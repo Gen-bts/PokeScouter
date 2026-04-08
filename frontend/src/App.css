@@ -1,0 +1,1124 @@
+/* PokeScouter - Dark Theme */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-panel: #0f3460;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0b0;
+  --accent: #e94560;
+  --accent-green: #4ecca3;
+  --accent-yellow: #f0c040;
+  --border: #2a2a4a;
+}
+
+html, body {
+  height: 100%;
+  font-family: "Segoe UI", "Meiryo", sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+/* アプリルート */
+.app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* タブバー */
+.tab-bar {
+  display: flex;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.tab-bar button {
+  flex: none;
+  padding: 8px 24px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab-bar button:hover {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.tab-bar button.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent);
+  background: transparent;
+}
+
+/* レイアウト: 映像（左）+ サイドパネル（右） */
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 映像エリア */
+.video-area {
+  flex: 1;
+  position: relative;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.video-area video {
+  display: none;
+}
+
+.video-area canvas {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.debug-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* サイドパネル */
+.side-panel {
+  width: 320px;
+  min-width: 280px;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-section {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-section h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+/* ステータス */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #666;
+}
+
+.status.connected .status-dot {
+  background: var(--accent-green);
+}
+
+.status.processing .status-dot {
+  background: var(--accent-yellow);
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+.status.disconnected .status-dot {
+  background: var(--accent);
+}
+
+.status.reconnecting .status-dot {
+  background: var(--accent-yellow);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* コントロール */
+label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
+select, input[type="range"] {
+  width: 100%;
+}
+
+select {
+  padding: 6px 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+button {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+button.active {
+  background: var(--accent);
+}
+
+/* OCR 結果 */
+.results-container {
+  flex: 1;
+  min-height: 120px;
+}
+
+.placeholder {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.debug-crop-img {
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  margin-bottom: 4px;
+}
+
+.debug-heading {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.result-item {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+
+.result-name {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.result-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-primary);
+  font-family: "Consolas", "Courier New", monospace;
+}
+
+.result-confidence {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.timing {
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding-top: 8px;
+}
+
+/* ======================================================================
+   DevTools
+   ====================================================================== */
+
+/* DevTools ビュー */
+.devtools-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.sub-tab-bar {
+  display: flex;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  padding-left: 8px;
+}
+
+.sub-tab-bar button {
+  flex: none;
+  padding: 6px 16px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sub-tab-bar button:hover {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.sub-tab-bar button.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: transparent;
+}
+
+.devtools-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.devtools-panel {
+  padding: 16px;
+}
+
+.devtools-panel h2 {
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.devtools-panel h3 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+/* 録画コントロール */
+.recording-controls {
+  margin-bottom: 16px;
+}
+
+.btn-record {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+
+.btn-stop {
+  background: var(--accent) !important;
+  color: #fff !important;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.recording-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 14px;
+  font-family: "Consolas", monospace;
+}
+
+.rec-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+/* セッション一覧 */
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.session-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.session-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-id {
+  font-size: 12px;
+  font-family: "Consolas", monospace;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.session-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.badge-recording {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 10px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 3px;
+}
+
+.btn-delete {
+  flex: none !important;
+  width: 28px;
+  padding: 4px !important;
+  font-size: 16px;
+  color: var(--text-secondary) !important;
+}
+
+.btn-delete:hover {
+  color: var(--accent) !important;
+}
+
+/* フレームビューア */
+.frame-display {
+  margin: 12px 0;
+}
+
+.frame-full {
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  background: #000;
+  border-radius: 4px;
+}
+
+.frame-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.timeline-slider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.timeline-slider input[type="range"] {
+  flex: 1;
+}
+
+.thumbnail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.thumbnail {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.thumbnail:hover {
+  border-color: var(--text-secondary);
+}
+
+.thumbnail.selected {
+  border-color: var(--accent);
+}
+
+/* クロップ編集 */
+.crop-editor-layout {
+  display: flex !important;
+  gap: 16px;
+  height: 100%;
+}
+
+.crop-editor-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.crop-editor-toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.crop-editor-toolbar > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.crop-editor-toolbar select {
+  min-width: 160px;
+}
+
+.crop-editor-canvas-container {
+  position: relative;
+  background: #000;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.crop-editor-canvas-container canvas {
+  width: 100%;
+  display: block;
+  cursor: crosshair;
+}
+
+.crop-editor-sidebar {
+  width: 260px;
+  min-width: 220px;
+  overflow-y: auto;
+}
+
+.new-region-form {
+  padding: 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--accent-green);
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.new-region-form h3 {
+  margin-top: 0;
+  color: var(--accent-green);
+}
+
+.new-region-form input[type="text"] {
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.btn-save {
+  width: 100%;
+  margin-top: 8px;
+  background: var(--accent-green) !important;
+  color: #000 !important;
+  font-weight: bold;
+}
+
+.btn-save:disabled {
+  opacity: 0.4;
+}
+
+.region-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.region-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.region-item:hover {
+  border-color: var(--text-secondary);
+}
+
+.region-item-selected {
+  border-color: var(--accent-green);
+  background: color-mix(in srgb, var(--accent-green) 10%, var(--bg-primary));
+}
+
+.region-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.region-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.region-name {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.region-coords {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: "Consolas", monospace;
+}
+
+/* ---------------------------------------------------------------------------
+   微調整フォーム
+   --------------------------------------------------------------------------- */
+
+.edit-region-form {
+  padding: 12px;
+  background: var(--bg-primary);
+  border: 1px solid #60a0f0;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.edit-region-form h3 {
+  margin-top: 0;
+  color: #60a0f0;
+  font-size: 14px;
+}
+
+.step-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.step-size-selector button {
+  padding: 2px 8px;
+  font-size: 11px;
+  border-radius: 3px;
+}
+
+.step-size-selector button.active {
+  background: #60a0f0;
+  color: #000;
+}
+
+.coord-adjust-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.coord-adjust-row label {
+  width: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: "Consolas", monospace;
+}
+
+.coord-adjust-row input[type="number"] {
+  width: 64px;
+  padding: 4px 6px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: "Consolas", monospace;
+  text-align: right;
+}
+
+.coord-adjust-row button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.edit-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.edit-actions button {
+  flex: 1;
+  font-size: 12px;
+}
+
+.btn-reset {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.btn-cancel {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   シーン管理
+   --------------------------------------------------------------------------- */
+
+.scene-manager {
+  max-width: 640px;
+}
+
+.scene-manager-description {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.scene-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.scene-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.scene-order-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.scene-order-controls .btn-icon {
+  font-size: 10px;
+  padding: 1px 4px;
+  line-height: 1;
+}
+
+.scene-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.scene-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scene-key-badge {
+  font-size: 11px;
+  font-family: "Consolas", monospace;
+  background: var(--bg-secondary);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.scene-display-name {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.scene-description {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.scene-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.scene-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.scene-edit-form label {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.scene-edit-form input {
+  font-size: 12px;
+}
+
+.scene-edit-row {
+  margin-bottom: 4px;
+}
+
+.scene-edit-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.scene-edit-actions button {
+  flex: 1;
+}
+
+.scene-add-form {
+  padding: 12px;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scene-add-form h3 {
+  font-size: 13px;
+  margin: 0 0 4px;
+}
+
+.scene-add-form label {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.scene-add-form input {
+  font-size: 12px;
+}
+
+.btn-icon {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--text-primary);
+  padding: 2px 6px;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.btn-icon:hover {
+  background: var(--bg-secondary);
+}
+
+.btn-icon:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.btn-icon.btn-danger:hover {
+  color: var(--accent);
+}
+
+.crop-type-toggle {
+  display: flex;
+  gap: 0;
+}
+
+.crop-type-toggle button {
+  flex: 1;
+  font-size: 11px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.crop-type-toggle button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.crop-type-toggle button:last-child {
+  border-radius: 0 4px 4px 0;
+  border-left: none;
+}
+
+.crop-type-toggle button.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.scene-selector-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.scene-selector-row select {
+  flex: 1;
+}
+
+/* ======================================================================
+   ベンチマーク
+   ====================================================================== */
+
+.benchmark-indicator {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.benchmark-report {
+  padding: 16px;
+}
+
+.benchmark-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.benchmark-header h2 {
+  margin-bottom: 0;
+}
+
+.btn-small {
+  flex: none;
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.benchmark-region-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.benchmark-region-card h3 {
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.benchmark-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.benchmark-table th {
+  text-align: left;
+  color: var(--text-secondary);
+  font-weight: normal;
+  padding: 3px 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+}
+
+.benchmark-table td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.benchmark-table tr.best-engine {
+  background: rgba(78, 204, 163, 0.1);
+}
+
+.benchmark-table .text-cell {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: "Consolas", monospace;
+}
+
+.benchmark-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.applied-msg {
+  color: var(--accent-green);
+  font-size: 12px;
+}
+
+.volume-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.volume-row button {
+  flex: none;
+  width: 36px;
+  padding: 4px;
+  font-size: 16px;
+}
+
+/* ---------------------------------------------------------------------------
+   オフラインベンチマーク
+   --------------------------------------------------------------------------- */
+
+.offline-benchmark .hint-text {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin: 4px 0 12px;
+}
+
+.benchmark-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.benchmark-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.benchmark-controls select {
+  min-width: 180px;
+}
+
+.benchmark-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.btn-danger {
+  background: var(--accent-red, #e53935);
+  border-color: var(--accent-red, #e53935);
+}
+
+.btn-danger:hover {
+  opacity: 0.85;
+}
+
+.benchmark-progress {
+  margin-top: 12px;
+}
+
+.progress-bar {
+  height: 6px;
+  background: var(--bg-tertiary, #333);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent, #4fc3f7);
+  transition: width 0.2s ease;
+}
+
+.progress-text {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.error-text {
+  color: var(--accent-red, #e53935);
+  font-size: 13px;
+  margin-top: 8px;
+}
