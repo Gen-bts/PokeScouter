@@ -213,6 +213,25 @@ print(f"GLM-OCR: OK (device={model.device})")
 - `pip show transformers` でバージョンが 5.3.0 以上であることを確認
 - `pip install --upgrade "transformers>=5.3.0"` で更新する
 
+### PyTorch と PaddlePaddle の cuDNN 衝突（WinError 127）
+
+PyTorch と PaddlePaddle はそれぞれ異なるバージョンの cuDNN を bundled しており、同一プロセスで `import torch` と `import paddle` を両方実行すると、2つ目のインポートで `cudnn_engines_precompiled64_9.dll` の WinError 127 が発生する。
+
+**原因**: PyTorch (cuDNN 9.10.x) と PaddlePaddle (cuDNN 9.9.x) のバージョン不一致。
+
+**解決策**: cuDNN バージョンを PyTorch に合わせて統一する。
+
+```bash
+# 1. nvidia-cudnn-cu12 を PyTorch のバージョンに合わせる
+pip install nvidia-cudnn-cu12==9.10.0.56
+
+# 2. torch/lib の cuDNN DLLs を統一版に置き換える
+#    (オリジナルをバックアップ後)
+cp .venv/Lib/site-packages/nvidia/cudnn/bin/cudnn*.dll .venv/Lib/site-packages/torch/lib/
+```
+
+> **注意**: `paddlepaddle-gpu` は `nvidia-cudnn-cu12==9.9.0.52` を要求するため、pip が依存警告を出すが、cuDNN 9.10.0 は 9.9 の上位互換であり実用上問題ない。
+
 ### bitsandbytes が Windows で動かない（GLM-OCR 量子化時のみ）
 
 - bitsandbytes は Windows で不安定な場合がある
