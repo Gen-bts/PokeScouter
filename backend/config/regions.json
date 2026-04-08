@@ -1,0 +1,192 @@
+{
+  "_comment": "画面領域の座標定義 (1920x1080 基準)",
+  "resolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "scenes": {
+    "pre_match": {
+      "display_name": "試合開始前",
+      "description": "",
+      "detection": {
+        "_comment": "テンプレート画像を templates/pre_match/ に配置してここに定義する",
+        "マッチング待機表示": {
+          "x": 772,
+          "y": 621,
+          "w": 330,
+          "h": 55,
+          "method": "ocr",
+          "engine": "paddle",
+          "expected_text": "マッチング待機中"
+        }
+      },
+      "regions": {}
+    },
+    "team_select": {
+      "display_name": "チーム選択",
+      "description": "",
+      "detection": {
+        "_comment": "テンプレート画像を templates/team_select/ に配置してここに定義する",
+        "ランクバトル表示": {
+          "x": 742,
+          "y": 26,
+          "w": 184,
+          "h": 38,
+          "method": "ocr",
+          "engine": "paddle",
+          "expected_text": "ランクバトル"
+        }
+      },
+      "regions": {
+        "味方ポケモン1": {
+          "x": 142,
+          "y": 162,
+          "w": 237,
+          "h": 46,
+          "engine": "paddle"
+        },
+        "味方ポケモン2": {
+          "x": 143,
+          "y": 294,
+          "w": 231,
+          "h": 41,
+          "engine": "paddle"
+        },
+        "味方ポケモン3": {
+          "x": 144,
+          "y": 417,
+          "w": 227,
+          "h": 41,
+          "engine": "paddle"
+        },
+        "味方ポケモン4": {
+          "x": 144,
+          "y": 544,
+          "w": 227,
+          "h": 38,
+          "engine": "paddle"
+        },
+        "味方ポケモン5": {
+          "x": 136,
+          "y": 667,
+          "w": 236,
+          "h": 44,
+          "engine": "paddle"
+        },
+        "味方ポケモン6": {
+          "x": 145,
+          "y": 796,
+          "w": 228,
+          "h": 42,
+          "engine": "paddle"
+        }
+      },
+      "pokemon_icons": {
+        "_comment": "相手ポケモンアイコン座標 (プレースホルダー: CropEditorで実際のゲーム画面から要調整)",
+        "opponent_pokemon_1": {
+          "x": 1550,
+          "y": 162,
+          "w": 120,
+          "h": 120
+        },
+        "opponent_pokemon_2": {
+          "x": 1550,
+          "y": 294,
+          "w": 120,
+          "h": 120
+        },
+        "opponent_pokemon_3": {
+          "x": 1550,
+          "y": 426,
+          "w": 120,
+          "h": 120
+        },
+        "opponent_pokemon_4": {
+          "x": 1550,
+          "y": 558,
+          "w": 120,
+          "h": 120
+        },
+        "opponent_pokemon_5": {
+          "x": 1550,
+          "y": 690,
+          "w": 120,
+          "h": 120
+        },
+        "opponent_pokemon_6": {
+          "x": 1550,
+          "y": 822,
+          "w": 120,
+          "h": 120
+        }
+      }
+    },
+    "team_confirm": {
+      "display_name": "チーム選択決定",
+      "description": "",
+      "detection": {
+        "_comment": "テンプレート画像を templates/team_confirm/ に配置してここに定義する"
+      },
+      "regions": {}
+    },
+    "battle": {
+      "display_name": "バトル",
+      "description": "",
+      "detection": {},
+      "regions": {
+        "自分の名前": {
+          "x": 140,
+          "y": 934,
+          "w": 240,
+          "h": 43,
+          "engine": "paddle"
+        },
+        "自分HP": {
+          "x": 247,
+          "y": 1007,
+          "w": 156,
+          "h": 49,
+          "engine": "paddle"
+        },
+        "相手の名前": {
+          "x": 1602,
+          "y": 47,
+          "w": 218,
+          "h": 48,
+          "engine": "paddle"
+        },
+        "相手HP": {
+          "x": 1727,
+          "y": 126,
+          "w": 109,
+          "h": 41,
+          "engine": "paddle"
+        }
+      }
+    },
+    "battle_end": {
+      "display_name": "バトル終了",
+      "description": "",
+      "detection": {
+        "_comment": "テンプレート画像を templates/battle_end/ に配置してここに定義する"
+      },
+      "regions": {}
+    },
+    "move_select": {
+      "display_name": "わざ選択",
+      "description": "バトル中のサブシーン: わざ選択画面",
+      "detection": {
+        "_comment": "テンプレート画像を templates/move_select/ に配置してここに定義する"
+      },
+      "regions": {}
+    },
+    "pokemon_summary": {
+      "display_name": "ポケモン画面",
+      "description": "バトル中のサブシーン: ポケモン入れ替え・詳細画面",
+      "detection": {
+        "_comment": "テンプレート画像を templates/pokemon_summary/ に配置してここに定義する"
+      },
+      "regions": {}
+    }
+  }
+}

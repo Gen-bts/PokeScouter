@@ -1,0 +1,35 @@
+[project]
+name = "pokescouter-backend"
+version = "0.1.0"
+description = "PokeScouter backend - OCR-based Pokémon Champions battle analyzer"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "opencv-python-headless",
+    "websockets",
+    "numpy",
+    "Pillow",
+    "paddleocr",
+    "paddlepaddle-gpu",
+    "manga-ocr",
+    "transformers>=5.3.0",
+    "accelerate",
+    "torch",
+    "torchvision",
+    "imagehash",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-timeout",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "gpu: requires GPU (deselect with -m 'not gpu')",
+    "slow: takes >5s (deselect with -m 'not slow')",
+]
+timeout = 60
