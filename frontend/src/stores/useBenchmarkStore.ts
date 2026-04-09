@@ -1,20 +1,8 @@
 import { create } from "zustand";
 import type { BenchmarkRegion } from "../types";
+import type { EngineSamples, RegionAccumulator } from "../utils/engineStats";
 
-export interface EngineSamples {
-  texts: string[];
-  confidences: number[];
-  elapsed_ms_values: number[];
-}
-
-export interface RegionAccumulator {
-  engines: Record<string, EngineSamples>;
-  lastCrop?: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
+export type { EngineSamples, RegionAccumulator };
 
 interface BenchmarkState {
   active: boolean;
@@ -54,7 +42,7 @@ export const useBenchmarkStore = create<BenchmarkState>()((set) => ({
           };
         }
 
-        const acc = updated[region.name];
+        const acc = updated[region.name]!;
 
         if (region.crop_b64) {
           acc.lastCrop = region.crop_b64;
@@ -68,7 +56,7 @@ export const useBenchmarkStore = create<BenchmarkState>()((set) => ({
               elapsed_ms_values: [],
             };
           }
-          const samples = acc.engines[eng.engine];
+          const samples = acc.engines[eng.engine]!;
           samples.texts.push(eng.text);
           samples.confidences.push(eng.confidence);
           samples.elapsed_ms_values.push(eng.elapsed_ms);

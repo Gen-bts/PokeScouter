@@ -28,6 +28,7 @@ export interface RegionDef {
   w: number;
   h: number;
   engine: string;
+  read_once?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -44,12 +45,25 @@ export interface DetectionRegionDef {
 }
 
 // ---------------------------------------------------------------------------
+// ポケモンアイコン（画像認識用クロップ）
+// ---------------------------------------------------------------------------
+
+export interface PokemonIconDef {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  read_once?: boolean;
+}
+
+// ---------------------------------------------------------------------------
 // シーン
 // ---------------------------------------------------------------------------
 
 export interface SceneMeta {
   display_name: string;
   description: string;
+  interval_ms: number;
 }
 
 export interface SceneConfig {
@@ -57,6 +71,7 @@ export interface SceneConfig {
   description: string;
   detection: Record<string, DetectionRegionDef>;
   regions: Record<string, RegionDef>;
+  pokemon_icons?: Record<string, PokemonIconDef>;
 }
 
 export interface RegionsConfig {
@@ -163,7 +178,7 @@ export async function createScene(
 
 export async function updateScene(
   scene: string,
-  meta: { display_name?: string; description?: string },
+  meta: { display_name?: string; description?: string; interval_ms?: number },
 ): Promise<RegionsConfig> {
   const res = await fetch(`${BASE}/scenes/${scene}`, {
     method: "PUT",
@@ -252,7 +267,290 @@ export async function deleteDetectionRegion(
 }
 
 // ---------------------------------------------------------------------------
+// ポケモンアイコン（画像認識用クロップ）
+// ---------------------------------------------------------------------------
+
+export async function upsertPokemonIcon(
+  scene: string,
+  name: string,
+  def: PokemonIconDef,
+): Promise<RegionsConfig> {
+  const res = await fetch(`${BASE}/pokemon-icons/${scene}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, ...def }),
+  });
+  return res.json();
+}
+
+export async function deletePokemonIcon(
+  scene: string,
+  name: string,
+): Promise<RegionsConfig> {
+  const res = await fetch(
+    `${BASE}/pokemon-icons/${scene}?name=${encodeURIComponent(name)}`,
+    { method: "DELETE" },
+  );
+  return res.json();
+}
+
+// ---------------------------------------------------------------------------
 // オフラインベンチマーク（SSE）
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// 1試合通しベンチマーク（SSE）
+// ---------------------------------------------------------------------------
+
+export interface SceneChangeEvent {
+  type: "scene_change";
+  frame_index: number;
+  timestamp_ms: number;
+  scene: string;
+  top_level: string;
+  sub_scene: string | null;
+  confidence: number;
+}
+
+export interface PokemonIdentifiedEvent {
+  type: "pokemon_identified";
+  frame_index: number;
+  timestamp_ms: number;
+  pokemon: { position: number; pokemon_id: number | null; confidence: number }[];
+  elapsed_ms: number;
+}
+
+export interface FrameSummaryEvent {
+  type: "frame_summary";
+  frame_index: number;
+  timestamp_ms: number;
+  scene_key: string;
+  detection_ms: number;
+  ocr_ms: number;
+  total_ms: number;
+}
+
+export interface FullMatchDoneEvent {
+  total_frames: number;
+  processed_frames: number;
+  skipped_frames: number;
+  total_elapsed_ms: number;
+  scene_timeline: { frame_index: number; timestamp_ms: number; scene: string; confidence: number }[];
+  scene_counts: Record<string, number>;
+}
+
+export interface FrameSkippedEvent {
+  frame_index: number;
+  timestamp_ms: number;
+  scene_key: string;
+}
+
+export interface BenchmarkResultRegion {
+  name: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  crop_b64?: string;
+  engines: Record<string, { text: string; confidence: number; elapsed_ms: number }>;
+}
+
+export interface BenchmarkResultEvent {
+  type: "benchmark_result";
+  frame_index: number;
+  timestamp_ms: number;
+  scene: string;
+  elapsed_ms: number;
+  regions: BenchmarkResultRegion[];
+}
+
+export interface OcrResultEvent {
+  type: "ocr_result";
+  frame_index: number;
+  timestamp_ms: number;
+  scene: string;
+  elapsed_ms: number;
+  regions: {
+    name: string;
+    text: string;
+    confidence: number;
+    elapsed_ms: number;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  }[];
+}
+
+export interface FullMatchCallbacks {
+  onStart: (totalFrames: number) => void;
+  onSceneChange: (data: SceneChangeEvent) => void;
+  onPokemonIdentified: (data: PokemonIdentifiedEvent) => void;
+  onOcrResult: (data: BenchmarkResultEvent | OcrResultEvent) => void;
+  onFrameSummary: (data: FrameSummaryEvent) => void;
+  onFrameSkipped?: (data: FrameSkippedEvent) => void;
+  onDone: (data: FullMatchDoneEvent) => void;
+  onError: (error: Error) => void;
+}
+
+export function runFullMatchBenchmark(
+  sessionId: string,
+  ocrMode: string,
+  callbacks: FullMatchCallbacks,
+): AbortController {
+  const controller = new AbortController();
+
+  (async () => {
+    try {
+      const res = await fetch(`${BASE}/benchmark/${sessionId}/full-match`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ocr_mode: ocrMode }),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        throw new Error(`Full-match benchmark failed: ${res.status} ${res.statusText}`);
+      }
+
+      const reader = res.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop()!;
+
+        for (const part of parts) {
+          if (!part.trim()) continue;
+
+          let eventType = "message";
+          let data = "";
+
+          for (const line of part.split("\n")) {
+            if (line.startsWith("event: ")) {
+              eventType = line.slice(7);
+            } else if (line.startsWith("data: ")) {
+              data = line.slice(6);
+            }
+          }
+
+          if (!data) continue;
+          const parsed = JSON.parse(data);
+
+          switch (eventType) {
+            case "start":
+              callbacks.onStart(parsed.total_frames);
+              break;
+            case "scene_change":
+              callbacks.onSceneChange(parsed);
+              break;
+            case "pokemon_identified":
+              callbacks.onPokemonIdentified(parsed);
+              break;
+            case "ocr_result":
+            case "benchmark_result":
+              callbacks.onOcrResult(parsed);
+              break;
+            case "frame_summary":
+              callbacks.onFrameSummary(parsed);
+              break;
+            case "frame_skipped":
+              callbacks.onFrameSkipped?.(parsed);
+              break;
+            case "done":
+              callbacks.onDone(parsed);
+              break;
+          }
+        }
+      }
+    } catch (err) {
+      if ((err as Error).name !== "AbortError") {
+        callbacks.onError(err as Error);
+      }
+    }
+  })();
+
+  return controller;
+}
+
+// ---------------------------------------------------------------------------
+// アドホックテスト（フレームビューワー用）
+// ---------------------------------------------------------------------------
+
+export interface CropRect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export interface OcrTestResult {
+  crop: CropRect;
+  engines: Record<string, { text: string; confidence: number; elapsed_ms: number }>;
+}
+
+export interface PokemonCandidate {
+  pokemon_id: number;
+  name: string;
+  confidence: number;
+}
+
+export interface PokemonTestResult {
+  crop: CropRect;
+  candidates: PokemonCandidate[];
+  threshold: number;
+  result: { pokemon_id: number; confidence: number } | null;
+  crop_b64: string;
+  template_b64: string | null;
+  elapsed_ms: number;
+}
+
+export async function runOcrTest(
+  sessionId: string,
+  filename: string,
+  crop: CropRect,
+): Promise<OcrTestResult> {
+  const res = await fetch(
+    `${BASE}/recordings/${sessionId}/frames/${filename}/ocr-test`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(crop),
+    },
+  );
+  if (!res.ok) {
+    throw new Error(`OCR test failed: ${res.status} ${res.statusText}`);
+  }
+  return res.json();
+}
+
+export async function runPokemonTest(
+  sessionId: string,
+  filename: string,
+  crop: CropRect,
+): Promise<PokemonTestResult> {
+  const res = await fetch(
+    `${BASE}/recordings/${sessionId}/frames/${filename}/pokemon-test`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(crop),
+    },
+  );
+  if (!res.ok) {
+    throw new Error(`Pokemon test failed: ${res.status} ${res.statusText}`);
+  }
+  return res.json();
+}
+
+// ---------------------------------------------------------------------------
+// OCRエンジン比較ベンチマーク（SSE）
 // ---------------------------------------------------------------------------
 
 export interface OfflineBenchmarkCallbacks {
