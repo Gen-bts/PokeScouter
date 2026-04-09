@@ -67,6 +67,119 @@ html, body {
   background: transparent;
 }
 
+/* ツールバー（タブバー直下） */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 16px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  font-size: 13px;
+}
+
+.toolbar-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.toolbar-status .status-dot {
+  width: 8px;
+  height: 8px;
+}
+
+.toolbar-status.connected .status-dot {
+  background: var(--accent-green);
+}
+
+.toolbar-status.processing .status-dot {
+  background: var(--accent-yellow);
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+.toolbar-status.disconnected .status-dot {
+  background: var(--accent);
+}
+
+.toolbar-status.reconnecting .status-dot {
+  background: var(--accent-yellow);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.toolbar-status.connecting .status-dot {
+  background: var(--accent-yellow);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.toolbar-btn {
+  flex: none;
+  padding: 3px 10px;
+  font-size: 12px;
+  background: transparent;
+  border: 1.5px solid var(--text-secondary);
+  border-radius: 4px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.toolbar-btn:hover {
+  background: var(--bg-panel);
+  border-color: var(--text-primary);
+}
+
+.toolbar-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 13px;
+  user-select: none;
+}
+
+.toolbar-checkbox input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.toolbar-volume {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.toolbar-volume button {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  padding: 2px;
+  font-size: 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.toolbar-volume button:hover {
+  background: var(--bg-panel);
+}
+
+.toolbar-volume input[type="range"] {
+  width: 100px;
+}
+
+.toolbar-volume-label {
+  min-width: 48px;
+  text-align: right;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
 /* レイアウト: 映像（左）+ サイドパネル（右） */
 .layout {
   display: flex;
@@ -90,8 +203,8 @@ html, body {
 }
 
 .video-area canvas {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
@@ -99,21 +212,55 @@ html, body {
   position: absolute;
   top: 0;
   left: 0;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
+  object-fit: contain;
 }
 
-/* サイドパネル */
-.side-panel {
+/* 左パネル（ログ） */
+.left-panel {
   width: 320px;
-  min-width: 280px;
+  min-width: 0;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease;
+}
+
+.left-panel.collapsed {
+  width: 0;
+  overflow: hidden;
+  border-right: none;
+}
+
+/* 右パネル（相手チーム） */
+.right-panel {
+  width: 320px;
+  min-width: 0;
   background: var(--bg-secondary);
   border-left: 1px solid var(--border);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  transition: width 0.2s ease;
+}
+
+.right-panel.collapsed {
+  width: 0;
+  overflow: hidden;
+  border-left: none;
+}
+
+/* 設定タブ */
+.settings-view {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+  overflow-y: auto;
 }
 
 .panel-section {
@@ -299,6 +446,136 @@ button.active {
 }
 
 /* ======================================================================
+   Match Log
+   ====================================================================== */
+
+.match-log {
+  flex: 1;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+.match-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.match-log-header h2 {
+  margin-bottom: 0;
+}
+
+.btn-clear {
+  flex: none;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.match-log-list {
+  flex: 1;
+  overflow-y: auto;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 12px;
+}
+
+.match-log-entry {
+  display: flex;
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.match-log-entry:last-child {
+  border-bottom: none;
+}
+
+.match-log-time {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.match-log-scene {
+  color: var(--accent-green);
+  font-weight: bold;
+}
+
+.match-log-confidence {
+  color: var(--text-secondary);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* match_teams エントリ */
+.match-log-teams {
+  flex-direction: column;
+  gap: 2px;
+}
+
+.match-log-teams .match-log-time {
+  margin-bottom: 2px;
+}
+
+.match-log-teams-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 0.85em;
+}
+
+.match-log-team-row {
+  display: flex;
+  gap: 6px;
+}
+
+.match-log-team-label {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  min-width: 2em;
+}
+
+.match-log-team-names {
+  color: var(--text-primary);
+}
+
+/* team_selection エントリ */
+.match-log-selection {
+  align-items: center;
+}
+
+.match-log-selection-label {
+  color: var(--accent-green);
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.match-log-selection-names {
+  color: var(--text-primary);
+}
+
+/* battle_result エントリ */
+.match-log-result {
+  align-items: center;
+}
+
+.match-log-result-label {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.match-log-result-win .match-log-result-label {
+  color: #4caf50;
+}
+
+.match-log-result-lose .match-log-result-label {
+  color: #f44336;
+}
+
+/* ======================================================================
    DevTools
    ====================================================================== */
 
@@ -454,8 +731,23 @@ button.active {
 }
 
 /* フレームビューア */
-.frame-display {
+.frame-and-results {
+  display: flex;
+  gap: 16px;
   margin: 12px 0;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+.frame-display {
+  width: 65%;
+  flex-shrink: 0;
+}
+
+.test-results-sidebar {
+  flex: 1;
+  overflow-x: auto;
+  max-width: 35%;
 }
 
 .frame-full {
@@ -817,6 +1109,17 @@ button.active {
   font-weight: bold;
 }
 
+.scene-interval-badge {
+  font-size: 11px;
+  font-family: "Consolas", monospace;
+  background: var(--bg-secondary);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  margin-left: auto;
+}
+
 .scene-description {
   font-size: 11px;
   color: var(--text-secondary);
@@ -1121,4 +1424,819 @@ button.active {
   color: var(--accent-red, #e53935);
   font-size: 13px;
   margin-top: 8px;
+}
+
+/* ---------------------------------------------------------------------------
+   Full Match Benchmark
+   --------------------------------------------------------------------------- */
+
+.fullmatch-benchmark h3 {
+  margin: 0 0 8px;
+}
+
+.fullmatch-benchmark h4 {
+  margin: 12px 0 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* KPI カード */
+.kpi-cards {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.kpi-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-tertiary, #2a2a2a);
+  border-radius: 8px;
+  padding: 12px 18px;
+  min-width: 100px;
+}
+
+.kpi-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  line-height: 1.2;
+}
+
+.kpi-label {
+  font-size: 11px;
+  color: var(--text-secondary, #999);
+  margin-top: 2px;
+}
+
+/* シーン分布バー */
+.scene-bar-chart {
+  display: flex;
+  height: 28px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.scene-bar-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2px;
+  transition: flex-grow 0.3s ease;
+}
+
+.scene-bar-label {
+  font-size: 10px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+}
+
+.scene-bar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.scene-bar-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* タイムライン */
+.timeline-wrapper {
+  position: relative;
+  outline: none;
+  border-radius: 6px;
+  overflow: visible;
+}
+
+.timeline-canvas {
+  display: block;
+  border-radius: 6px;
+}
+
+.timeline-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.timeline-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-secondary, #aaa);
+}
+
+.timeline-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.timeline-legend-color {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.timeline-frame-info {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  padding: 4px 0;
+  border-top: 1px solid var(--bg-tertiary, #333);
+}
+
+/* フレームビューワー */
+.frame-viewer {
+  position: relative;
+  background: #000;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.frame-viewer-canvas {
+  display: block;
+  width: 100%;
+  cursor: crosshair;
+}
+
+.frame-viewer-placeholder {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* テストモード */
+.test-mode-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.test-mode-toolbar button {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.test-mode-toolbar button:hover {
+  background: var(--bg-panel);
+}
+
+.test-mode-toolbar button.active.ocr {
+  background: rgba(34, 211, 238, 0.2);
+  border-color: #22d3ee;
+  color: #22d3ee;
+}
+
+.test-mode-toolbar button.active.pokemon {
+  background: rgba(251, 146, 60, 0.2);
+  border-color: #fb923c;
+  color: #fb923c;
+}
+
+.test-mode-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-left: 8px;
+}
+
+.test-results {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.test-results h4 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.test-results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Consolas", "Menlo", monospace;
+  font-size: 12px;
+  table-layout: fixed;
+  word-break: break-all;
+}
+
+.test-results-table th {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-weight: normal;
+}
+
+.test-results-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(42, 42, 74, 0.5);
+}
+
+.test-result-text {
+  color: #fff;
+  font-weight: bold;
+}
+
+.test-result-coords {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: "Consolas", "Menlo", monospace;
+}
+
+.test-result-pokemon {
+  display: flex;
+  gap: 16px;
+  font-family: "Consolas", "Menlo", monospace;
+}
+
+.test-result-pokemon strong {
+  color: #fff;
+}
+
+.test-result-pokemon.no-match {
+  color: var(--text-secondary);
+}
+
+.test-result-images {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.test-result-images img {
+  max-width: 112px;
+  max-height: 112px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  image-rendering: pixelated;
+}
+
+.test-result-image-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.test-results-table tr.match-above-threshold {
+  color: #4caf50;
+}
+
+.test-loading {
+  color: var(--text-secondary);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* エンジン比較 */
+.engine-frame-detail,
+.engine-aggregate {
+  margin-bottom: 12px;
+}
+
+.engine-region-block {
+  margin-bottom: 10px;
+}
+
+.engine-region-name {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+  margin-bottom: 4px;
+}
+
+.engine-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.engine-card {
+  background: var(--bg-tertiary, #2a2a2a);
+  border: 1px solid var(--bg-tertiary, #444);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.engine-card--best {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.3);
+}
+
+.engine-card--compact {
+  padding: 6px 8px;
+}
+
+.engine-card-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  margin-bottom: 4px;
+}
+
+.engine-card-text {
+  font-size: 14px;
+  font-family: monospace;
+  color: var(--accent, #4fc3f7);
+  margin-bottom: 4px;
+  word-break: break-all;
+  max-height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.engine-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 11px;
+  color: var(--text-secondary, #999);
+}
+
+.engine-summary-block {
+  margin-bottom: 10px;
+}
+
+.engine-stats-table {
+  font-size: 12px;
+}
+
+/* スパークライン */
+.sparkline-wrapper {
+  background: var(--bg-tertiary, #1a1a1a);
+  border-radius: 6px;
+  padding: 4px;
+  margin-bottom: 8px;
+}
+
+.sparkline-canvas {
+  display: block;
+  border-radius: 4px;
+}
+
+/* シーン別統計テーブル（強化版） */
+.stat-table--enhanced td,
+.stat-table--enhanced th {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.inline-bar {
+  height: 6px;
+  background: var(--bg-tertiary, #333);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.inline-bar-fill {
+  height: 100%;
+  background: var(--accent, #4fc3f7);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* ======================================================================
+   相手パーティパネル
+   ====================================================================== */
+
+.opponent-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.opponent-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.opponent-panel-header h2 {
+  margin-bottom: 0;
+}
+
+.opponent-panel-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.opponent-slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  transition: border-color 0.15s;
+  position: relative;
+  z-index: 1;
+}
+
+.opponent-slot-empty {
+  opacity: 0.5;
+}
+
+.opponent-slot-manual {
+  border-style: dashed;
+  border-color: var(--accent-yellow);
+}
+
+.opponent-slot-pos {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: "Consolas", monospace;
+  flex-shrink: 0;
+  width: 20px;
+}
+
+.opponent-slot-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.opponent-slot-placeholder {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.opponent-slot-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.opponent-slot-name {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.opponent-slot-confidence {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: "Consolas", monospace;
+}
+
+.opponent-slot-badge {
+  font-size: 10px;
+  color: var(--accent-yellow);
+  font-weight: bold;
+}
+
+.opponent-slot-edit {
+  flex: none;
+  font-size: 14px;
+  opacity: 0.4;
+  transition: opacity 0.15s;
+}
+
+.opponent-slot:hover .opponent-slot-edit {
+  opacity: 1;
+}
+
+/* オートコンプリート */
+.opponent-autocomplete {
+  position: relative;
+}
+
+.opponent-autocomplete-input {
+  width: 100%;
+  padding: 4px 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--accent-green);
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+}
+
+.opponent-autocomplete-input:focus {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 1px var(--accent-green);
+}
+
+.opponent-autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 0 0 6px 6px;
+  list-style: none;
+  padding: 4px 0;
+  margin: 0;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.opponent-autocomplete-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.opponent-autocomplete-list li:hover,
+.opponent-autocomplete-list li.selected {
+  background: var(--bg-panel);
+}
+
+.opponent-autocomplete-thumb {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+/* 候補セレクター */
+.opponent-candidates {
+  position: relative;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 0;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  outline: none;
+  min-width: 200px;
+}
+
+.opponent-candidate-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.opponent-candidate-row:hover,
+.opponent-candidate-row.selected {
+  background: var(--bg-panel);
+}
+
+.opponent-candidate-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.opponent-candidate-confidence {
+  color: var(--text-secondary);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.opponent-candidate-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 8px;
+}
+
+.opponent-candidate-manual-btn {
+  color: var(--accent);
+  font-size: 13px;
+}
+
+/* === MyPartyPanel === */
+
+.my-party-panel {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.my-party-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.my-party-panel-header h2 {
+  margin-bottom: 0;
+}
+
+.my-party-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.my-party-slot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.my-party-slot-empty {
+  opacity: 0.5;
+}
+
+.my-party-slot-pos {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: "Consolas", monospace;
+  flex-shrink: 0;
+  width: 20px;
+}
+
+.my-party-slot-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.my-party-slot-placeholder {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.my-party-slot-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.my-party-slot-name {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.my-party-slot-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.my-party-slot-detail {
+  font-size: 10px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  padding: 1px 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+.my-party-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.my-party-progress-label {
+  font-size: 13px;
+  color: var(--accent);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.my-party-error {
+  font-size: 12px;
+  color: var(--accent-red, #e94560);
+  padding: 6px 8px;
+  background: rgba(233, 69, 96, 0.1);
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.my-party-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-primary:hover {
+  opacity: 0.85;
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
 }

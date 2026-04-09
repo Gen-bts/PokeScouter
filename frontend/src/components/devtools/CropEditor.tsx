@@ -9,10 +9,13 @@ import {
   deleteRegion,
   upsertDetectionRegion,
   deleteDetectionRegion,
+  upsertPokemonIcon,
+  deletePokemonIcon,
   type SessionMetadata,
   type FrameInfo,
   type RegionDef,
   type DetectionRegionDef,
+  type PokemonIconDef,
   type SceneMeta,
   type SceneConfig,
 } from "../../api/devtools";
@@ -36,7 +39,7 @@ interface Rect {
   h: number;
 }
 
-type CropType = "regions" | "detection";
+type CropType = "regions" | "detection" | "pokemon_icons";
 type InteractionMode = "draw" | "move" | "resize";
 type ResizeHandle = "nw" | "ne" | "sw" | "se";
 
@@ -59,6 +62,15 @@ const DETECTION_COLORS = [
   "#ffd93d",
   "#6bcb77",
   "#4d96ff",
+];
+
+const POKEMON_ICON_COLORS = [
+  "#ff9f43",
+  "#feca57",
+  "#ee5a24",
+  "#f8b739",
+  "#e17055",
+  "#fdcb6e",
 ];
 
 function clampRect(r: Rect): Rect {
@@ -136,6 +148,9 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
   const [newTemplate, setNewTemplate] = useState("");
   const [newThreshold, setNewThreshold] = useState(0.8);
   const [newExpectedText, setNewExpectedText] = useState("");
+  const [newExcludedText, setNewExcludedText] = useState("");
+  // read_once フラグ
+  const [newReadOnce, setNewReadOnce] = useState(false);
 
   const [drawnRect, setDrawnRect] = useState<Rect | null>(null);
 
@@ -146,6 +161,7 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
   const [dragOffset, setDragOffset] = useState<{ dx: number; dy: number } | null>(null);
   const [resizeHandle, setResizeHandle] = useState<ResizeHandle | null>(null);
   const [step, setStep] = useState(1);
+  const [editReadOnce, setEditReadOnce] = useState(false);
 
   // 初期ロード
   useEffect(() => {
@@ -194,9 +210,23 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
   const currentScene = sceneConfigs[scene];
   const currentRegions = currentScene?.regions || {};
   const currentDetection = currentScene?.detection || {};
-  const currentCrops =
-    cropType === "regions" ? currentRegions : currentDetection;
-  const colors = cropType === "regions" ? REGION_COLORS : DETECTION_COLORS;
+  const rawPokemonIcons = currentScene?.pokemon_icons || {};
+  const currentPokemonIcons = Object.fromEntries(
+    Object.entries(rawPokemonIcons).filter(([k]) => !k.startsWith("_")),
+  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const currentCrops: Record<string, any> =
+    cropType === "regions"
+      ? currentRegions
+      : cropType === "detection"
+        ? currentDetection
+        : currentPokemonIcons;
+  const colors =
+    cropType === "regions"
+      ? REGION_COLORS
+      : cropType === "detection"
+        ? DETECTION_COLORS
+        : POKEMON_ICON_COLORS;
 
   // 画像とリージョンの描画
   const redraw = useCallback(
@@ -516,9 +546,10 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
       const updated = await upsertRegion(scene, newName.trim(), {
         ...drawnRect,
         engine: newEngine,
+        ...(newReadOnce ? { read_once: true } : {}),
       });
       setSceneConfigs(updated.scenes || {});
-    } else {
+    } else if (cropType === "detection") {
       const params: Record<string, unknown> = {};
       if (newMethod === "template") {
         if (newTemplate) params.template = newTemplate;
@@ -532,6 +563,13 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
             .filter(Boolean);
           params.expected_text = texts.length === 1 ? texts[0] : texts;
         }
+        if (newExcludedText) {
+          const texts = newExcludedText
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean);
+          params.excluded_text = texts.length === 1 ? texts[0] : texts;
+        }
       }
       const updated = await upsertDetectionRegion(scene, newName.trim(), {
         ...drawnRect,
@@ -539,17 +577,26 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
         ...params,
       });
       setSceneConfigs(updated.scenes || {});
+    } else {
+      const updated = await upsertPokemonIcon(scene, newName.trim(), {
+        ...drawnRect,
+        ...(newReadOnce ? { read_once: true } : {}),
+      });
+      setSceneConfigs(updated.scenes || {});
     }
     setDrawnRect(null);
     setNewName("");
+    setNewReadOnce(false);
   }, [
     drawnRect,
     newName,
     newEngine,
+    newReadOnce,
     newMethod,
     newTemplate,
     newThreshold,
     newExpectedText,
+    newExcludedText,
     scene,
     cropType,
   ]);
@@ -565,9 +612,10 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
       const updated = await upsertRegion(scene, selectedCropName, {
         ...editRect,
         engine: regionDef.engine,
+        ...(editReadOnce ? { read_once: true } : {}),
       });
       setSceneConfigs(updated.scenes || {});
-    } else {
+    } else if (cropType === "detection") {
       const detDef = existing as DetectionRegionDef;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { x: _x, y: _y, w: _w, h: _h, ...rest } = detDef;
@@ -576,10 +624,16 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
         ...rest,
       });
       setSceneConfigs(updated.scenes || {});
+    } else {
+      const updated = await upsertPokemonIcon(scene, selectedCropName, {
+        ...editRect,
+        ...(editReadOnce ? { read_once: true } : {}),
+      });
+      setSceneConfigs(updated.scenes || {});
     }
     setSelectedCropName(null);
     setEditRect(null);
-  }, [editRect, selectedCropName, scene, cropType, currentCrops]);
+  }, [editRect, selectedCropName, scene, cropType, currentCrops, editReadOnce]);
 
   // クロップ削除
   const handleDeleteCrop = useCallback(
@@ -588,7 +642,9 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
       const updated =
         cropType === "regions"
           ? await deleteRegion(scene, name)
-          : await deleteDetectionRegion(scene, name);
+          : cropType === "detection"
+            ? await deleteDetectionRegion(scene, name)
+            : await deletePokemonIcon(scene, name);
       setSceneConfigs(updated.scenes || {});
       if (selectedCropName === name) {
         setSelectedCropName(null);
@@ -610,6 +666,9 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
         if (!r) return;
         setSelectedCropName(name);
         setEditRect({ x: r.x, y: r.y, w: r.w, h: r.h });
+        if (cropType === "regions" || cropType === "pokemon_icons") {
+          setEditReadOnce(!!(r as RegionDef).read_once);
+        }
         setDrawnRect(null); // 新規描画をクリア
       }
     },
@@ -632,12 +691,15 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
     if (!selectedCropName || !editRect) return false;
     const saved = currentCrops[selectedCropName];
     if (!saved) return false;
-    return (
+    const coordChanged =
       saved.x !== editRect.x ||
       saved.y !== editRect.y ||
       saved.w !== editRect.w ||
-      saved.h !== editRect.h
-    );
+      saved.h !== editRect.h;
+    if (cropType === "regions" || cropType === "pokemon_icons") {
+      return coordChanged || !!(saved as RegionDef).read_once !== editReadOnce;
+    }
+    return coordChanged;
   })();
 
   return (
@@ -711,6 +773,12 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
               >
                 検出クロップ
               </button>
+              <button
+                className={cropType === "pokemon_icons" ? "active" : ""}
+                onClick={() => setCropType("pokemon_icons")}
+              >
+                ポケモン画像
+              </button>
             </div>
           </div>
         </div>
@@ -770,6 +838,17 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
               </div>
             ))}
 
+            {(cropType === "regions" || cropType === "pokemon_icons") && (
+              <label className="read-once-label">
+                <input
+                  type="checkbox"
+                  checked={editReadOnce}
+                  onChange={(e) => setEditReadOnce(e.target.checked)}
+                />
+                1度のみ読取
+              </label>
+            )}
+
             <div className="edit-hint">
               Canvas上でドラッグ移動・四隅ハンドルでリサイズ可能。矢印キーでも移動できます。
             </div>
@@ -786,7 +865,12 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
                 className="btn-reset"
                 onClick={() => {
                   const saved = currentCrops[selectedCropName];
-                  if (saved) setEditRect({ x: saved.x, y: saved.y, w: saved.w, h: saved.h });
+                  if (saved) {
+                    setEditRect({ x: saved.x, y: saved.y, w: saved.w, h: saved.h });
+                    if (cropType === "regions" || cropType === "pokemon_icons") {
+                      setEditReadOnce(!!(saved as RegionDef).read_once);
+                    }
+                  }
                 }}
                 disabled={!hasChanges}
               >
@@ -809,7 +893,11 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
         {drawnRect && !selectedCropName && (
           <div className="new-region-form">
             <h3>
-              {cropType === "regions" ? "新規読取クロップ" : "新規検出クロップ"}
+              {cropType === "regions"
+                ? "新規読取クロップ"
+                : cropType === "detection"
+                  ? "新規検出クロップ"
+                  : "新規ポケモンアイコン"}
             </h3>
             <div className="region-coords">
               x:{drawnRect.x} y:{drawnRect.y} w:{drawnRect.w} h:{drawnRect.h}
@@ -835,8 +923,16 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
                   <option value="manga">MangaOCR</option>
                   <option value="glm">GLM OCR</option>
                 </select>
+                <label className="read-once-label">
+                  <input
+                    type="checkbox"
+                    checked={newReadOnce}
+                    onChange={(e) => setNewReadOnce(e.target.checked)}
+                  />
+                  1度のみ読取
+                </label>
               </>
-            ) : (
+            ) : cropType === "detection" ? (
               <>
                 <label htmlFor="detection-method">検出方法</label>
                 <select
@@ -895,10 +991,29 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
                       placeholder={"たたかう\nタタカウ"}
                       rows={3}
                     />
+                    <label htmlFor="detection-excluded">
+                      除外テキスト (1行に1つ、いずれかが存在すると不検出)
+                    </label>
+                    <textarea
+                      id="detection-excluded"
+                      value={newExcludedText}
+                      onChange={(e) => setNewExcludedText(e.target.value)}
+                      placeholder={"シングル\nダブル"}
+                      rows={3}
+                    />
                   </>
                 )}
               </>
-            )}
+            ) : cropType === "pokemon_icons" ? (
+              <label className="read-once-label">
+                <input
+                  type="checkbox"
+                  checked={newReadOnce}
+                  onChange={(e) => setNewReadOnce(e.target.checked)}
+                />
+                1度のみ読取
+              </label>
+            ) : null}
 
             <button
               className="btn-save"
@@ -911,7 +1026,11 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
         )}
 
         <h3>
-          {cropType === "regions" ? "読取クロップ一覧" : "検出クロップ一覧"}
+          {cropType === "regions"
+            ? "読取クロップ一覧"
+            : cropType === "detection"
+              ? "検出クロップ一覧"
+              : "ポケモンアイコン一覧"}
           {scene && ` (${scenesMap[scene]?.display_name || scene})`}
         </h3>
         <div className="region-list">
@@ -935,8 +1054,12 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
                 <div className="region-coords">
                   {r.x},{r.y} {r.w}x{r.h}
                   {cropType === "regions"
-                    ? ` | ${(r as RegionDef).engine}`
-                    : ` | ${(r as DetectionRegionDef).method}`}
+                    ? ` | ${(r as RegionDef).engine}${(r as RegionDef).read_once ? " | 1回" : ""}`
+                    : cropType === "detection"
+                      ? ` | ${(r as DetectionRegionDef).method}`
+                      : cropType === "pokemon_icons" && (r as PokemonIconDef).read_once
+                        ? " | 1回"
+                        : ""}
                 </div>
                 {cropType === "detection" &&
                   (r as DetectionRegionDef).method === "ocr" &&
@@ -951,6 +1074,23 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
                           ).join(" | ")
                         : String(
                             (r as Record<string, unknown>).expected_text,
+                          )}
+                    </div>
+                  )}
+                {cropType === "detection" &&
+                  (r as DetectionRegionDef).method === "ocr" &&
+                  (r as Record<string, unknown>).excluded_text != null && (
+                    <div className="region-expected-text" style={{ color: "#e94560" }}>
+                      {"! "}
+                      {Array.isArray(
+                        (r as Record<string, unknown>).excluded_text,
+                      )
+                        ? (
+                            (r as Record<string, unknown>)
+                              .excluded_text as string[]
+                          ).join(" | ")
+                        : String(
+                            (r as Record<string, unknown>).excluded_text,
                           )}
                     </div>
                   )}

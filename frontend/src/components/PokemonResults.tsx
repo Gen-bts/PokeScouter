@@ -21,7 +21,7 @@ export function PokemonResults({ result }: Props) {
             <span className="position">#{p.position}</span>
             {p.pokemon_id ? (
               <>
-                <span className="pokemon-id">No.{p.pokemon_id}</span>
+                <span className="pokemon-id">{p.name ?? `No.${p.pokemon_id}`}</span>
                 <span className="confidence">
                   {(p.confidence * 100).toFixed(1)}%
                 </span>

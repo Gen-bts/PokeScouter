@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import type { OcrResult } from "../types";
+import type { OcrResult, PokemonIdentifiedResult } from "../types";
+import type { SceneMeta } from "../api/devtools";
 
 const COLORS = [
   "rgba(255, 107, 107, 0.7)",
@@ -12,14 +13,28 @@ const COLORS = [
   "rgba(223, 128, 255, 0.7)",
 ];
 
+const DETECTION_COLOR = "rgba(0, 255, 255, 0.7)";
+const POKEMON_ICON_COLOR = "rgba(255, 0, 255, 0.7)";
+
 interface Props {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  currentScene: string;
   lastResult: OcrResult | null;
+  lastPokemonResult: PokemonIdentifiedResult | null;
+  availableScenes: Record<string, SceneMeta>;
   debugOverlay: boolean;
 }
 
-export function VideoCanvas({ videoRef, canvasRef, lastResult, debugOverlay }: Props) {
+export function VideoCanvas({
+  videoRef,
+  canvasRef,
+  currentScene,
+  lastResult,
+  lastPokemonResult,
+  availableScenes,
+  debugOverlay,
+}: Props) {
   const overlayRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -28,63 +43,194 @@ export function VideoCanvas({ videoRef, canvasRef, lastResult, debugOverlay }: P
     const ctx = overlay.getContext("2d");
     if (!ctx) return;
 
-    if (!debugOverlay || !lastResult || !canvasRef.current) {
+    if (!canvasRef.current) {
       ctx.clearRect(0, 0, overlay.width, overlay.height);
       return;
     }
 
     const baseCanvas = canvasRef.current;
-    overlay.width = baseCanvas.width;
-    overlay.height = baseCanvas.height;
+    // キャプチャ中はbase canvasのビットマップサイズ、未開始時はオーバーレイの表示サイズを使う
+    const displayRect = overlay.getBoundingClientRect();
+    if (baseCanvas.width > 300) {
+      overlay.width = baseCanvas.width;
+      overlay.height = baseCanvas.height;
+    } else {
+      overlay.width = displayRect.width;
+      overlay.height = displayRect.height;
+    }
 
     ctx.clearRect(0, 0, overlay.width, overlay.height);
 
-    const refW = lastResult.resolution?.width ?? 1920;
-    const refH = lastResult.resolution?.height ?? 1080;
-    const scaleX = overlay.width / refW;
-    const scaleY = overlay.height / refH;
+    // === debugOverlay が有効かつ OCR 結果がある場合のみリージョンを描画 ===
+    if (debugOverlay && lastResult) {
+      const refW = lastResult.resolution?.width ?? 1920;
+      const refH = lastResult.resolution?.height ?? 1080;
+      const scaleX = overlay.width / refW;
+      const scaleY = overlay.height / refH;
 
-    for (let i = 0; i < lastResult.regions.length; i++) {
-      const region = lastResult.regions[i];
-      const color = COLORS[i % COLORS.length];
+      // === 1. 検出用リージョン (破線シアン) ===
+      const detectionRegions = lastResult.detection_regions ?? [];
+      if (detectionRegions.length > 0) {
+        ctx.save();
+        ctx.setLineDash([8, 4]);
+        for (const dr of detectionRegions) {
+          const rx = dr.x * scaleX;
+          const ry = dr.y * scaleY;
+          const rw = dr.w * scaleX;
+          const rh = dr.h * scaleY;
 
-      const rx = region.x * scaleX;
-      const ry = region.y * scaleY;
-      const rw = region.w * scaleX;
-      const rh = region.h * scaleY;
+          // 半透明の塗り
+          ctx.fillStyle = DETECTION_COLOR.replace("0.7", "0.08");
+          ctx.fillRect(rx, ry, rw, rh);
 
-      // 半透明の塗り
-      ctx.fillStyle = color.replace("0.7", "0.15");
-      ctx.fillRect(rx, ry, rw, rh);
+          // 破線枠
+          ctx.strokeStyle = DETECTION_COLOR;
+          ctx.lineWidth = 2;
+          ctx.strokeRect(rx, ry, rw, rh);
 
-      // 枠線
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(rx, ry, rw, rh);
-
-      // リージョン名（矩形上部）
-      ctx.font = `bold ${Math.max(12, 14 * scaleY)}px sans-serif`;
-      ctx.fillStyle = color;
-      const label = region.name;
-      const labelY = ry - 4;
-      if (labelY > 14) {
-        ctx.fillText(label, rx + 2, labelY);
-      } else {
-        ctx.fillText(label, rx + 2, ry + 14 * scaleY);
+          // ラベル: name (method)
+          ctx.font = `bold ${Math.max(11, 13 * scaleY)}px sans-serif`;
+          ctx.fillStyle = DETECTION_COLOR;
+          const label = `${dr.name} (${dr.method})`;
+          const labelY = ry - 4;
+          if (labelY > 14) {
+            ctx.fillText(label, rx + 2, labelY);
+          } else {
+            ctx.fillText(label, rx + 2, ry + 13 * scaleY);
+          }
+        }
+        ctx.restore();
       }
 
-      // OCRテキスト（矩形内）
-      if (region.text) {
-        ctx.font = `bold ${Math.max(11, 13 * scaleY)}px monospace`;
-        ctx.fillStyle = "#fff";
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = 3;
-        const textY = ry + rh / 2 + 5 * scaleY;
-        ctx.strokeText(region.text, rx + 4, textY);
-        ctx.fillText(region.text, rx + 4, textY);
+      // === 2. OCR 読み取りリージョン (既存、実線カラー) ===
+      for (let i = 0; i < lastResult.regions.length; i++) {
+        const region = lastResult.regions[i];
+        const color = COLORS[i % COLORS.length];
+
+        const rx = region.x * scaleX;
+        const ry = region.y * scaleY;
+        const rw = region.w * scaleX;
+        const rh = region.h * scaleY;
+
+        // 半透明の塗り
+        ctx.fillStyle = color.replace("0.7", "0.15");
+        ctx.fillRect(rx, ry, rw, rh);
+
+        // 枠線
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(rx, ry, rw, rh);
+
+        // リージョン名（矩形上部）
+        ctx.font = `bold ${Math.max(12, 14 * scaleY)}px sans-serif`;
+        ctx.fillStyle = color;
+        const label = region.name;
+        const labelY = ry - 4;
+        if (labelY > 14) {
+          ctx.fillText(label, rx + 2, labelY);
+        } else {
+          ctx.fillText(label, rx + 2, ry + 14 * scaleY);
+        }
+
+        // OCRテキスト（矩形内）
+        if (region.text) {
+          ctx.font = `bold ${Math.max(11, 13 * scaleY)}px monospace`;
+          ctx.fillStyle = "#fff";
+          ctx.strokeStyle = "#000";
+          ctx.lineWidth = 3;
+          const textY = ry + rh / 2 + 5 * scaleY;
+          ctx.strokeText(region.text, rx + 4, textY);
+          ctx.fillText(region.text, rx + 4, textY);
+        }
+      }
+
+      // === 3. ポケモンアイコン枠 (マゼンタ) ===
+      const pokemonIcons = lastResult.pokemon_icons ?? [];
+      if (pokemonIcons.length > 0) {
+        const pokemonMap = new Map(
+          (lastPokemonResult?.pokemon ?? []).map((p) => [p.position, p]),
+        );
+
+        for (let i = 0; i < pokemonIcons.length; i++) {
+          const icon = pokemonIcons[i];
+          const rx = icon.x * scaleX;
+          const ry = icon.y * scaleY;
+          const rw = icon.w * scaleX;
+          const rh = icon.h * scaleY;
+
+          // 半透明の塗り
+          ctx.fillStyle = POKEMON_ICON_COLOR.replace("0.7", "0.1");
+          ctx.fillRect(rx, ry, rw, rh);
+
+          // 枠線
+          ctx.strokeStyle = POKEMON_ICON_COLOR;
+          ctx.lineWidth = 2;
+          ctx.strokeRect(rx, ry, rw, rh);
+
+          // ポケモン認識結果があれば名前を表示
+          const pokemon = pokemonMap.get(i + 1); // position は 1-based
+          if (pokemon?.name && pokemon.confidence > 0) {
+            const nameLabel = `${pokemon.name} (${Math.round(pokemon.confidence * 100)}%)`;
+            ctx.font = `bold ${Math.max(12, 14 * scaleY)}px sans-serif`;
+
+            // 背景付きテキスト
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            const metrics = ctx.measureText(nameLabel);
+            const textH = Math.max(14, 16 * scaleY);
+            ctx.fillRect(rx, ry + rh + 2, metrics.width + 8, textH + 4);
+
+            ctx.fillStyle = POKEMON_ICON_COLOR;
+            ctx.fillText(nameLabel, rx + 4, ry + rh + textH);
+          } else {
+            // 未認識: アイコン名のみ
+            ctx.font = `bold ${Math.max(11, 13 * scaleY)}px sans-serif`;
+            ctx.fillStyle = POKEMON_ICON_COLOR.replace("0.7", "0.5");
+            const labelY = ry - 4;
+            if (labelY > 14) {
+              ctx.fillText(icon.name, rx + 2, labelY);
+            } else {
+              ctx.fillText(icon.name, rx + 2, ry + 13 * scaleY);
+            }
+          }
+        }
       }
     }
-  }, [lastResult, debugOverlay, canvasRef]);
+
+    // === 4. シーン名バッジ (左上、最前面 — 常に表示) ===
+    const sceneName = currentScene === "none"
+      ? "シーン検出待機中"
+      : availableScenes[currentScene]?.display_name ?? currentScene;
+    const scaleY = overlay.height / 1080;
+    const fontSize = Math.max(14, 16 * scaleY);
+    ctx.font = `bold ${fontSize}px sans-serif`;
+    const textMetrics = ctx.measureText(sceneName);
+    const badgePadX = 10;
+    const badgePadY = 6;
+    const badgeX = 10;
+    const badgeY = 10;
+    const badgeW = textMetrics.width + badgePadX * 2;
+    const badgeH = fontSize + badgePadY * 2;
+
+    // 角丸背景
+    const r = 6;
+    ctx.beginPath();
+    ctx.moveTo(badgeX + r, badgeY);
+    ctx.lineTo(badgeX + badgeW - r, badgeY);
+    ctx.quadraticCurveTo(badgeX + badgeW, badgeY, badgeX + badgeW, badgeY + r);
+    ctx.lineTo(badgeX + badgeW, badgeY + badgeH - r);
+    ctx.quadraticCurveTo(badgeX + badgeW, badgeY + badgeH, badgeX + badgeW - r, badgeY + badgeH);
+    ctx.lineTo(badgeX + r, badgeY + badgeH);
+    ctx.quadraticCurveTo(badgeX, badgeY + badgeH, badgeX, badgeY + badgeH - r);
+    ctx.lineTo(badgeX, badgeY + r);
+    ctx.quadraticCurveTo(badgeX, badgeY, badgeX + r, badgeY);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+    ctx.fill();
+
+    // テキスト
+    ctx.fillStyle = "#fff";
+    ctx.fillText(sceneName, badgeX + badgePadX, badgeY + badgePadY + fontSize * 0.85);
+  }, [currentScene, lastResult, lastPokemonResult, availableScenes, debugOverlay, canvasRef]);
 
   return (
     <main className="video-area">

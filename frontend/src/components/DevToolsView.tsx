@@ -4,9 +4,10 @@ import { FrameViewer } from "./devtools/FrameViewer";
 import { CropEditor } from "./devtools/CropEditor";
 import { SceneManager } from "./devtools/SceneManager";
 import { OfflineBenchmark } from "./devtools/OfflineBenchmark";
+import { FullMatchBenchmark } from "./devtools/FullMatchBenchmark";
 import type { FrameInfo } from "../api/devtools";
 
-type SubTab = "recording" | "viewer" | "crop" | "scenes" | "benchmark";
+type SubTab = "recording" | "viewer" | "crop" | "scenes" | "benchmark" | "full-match";
 
 interface Props {
   captureFrame: (quality: number) => Promise<Blob | null>;
@@ -61,6 +62,12 @@ export function DevToolsView({ captureFrame }: Props) {
         >
           ベンチマーク
         </button>
+        <button
+          className={subTab === "full-match" ? "active" : undefined}
+          onClick={() => setSubTab("full-match")}
+        >
+          1試合通し
+        </button>
       </div>
 
       <div className="devtools-content">
@@ -78,6 +85,7 @@ export function DevToolsView({ captureFrame }: Props) {
         )}
         {subTab === "scenes" && <SceneManager />}
         {subTab === "benchmark" && <OfflineBenchmark />}
+        {subTab === "full-match" && <FullMatchBenchmark />}
       </div>
     </div>
   );

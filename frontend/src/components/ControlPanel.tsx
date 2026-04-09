@@ -1,5 +1,3 @@
-import type { SceneMeta } from "../api/devtools";
-
 interface Props {
   devices: MediaDeviceInfo[];
   selectedDeviceId: string;
@@ -7,25 +5,11 @@ interface Props {
   audioDevices: MediaDeviceInfo[];
   selectedAudioDeviceId: string;
   onAudioDeviceChange: (deviceId: string) => void;
-  scene: string;
-  onSceneChange: (scene: string) => void;
-  availableScenes: Record<string, SceneMeta>;
-  intervalMs: number;
-  onIntervalChange: (ms: number) => void;
   quality: number;
   onQualityChange: (q: number) => void;
-  paused: boolean;
-  onPauseToggle: () => void;
   connected: boolean;
   onConnectToggle: () => void;
   connectDisabled: boolean;
-  pauseDisabled: boolean;
-  volume: number;
-  onVolumeChange: (v: number) => void;
-  muted: boolean;
-  onMuteToggle: () => void;
-  debugOverlay: boolean;
-  onToggleDebugOverlay: () => void;
   debugCrops: boolean;
   onToggleDebugCrops: () => void;
   benchmark: boolean;
@@ -40,25 +24,11 @@ export function ControlPanel({
   audioDevices,
   selectedAudioDeviceId,
   onAudioDeviceChange,
-  scene,
-  onSceneChange,
-  availableScenes,
-  intervalMs,
-  onIntervalChange,
   quality,
   onQualityChange,
-  paused,
-  onPauseToggle,
   connected,
   onConnectToggle,
   connectDisabled,
-  pauseDisabled,
-  volume,
-  onVolumeChange,
-  muted,
-  onMuteToggle,
-  debugOverlay,
-  onToggleDebugOverlay,
   debugCrops,
   onToggleDebugCrops,
   benchmark,
@@ -97,30 +67,6 @@ export function ControlPanel({
         ))}
       </select>
 
-      <label htmlFor="scene-select">シーン</label>
-      <select
-        id="scene-select"
-        value={scene}
-        onChange={(e) => onSceneChange(e.target.value)}
-      >
-        {Object.entries(availableScenes).map(([key, meta]) => (
-          <option key={key} value={key}>
-            {meta.display_name || key}
-          </option>
-        ))}
-      </select>
-
-      <label htmlFor="interval-slider">送信間隔: {intervalMs}ms</label>
-      <input
-        type="range"
-        id="interval-slider"
-        min={100}
-        max={2000}
-        step={100}
-        value={intervalMs}
-        onChange={(e) => onIntervalChange(Number(e.target.value))}
-      />
-
       <label htmlFor="quality-slider">JPEG画質: {quality.toFixed(1)}</label>
       <input
         type="range"
@@ -132,46 +78,13 @@ export function ControlPanel({
         onChange={(e) => onQualityChange(Number(e.target.value))}
       />
 
-      <label htmlFor="volume-slider">
-        音量: {muted ? "ミュート" : Math.round(volume * 100) + "%"}
-      </label>
-      <div className="volume-row">
-        <button onClick={onMuteToggle} title={muted ? "ミュート解除" : "ミュート"}>
-          {muted || volume === 0 ? "🔇" : volume < 0.5 ? "🔈" : "🔊"}
-        </button>
-        <input
-          type="range"
-          id="volume-slider"
-          min={0}
-          max={1}
-          step={0.05}
-          value={muted ? 0 : volume}
-          onChange={(e) => onVolumeChange(Number(e.target.value))}
-        />
-      </div>
-
       <div className="button-row">
-        <button
-          disabled={pauseDisabled}
-          className={paused ? "active" : undefined}
-          onClick={onPauseToggle}
-        >
-          {paused ? "再開" : "一時停止"}
-        </button>
         <button disabled={connectDisabled} onClick={onConnectToggle}>
           {connected ? "切断" : "接続"}
         </button>
       </div>
 
       <h3 className="debug-heading">デバッグ</h3>
-      <label className="checkbox-label">
-        <input
-          type="checkbox"
-          checked={debugOverlay}
-          onChange={onToggleDebugOverlay}
-        />
-        領域オーバーレイ表示
-      </label>
       <label className="checkbox-label">
         <input
           type="checkbox"

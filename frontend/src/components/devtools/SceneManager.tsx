@@ -12,6 +12,7 @@ interface SceneEntry {
   key: string;
   display_name: string;
   description: string;
+  interval_ms: number;
 }
 
 export function SceneManager() {
@@ -19,6 +20,7 @@ export function SceneManager() {
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editDisplayName, setEditDisplayName] = useState("");
   const [editDescription, setEditDescription] = useState("");
+  const [editIntervalMs, setEditIntervalMs] = useState(500);
 
   // 新規追加フォーム
   const [newKey, setNewKey] = useState("");
@@ -31,6 +33,7 @@ export function SceneManager() {
       key,
       display_name: meta.display_name,
       description: meta.description,
+      interval_ms: meta.interval_ms,
     }));
     setScenes(entries);
   }, []);
@@ -58,6 +61,7 @@ export function SceneManager() {
     setEditingKey(entry.key);
     setEditDisplayName(entry.display_name);
     setEditDescription(entry.description);
+    setEditIntervalMs(entry.interval_ms);
   }, []);
 
   const cancelEdit = useCallback(() => {
@@ -69,6 +73,7 @@ export function SceneManager() {
     await updateScene(editingKey, {
       display_name: editDisplayName,
       description: editDescription,
+      interval_ms: editIntervalMs,
     });
     setEditingKey(null);
     await loadScenes();
@@ -134,6 +139,15 @@ export function SceneManager() {
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
                 />
+                <label>ポーリング間隔 (ms)</label>
+                <input
+                  type="number"
+                  min={100}
+                  max={5000}
+                  step={100}
+                  value={editIntervalMs}
+                  onChange={(e) => setEditIntervalMs(Number(e.target.value))}
+                />
                 <div className="scene-edit-actions">
                   <button className="btn-save" onClick={saveEdit}>
                     保存
@@ -167,6 +181,9 @@ export function SceneManager() {
                     <span className="scene-key-badge">{entry.key}</span>
                     <span className="scene-display-name">
                       {entry.display_name}
+                    </span>
+                    <span className="scene-interval-badge">
+                      {entry.interval_ms}ms
                     </span>
                   </div>
                   {entry.description && (
