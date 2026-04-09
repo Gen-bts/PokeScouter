@@ -1,13 +1,15 @@
-"""pHash + テンプレートマッチングによるポケモン画像識別.
+"""DINOv2 + FAISS によるポケモン画像識別.
 
-選出画面のアイコンをクロップし、テンプレート画像群と照合して
-どのポケモンかを判定する。
+選出画面のアイコンをクロップし、DINOv2 で embedding を抽出して
+FAISS インデックスから最近傍検索でポケモンを判定する。
 
 フロー:
-    1. クロップ画像の pHash を計算
-    2. 全テンプレートの pHash とのハミング距離で上位 top_k 件に絞り込み
-    3. 候補のみ cv2.matchTemplate(TM_CCOEFF_NORMED) で精密マッチ
-    4. 閾値以上の最高スコアのポケモンを返す
+    1. クロップ画像を DINOv2 ViT-S/14 に入力して embedding を抽出
+    2. FAISS IndexFlatIP で cosine similarity 最近傍検索
+    3. 閾値以上の最高スコアのポケモンを返す
+
+事前準備:
+    python -m tools.build_faiss_index  でインデックスを構築しておくこと。
 """
 
 from __future__ import annotations
@@ -18,15 +20,16 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import cv2
-import imagehash
+import faiss
 import numpy as np
-from PIL import Image
+import torch
+import torchvision.transforms as T
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_TEMPLATE_DIR = Path(__file__).parent.parent.parent / "templates" / "pokemon"
-_DEFAULT_THRESHOLD = 0.80
-_DEFAULT_TOP_K = 10
+_DEFAULT_TEMPLATE_DIR = Path(__file__).parent.parent.parent.parent / "templates" / "pokemon"
+_DEFAULT_THRESHOLD = 0.60
+_DEFAULT_MODEL = "dinov2_vits14"
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,16 +41,15 @@ class MatchResult:
 
 
 @dataclass(frozen=True, slots=True)
-class _TemplateEntry:
-    """テンプレート画像のキャッシュエントリ."""
+class DetailedMatchResult:
+    """詳細なポケモン識別結果（デバッグ用）."""
 
-    pokemon_id: int
-    image: np.ndarray
-    phash: imagehash.ImageHash
+    candidates: list[MatchResult]
+    threshold: float
 
 
 class PokemonMatcher:
-    """pHash 前段フィルタ + テンプレートマッチングでポケモンを識別する.
+    """DINOv2 + FAISS でポケモンを識別する.
 
     使い方::
 
@@ -65,19 +67,31 @@ class PokemonMatcher:
         self,
         template_dir: str | Path = _DEFAULT_TEMPLATE_DIR,
         threshold: float = _DEFAULT_THRESHOLD,
-        top_k: int = _DEFAULT_TOP_K,
+        model_name: str = _DEFAULT_MODEL,
+        device: str | None = None,
     ) -> None:
         self._template_dir = Path(template_dir)
         self._threshold = threshold
-        self._top_k = top_k
-        self._templates: list[_TemplateEntry] = []
+        self._model_name = model_name
+        self._device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self._model: torch.nn.Module | None = None
+        self._transform: T.Compose | None = None
+        self._index: faiss.IndexFlatIP | None = None
+        self._pokemon_ids: np.ndarray | None = None
         self._loaded = False
 
     @property
+    def template_dir(self) -> Path:
+        """テンプレートディレクトリのパス."""
+        return self._template_dir
+
+    @property
     def template_count(self) -> int:
-        """ロード済みテンプレート数."""
+        """ロード済みテンプレート数 (FAISS インデックスのベクトル数)."""
         self._ensure_loaded()
-        return len(self._templates)
+        if self._index is None:
+            return 0
+        return self._index.ntotal
 
     def identify(self, icon_image: np.ndarray) -> MatchResult | None:
         """単一のクロップ画像からポケモンを識別する.
@@ -90,176 +104,277 @@ class PokemonMatcher:
         """
         self._ensure_loaded()
 
-        if not self._templates:
-            logger.warning("テンプレートが0件です。templates/pokemon/ を確認してください")
+        if self._index is None or self._index.ntotal == 0:
+            logger.warning("FAISSインデックスが空です。build_faiss_index を実行してください")
             return None
 
         t0 = time.perf_counter()
 
-        # 1. pHash で候補を絞り込み
-        query_hash = self._compute_phash(icon_image)
-        candidates = self._filter_by_phash(query_hash, self._top_k)
+        embedding = self._extract_embedding(icon_image)
+        distances, indices = self._index.search(embedding, 1)
 
-        # 2. テンプレートマッチングで精密比較
-        best_result: MatchResult | None = None
-        best_confidence = 0.0
-
-        # クロップ画像をテンプレートサイズにリサイズ
-        for entry in candidates:
-            th, tw = entry.image.shape[:2]
-            resized = cv2.resize(icon_image, (tw, th), interpolation=cv2.INTER_AREA)
-            confidence = self._match_template(resized, entry.image)
-
-            if confidence > best_confidence:
-                best_confidence = confidence
-                best_result = MatchResult(
-                    pokemon_id=entry.pokemon_id,
-                    confidence=confidence,
-                )
+        confidence = float(distances[0, 0])
+        idx = int(indices[0, 0])
+        pokemon_id = int(self._pokemon_ids[idx])
 
         elapsed = (time.perf_counter() - t0) * 1000
 
-        if best_result and best_result.confidence >= self._threshold:
+        if confidence >= self._threshold:
             logger.debug(
                 "識別成功: pokemon_id=%d confidence=%.3f (%.1fms)",
-                best_result.pokemon_id,
-                best_result.confidence,
+                pokemon_id,
+                confidence,
                 elapsed,
             )
-            return best_result
+            return MatchResult(pokemon_id=pokemon_id, confidence=confidence)
 
         logger.debug(
             "識別失敗: best_confidence=%.3f threshold=%.2f (%.1fms)",
-            best_confidence,
+            confidence,
             self._threshold,
             elapsed,
         )
         return None
 
+    def identify_detailed(
+        self,
+        icon_image: np.ndarray,
+        k: int = 5,
+    ) -> DetailedMatchResult:
+        """単一のクロップ画像からポケモンを識別し、Top-K候補を返す（デバッグ用）.
+
+        Args:
+            icon_image: BGR クロップ画像 (OpenCV 形式)。
+            k: 返す候補数。
+
+        Returns:
+            Top-K候補と閾値を含む DetailedMatchResult。
+        """
+        self._ensure_loaded()
+
+        if self._index is None or self._index.ntotal == 0:
+            logger.warning("FAISSインデックスが空です。build_faiss_index を実行してください")
+            return DetailedMatchResult(candidates=[], threshold=self._threshold)
+
+        # インデックスのベクトル数より大きい k は使えない
+        actual_k = min(k, self._index.ntotal)
+
+        embedding = self._extract_embedding(icon_image)
+        distances, indices = self._index.search(embedding, actual_k)
+
+        candidates: list[MatchResult] = []
+        for j in range(actual_k):
+            idx = int(indices[0, j])
+            if idx < 0:
+                break
+            candidates.append(
+                MatchResult(
+                    pokemon_id=int(self._pokemon_ids[idx]),
+                    confidence=float(distances[0, j]),
+                )
+            )
+
+        return DetailedMatchResult(candidates=candidates, threshold=self._threshold)
+
     def identify_team(
         self,
         frame: np.ndarray,
         positions: list[dict[str, int]],
-    ) -> list[MatchResult | None]:
-        """フレームから複数のポケモンアイコンを一括識別する.
+        k: int = 5,
+    ) -> list[DetailedMatchResult]:
+        """フレームから複数のポケモンアイコンを一括識別する (バッチ処理).
 
         Args:
             frame: BGR フルフレーム画像。
             positions: クロップ座標のリスト。各要素は {"x", "y", "w", "h"} を持つ dict。
+            k: 各位置で返す候補数。
 
         Returns:
-            各位置に対応する MatchResult のリスト (識別失敗は None)。
+            各位置に対応する DetailedMatchResult のリスト。
         """
-        results: list[MatchResult | None] = []
+        self._ensure_loaded()
 
-        for pos in positions:
+        empty = DetailedMatchResult(candidates=[], threshold=self._threshold)
+
+        if self._index is None or self._index.ntotal == 0:
+            logger.warning("FAISSインデックスが空です。build_faiss_index を実行してください")
+            return [empty] * len(positions)
+
+        t0 = time.perf_counter()
+
+        # クロップ画像を収集
+        crops: list[np.ndarray] = []
+        valid_indices: list[int] = []
+
+        for i, pos in enumerate(positions):
             x, y, w, h = pos["x"], pos["y"], pos["w"], pos["h"]
             cropped = frame[y : y + h, x : x + w]
 
             if cropped.size == 0:
                 logger.warning("クロップ領域が空です: %s", pos)
-                results.append(None)
                 continue
 
-            results.append(self.identify(cropped))
+            crops.append(cropped)
+            valid_indices.append(i)
+
+        results: list[DetailedMatchResult] = [empty] * len(positions)
+
+        if not crops:
+            return results
+
+        # バッチで embedding 抽出
+        embeddings = self._extract_embeddings_batch(crops)
+
+        # FAISS バッチ検索
+        actual_k = min(k, self._index.ntotal)
+        distances, indices = self._index.search(embeddings, actual_k)
+
+        for j, orig_idx in enumerate(valid_indices):
+            # 候補を構築（同一 pokemon_id は最高スコアのみ保持）
+            seen: dict[int, float] = {}
+            candidates: list[MatchResult] = []
+            for col in range(actual_k):
+                faiss_idx = int(indices[j, col])
+                if faiss_idx < 0:
+                    break
+                confidence = float(distances[j, col])
+                pokemon_id = int(self._pokemon_ids[faiss_idx])
+                if pokemon_id in seen:
+                    continue
+                seen[pokemon_id] = confidence
+                candidates.append(
+                    MatchResult(pokemon_id=pokemon_id, confidence=confidence),
+                )
+            results[orig_idx] = DetailedMatchResult(
+                candidates=candidates,
+                threshold=self._threshold,
+            )
+
+        elapsed = (time.perf_counter() - t0) * 1000
+        matched = sum(
+            1
+            for r in results
+            if r.candidates and r.candidates[0].confidence >= self._threshold
+        )
+        logger.debug(
+            "チーム識別: %d/%d 成功 (%.1fms)",
+            matched,
+            len(positions),
+            elapsed,
+        )
 
         return results
 
     def reload(self) -> None:
-        """テンプレート画像を再読み込みする."""
-        self._templates.clear()
-        self._loaded = False
+        """FAISS インデックスとモデルを再読み込みする."""
+        self._unload()
         self._ensure_loaded()
 
+    def unload(self) -> None:
+        """モデルとインデックスを解放する."""
+        self._unload()
+
+    def _unload(self) -> None:
+        """内部リソースを解放する."""
+        if self._model is not None:
+            del self._model
+            self._model = None
+        self._index = None
+        self._pokemon_ids = None
+        self._transform = None
+        self._loaded = False
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
     def _ensure_loaded(self) -> None:
-        """テンプレート画像を遅延ロードする."""
+        """DINOv2 モデルと FAISS インデックスを遅延ロードする."""
         if self._loaded:
             return
 
         self._loaded = True
 
-        if not self._template_dir.exists():
-            logger.warning(
-                "テンプレートディレクトリが存在しません: %s",
-                self._template_dir,
+        # DINOv2 モデルのロード
+        t0 = time.perf_counter()
+        try:
+            self._model = torch.hub.load(
+                "facebookresearch/dinov2", self._model_name
             )
+            self._model = self._model.to(self._device).eval()
+        except Exception:
+            logger.exception("DINOv2 モデルのロードに失敗しました")
             return
 
-        png_files = sorted(self._template_dir.glob("*.png"))
-        if not png_files:
+        # 前処理パイプライン
+        self._transform = T.Compose([
+            T.ToPILImage(),
+            T.Resize((224, 224)),
+            T.ToTensor(),
+            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ])
+
+        model_elapsed = (time.perf_counter() - t0) * 1000
+        logger.info("DINOv2 '%s' ロード完了 (%.0fms)", self._model_name, model_elapsed)
+
+        # FAISS インデックスのロード
+        index_path = self._template_dir / "faiss_index.bin"
+        ids_path = self._template_dir / "faiss_ids.npy"
+
+        if not index_path.exists() or not ids_path.exists():
             logger.warning(
-                "テンプレート画像が見つかりません: %s",
-                self._template_dir,
+                "FAISSインデックスが見つかりません: %s — "
+                "python -m tools.build_faiss_index を実行してください",
+                index_path,
             )
             return
 
         t0 = time.perf_counter()
+        self._index = faiss.read_index(str(index_path))
+        self._pokemon_ids = np.load(str(ids_path))
 
-        for png_path in png_files:
-            try:
-                pokemon_id = int(png_path.stem)
-            except ValueError:
-                logger.debug("ファイル名が数値ではないためスキップ: %s", png_path.name)
-                continue
-
-            img = cv2.imread(str(png_path), cv2.IMREAD_UNCHANGED)
-            if img is None:
-                logger.warning("画像読み込み失敗: %s", png_path)
-                continue
-
-            # RGBA → BGR 変換 (アルファチャンネルがある場合は白背景に合成)
-            if img.shape[2] == 4:
-                img = self._alpha_to_bgr(img)
-
-            phash = self._compute_phash(img)
-
-            self._templates.append(
-                _TemplateEntry(
-                    pokemon_id=pokemon_id,
-                    image=img,
-                    phash=phash,
-                )
-            )
-
-        elapsed = (time.perf_counter() - t0) * 1000
+        index_elapsed = (time.perf_counter() - t0) * 1000
         logger.info(
-            "テンプレート %d 件をロード (%.0fms): %s",
-            len(self._templates),
-            elapsed,
-            self._template_dir,
+            "FAISS インデックスロード完了: %d vectors (%.0fms)",
+            self._index.ntotal,
+            index_elapsed,
         )
 
-    def _filter_by_phash(
-        self, query_hash: imagehash.ImageHash, top_k: int
-    ) -> list[_TemplateEntry]:
-        """pHash のハミング距離で上位 top_k 件を返す."""
-        distances: list[tuple[int, _TemplateEntry]] = []
-        for entry in self._templates:
-            dist = query_hash - entry.phash
-            distances.append((dist, entry))
+    def _extract_embedding(self, bgr_image: np.ndarray) -> np.ndarray:
+        """単一の BGR 画像から L2 正規化済み embedding を抽出する.
 
-        distances.sort(key=lambda x: x[0])
-        return [entry for _, entry in distances[:top_k]]
+        Returns:
+            shape (1, embed_dim) の float32 配列。
+        """
+        rgb = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
+        tensor = self._transform(rgb).unsqueeze(0).to(self._device)
 
-    @staticmethod
-    def _compute_phash(image: np.ndarray) -> imagehash.ImageHash:
-        """OpenCV BGR 画像から pHash を計算する."""
-        rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        pil_image = Image.fromarray(rgb)
-        return imagehash.phash(pil_image)
+        with torch.no_grad():
+            features = self._model(tensor)
 
-    @staticmethod
-    def _match_template(image: np.ndarray, template: np.ndarray) -> float:
-        """テンプレートマッチングの最大信頼度を返す."""
-        result = cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
-        _, max_val, _, _ = cv2.minMaxLoc(result)
-        return float(max_val)
+        embedding = features.cpu().numpy().flatten()
+        embedding = embedding / np.linalg.norm(embedding)
+        return embedding.reshape(1, -1).astype(np.float32)
 
-    @staticmethod
-    def _alpha_to_bgr(img: np.ndarray) -> np.ndarray:
-        """BGRA 画像を白背景の BGR に変換する."""
-        alpha = img[:, :, 3:4] / 255.0
-        bgr = img[:, :, :3]
-        white = np.full_like(bgr, 255)
-        composited = (bgr * alpha + white * (1 - alpha)).astype(np.uint8)
-        return composited
+    def _extract_embeddings_batch(self, bgr_images: list[np.ndarray]) -> np.ndarray:
+        """複数の BGR 画像からバッチで embedding を抽出する.
+
+        Returns:
+            shape (N, embed_dim) の float32 配列。
+        """
+        tensors = []
+        for img in bgr_images:
+            rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            tensors.append(self._transform(rgb))
+
+        batch = torch.stack(tensors).to(self._device)
+
+        with torch.no_grad():
+            features = self._model(batch)
+
+        embeddings = features.cpu().numpy()
+
+        # L2 正規化 (行ごと)
+        norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
+        norms = np.maximum(norms, 1e-12)
+        embeddings = embeddings / norms
+
+        return embeddings.astype(np.float32)
