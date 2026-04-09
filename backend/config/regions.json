@@ -426,6 +426,38 @@
           "w": 354,
           "h": 37,
           "engine": "paddle"
+        },
+        "ポケモン１わざ１": {
+          "x": 678,
+          "y": 307,
+          "w": 240,
+          "h": 32,
+          "engine": "paddle",
+          "read_once": true
+        },
+        "ポケモン１わざ２": {
+          "x": 678,
+          "y": 355,
+          "w": 241,
+          "h": 30,
+          "engine": "paddle",
+          "read_once": true
+        },
+        "ポケモン１わざ３": {
+          "x": 679,
+          "y": 399,
+          "w": 240,
+          "h": 31,
+          "engine": "paddle",
+          "read_once": true
+        },
+        "ポケモン１わざ４": {
+          "x": 679,
+          "y": 444,
+          "w": 241,
+          "h": 30,
+          "engine": "paddle",
+          "read_once": true
         }
       },
       "pokemon_icons": {}
