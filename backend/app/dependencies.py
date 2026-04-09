@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 
+from app.data.game_data import GameData
 from app.ocr.region import RegionRecognizer
 from app.recognition.pokemon_matcher import PokemonMatcher
 from app.recognition.scene_detector import SceneDetector
@@ -11,6 +12,7 @@ from app.recognition.scene_detector import SceneDetector
 # OCR の同時実行を防ぐグローバルロック（GPU 直列化）
 ocr_lock = asyncio.Lock()
 
+_game_data: GameData | None = None
 _recognizer: RegionRecognizer | None = None
 _detector: SceneDetector | None = None
 _pokemon_matcher: PokemonMatcher | None = None
@@ -59,9 +61,11 @@ def shutdown_detector() -> None:
 
 
 def shutdown_pokemon_matcher() -> None:
-    """PokemonMatcher を解放する."""
+    """PokemonMatcher を解放する (DINOv2 モデル・FAISS インデックスも解放)."""
     global _pokemon_matcher  # noqa: PLW0603
-    _pokemon_matcher = None
+    if _pokemon_matcher is not None:
+        _pokemon_matcher.unload()
+        _pokemon_matcher = None
 
 
 def get_recognizer() -> RegionRecognizer:
@@ -83,3 +87,21 @@ def get_pokemon_matcher() -> PokemonMatcher:
     if _pokemon_matcher is None:
         raise RuntimeError("PokemonMatcher が初期化されていません")
     return _pokemon_matcher
+
+
+# --- GameData ---
+
+
+def init_game_data() -> GameData:
+    """GameData を初期化してシングルトンとして保持する."""
+    global _game_data  # noqa: PLW0603
+    _game_data = GameData()
+    _game_data.load()
+    return _game_data
+
+
+def get_game_data() -> GameData:
+    """現在の GameData を取得する."""
+    if _game_data is None:
+        raise RuntimeError("GameData が初期化されていません")
+    return _game_data

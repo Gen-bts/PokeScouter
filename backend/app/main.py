@@ -13,8 +13,10 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.health import router as health_router
 from app.api.devtools import router as devtools_router
+from app.api.pokemon import router as pokemon_router
 from app.dependencies import (
     init_detector,
+    init_game_data,
     init_pokemon_matcher,
     init_recognizer,
     shutdown_detector,
@@ -26,11 +28,15 @@ from app.ws.battle import router as battle_router
 logger = logging.getLogger(__name__)
 
 FRONTEND_DIR = Path(__file__).parent.parent.parent / "frontend" / "dist"
+TEMPLATES_DIR = Path(__file__).parent.parent.parent / "templates"
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     """起動時に RegionRecognizer を初期化、終了時に解放する."""
+    logger.info("GameData を読み込み中...")
+    init_game_data()
+    logger.info("GameData 読み込み完了")
     logger.info("RegionRecognizer を初期化中...")
     init_recognizer()
     logger.info("RegionRecognizer 初期化完了")
@@ -61,7 +67,12 @@ app.add_middleware(
 # ルーター登録
 app.include_router(health_router)
 app.include_router(devtools_router)
+app.include_router(pokemon_router)
 app.include_router(battle_router)
+
+# スプライト画像配信
+if (TEMPLATES_DIR / "pokemon").is_dir():
+    app.mount("/sprites", StaticFiles(directory=str(TEMPLATES_DIR / "pokemon")), name="sprites")
 
 # フロントエンド静的ファイル配信（最後にマウント）
 if FRONTEND_DIR.is_dir():

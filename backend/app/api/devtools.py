@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import base64
 import json
 import logging
 import re
 import string
 import random
+import time
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -21,8 +24,11 @@ from fastapi.responses import FileResponse, Response, StreamingResponse
 
 from .devtools_models import (
     BenchmarkRequest,
+    CropTestRequest,
     DetectionRegionUpdate,
     FrameInfo,
+    FullMatchBenchmarkRequest,
+    PokemonIconUpdate,
     RegionUpdate,
     SceneCreate,
     SceneReorder,
@@ -243,14 +249,16 @@ def _ensure_scenes(data: dict[str, Any]) -> dict[str, Any]:
 
 
 @router.get("/scenes")
-async def get_scenes() -> dict[str, dict[str, str]]:
+async def get_scenes() -> dict[str, dict[str, Any]]:
     """全シーンのメタデータ一覧を取得する."""
     data = _ensure_scenes(_read_regions())
-    result: dict[str, dict[str, str]] = {}
+    default_interval = data.get("default_interval_ms", 500)
+    result: dict[str, dict[str, Any]] = {}
     for key, scene in data["scenes"].items():
         result[key] = {
             "display_name": scene.get("display_name", key),
             "description": scene.get("description", ""),
+            "interval_ms": scene.get("interval_ms", default_interval),
         }
     return result
 
@@ -306,6 +314,8 @@ async def update_scene(scene: str, body: SceneUpdate) -> dict[str, Any]:
         data["scenes"][scene]["display_name"] = body.display_name
     if body.description is not None:
         data["scenes"][scene]["description"] = body.description
+    if body.interval_ms is not None:
+        data["scenes"][scene]["interval_ms"] = max(100, body.interval_ms)
     _write_regions(data)
     return data
 
@@ -342,13 +352,16 @@ async def upsert_region(scene: str, body: RegionUpdate) -> dict[str, Any]:
     if scene not in data["scenes"]:
         raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
 
-    data["scenes"][scene]["regions"][body.name] = {
+    region_data: dict[str, Any] = {
         "x": body.x,
         "y": body.y,
         "w": body.w,
         "h": body.h,
         "engine": body.engine,
     }
+    if body.read_once:
+        region_data["read_once"] = True
+    data["scenes"][scene]["regions"][body.name] = region_data
     _write_regions(data)
 
     # メモリ上の RegionConfig を再読み込みして即座に反映
@@ -406,6 +419,46 @@ async def delete_detection_region(scene: str, name: str = Query(...)) -> dict[st
 
     if scene in data["scenes"] and name in data["scenes"][scene].get("detection", {}):
         del data["scenes"][scene]["detection"][name]
+        _write_regions(data)
+    return data
+
+
+# ---------------------------------------------------------------------------
+# ポケモンアイコン（画像認識用クロップ）API
+# ---------------------------------------------------------------------------
+
+
+@router.post("/pokemon-icons/{scene}")
+async def upsert_pokemon_icon(scene: str, body: PokemonIconUpdate) -> dict[str, Any]:
+    """ポケモンアイコンを追加/更新する."""
+    data = _ensure_scenes(_read_regions())
+
+    if scene not in data["scenes"]:
+        raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
+
+    if "pokemon_icons" not in data["scenes"][scene]:
+        data["scenes"][scene]["pokemon_icons"] = {}
+
+    icon_data: dict[str, Any] = {
+        "x": body.x,
+        "y": body.y,
+        "w": body.w,
+        "h": body.h,
+    }
+    if body.read_once:
+        icon_data["read_once"] = True
+    data["scenes"][scene]["pokemon_icons"][body.name] = icon_data
+    _write_regions(data)
+    return data
+
+
+@router.delete("/pokemon-icons/{scene}")
+async def delete_pokemon_icon(scene: str, name: str = Query(...)) -> dict[str, Any]:
+    """ポケモンアイコンを削除する."""
+    data = _ensure_scenes(_read_regions())
+
+    if scene in data["scenes"] and name in data["scenes"][scene].get("pokemon_icons", {}):
+        del data["scenes"][scene]["pokemon_icons"][name]
         _write_regions(data)
     return data
 
@@ -473,3 +526,329 @@ async def run_offline_benchmark(
             "X-Accel-Buffering": "no",
         },
     )
+
+
+# ---------------------------------------------------------------------------
+# 1試合通しベンチマーク（フルパイプライン再生）
+# ---------------------------------------------------------------------------
+
+_FRAME_PATTERN = re.compile(r"^(\d{6})_(\d{7})\.jpg$")
+
+
+@dataclass
+class _OfflineReplaySession:
+    """オフライン再生用の軽量セッション（BattleSession とダックタイプ互換）."""
+
+    _state_machine: "SceneStateMachine" = field(default=None)  # type: ignore[assignment]
+    _last_scene_key: str = "pre_match"
+    _last_ocr_timestamp_ms: int = field(default=0, repr=False)
+    _read_once_cache: dict[str, dict] = field(default_factory=dict, repr=False)
+
+    def __post_init__(self) -> None:
+        if self._state_machine is None:
+            from app.recognition.scene_state import SceneStateMachine
+            self._state_machine = SceneStateMachine()
+
+
+def _run_full_match_frame(
+    frame: np.ndarray,
+    session: _OfflineReplaySession,
+    ocr_mode: str,
+) -> list[dict[str, Any]]:
+    """1フレームをフルパイプラインで処理する（同期、to_thread で呼ばれる）."""
+    from app.ws.battle import (
+        _run_ocr,
+        _run_ocr_benchmark,
+        _run_pokemon_identification,
+        _run_scene_detection,
+    )
+
+    events: list[dict[str, Any]] = []
+    detection_ms = 0.0
+    ocr_ms = 0.0
+
+    # 1. シーン検出
+    t0 = time.perf_counter()
+    scene_change = _run_scene_detection(frame, session)  # type: ignore[arg-type]
+    detection_ms = (time.perf_counter() - t0) * 1000
+
+    if scene_change is not None:
+        events.append(scene_change)
+
+        # シーン変更時に read_once キャッシュをクリア（通常運用と同じ動作）
+        if ocr_mode == "normal":
+            session._read_once_cache.clear()
+
+        # 2. team_select 遷移時にポケモン識別
+        if scene_change["scene"] == "team_select":
+            pokemon_result = _run_pokemon_identification(frame)
+            if pokemon_result is not None:
+                events.append(pokemon_result)
+
+    # 3. OCR 実行
+    scene_key = session._state_machine.state.scene_key
+    t0 = time.perf_counter()
+    if ocr_mode == "all":
+        ocr_result = _run_ocr_benchmark(frame, scene_key)
+    elif ocr_mode == "normal":
+        ocr_result = _run_ocr(
+            frame, scene_key,
+            read_once_cache=session._read_once_cache,
+        )
+    else:
+        ocr_result = _run_ocr(frame, scene_key)
+    ocr_ms = (time.perf_counter() - t0) * 1000
+
+    events.append(ocr_result)
+
+    # 4. フレームサマリー（タイミング情報）
+    events.append({
+        "type": "frame_summary",
+        "scene_key": scene_key,
+        "detection_ms": round(detection_ms, 1),
+        "ocr_ms": round(ocr_ms, 1),
+        "total_ms": round(detection_ms + ocr_ms, 1),
+    })
+
+    return events
+
+
+async def _full_match_stream(
+    session_id: str, ocr_mode: str,
+) -> AsyncGenerator[str, None]:
+    """録画セッションをフルパイプラインで再生し SSE イベントを生成する."""
+    from app.dependencies import get_recognizer, ocr_lock
+
+    frames_dir = DATA_DIR / session_id / "frames"
+    frame_files = sorted(frames_dir.glob("*.jpg"))
+    total = len(frame_files)
+
+    yield f"event: start\ndata: {json.dumps({'total_frames': total, 'mode': 'full_match', 'ocr_mode': ocr_mode})}\n\n"
+
+    session = _OfflineReplaySession()
+    scene_timeline: list[dict[str, Any]] = []
+    scene_counts: dict[str, int] = {}
+    skipped_frames = 0
+    processed_frames = 0
+    t_start = time.perf_counter()
+
+    for frame_path in frame_files:
+        # フレームインデックスとタイムスタンプを抽出
+        m = _FRAME_PATTERN.match(frame_path.name)
+        if not m:
+            continue
+        frame_index = int(m.group(1))
+        timestamp_ms = int(m.group(2))
+
+        # normal モード: インターバルスロットリング（リアルタイムと同じ動作）
+        if ocr_mode == "normal":
+            config = get_recognizer()._config
+            effective_interval = config.get_interval_ms(session._last_scene_key)
+            elapsed_since_last = timestamp_ms - session._last_ocr_timestamp_ms
+            if elapsed_since_last < effective_interval:
+                skipped_frames += 1
+                yield f"event: frame_skipped\ndata: {json.dumps({'frame_index': frame_index, 'timestamp_ms': timestamp_ms, 'scene_key': session._last_scene_key})}\n\n"
+                continue
+
+        img = cv2.imread(str(frame_path))
+        if img is None:
+            logger.warning("フレーム読み込み失敗: %s", frame_path)
+            continue
+
+        async with ocr_lock:
+            events = await asyncio.to_thread(
+                _run_full_match_frame, img, session, ocr_mode,
+            )
+
+        if ocr_mode == "normal":
+            session._last_ocr_timestamp_ms = timestamp_ms
+        processed_frames += 1
+
+        # フレーム情報を各イベントに付与して送信
+        for event in events:
+            event["frame_index"] = frame_index
+            event["timestamp_ms"] = timestamp_ms
+            event_type = event["type"]
+
+            # シーンタイムライン収集
+            if event_type == "scene_change":
+                scene_timeline.append({
+                    "frame_index": frame_index,
+                    "timestamp_ms": timestamp_ms,
+                    "scene": event["scene"],
+                    "confidence": event["confidence"],
+                })
+
+            # シーン別フレーム数カウント
+            if event_type == "frame_summary":
+                sk = event["scene_key"]
+                scene_counts[sk] = scene_counts.get(sk, 0) + 1
+
+            yield f"event: {event_type}\ndata: {json.dumps(event, ensure_ascii=False)}\n\n"
+
+    total_elapsed_ms = (time.perf_counter() - t_start) * 1000
+
+    done_data = {
+        "total_frames": total,
+        "processed_frames": processed_frames,
+        "skipped_frames": skipped_frames,
+        "total_elapsed_ms": round(total_elapsed_ms, 1),
+        "scene_timeline": scene_timeline,
+        "scene_counts": scene_counts,
+    }
+    yield f"event: done\ndata: {json.dumps(done_data, ensure_ascii=False)}\n\n"
+
+
+@router.post("/benchmark/{session_id}/full-match")
+async def run_full_match_benchmark(
+    session_id: str, body: FullMatchBenchmarkRequest,
+) -> StreamingResponse:
+    """録画セッションで1試合通しベンチマークを実行する（SSE）."""
+    session_dir = DATA_DIR / session_id
+    meta = _read_metadata(session_dir)
+
+    if meta["status"] != "completed":
+        raise HTTPException(
+            status_code=400, detail="セッションが完了していません",
+        )
+
+    frames_dir = session_dir / "frames"
+    if not frames_dir.exists() or not any(frames_dir.glob("*.jpg")):
+        raise HTTPException(status_code=400, detail="フレームが見つかりません")
+
+    if body.ocr_mode not in ("default", "all", "normal"):
+        raise HTTPException(status_code=400, detail="ocr_mode は 'default', 'all', または 'normal' を指定してください")
+
+    return StreamingResponse(
+        _full_match_stream(session_id, body.ocr_mode),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+# ---------------------------------------------------------------------------
+# アドホックテスト（フレームビューワー用）
+# ---------------------------------------------------------------------------
+
+
+def _read_frame_image(session_id: str, filename: str) -> np.ndarray:
+    """フレーム画像を読み込む."""
+    frame_path = DATA_DIR / session_id / "frames" / filename
+    if not frame_path.exists():
+        raise HTTPException(status_code=404, detail="Frame not found")
+    img = cv2.imread(str(frame_path))
+    if img is None:
+        raise HTTPException(status_code=500, detail="Failed to read image")
+    return img
+
+
+def _run_ocr_test(image: np.ndarray, crop: CropTestRequest) -> dict[str, Any]:
+    """クロップ領域を全OCRエンジンでテストする（同期）."""
+    from app.dependencies import get_recognizer
+    from app.ocr.region import ALL_ENGINES
+
+    recognizer = get_recognizer()
+    cropped = image[crop.y : crop.y + crop.h, crop.x : crop.x + crop.w]
+
+    engines: dict[str, Any] = {}
+    for engine_name in ALL_ENGINES:
+        pipeline = recognizer._get_pipeline(engine_name)
+        t0 = time.perf_counter()
+        ocr_results = pipeline.run(cropped)
+        elapsed = (time.perf_counter() - t0) * 1000
+        text = "".join(r.text for r in ocr_results)
+        conf = ocr_results[0].confidence if ocr_results else 0.0
+        engines[engine_name] = {
+            "text": text,
+            "confidence": round(conf, 4),
+            "elapsed_ms": round(elapsed, 1),
+        }
+
+    return {
+        "crop": {"x": crop.x, "y": crop.y, "w": crop.w, "h": crop.h},
+        "engines": engines,
+    }
+
+
+from app.data.names import get_id_to_name as _get_id_to_name
+
+
+def _run_pokemon_test(image: np.ndarray, crop: CropTestRequest) -> dict[str, Any]:
+    """クロップ領域でポケモン画像認識テストを実行する（同期・詳細版）."""
+    from app.dependencies import get_pokemon_matcher
+
+    matcher = get_pokemon_matcher()
+    cropped = image[crop.y : crop.y + crop.h, crop.x : crop.x + crop.w]
+
+    t0 = time.perf_counter()
+    detailed = matcher.identify_detailed(cropped, k=5)
+    elapsed = (time.perf_counter() - t0) * 1000
+
+    id_to_name = _get_id_to_name()
+
+    # クロップ画像を base64 エンコード
+    _, buf = cv2.imencode(".jpg", cropped, [cv2.IMWRITE_JPEG_QUALITY, 80])
+    crop_b64 = base64.b64encode(buf).decode("ascii")
+
+    # ベストマッチのテンプレート画像を base64 エンコード
+    template_b64: str | None = None
+    if detailed.candidates:
+        best_id = detailed.candidates[0].pokemon_id
+        template_path = matcher.template_dir / f"{best_id}.png"
+        if template_path.exists():
+            template_img = cv2.imread(str(template_path))
+            if template_img is not None:
+                _, tbuf = cv2.imencode(".jpg", template_img, [cv2.IMWRITE_JPEG_QUALITY, 80])
+                template_b64 = base64.b64encode(tbuf).decode("ascii")
+
+    # 後方互換: 閾値以上の最上位候補を result に入れる
+    top_result = None
+    if detailed.candidates and detailed.candidates[0].confidence >= detailed.threshold:
+        c = detailed.candidates[0]
+        top_result = {"pokemon_id": c.pokemon_id, "confidence": round(c.confidence, 4)}
+
+    return {
+        "crop": {"x": crop.x, "y": crop.y, "w": crop.w, "h": crop.h},
+        "candidates": [
+            {
+                "pokemon_id": c.pokemon_id,
+                "name": id_to_name.get(c.pokemon_id, f"#{c.pokemon_id}"),
+                "confidence": round(c.confidence, 4),
+            }
+            for c in detailed.candidates
+        ],
+        "threshold": detailed.threshold,
+        "result": top_result,
+        "crop_b64": crop_b64,
+        "template_b64": template_b64,
+        "elapsed_ms": round(elapsed, 1),
+    }
+
+
+@router.post("/recordings/{session_id}/frames/{filename}/ocr-test")
+async def run_ocr_test(
+    session_id: str, filename: str, body: CropTestRequest,
+) -> dict[str, Any]:
+    """任意矩形でOCRテストを実行する（全3エンジン比較）."""
+    from app.dependencies import ocr_lock
+
+    img = _read_frame_image(session_id, filename)
+
+    async with ocr_lock:
+        return await asyncio.to_thread(_run_ocr_test, img, body)
+
+
+@router.post("/recordings/{session_id}/frames/{filename}/pokemon-test")
+async def run_pokemon_test(
+    session_id: str, filename: str, body: CropTestRequest,
+) -> dict[str, Any]:
+    """任意矩形でポケモン画像認識テストを実行する."""
+    from app.dependencies import ocr_lock
+
+    img = _read_frame_image(session_id, filename)
+
+    async with ocr_lock:
+        return await asyncio.to_thread(_run_pokemon_test, img, body)

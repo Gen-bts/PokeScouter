@@ -47,6 +47,7 @@ class RegionUpdate(BaseModel):
     w: int
     h: int
     engine: str = "paddle"
+    read_once: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -67,6 +68,22 @@ class DetectionRegionUpdate(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# ポケモンアイコン（画像認識用クロップ）
+# ---------------------------------------------------------------------------
+
+
+class PokemonIconUpdate(BaseModel):
+    """ポケモンアイコン追加/更新リクエスト."""
+
+    name: str
+    x: int
+    y: int
+    w: int
+    h: int
+    read_once: bool = False
+
+
+# ---------------------------------------------------------------------------
 # シーン管理
 # ---------------------------------------------------------------------------
 
@@ -84,6 +101,7 @@ class SceneUpdate(BaseModel):
 
     display_name: str | None = None
     description: str | None = None
+    interval_ms: int | None = None
 
 
 class SceneReorder(BaseModel):
@@ -101,3 +119,23 @@ class BenchmarkRequest(BaseModel):
     """オフラインベンチマークリクエスト."""
 
     scene: str
+
+
+class FullMatchBenchmarkRequest(BaseModel):
+    """1試合通しベンチマークリクエスト."""
+
+    ocr_mode: str = "default"  # "default" = 設定エンジンのみ, "all" = 全エンジン比較
+
+
+# ---------------------------------------------------------------------------
+# アドホックテスト（フレームビューワー用）
+# ---------------------------------------------------------------------------
+
+
+class CropTestRequest(BaseModel):
+    """任意矩形のOCR/認識テストリクエスト."""
+
+    x: int
+    y: int
+    w: int
+    h: int
