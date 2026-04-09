@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "game": "Pokemon Champions",
+    "game_version": "1.0.0",
+    "source": "NCP VGC Damage Calculator",
+    "last_updated": "2026-04-09",
+    "description": "チャンピオンズで変更された既存ポケモンの種族値パッチ"
+  },
+  "Meditite": {
+    "base_stats": {
+      "atk": 56
+    }
+  },
+  "Medicham": {
+    "base_stats": {
+      "atk": 84
+    }
+  },
+  "Mega Mawile": {
+    "base_stats": {
+      "atk": 147
+    }
+  },
+  "Mega Medicham": {
+    "base_stats": {
+      "atk": 140
+    }
+  },
+  "Mega Starmie": {
+    "base_stats": {
+      "atk": 140
+    }
+  }
+}

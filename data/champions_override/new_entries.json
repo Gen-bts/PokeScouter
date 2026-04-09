@@ -1,0 +1,734 @@
+{
+  "_meta": {
+    "game": "Pokemon Champions",
+    "game_version": "1.0.0",
+    "source": "NCP VGC Damage Calculator",
+    "last_updated": "2026-04-09",
+    "description": "チャンピオンズで追加された新メガシンカ・新技・新とくせい"
+  },
+  "mega_evolutions": {
+    "Mega Clefable": {
+      "types": [
+        "fairy",
+        "flying"
+      ],
+      "base_stats": {
+        "hp": 95,
+        "atk": 80,
+        "def": 93,
+        "spa": 135,
+        "spd": 110,
+        "spe": 70
+      },
+      "weight": 42.3,
+      "ability": "Magic Bounce"
+    },
+    "Mega Victreebel": {
+      "types": [
+        "grass",
+        "poison"
+      ],
+      "base_stats": {
+        "hp": 80,
+        "atk": 125,
+        "def": 85,
+        "spa": 135,
+        "spd": 95,
+        "spe": 70
+      },
+      "weight": 125.5,
+      "ability": "Innards Out"
+    },
+    "Mega Starmie": {
+      "types": [
+        "water",
+        "psychic"
+      ],
+      "base_stats": {
+        "hp": 60,
+        "atk": 100,
+        "def": 105,
+        "spa": 130,
+        "spd": 105,
+        "spe": 120
+      },
+      "weight": 80.0,
+      "ability": "Huge Power"
+    },
+    "Mega Dragonite": {
+      "types": [
+        "dragon",
+        "flying"
+      ],
+      "base_stats": {
+        "hp": 91,
+        "atk": 124,
+        "def": 115,
+        "spa": 145,
+        "spd": 125,
+        "spe": 100
+      },
+      "weight": 290.0,
+      "ability": "Multiscale"
+    },
+    "Mega Meganium": {
+      "types": [
+        "grass",
+        "fairy"
+      ],
+      "base_stats": {
+        "hp": 80,
+        "atk": 92,
+        "def": 115,
+        "spa": 143,
+        "spd": 115,
+        "spe": 80
+      },
+      "weight": 201.0,
+      "ability": "Mega Sol"
+    },
+    "Mega Feraligatr": {
+      "types": [
+        "water",
+        "dragon"
+      ],
+      "base_stats": {
+        "hp": 85,
+        "atk": 160,
+        "def": 125,
+        "spa": 89,
+        "spd": 93,
+        "spe": 78
+      },
+      "weight": 108.8,
+      "ability": "Dragonize"
+    },
+    "Mega Skarmory": {
+      "types": [
+        "steel",
+        "flying"
+      ],
+      "base_stats": {
+        "hp": 65,
+        "atk": 140,
+        "def": 110,
+        "spa": 40,
+        "spd": 100,
+        "spe": 110
+      },
+      "weight": 40.4,
+      "ability": "Stalwart"
+    },
+    "Mega Froslass": {
+      "types": [
+        "ice",
+        "ghost"
+      ],
+      "base_stats": {
+        "hp": 70,
+        "atk": 80,
+        "def": 70,
+        "spa": 140,
+        "spd": 100,
+        "spe": 120
+      },
+      "weight": 29.6,
+      "ability": "Snow Warning"
+    },
+    "Mega Emboar": {
+      "types": [
+        "fire",
+        "fighting"
+      ],
+      "base_stats": {
+        "hp": 110,
+        "atk": 148,
+        "def": 75,
+        "spa": 110,
+        "spd": 110,
+        "spe": 75
+      },
+      "weight": 180.3,
+      "ability": "Mold Breaker"
+    },
+    "Mega Excadrill": {
+      "types": [
+        "ground",
+        "steel"
+      ],
+      "base_stats": {
+        "hp": 110,
+        "atk": 165,
+        "def": 100,
+        "spa": 65,
+        "spd": 65,
+        "spe": 103
+      },
+      "weight": 60.0,
+      "ability": "Piercing Drill"
+    },
+    "Mega Scolipede": {
+      "types": [
+        "bug",
+        "poison"
+      ],
+      "base_stats": {
+        "hp": 60,
+        "atk": 140,
+        "def": 149,
+        "spa": 75,
+        "spd": 99,
+        "spe": 62
+      },
+      "weight": 230.5
+    },
+    "Mega Scrafty": {
+      "types": [
+        "dark",
+        "fighting"
+      ],
+      "base_stats": {
+        "hp": 65,
+        "atk": 130,
+        "def": 135,
+        "spa": 55,
+        "spd": 135,
+        "spe": 68
+      },
+      "weight": 31.0
+    },
+    "Mega Eelektross": {
+      "types": [
+        "electric"
+      ],
+      "base_stats": {
+        "hp": 85,
+        "atk": 145,
+        "def": 80,
+        "spa": 135,
+        "spd": 90,
+        "spe": 80
+      },
+      "weight": 180.0
+    },
+    "Mega Chandelure": {
+      "types": [
+        "fire",
+        "ghost"
+      ],
+      "base_stats": {
+        "hp": 60,
+        "atk": 75,
+        "def": 110,
+        "spa": 175,
+        "spd": 110,
+        "spe": 90
+      },
+      "weight": 69.6,
+      "ability": "Infiltrator"
+    },
+    "Mega Chesnaught": {
+      "types": [
+        "grass",
+        "fighting"
+      ],
+      "base_stats": {
+        "hp": 88,
+        "atk": 137,
+        "def": 172,
+        "spa": 74,
+        "spd": 115,
+        "spe": 44
+      },
+      "weight": 90.0,
+      "ability": "Bulletproof"
+    },
+    "Mega Delphox": {
+      "types": [
+        "fire",
+        "psychic"
+      ],
+      "base_stats": {
+        "hp": 75,
+        "atk": 69,
+        "def": 72,
+        "spa": 159,
+        "spd": 125,
+        "spe": 134
+      },
+      "weight": 39.0,
+      "ability": "Levitate"
+    },
+    "Mega Greninja": {
+      "types": [
+        "water",
+        "dark"
+      ],
+      "base_stats": {
+        "hp": 72,
+        "atk": 125,
+        "def": 77,
+        "spa": 133,
+        "spd": 81,
+        "spe": 142
+      },
+      "weight": 40.0,
+      "ability": "Protean"
+    },
+    "Mega Pyroar": {
+      "types": [
+        "fire",
+        "normal"
+      ],
+      "base_stats": {
+        "hp": 86,
+        "atk": 88,
+        "def": 92,
+        "spa": 129,
+        "spd": 86,
+        "spe": 126
+      },
+      "weight": 93.3
+    },
+    "Floette-Eternal": {
+      "types": [
+        "fairy"
+      ],
+      "base_stats": {
+        "hp": 74,
+        "atk": 65,
+        "def": 67,
+        "spa": 125,
+        "spd": 128,
+        "spe": 92
+      },
+      "weight": 0.9,
+      "ability": "Flower Veil"
+    },
+    "Mega Floette": {
+      "types": [
+        "fairy"
+      ],
+      "base_stats": {
+        "hp": 74,
+        "atk": 85,
+        "def": 87,
+        "spa": 155,
+        "spd": 148,
+        "spe": 102
+      },
+      "weight": 100.8,
+      "ability": "Fairy Aura"
+    },
+    "Mega Malamar": {
+      "types": [
+        "dark",
+        "psychic"
+      ],
+      "base_stats": {
+        "hp": 86,
+        "atk": 102,
+        "def": 88,
+        "spa": 98,
+        "spd": 120,
+        "spe": 88
+      },
+      "weight": 69.8
+    },
+    "Mega Barbaracle": {
+      "types": [
+        "rock",
+        "fighting"
+      ],
+      "base_stats": {
+        "hp": 72,
+        "atk": 140,
+        "def": 130,
+        "spa": 64,
+        "spd": 106,
+        "spe": 88
+      },
+      "weight": 100.0
+    },
+    "Mega Dragalge": {
+      "types": [
+        "poison",
+        "dragon"
+      ],
+      "base_stats": {
+        "hp": 65,
+        "atk": 85,
+        "def": 105,
+        "spa": 132,
+        "spd": 163,
+        "spe": 44
+      },
+      "weight": 100.3
+    },
+    "Mega Hawlucha": {
+      "types": [
+        "fighting",
+        "flying"
+      ],
+      "base_stats": {
+        "hp": 78,
+        "atk": 137,
+        "def": 100,
+        "spa": 74,
+        "spd": 93,
+        "spe": 118
+      },
+      "weight": 25.0,
+      "ability": "No Guard"
+    },
+    "Mega Zygarde": {
+      "types": [
+        "dragon",
+        "ground"
+      ],
+      "base_stats": {
+        "hp": 216,
+        "atk": 70,
+        "def": 91,
+        "spa": 216,
+        "spd": 85,
+        "spe": 100
+      },
+      "weight": 610.0
+    },
+    "Mega Drampa": {
+      "types": [
+        "normal",
+        "dragon"
+      ],
+      "base_stats": {
+        "hp": 78,
+        "atk": 85,
+        "def": 110,
+        "spa": 160,
+        "spd": 116,
+        "spe": 36
+      },
+      "weight": 240.5,
+      "ability": "Berserk"
+    },
+    "Mega Falinks": {
+      "types": [
+        "fighting"
+      ],
+      "base_stats": {
+        "hp": 65,
+        "atk": 135,
+        "def": 135,
+        "spa": 70,
+        "spd": 65,
+        "spe": 100
+      },
+      "weight": 99.0
+    },
+    "Mega Raichu X": {
+      "types": [
+        "electric"
+      ],
+      "base_stats": {
+        "hp": 60,
+        "atk": 135,
+        "def": 95,
+        "spa": 90,
+        "spd": 95,
+        "spe": 110
+      },
+      "weight": 38.0
+    },
+    "Mega Raichu Y": {
+      "types": [
+        "electric"
+      ],
+      "base_stats": {
+        "hp": 60,
+        "atk": 100,
+        "def": 55,
+        "spa": 160,
+        "spd": 80,
+        "spe": 130
+      },
+      "weight": 26.0
+    },
+    "Mega Chimecho": {
+      "types": [
+        "psychic",
+        "steel"
+      ],
+      "base_stats": {
+        "hp": 75,
+        "atk": 50,
+        "def": 110,
+        "spa": 135,
+        "spd": 120,
+        "spe": 65
+      },
+      "weight": 8.0,
+      "ability": "Levitate"
+    },
+    "Mega Absol Z": {
+      "types": [
+        "dark",
+        "ghost"
+      ],
+      "base_stats": {
+        "hp": 65,
+        "atk": 154,
+        "def": 60,
+        "spa": 75,
+        "spd": 60,
+        "spe": 151
+      },
+      "weight": 49.0
+    },
+    "Mega Staraptor": {
+      "types": [
+        "fighting",
+        "flying"
+      ],
+      "base_stats": {
+        "hp": 85,
+        "atk": 140,
+        "def": 100,
+        "spa": 60,
+        "spd": 90,
+        "spe": 110
+      },
+      "weight": 50.0
+    },
+    "Mega Garchomp Z": {
+      "types": [
+        "dragon"
+      ],
+      "base_stats": {
+        "hp": 108,
+        "atk": 130,
+        "def": 85,
+        "spa": 141,
+        "spd": 85,
+        "spe": 151
+      },
+      "weight": 99.0
+    },
+    "Mega Lucario Z": {
+      "types": [
+        "fighting",
+        "steel"
+      ],
+      "base_stats": {
+        "hp": 70,
+        "atk": 100,
+        "def": 70,
+        "spa": 164,
+        "spd": 70,
+        "spe": 151
+      },
+      "weight": 49.4
+    },
+    "Mega Heatran": {
+      "types": [
+        "fire",
+        "steel"
+      ],
+      "base_stats": {
+        "hp": 91,
+        "atk": 120,
+        "def": 106,
+        "spa": 175,
+        "spd": 141,
+        "spe": 67
+      },
+      "weight": 570.0
+    },
+    "Mega Darkrai": {
+      "types": [
+        "dark"
+      ],
+      "base_stats": {
+        "hp": 70,
+        "atk": 120,
+        "def": 130,
+        "spa": 165,
+        "spd": 130,
+        "spe": 85
+      },
+      "weight": 240.0
+    },
+    "Mega Golurk": {
+      "types": [
+        "ground",
+        "ghost"
+      ],
+      "base_stats": {
+        "hp": 89,
+        "atk": 159,
+        "def": 105,
+        "spa": 70,
+        "spd": 105,
+        "spe": 55
+      },
+      "weight": 330.0,
+      "ability": "Unseen Fist"
+    },
+    "Mega Meowstic": {
+      "types": [
+        "psychic"
+      ],
+      "base_stats": {
+        "hp": 74,
+        "atk": 48,
+        "def": 76,
+        "spa": 143,
+        "spd": 101,
+        "spe": 124
+      },
+      "weight": 10.1,
+      "ability": "Trace"
+    },
+    "Mega Crabominable": {
+      "types": [
+        "fighting",
+        "ice"
+      ],
+      "base_stats": {
+        "hp": 97,
+        "atk": 157,
+        "def": 122,
+        "spa": 62,
+        "spd": 107,
+        "spe": 33
+      },
+      "weight": 252.8,
+      "ability": "Iron Fist"
+    },
+    "Mega Golisopod": {
+      "types": [
+        "bug",
+        "steel"
+      ],
+      "base_stats": {
+        "hp": 75,
+        "atk": 150,
+        "def": 175,
+        "spa": 70,
+        "spd": 120,
+        "spe": 40
+      },
+      "weight": 148.0
+    },
+    "Mega Magearna": {
+      "types": [
+        "steel",
+        "fairy"
+      ],
+      "base_stats": {
+        "hp": 80,
+        "atk": 125,
+        "def": 115,
+        "spa": 170,
+        "spd": 115,
+        "spe": 95
+      },
+      "weight": 248.1
+    },
+    "Mega Zeraora": {
+      "types": [
+        "electric"
+      ],
+      "base_stats": {
+        "hp": 88,
+        "atk": 157,
+        "def": 75,
+        "spa": 147,
+        "spd": 80,
+        "spe": 153
+      },
+      "weight": 44.5
+    },
+    "Mega Scovillain": {
+      "types": [
+        "grass",
+        "fire"
+      ],
+      "base_stats": {
+        "hp": 65,
+        "atk": 138,
+        "def": 85,
+        "spa": 138,
+        "spd": 85,
+        "spe": 75
+      },
+      "weight": 22.0,
+      "ability": "Spicy Spray"
+    },
+    "Mega Glimmora": {
+      "types": [
+        "rock",
+        "poison"
+      ],
+      "base_stats": {
+        "hp": 83,
+        "atk": 90,
+        "def": 105,
+        "spa": 150,
+        "spd": 96,
+        "spe": 101
+      },
+      "weight": 77.0,
+      "ability": "Adaptability"
+    },
+    "Mega Tatsugiri": {
+      "types": [
+        "water",
+        "dragon"
+      ],
+      "base_stats": {
+        "hp": 68,
+        "atk": 65,
+        "def": 90,
+        "spa": 135,
+        "spd": 125,
+        "spe": 92
+      },
+      "weight": 24.0
+    },
+    "Mega Baxcalibur": {
+      "types": [
+        "dragon",
+        "ice"
+      ],
+      "base_stats": {
+        "hp": 115,
+        "atk": 175,
+        "def": 117,
+        "spa": 105,
+        "spd": 101,
+        "spe": 87
+      },
+      "weight": 315.0
+    }
+  },
+  "new_moves": {},
+  "new_abilities": {
+    "piercing-drill": {
+      "name": "Piercing Drill",
+      "effect": "Moves hit through Protect with 1/4 damage"
+    },
+    "dragonize": {
+      "name": "Dragonize",
+      "effect": "Normal-type moves become Dragon-type with 1.2x power boost"
+    },
+    "mega-sol": {
+      "name": "Mega Sol",
+      "effect": "User's attacks act as if Sun is always active"
+    },
+    "spicy-spray": {
+      "name": "Spicy Spray",
+      "effect": "Burns the attacker on contact"
+    }
+  }
+}

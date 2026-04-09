@@ -1,0 +1,182 @@
+{
+  "_meta": {
+    "source": "PokeAPI",
+    "last_updated": "2026-04-09",
+    "description": "Auto-generated from PokeAPI CSV data"
+  },
+  "1": {
+    "identifier": "hardy",
+    "name": "Hardy",
+    "increased_stat": "atk",
+    "decreased_stat": "atk",
+    "is_neutral": true
+  },
+  "2": {
+    "identifier": "bold",
+    "name": "Bold",
+    "increased_stat": "def",
+    "decreased_stat": "atk",
+    "is_neutral": false
+  },
+  "3": {
+    "identifier": "modest",
+    "name": "Modest",
+    "increased_stat": "spa",
+    "decreased_stat": "atk",
+    "is_neutral": false
+  },
+  "4": {
+    "identifier": "calm",
+    "name": "Calm",
+    "increased_stat": "spd",
+    "decreased_stat": "atk",
+    "is_neutral": false
+  },
+  "5": {
+    "identifier": "timid",
+    "name": "Timid",
+    "increased_stat": "spe",
+    "decreased_stat": "atk",
+    "is_neutral": false
+  },
+  "6": {
+    "identifier": "lonely",
+    "name": "Lonely",
+    "increased_stat": "atk",
+    "decreased_stat": "def",
+    "is_neutral": false
+  },
+  "7": {
+    "identifier": "docile",
+    "name": "Docile",
+    "increased_stat": "def",
+    "decreased_stat": "def",
+    "is_neutral": true
+  },
+  "8": {
+    "identifier": "mild",
+    "name": "Mild",
+    "increased_stat": "spa",
+    "decreased_stat": "def",
+    "is_neutral": false
+  },
+  "9": {
+    "identifier": "gentle",
+    "name": "Gentle",
+    "increased_stat": "spd",
+    "decreased_stat": "def",
+    "is_neutral": false
+  },
+  "10": {
+    "identifier": "hasty",
+    "name": "Hasty",
+    "increased_stat": "spe",
+    "decreased_stat": "def",
+    "is_neutral": false
+  },
+  "11": {
+    "identifier": "adamant",
+    "name": "Adamant",
+    "increased_stat": "atk",
+    "decreased_stat": "spa",
+    "is_neutral": false
+  },
+  "12": {
+    "identifier": "impish",
+    "name": "Impish",
+    "increased_stat": "def",
+    "decreased_stat": "spa",
+    "is_neutral": false
+  },
+  "13": {
+    "identifier": "bashful",
+    "name": "Bashful",
+    "increased_stat": "spa",
+    "decreased_stat": "spa",
+    "is_neutral": true
+  },
+  "14": {
+    "identifier": "careful",
+    "name": "Careful",
+    "increased_stat": "spd",
+    "decreased_stat": "spa",
+    "is_neutral": false
+  },
+  "15": {
+    "identifier": "rash",
+    "name": "Rash",
+    "increased_stat": "spa",
+    "decreased_stat": "spd",
+    "is_neutral": false
+  },
+  "16": {
+    "identifier": "jolly",
+    "name": "Jolly",
+    "increased_stat": "spe",
+    "decreased_stat": "spa",
+    "is_neutral": false
+  },
+  "17": {
+    "identifier": "naughty",
+    "name": "Naughty",
+    "increased_stat": "atk",
+    "decreased_stat": "spd",
+    "is_neutral": false
+  },
+  "18": {
+    "identifier": "lax",
+    "name": "Lax",
+    "increased_stat": "def",
+    "decreased_stat": "spd",
+    "is_neutral": false
+  },
+  "19": {
+    "identifier": "quirky",
+    "name": "Quirky",
+    "increased_stat": "spd",
+    "decreased_stat": "spd",
+    "is_neutral": true
+  },
+  "20": {
+    "identifier": "naive",
+    "name": "Naive",
+    "increased_stat": "spe",
+    "decreased_stat": "spd",
+    "is_neutral": false
+  },
+  "21": {
+    "identifier": "brave",
+    "name": "Brave",
+    "increased_stat": "atk",
+    "decreased_stat": "spe",
+    "is_neutral": false
+  },
+  "22": {
+    "identifier": "relaxed",
+    "name": "Relaxed",
+    "increased_stat": "def",
+    "decreased_stat": "spe",
+    "is_neutral": false
+  },
+  "23": {
+    "identifier": "quiet",
+    "name": "Quiet",
+    "increased_stat": "spa",
+    "decreased_stat": "spe",
+    "is_neutral": false
+  },
+  "24": {
+    "identifier": "sassy",
+    "name": "Sassy",
+    "increased_stat": "spd",
+    "decreased_stat": "spe",
+    "is_neutral": false
+  },
+  "25": {
+    "identifier": "serious",
+    "name": "Serious",
+    "increased_stat": "spe",
+    "decreased_stat": "spe",
+    "is_neutral": true
+  }
+}
