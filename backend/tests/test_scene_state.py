@@ -54,6 +54,12 @@ class TestCandidates:
         assert "pokemon_summary" in candidates
         assert "team_select" not in candidates
 
+    def test_none_candidates(self) -> None:
+        sm = SceneStateMachine(initial="none")
+        candidates = sm.candidates()
+        assert "pre_match" in candidates
+        assert len(candidates) == 1
+
     def test_battle_end_candidates(self) -> None:
         sm = SceneStateMachine(initial="battle_end")
         candidates = sm.candidates()
@@ -70,8 +76,12 @@ class TestTopLevelTransitions:
             sm.update({scene: confidence})
 
     def test_full_match_cycle(self) -> None:
-        """pre_match → team_select → team_confirm → battle → battle_end → pre_match."""
+        """none → pre_match → ... → battle_end → pre_match（次の試合へ）."""
         sm = SceneStateMachine()
+        assert sm.state.top_level == "none"
+
+        # none → pre_match
+        self._advance(sm, "pre_match")
         assert sm.state.top_level == "pre_match"
 
         # pre_match → team_select
@@ -90,7 +100,7 @@ class TestTopLevelTransitions:
         self._advance(sm, "battle_end")
         assert sm.state.top_level == "battle_end"
 
-        # battle_end → pre_match
+        # battle_end → pre_match（次の試合）
         self._advance(sm, "pre_match")
         assert sm.state.top_level == "pre_match"
 
@@ -210,7 +220,7 @@ class TestReset:
         sm = SceneStateMachine(initial="battle")
         sm.update({"battle_end": 0.9})
         sm.reset()
-        assert sm.state.top_level == "pre_match"
+        assert sm.state.top_level == "none"
         assert sm.state.sub_scene is None
 
     def test_reset_clears_pending(self) -> None:
@@ -218,9 +228,11 @@ class TestReset:
         # デバウンス途中
         sm.update({"team_select": 0.9})
         sm.reset()
-        # リセット後、1回の検出では遷移しない
-        sm.update({"team_select": 0.9})
-        assert sm.state.top_level == "pre_match"
+        # リセット後は none に戻り、デバウンスもクリアされる
+        assert sm.state.top_level == "none"
+        # 1回の検出では遷移しない
+        sm.update({"pre_match": 0.9})
+        assert sm.state.top_level == "none"
 
 
 class TestConfidence:

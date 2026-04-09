@@ -1,7 +1,8 @@
 """シーン自動判定の階層型ステートマシン.
 
-トップレベル遷移（不可逆）:
-    pre_match → team_select → team_confirm → battle → battle_end → pre_match
+トップレベル遷移:
+    none → pre_match → team_select → team_confirm →(auto) battle → battle_end → pre_match → ...
+    none への復帰は手動リセット (reset()) のみ
 
 バトル内サブシーン（可逆）:
     battle（デフォルト） ↔ move_select ↔ pokemon_summary ↔ ...
@@ -18,7 +19,7 @@ class SceneState:
     """シーン状態のイミュータブルなスナップショット."""
 
     top_level: str
-    """トップレベル状態: pre_match / team_select / team_confirm / battle / battle_end"""
+    """トップレベル状態: none / pre_match / team_select / team_confirm / battle / battle_end"""
 
     sub_scene: str | None = None
     """バトル内サブシーン: None（battle以外）/ move_select / pokemon_summary / ..."""
@@ -58,6 +59,7 @@ class SceneStateMachine:
     # --- 遷移定義 ---
 
     TOP_TRANSITIONS: dict[str, list[str]] = {
+        "none": ["pre_match"],
         "pre_match": ["team_select"],
         "team_select": ["team_confirm"],
         "team_confirm": [],  # battle へは自動遷移
@@ -85,7 +87,7 @@ class SceneStateMachine:
     SUB_REVERT_COUNT: int = 3
     """サブシーン未検出がこの回数続いたらデフォルト battle に戻る."""
 
-    def __init__(self, initial: str = "pre_match") -> None:
+    def __init__(self, initial: str = "none") -> None:
         self._state = SceneState(
             top_level=initial,
             sub_scene=None,
@@ -201,7 +203,7 @@ class SceneStateMachine:
     def reset(self) -> None:
         """ステートマシンを初期状態にリセットする."""
         self._state = SceneState(
-            top_level="pre_match",
+            top_level="none",
             sub_scene=None,
             confidence=0.0,
             timestamp=time.monotonic(),

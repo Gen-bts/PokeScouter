@@ -194,6 +194,10 @@ class SceneDetector:
 
         expected_text に指定された文字列のいずれかが OCR 結果に含まれていれば
         confidence=1.0 を返す（OR 条件）。
+        excluded_text に指定された文字列のいずれかが含まれていれば
+        confidence=0.0 を返す（AND-NOT 条件）。
+        expected_text 未指定で excluded_text のみの場合、除外テキストが
+        含まれなければ confidence=1.0 を返す（純粋な否定条件）。
         """
         if self._recognizer is None:
             logger.warning(
@@ -208,9 +212,16 @@ class SceneDetector:
         else:
             expected_texts = list(raw_expected)
 
-        if not expected_texts:
+        raw_excluded = region.params.get("excluded_text", [])
+        if isinstance(raw_excluded, str):
+            excluded_texts = [raw_excluded]
+        else:
+            excluded_texts = list(raw_excluded)
+
+        if not expected_texts and not excluded_texts:
             logger.warning(
-                "検出領域 '%s' に expected_text が未定義", region.name,
+                "検出領域 '%s' に expected_text/excluded_text が未定義",
+                region.name,
             )
             return 0.0, _DEFAULT_OCR_THRESHOLD, 0.0
 
@@ -222,11 +233,21 @@ class SceneDetector:
         elapsed = (time.perf_counter() - t0) * 1000
 
         ocr_text = "".join(r.text for r in ocr_results)
-        matched = any(exp in ocr_text for exp in expected_texts)
+        has_expected = (
+            any(exp in ocr_text for exp in expected_texts)
+            if expected_texts
+            else True
+        )
+        has_excluded = (
+            any(exc in ocr_text for exc in excluded_texts)
+            if excluded_texts
+            else False
+        )
+        matched = has_expected and not has_excluded
 
         logger.debug(
-            "OCR検出: region=%s ocr_text='%s' expected=%s matched=%s (%.1fms)",
-            region.name, ocr_text, expected_texts, matched, elapsed,
+            "OCR検出: region=%s ocr_text='%s' expected=%s excluded=%s matched=%s (%.1fms)",
+            region.name, ocr_text, expected_texts, excluded_texts, matched, elapsed,
         )
 
         confidence = 1.0 if matched else 0.0

@@ -53,6 +53,7 @@ class Region:
     w: int
     h: int
     engine: str
+    read_once: bool = False
 
     def crop(self, image: np.ndarray) -> np.ndarray:
         """画像からこの領域を切り出す."""
@@ -165,6 +166,7 @@ class RegionConfig:
                 w=cfg["w"],
                 h=cfg["h"],
                 engine=cfg.get("engine", "paddle"),
+                read_once=cfg.get("read_once", False),
             ))
         return regions
 
@@ -190,6 +192,24 @@ class RegionConfig:
             ))
         return regions
 
+    def get_pokemon_icons(self, scene: str) -> list[dict[str, Any]]:
+        """シーン名からポケモンアイコン領域を取得."""
+        scene_data = self._data.get("scenes", {}).get(scene, {})
+        icons_data = scene_data.get("pokemon_icons", {})
+        icons: list[dict[str, Any]] = []
+        for name, cfg in icons_data.items():
+            if name.startswith("_"):
+                continue
+            icons.append({
+                "name": name,
+                "x": cfg["x"],
+                "y": cfg["y"],
+                "w": cfg["w"],
+                "h": cfg["h"],
+                "read_once": cfg.get("read_once", False),
+            })
+        return icons
+
     @property
     def scenes(self) -> list[str]:
         """利用可能なシーン名一覧."""
@@ -206,6 +226,21 @@ class RegionConfig:
     def get_all_scenes_meta(self) -> dict[str, dict[str, str]]:
         """全シーンのメタデータを取得."""
         return {scene: self.get_scene_meta(scene) for scene in self.scenes}
+
+    def get_interval_ms(self, scene: str) -> int:
+        """シーンのポーリング間隔(ms)を取得."""
+        scene_data = self._data.get("scenes", {}).get(scene, {})
+        return scene_data.get(
+            "interval_ms", self._data.get("default_interval_ms", 500),
+        )
+
+    def get_all_intervals(self) -> dict[str, int]:
+        """全シーンの {シーン名: interval_ms} を取得."""
+        default = self._data.get("default_interval_ms", 500)
+        return {
+            name: scene.get("interval_ms", default)
+            for name, scene in self._data.get("scenes", {}).items()
+        }
 
 
 ALL_ENGINES = ["paddle", "manga", "glm"]
@@ -252,11 +287,10 @@ class RegionRecognizer:
             self._engines[name] = engine
         return self._engines[name]
 
-    def recognize(self, image: np.ndarray, scene: str) -> list[RegionResult]:
-        """全体画像から指定シーンの全領域を認識する."""
-        import time
-
-        regions = self._config.get_regions(scene)
+    def recognize_regions(
+        self, image: np.ndarray, regions: list[Region],
+    ) -> list[RegionResult]:
+        """指定された領域リストを認識する."""
         results: list[RegionResult] = []
 
         for region in regions:
@@ -276,6 +310,11 @@ class RegionRecognizer:
             ))
 
         return results
+
+    def recognize(self, image: np.ndarray, scene: str) -> list[RegionResult]:
+        """全体画像から指定シーンの全領域を認識する."""
+        regions = self._config.get_regions(scene)
+        return self.recognize_regions(image, regions)
 
     def recognize_all_engines(
         self, image: np.ndarray, scene: str,
