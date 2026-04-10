@@ -19,6 +19,7 @@ dependencies = [
     "torchvision",
     "imagehash",
     "faiss-cpu",
+    "httpx",
 ]
 
 [project.optional-dependencies]

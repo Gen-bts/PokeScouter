@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 
+from app.damage.client import CalcServiceClient
 from app.data.game_data import GameData
 from app.ocr.region import RegionRecognizer
 from app.recognition.pokemon_matcher import PokemonMatcher
@@ -16,6 +17,7 @@ _game_data: GameData | None = None
 _recognizer: RegionRecognizer | None = None
 _detector: SceneDetector | None = None
 _pokemon_matcher: PokemonMatcher | None = None
+_calc_client: CalcServiceClient | None = None
 
 
 def init_recognizer() -> RegionRecognizer:
@@ -105,3 +107,28 @@ def get_game_data() -> GameData:
     if _game_data is None:
         raise RuntimeError("GameData が初期化されていません")
     return _game_data
+
+
+# --- CalcServiceClient ---
+
+
+def init_calc_client() -> CalcServiceClient:
+    """CalcServiceClient を初期化してシングルトンとして保持する."""
+    global _calc_client  # noqa: PLW0603
+    _calc_client = CalcServiceClient()
+    return _calc_client
+
+
+async def shutdown_calc_client() -> None:
+    """CalcServiceClient を閉じる."""
+    global _calc_client  # noqa: PLW0603
+    if _calc_client is not None:
+        await _calc_client.close()
+        _calc_client = None
+
+
+def get_calc_client() -> CalcServiceClient:
+    """現在の CalcServiceClient を取得する."""
+    if _calc_client is None:
+        raise RuntimeError("CalcServiceClient が初期化されていません")
+    return _calc_client
