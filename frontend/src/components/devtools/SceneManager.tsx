@@ -77,7 +77,7 @@ export function SceneManager() {
     });
     setEditingKey(null);
     await loadScenes();
-  }, [editingKey, editDisplayName, editDescription, loadScenes]);
+  }, [editingKey, editDisplayName, editDescription, editIntervalMs, loadScenes]);
 
   // --- 削除 ---
   const handleDelete = useCallback(

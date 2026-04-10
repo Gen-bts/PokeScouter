@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   listSessions,
   listFrames,
@@ -17,6 +17,7 @@ import {
   deleteGroupTemplate,
   upsertGroupSlot,
   deleteGroupSlot,
+  runPokemonTest,
   type SessionMetadata,
   type FrameInfo,
   type RegionDef,
@@ -26,7 +27,9 @@ import {
   type SceneConfig,
   type RegionGroup,
   type RegionGroupTemplateEntry,
+  type PokemonTestResult,
 } from "../../api/devtools";
+import { PokemonIconCandidateSelector } from "./PokemonIconCandidateSelector";
 
 interface Props {
   initialSessionId?: string;
@@ -191,6 +194,19 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
   const [step, setStep] = useState(1);
   const [editReadOnce, setEditReadOnce] = useState(false);
 
+  // --- ポケモン検出プレビュー State ---
+  const [pokemonTestResults, setPokemonTestResults] = useState<
+    Record<string, PokemonTestResult>
+  >({});
+  const [testingCrops, setTestingCrops] = useState<Set<string>>(new Set());
+  const [pokemonOverrides, setPokemonOverrides] = useState<
+    Record<string, { pokemon_id: number; name: string }>
+  >({});
+  const [activeCandidateSelector, setActiveCandidateSelector] = useState<
+    string | null
+  >(null);
+  const spriteImagesRef = useRef<Record<number, HTMLImageElement>>({});
+
   // 初期ロード
   useEffect(() => {
     listSessions().then(setSessions);
@@ -237,6 +253,13 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
     setEditingSlotIndex(null);
     setSelectedTemplateName(null);
   }, [scene, cropType]);
+
+  // フレーム・シーン変更時にポケモンテスト結果をクリア
+  useEffect(() => {
+    setPokemonTestResults({});
+    setPokemonOverrides({});
+    setActiveCandidateSelector(null);
+  }, [selectedFrame, scene]);
 
   // 現在のシーンのクロップ一覧
   const currentScene = sceneConfigs[scene];
@@ -348,6 +371,30 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
           ctx.font = "16px sans-serif";
           ctx.fillStyle = color;
           ctx.fillText(name, drawR.x + 4, drawR.y - 4);
+        }
+
+        // ポケモンスプライトをクロップ左側に描画
+        if (cropType === "pokemon_icons") {
+          const override = pokemonOverrides[name];
+          const testResult = pokemonTestResults[name];
+          const pid = override
+            ? override.pokemon_id
+            : testResult?.result?.pokemon_id ?? null;
+          if (pid) {
+            const spriteImg = spriteImagesRef.current[pid];
+            if (spriteImg) {
+              const spriteSize = Math.min(drawR.h, 80);
+              const sx = drawR.x - spriteSize - 8;
+              const sy = drawR.y + (drawR.h - spriteSize) / 2;
+              // 白背景
+              ctx.fillStyle = "#ffffff";
+              ctx.fillRect(sx - 2, sy - 2, spriteSize + 4, spriteSize + 4);
+              ctx.strokeStyle = "#cccccc";
+              ctx.lineWidth = 1;
+              ctx.strokeRect(sx - 2, sy - 2, spriteSize + 4, spriteSize + 4);
+              ctx.drawImage(spriteImg, sx, sy, spriteSize, spriteSize);
+            }
+          }
         }
       });
 
@@ -510,7 +557,8 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
       }
     },
     [currentCrops, colors, drawnRect, selectedCropName, editRect,
-     cropType, currentGroup, groupEditMode, selectedTemplateName, editingSlotIndex],
+     cropType, currentGroup, groupEditMode, selectedTemplateName, editingSlotIndex,
+     pokemonTestResults, pokemonOverrides],
   );
 
   // 画像ロード時に再描画
@@ -1081,6 +1129,100 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
     }
     return coordChanged;
   })();
+
+  // --- ポケモン検出テスト ---
+  const getDisplayedPokemon = useCallback(
+    (
+      cropName: string,
+    ): {
+      pokemonId: number | null;
+      name: string | null;
+      confidence: number | null;
+    } => {
+      const override = pokemonOverrides[cropName];
+      if (override) {
+        return { pokemonId: override.pokemon_id, name: override.name, confidence: null };
+      }
+      const result = pokemonTestResults[cropName];
+      if (result?.result) {
+        const top = result.candidates.find(
+          (c) => c.pokemon_id === result.result!.pokemon_id,
+        );
+        return {
+          pokemonId: result.result.pokemon_id,
+          name: top?.name ?? null,
+          confidence: result.result.confidence,
+        };
+      }
+      return { pokemonId: null, name: null, confidence: null };
+    },
+    [pokemonOverrides, pokemonTestResults],
+  );
+
+  const runSinglePokemonTest = useCallback(
+    async (cropName: string) => {
+      if (!selectedSession || !selectedFrame) return;
+      const crop = currentPokemonIcons[cropName];
+      if (!crop) return;
+
+      setTestingCrops((prev) => new Set(prev).add(cropName));
+      try {
+        const result = await runPokemonTest(selectedSession, selectedFrame.filename, {
+          x: crop.x,
+          y: crop.y,
+          w: crop.w,
+          h: crop.h,
+        });
+        setPokemonTestResults((prev) => ({ ...prev, [cropName]: result }));
+      } catch (err) {
+        console.error(`Pokemon test failed for ${cropName}:`, err);
+      } finally {
+        setTestingCrops((prev) => {
+          const next = new Set(prev);
+          next.delete(cropName);
+          return next;
+        });
+      }
+    },
+    [selectedSession, selectedFrame, currentPokemonIcons],
+  );
+
+  const runAllPokemonTests = useCallback(async () => {
+    const names = Object.keys(currentPokemonIcons);
+    if (names.length === 0 || !selectedSession || !selectedFrame) return;
+    setPokemonTestResults({});
+    setPokemonOverrides({});
+    await Promise.all(names.map((n) => runSinglePokemonTest(n)));
+  }, [currentPokemonIcons, selectedSession, selectedFrame, runSinglePokemonTest]);
+
+  // スプライト画像プリロード（Canvas描画用）
+  const displayedPokemonMap = useMemo(() => {
+    if (cropType !== "pokemon_icons") return {};
+    const map: Record<string, { pokemonId: number | null; name: string | null }> = {};
+    for (const name of Object.keys(currentPokemonIcons)) {
+      const d = getDisplayedPokemon(name);
+      map[name] = d;
+    }
+    return map;
+  }, [cropType, currentPokemonIcons, getDisplayedPokemon]);
+
+  useEffect(() => {
+    if (cropType !== "pokemon_icons") return;
+    let needsRedraw = false;
+    for (const d of Object.values(displayedPokemonMap)) {
+      if (d.pokemonId && !spriteImagesRef.current[d.pokemonId]) {
+        const id = d.pokemonId;
+        const img = new Image();
+        img.onload = () => {
+          spriteImagesRef.current[id] = img;
+          redraw();
+        };
+        img.src = `/sprites/${id}.png`;
+        needsRedraw = true;
+      }
+    }
+    if (!needsRedraw) redraw();
+  }, [cropType, displayedPokemonMap, redraw]);
 
   return (
     <div className="devtools-panel crop-editor-layout">
@@ -1734,80 +1876,170 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
               : "ポケモンアイコン一覧"}
           {scene && ` (${scenesMap[scene]?.display_name || scene})`}
         </h3>
+
+        {cropType === "pokemon_icons" &&
+          selectedSession &&
+          selectedFrame &&
+          Object.keys(currentPokemonIcons).length > 0 && (
+            <button
+              className="btn-test-all"
+              onClick={runAllPokemonTests}
+              disabled={testingCrops.size > 0}
+            >
+              {testingCrops.size > 0 ? "テスト中..." : "全アイコンをテスト"}
+            </button>
+          )}
+
         <div className="region-list">
           {Object.keys(currentCrops).length === 0 && (
             <p className="placeholder">クロップなし</p>
           )}
-          {Object.entries(currentCrops).map(([name, r], i) => (
-            <div
-              className={`region-item ${selectedCropName === name ? "region-item-selected" : ""}`}
-              key={name}
-              onClick={() => handleSelectCrop(name)}
-            >
+          {Object.entries(currentCrops).map(([name, r], i) => {
+            const displayed =
+              cropType === "pokemon_icons"
+                ? getDisplayedPokemon(name)
+                : null;
+            const isTesting = testingCrops.has(name);
+
+            return (
               <div
-                className="region-color"
-                style={{
-                  background: colors[i % colors.length],
-                }}
-              />
-              <div className="region-details">
-                <div className="region-name">{name}</div>
-                <div className="region-coords">
-                  {r.x},{r.y} {r.w}x{r.h}
-                  {cropType === "regions"
-                    ? ` | ${(r as RegionDef).engine}${(r as RegionDef).read_once ? " | 1回" : ""}`
-                    : cropType === "detection"
-                      ? ` | ${(r as DetectionRegionDef).method}`
-                      : cropType === "pokemon_icons" && (r as PokemonIconDef).read_once
-                        ? " | 1回"
-                        : ""}
-                </div>
-                {cropType === "detection" &&
-                  (r as DetectionRegionDef).method === "ocr" &&
-                  (r as Record<string, unknown>).expected_text != null && (
-                    <div className="region-expected-text">
-                      {Array.isArray(
-                        (r as Record<string, unknown>).expected_text,
-                      )
-                        ? (
-                            (r as Record<string, unknown>)
-                              .expected_text as string[]
-                          ).join(" | ")
-                        : String(
-                            (r as Record<string, unknown>).expected_text,
-                          )}
-                    </div>
-                  )}
-                {cropType === "detection" &&
-                  (r as DetectionRegionDef).method === "ocr" &&
-                  (r as Record<string, unknown>).excluded_text != null && (
-                    <div className="region-expected-text" style={{ color: "#e94560" }}>
-                      {"! "}
-                      {Array.isArray(
-                        (r as Record<string, unknown>).excluded_text,
-                      )
-                        ? (
-                            (r as Record<string, unknown>)
-                              .excluded_text as string[]
-                          ).join(" | ")
-                        : String(
-                            (r as Record<string, unknown>).excluded_text,
-                          )}
-                    </div>
-                  )}
-              </div>
-              <button
-                className="btn-delete"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteCrop(name);
-                }}
-                title="削除"
+                className={`region-item ${selectedCropName === name ? "region-item-selected" : ""}`}
+                key={name}
+                onClick={() => handleSelectCrop(name)}
               >
-                ×
-              </button>
-            </div>
-          ))}
+                <div
+                  className="region-color"
+                  style={{
+                    background: colors[i % colors.length],
+                  }}
+                />
+
+                {/* ポケモンスプライト（pokemon_icons モード） */}
+                {cropType === "pokemon_icons" && (
+                  <div
+                    className={`region-pokemon-sprite${displayed?.pokemonId ? " has-result" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (displayed?.pokemonId || pokemonTestResults[name]) {
+                        setActiveCandidateSelector(
+                          activeCandidateSelector === name ? null : name,
+                        );
+                      }
+                    }}
+                    title={
+                      displayed?.pokemonId
+                        ? `${displayed.name ?? "?"} ${displayed.confidence != null ? `(${(displayed.confidence * 100).toFixed(0)}%)` : "(手動)"}`
+                        : isTesting
+                          ? "テスト中..."
+                          : "未テスト"
+                    }
+                  >
+                    {isTesting ? (
+                      <div className="region-pokemon-loading">...</div>
+                    ) : displayed?.pokemonId ? (
+                      <img
+                        src={`/sprites/${displayed.pokemonId}.png`}
+                        alt={displayed.name ?? ""}
+                        width={32}
+                        height={32}
+                        className="region-pokemon-img"
+                      />
+                    ) : pokemonTestResults[name] ? (
+                      <div className="region-pokemon-unknown">?</div>
+                    ) : (
+                      <div className="region-pokemon-empty" />
+                    )}
+
+                    {/* 候補セレクタ */}
+                    {activeCandidateSelector === name && (
+                      <PokemonIconCandidateSelector
+                        candidates={pokemonTestResults[name]?.candidates ?? []}
+                        onSelect={(pokemonId, pokemonName) => {
+                          setPokemonOverrides((prev) => ({
+                            ...prev,
+                            [name]: { pokemon_id: pokemonId, name: pokemonName },
+                          }));
+                          setActiveCandidateSelector(null);
+                        }}
+                        onClose={() => setActiveCandidateSelector(null)}
+                      />
+                    )}
+                  </div>
+                )}
+
+                <div className="region-details">
+                  <div className="region-name">
+                    {name}
+                    {cropType === "pokemon_icons" && displayed?.name && (
+                      <span className="region-pokemon-name-tag">
+                        {" "}
+                        {displayed.name}
+                        {displayed.confidence != null && (
+                          <span className="region-pokemon-confidence">
+                            {" "}
+                            {(displayed.confidence * 100).toFixed(0)}%
+                          </span>
+                        )}
+                      </span>
+                    )}
+                  </div>
+                  <div className="region-coords">
+                    {r.x},{r.y} {r.w}x{r.h}
+                    {cropType === "regions"
+                      ? ` | ${(r as RegionDef).engine}${(r as RegionDef).read_once ? " | 1回" : ""}`
+                      : cropType === "detection"
+                        ? ` | ${(r as DetectionRegionDef).method}`
+                        : cropType === "pokemon_icons" && (r as PokemonIconDef).read_once
+                          ? " | 1回"
+                          : ""}
+                  </div>
+                  {cropType === "detection" &&
+                    (r as DetectionRegionDef).method === "ocr" &&
+                    (r as Record<string, unknown>).expected_text != null && (
+                      <div className="region-expected-text">
+                        {Array.isArray(
+                          (r as Record<string, unknown>).expected_text,
+                        )
+                          ? (
+                              (r as Record<string, unknown>)
+                                .expected_text as string[]
+                            ).join(" | ")
+                          : String(
+                              (r as Record<string, unknown>).expected_text,
+                            )}
+                      </div>
+                    )}
+                  {cropType === "detection" &&
+                    (r as DetectionRegionDef).method === "ocr" &&
+                    (r as Record<string, unknown>).excluded_text != null && (
+                      <div className="region-expected-text" style={{ color: "#e94560" }}>
+                        {"! "}
+                        {Array.isArray(
+                          (r as Record<string, unknown>).excluded_text,
+                        )
+                          ? (
+                              (r as Record<string, unknown>)
+                                .excluded_text as string[]
+                            ).join(" | ")
+                          : String(
+                              (r as Record<string, unknown>).excluded_text,
+                            )}
+                      </div>
+                    )}
+                </div>
+                <button
+                  className="btn-delete"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteCrop(name);
+                  }}
+                  title="削除"
+                >
+                  ×
+                </button>
+              </div>
+            );
+          })}
         </div>
         </>}
       </div>
