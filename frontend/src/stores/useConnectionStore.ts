@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type {
+  BattleEventMessage,
   BattleResultMessage,
   BenchmarkResult,
   ConnectionState,
@@ -64,11 +65,16 @@ function doConnect() {
       try {
         const msg = JSON.parse(event.data) as { type: string };
         if (msg.type === "ocr_result") {
+          const ocrMsg = msg as unknown as OcrResult;
           setState({
-            lastResult: msg as unknown as OcrResult,
+            lastResult: ocrMsg,
             connectionState: "connected",
             isConnected: true,
           });
+          const hasText = ocrMsg.regions.some((r) => r.text && r.text.trim() !== "");
+          if (hasText) {
+            useMatchLogStore.getState().addOcrResult(ocrMsg);
+          }
         } else if (msg.type === "benchmark_result") {
           setState({
             lastBenchmarkResult: msg as unknown as BenchmarkResult,
@@ -94,6 +100,8 @@ function doConnect() {
           useMatchLogStore.getState().addTeamSelection(msg as unknown as TeamSelectionMessage);
         } else if (msg.type === "battle_result") {
           useMatchLogStore.getState().addBattleResult(msg as unknown as BattleResultMessage);
+        } else if (msg.type === "battle_event") {
+          useMatchLogStore.getState().addBattleEvent(msg as unknown as BattleEventMessage);
         } else if (msg.type === "party_register_progress") {
           const progressMsg = msg as unknown as PartyRegisterProgressMessage;
           useMyPartyStore.getState().setRegistrationState(progressMsg.state as PartyRegistrationPhase);

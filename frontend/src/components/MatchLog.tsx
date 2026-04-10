@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
 import {
   useMatchLogStore,
+  type BattleEventLogEntry,
   type MatchLogEntry,
   type MatchTeamsLogEntry,
+  type OcrResultLogEntry,
 } from "../stores/useMatchLogStore";
 
 function formatTime(ts: number): string {
@@ -72,6 +74,45 @@ function TeamSelectionEntry({
   );
 }
 
+function OcrResultEntry({ entry }: { entry: OcrResultLogEntry }) {
+  return (
+    <div className="match-log-entry match-log-ocr">
+      <span className="match-log-time">{formatTime(entry.timestamp)}</span>
+      <span className="match-log-scene">{entry.scene}</span>
+      <div className="match-log-ocr-regions">
+        {entry.regions.map((r, i) => (
+          <div key={i} className="match-log-ocr-region">
+            <span className="match-log-ocr-name">{r.name}</span>
+            <span className="match-log-ocr-text">{r.text || "—"}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BattleEventEntry({ entry }: { entry: BattleEventLogEntry }) {
+  const sideLabel = entry.side === "opponent" ? "相手" : "自分";
+  const sideCls = entry.side === "opponent" ? "match-log-event-opponent" : "match-log-event-player";
+
+  let description = entry.rawText;
+  if (entry.eventType === "pokemon_fainted") {
+    const name = entry.pokemonName ?? "???";
+    description = `${sideLabel}の ${name} は たおれた！`;
+  } else if (entry.eventType === "opponent_sent_out") {
+    const name = entry.pokemonName ?? "???";
+    const trainer = (entry.details?.trainer_name as string) ?? "相手";
+    description = `${trainer}が ${name} を繰り出した！`;
+  }
+
+  return (
+    <div className={`match-log-entry match-log-battle-event ${sideCls}`}>
+      <span className="match-log-time">{formatTime(entry.timestamp)}</span>
+      <span className="match-log-event-text">{description}</span>
+    </div>
+  );
+}
+
 function BattleResultEntry({ entry }: { entry: MatchLogEntry & { kind: "battle_result" } }) {
   const cls =
     entry.result === "win"
@@ -127,6 +168,10 @@ export function MatchLog() {
                 );
               case "battle_result":
                 return <BattleResultEntry key={i} entry={e} />;
+              case "battle_event":
+                return <BattleEventEntry key={i} entry={e} />;
+              case "ocr_result":
+                return <OcrResultEntry key={i} entry={e} />;
             }
           })
         )}

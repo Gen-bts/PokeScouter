@@ -4,13 +4,14 @@ import type {
   PartyRegistrationPhase,
   PartyRegisterScreenMessage,
   PartySlotData,
+  ValidatedField,
 } from "../types";
 
 export interface MyPartySlot {
   position: number;
   pokemonId: number | null;
   name: string | null;
-  details: Record<string, string>;
+  fields: Record<string, ValidatedField>;
 }
 
 function emptySlots(): MyPartySlot[] {
@@ -18,7 +19,7 @@ function emptySlots(): MyPartySlot[] {
     position: i + 1,
     pokemonId: null,
     name: null,
-    details: {},
+    fields: {},
   }));
 }
 
@@ -50,13 +51,17 @@ export const useMyPartyStore = create<MyPartyState>()(
           for (const p of msg.pokemon) {
             const idx = p.position - 1;
             if (idx < 0 || idx >= 6) continue;
-            // 画面2のデータは画面1のオフセット分を考慮
-            // (バックエンドが position を通し番号で返す前提)
+            // スロット別に振り分けられたフィールドを取得
+            const slotFields = msg.slots[p.position] ?? {};
+            const newFields: Record<string, ValidatedField> = {};
+            for (const [k, v] of Object.entries(slotFields)) {
+              newFields[k] = { raw: v, validated: null, confidence: 0 };
+            }
             next[idx] = {
               position: p.position,
               pokemonId: p.pokemon_id,
               name: p.name,
-              details: msg.regions,
+              fields: { ...(next[idx]?.fields), ...newFields },
             };
           }
           return { slots: next };
@@ -72,7 +77,7 @@ export const useMyPartyStore = create<MyPartyState>()(
               position: p.position,
               pokemonId: p.pokemon_id,
               name: p.name,
-              details: p.regions,
+              fields: p.fields,
             };
           }
           return { slots: next, registrationState: "done" };
@@ -85,7 +90,7 @@ export const useMyPartyStore = create<MyPartyState>()(
         set({ slots: emptySlots(), registrationState: "idle", error: null }),
     }),
     {
-      name: "my-party-store",
+      name: "my-party-store-v2",
       partialize: (state) => ({
         slots: state.slots,
       }),

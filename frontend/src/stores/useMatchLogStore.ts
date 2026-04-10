@@ -1,7 +1,9 @@
 import { create } from "zustand";
 import type {
+  BattleEventMessage,
   BattleResultMessage,
   MatchTeamsMessage,
+  OcrResult,
   SceneChangeMessage,
   TeamSelectionMessage,
 } from "../types";
@@ -38,11 +40,31 @@ export interface BattleResultLogEntry extends BaseLogEntry {
   result: "win" | "lose" | "unknown";
 }
 
+export interface OcrResultLogEntry extends BaseLogEntry {
+  kind: "ocr_result";
+  scene: string;
+  regions: Array<{ name: string; text: string }>;
+}
+
+export interface BattleEventLogEntry extends BaseLogEntry {
+  kind: "battle_event";
+  eventType: string;
+  side: "player" | "opponent";
+  rawText: string;
+  pokemonName: string | null;
+  speciesId: number | null;
+  moveName: string | null;
+  moveId: number | null;
+  details: Record<string, unknown>;
+}
+
 export type MatchLogEntry =
   | SceneChangeLogEntry
   | MatchTeamsLogEntry
   | TeamSelectionLogEntry
-  | BattleResultLogEntry;
+  | BattleResultLogEntry
+  | OcrResultLogEntry
+  | BattleEventLogEntry;
 
 interface MatchLogState {
   entries: MatchLogEntry[];
@@ -50,6 +72,8 @@ interface MatchLogState {
   addMatchTeams: (msg: MatchTeamsMessage) => void;
   addTeamSelection: (msg: TeamSelectionMessage) => void;
   addBattleResult: (msg: BattleResultMessage) => void;
+  addOcrResult: (msg: OcrResult) => void;
+  addBattleEvent: (msg: BattleEventMessage) => void;
   clear: () => void;
 }
 
@@ -100,6 +124,30 @@ export const useMatchLogStore = create<MatchLogState>((set) => ({
         kind: "battle_result",
         timestamp: Date.now(),
         result: msg.result,
+      }),
+    ),
+  addOcrResult: (msg) =>
+    set((state) =>
+      append(state.entries, {
+        kind: "ocr_result",
+        timestamp: Date.now(),
+        scene: msg.scene,
+        regions: msg.regions.map((r) => ({ name: r.name, text: r.text })),
+      }),
+    ),
+  addBattleEvent: (msg) =>
+    set((state) =>
+      append(state.entries, {
+        kind: "battle_event",
+        timestamp: Date.now(),
+        eventType: msg.event_type,
+        side: msg.side,
+        rawText: msg.raw_text,
+        pokemonName: msg.pokemon_name,
+        speciesId: msg.species_id,
+        moveName: msg.move_name,
+        moveId: msg.move_id,
+        details: msg.details,
       }),
     ),
   clear: () => set({ entries: [] }),

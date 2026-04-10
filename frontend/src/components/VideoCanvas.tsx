@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { OcrResult, PokemonIdentifiedResult } from "../types";
 import type { SceneMeta } from "../api/devtools";
+import { RegistrationOverlay } from "./RegistrationOverlay";
 
 const COLORS = [
   "rgba(255, 107, 107, 0.7)",
@@ -237,6 +238,7 @@ export function VideoCanvas({
       <video ref={videoRef} autoPlay playsInline />
       <canvas ref={canvasRef} />
       <canvas ref={overlayRef} className="debug-overlay" />
+      <RegistrationOverlay />
     </main>
   );
 }

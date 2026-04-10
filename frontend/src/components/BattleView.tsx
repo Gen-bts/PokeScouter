@@ -6,6 +6,7 @@ import { OpponentPanel } from "./OpponentPanel";
 import { useConnectionStore } from "../stores/useConnectionStore";
 import { useSettingsStore } from "../stores/useSettingsStore";
 import { useBenchmarkStore } from "../stores/useBenchmarkStore";
+import { useMyPartyStore } from "../stores/useMyPartyStore";
 import { getScenes, type SceneMeta } from "../api/devtools";
 import type { ConnectionState } from "../types";
 
@@ -55,7 +56,13 @@ export function BattleView({
   const muted = useSettingsStore((s) => s.muted);
   const debugOverlay = useSettingsStore((s) => s.debugOverlay);
 
-  const FRAME_INTERVAL_MS = 500;
+  const partyRegState = useMyPartyStore((s) => s.registrationState);
+  const isPartyRegistering =
+    partyRegState === "detecting_screen1" ||
+    partyRegState === "reading_screen1" ||
+    partyRegState === "detecting_screen2" ||
+    partyRegState === "reading_screen2";
+  const FRAME_INTERVAL_MS = isPartyRegistering ? 150 : 500;
   const [availableScenes, setAvailableScenes] = useState<Record<string, SceneMeta>>({});
   const [paused, setPaused] = useState(false);
   const [sending, setSending] = useState(false);
@@ -139,7 +146,7 @@ export function BattleView({
     }, FRAME_INTERVAL_MS);
 
     return () => clearInterval(id);
-  }, [sending, isConnected, captureFrame, sendFrame]);
+  }, [sending, isConnected, captureFrame, sendFrame, FRAME_INTERVAL_MS]);
 
   return (
     <>

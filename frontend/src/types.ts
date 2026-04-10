@@ -135,6 +135,20 @@ export interface BattleResultMessage {
   result: "win" | "lose" | "unknown";
 }
 
+// --- バトルイベント ---
+
+export interface BattleEventMessage {
+  type: "battle_event";
+  event_type: string;
+  side: "player" | "opponent";
+  raw_text: string;
+  pokemon_name: string | null;
+  species_id: number | null;
+  move_name: string | null;
+  move_id: number | null;
+  details: Record<string, unknown>;
+}
+
 // --- パーティ登録 ---
 
 export type PartyRegistrationPhase =
@@ -153,7 +167,7 @@ export interface PartyRegisterProgressMessage {
 export interface PartyRegisterScreenMessage {
   type: "party_register_screen";
   screen: number;
-  regions: Record<string, string>;
+  slots: Record<number, Record<string, string>>;
   pokemon: Array<{
     position: number;
     pokemon_id: number | null;
@@ -163,11 +177,27 @@ export interface PartyRegisterScreenMessage {
   }>;
 }
 
+export interface MoveMeta {
+  type: string | null;
+  power: number | null;
+  accuracy: number | null;
+  damage_class: string | null;
+}
+
+export interface ValidatedField {
+  raw: string;
+  validated: string | null;
+  confidence: number;
+  matched_id?: number | null;
+  matched_identifier?: string | null;
+  move_meta?: MoveMeta | null;
+}
+
 export interface PartySlotData {
   position: number;
   pokemon_id: number | null;
   name: string | null;
-  regions: Record<string, string>;
+  fields: Record<string, ValidatedField>;
 }
 
 export interface PartyRegisterCompleteMessage {
@@ -178,4 +208,22 @@ export interface PartyRegisterCompleteMessage {
 export interface PartyRegisterErrorMessage {
   type: "party_register_error";
   message: string;
+}
+
+// --- タイプ一貫性 ---
+
+export interface TypeConsistencyEntry {
+  type: string;
+  name: string;
+  consistent: boolean;
+  min_effectiveness: number;
+  per_pokemon: Array<{
+    pokemon_id: number;
+    effectiveness: number;
+  }>;
+}
+
+export interface TypeConsistencyResult {
+  results: TypeConsistencyEntry[];
+  pokemon_count: number;
 }

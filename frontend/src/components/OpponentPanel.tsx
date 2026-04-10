@@ -4,42 +4,127 @@ import {
   type OpponentSlot,
 } from "../stores/useOpponentTeamStore";
 import { usePokemonNames } from "../hooks/usePokemonNames";
-import type { PokemonCandidate } from "../types";
+import { usePokemonDetail, type PokemonDetail } from "../hooks/usePokemonDetail";
+import { PokemonSprite } from "./PokemonSprite";
+import { TypeConsistencyPanel } from "./TypeConsistencyPanel";
+import { TypeBadge } from "./TypeBadge";
+import type { PokemonCandidate, TypeConsistencyEntry } from "../types";
 
-function SpriteImg({
-  pokemonId,
-  size = 48,
-}: {
-  pokemonId: number | null;
-  size?: number;
-}) {
-  const [errored, setErrored] = useState(false);
+const STAT_LABELS: Record<string, string> = {
+  hp: "HP", atk: "こうげき", def: "ぼうぎょ",
+  spa: "とくこう", spd: "とくぼう", spe: "すばやさ",
+};
 
-  // pokemonId が変わったらエラー状態をリセット
-  useEffect(() => {
-    setErrored(false);
-  }, [pokemonId]);
+const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"] as const;
 
-  if (pokemonId === null || errored) {
-    return (
-      <div
-        className="opponent-slot-placeholder"
-        style={{ width: size, height: size }}
-      >
-        ?
-      </div>
-    );
-  }
+function formatMultiplier(m: number): string {
+  if (m === 0) return "x0";
+  if (m === 0.25) return "x1/4";
+  if (m === 0.5) return "x1/2";
+  if (m === 2) return "x2";
+  if (m === 4) return "x4";
+  return `x${m}`;
+}
 
+function getEffClass(eff: number): string {
+  if (eff === 0) return "immune";
+  if (eff < 1) return "resist";
+  if (eff === 1) return "neutral";
+  if (eff >= 4) return "super4";
+  return "super2";
+}
+
+function OpponentTooltipContent({ detail }: { detail: PokemonDetail }) {
   return (
-    <img
-      className="opponent-slot-img"
-      src={`/sprites/${pokemonId}.png`}
-      alt={`#${pokemonId}`}
-      width={size}
-      height={size}
-      onError={() => setErrored(true)}
-    />
+    <>
+      {/* タイプ */}
+      <div className="opponent-tooltip-types">
+        {detail.types.map((t) => (
+          <TypeBadge key={t} type={t} />
+        ))}
+      </div>
+
+      {/* とくせい */}
+      <div className="tooltip-section">
+        <div className="tooltip-section-label">とくせい</div>
+        <div className="opponent-tooltip-abilities">
+          {detail.abilities.normal.map((a) => (
+            <span key={a.name} className="opponent-tooltip-ability">
+              {a.name}
+              {a.effect && (
+                <span className="ability-desc-tooltip">{a.effect}</span>
+              )}
+            </span>
+          ))}
+          {detail.abilities.hidden && (
+            <span className="opponent-tooltip-ability opponent-tooltip-ability-hidden">
+              {detail.abilities.hidden.name}
+              <span className="opponent-tooltip-hidden-tag">夢</span>
+              {detail.abilities.hidden.effect && (
+                <span className="ability-desc-tooltip">{detail.abilities.hidden.effect}</span>
+              )}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* 種族値 */}
+      <div className="tooltip-section">
+        <div className="tooltip-section-label">種族値</div>
+        <div className="tooltip-stats-grid">
+          {STAT_ORDER.map((key) => {
+            const val = detail.base_stats[key];
+            return (
+              <span key={key} className="tooltip-stat-label">
+                {STAT_LABELS[key]}
+                <span className="tooltip-stat-value">{val}</span>
+              </span>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* タイプ相性 */}
+      {detail.type_effectiveness.weak.length > 0 && (
+        <div className="tooltip-section">
+          <div className="tooltip-section-label">弱点</div>
+          <div className="opponent-tooltip-eff-list">
+            {detail.type_effectiveness.weak.map((e) => (
+              <span key={e.type} className="opponent-tooltip-eff-item opponent-tooltip-eff-weak">
+                <TypeBadge type={e.type} size="sm" />
+                <span className="opponent-tooltip-eff-mult">{formatMultiplier(e.multiplier)}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      {detail.type_effectiveness.resist.length > 0 && (
+        <div className="tooltip-section">
+          <div className="tooltip-section-label">耐性</div>
+          <div className="opponent-tooltip-eff-list">
+            {detail.type_effectiveness.resist.map((e) => (
+              <span key={e.type} className="opponent-tooltip-eff-item opponent-tooltip-eff-resist">
+                <TypeBadge type={e.type} size="sm" />
+                <span className="opponent-tooltip-eff-mult">{formatMultiplier(e.multiplier)}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      {detail.type_effectiveness.immune.length > 0 && (
+        <div className="tooltip-section">
+          <div className="tooltip-section-label">無効</div>
+          <div className="opponent-tooltip-eff-list">
+            {detail.type_effectiveness.immune.map((e) => (
+              <span key={e.type} className="opponent-tooltip-eff-item opponent-tooltip-eff-immune">
+                <TypeBadge type={e.type} size="sm" />
+                <span className="opponent-tooltip-eff-mult">{formatMultiplier(e.multiplier)}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -249,10 +334,32 @@ function CandidateSelector({
   );
 }
 
-function SlotRow({ slot }: { slot: OpponentSlot }) {
+function SlotRow({
+  slot,
+  isTooltipActive,
+  setActiveTooltip,
+  closeTimerRef,
+  hoveredTypeEntry,
+}: {
+  slot: OpponentSlot;
+  isTooltipActive: boolean;
+  setActiveTooltip: (position: number | null) => void;
+  closeTimerRef: React.RefObject<ReturnType<typeof setTimeout> | null>;
+  hoveredTypeEntry: TypeConsistencyEntry | null;
+}) {
   const [editing, setEditing] = useState<false | "candidates" | "manual">(
     false,
   );
+  const slotRef = useRef<HTMLDivElement>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ top: number; right: number } | null>(null);
+  const { detail } = usePokemonDetail(slot.pokemonId);
+
+  const effectivenessInfo = useMemo(() => {
+    if (!hoveredTypeEntry || slot.pokemonId === null) return null;
+    return hoveredTypeEntry.per_pokemon.find(
+      (p) => p.pokemon_id === slot.pokemonId,
+    ) ?? null;
+  }, [hoveredTypeEntry, slot.pokemonId]);
 
   const openEdit = useCallback(() => {
     if (slot.candidates.length > 0) {
@@ -262,13 +369,53 @@ function SlotRow({ slot }: { slot: OpponentSlot }) {
     }
   }, [slot.candidates.length]);
 
+  const handleMouseEnter = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    if (!detail || editing) return;
+    const rect = slotRef.current?.getBoundingClientRect();
+    if (rect) {
+      setTooltipPos({
+        top: rect.top + rect.height / 2,
+        right: window.innerWidth - rect.left + 8,
+      });
+    }
+    setActiveTooltip(slot.position);
+  };
+
+  const handleMouseLeave = () => {
+    closeTimerRef.current = setTimeout(() => setActiveTooltip(null), 150);
+  };
+
+  const handleTooltipMouseEnter = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const handleTooltipMouseLeave = () => {
+    setActiveTooltip(null);
+  };
+
+  const showTooltip = isTooltipActive && tooltipPos && detail && !editing;
+
   return (
     <div
+      ref={slotRef}
       className={`opponent-slot${slot.isManual ? " opponent-slot-manual" : ""}${slot.pokemonId === null ? " opponent-slot-empty" : ""}`}
       style={editing ? { zIndex: 50 } : undefined}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      <span className="opponent-slot-pos">#{slot.position}</span>
-      <SpriteImg pokemonId={slot.pokemonId} />
+      <PokemonSprite
+        pokemonId={slot.pokemonId}
+        size={52}
+        className="opponent-slot-img"
+        placeholderClass="opponent-slot-placeholder"
+      />
       <div className="opponent-slot-info">
         {editing === "candidates" ? (
           <CandidateSelector
@@ -307,6 +454,26 @@ function SlotRow({ slot }: { slot: OpponentSlot }) {
           &#9998;
         </button>
       )}
+      {showTooltip && (
+        <div
+          className="opponent-slot-tooltip"
+          style={{
+            top: tooltipPos.top,
+            right: tooltipPos.right,
+          }}
+          onMouseEnter={handleTooltipMouseEnter}
+          onMouseLeave={handleTooltipMouseLeave}
+        >
+          <OpponentTooltipContent detail={detail} />
+        </div>
+      )}
+      {effectivenessInfo && (
+        <div
+          className={`slot-eff-overlay slot-eff-${getEffClass(effectivenessInfo.effectiveness)}`}
+        >
+          {formatMultiplier(effectivenessInfo.effectiveness)}
+        </div>
+      )}
     </div>
   );
 }
@@ -314,6 +481,10 @@ function SlotRow({ slot }: { slot: OpponentSlot }) {
 export function OpponentPanel() {
   const slots = useOpponentTeamStore((s) => s.slots);
   const clear = useOpponentTeamStore((s) => s.clear);
+
+  const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [hoveredType, setHoveredType] = useState<TypeConsistencyEntry | null>(null);
 
   const hasAny = slots.some((s) => s.pokemonId !== null);
 
@@ -329,9 +500,17 @@ export function OpponentPanel() {
       </div>
       <div className="opponent-panel-slots">
         {slots.map((slot) => (
-          <SlotRow key={slot.position} slot={slot} />
+          <SlotRow
+            key={slot.position}
+            slot={slot}
+            isTooltipActive={activeTooltip === slot.position}
+            setActiveTooltip={setActiveTooltip}
+            closeTimerRef={closeTimerRef}
+            hoveredTypeEntry={hoveredType}
+          />
         ))}
       </div>
+      <TypeConsistencyPanel onTypeHover={setHoveredType} />
     </div>
   );
 }
