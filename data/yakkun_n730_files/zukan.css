@@ -1,0 +1,309 @@
+
+.change{}
+.physics{color:#c36;}
+.special{color:#36c;}
+.secrets{color:#c36;}
+
+ul.select_list.gen_list{
+	display:flex;
+}
+ul.select_list.gen_list li{
+	max-width:47px;
+	flex:1;
+	white-space: nowrap;
+	margin:0;
+}
+ul.select_list.gen_list li:last-child{
+	margin-right:0;
+}
+ul.select_list.gen_list li.disabled{
+	background: #fafafa;
+	color:#cdcdcd;
+	border: 1px solid #fafafa;
+	cursor:default;
+}
+ul.select_list.gen_list li.disabled i{
+	opacity: 0.15;
+}
+ul.select_list.gen_list li:not(.disabled) + li a{
+	border-left:none;
+}
+ul.select_list.gen_list li:has(+ .selected) a{
+	border-right:none;
+}
+ul.select_list.gen_list li > *{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	font-size: 11px;
+	line-height: 14px;
+	text-align: center;
+	padding: 5px 0;
+}
+
+span.egg_move_pokemon{color:#f44;font-weight:bold;text-decoration:underline;}
+
+#contents div.zukan_navi{display:flex;justify-content:space-between;align-items:center;margin:10px 0 -5px 0;padding:0 10px;}
+#contents div.zukan_navi img{margin:-8px 0 -5px 0;}
+#contents div.zukan_navi div{padding:0;flex:1;}
+#contents div.zukan_navi div.search_box{width:270px;min-width:270px;}
+#contents div.zukan_navi p{text-indent:0;}
+#contents div.zukan_navi div:first-child a.no_border{padding-left:20px;background:url(//img.yakkun.com/page/common/link_arrow_left.png) left center no-repeat !important;}
+#contents div.zukan_navi div:last-child{text-align:right;}
+#contents div.zukan_navi div:last-child a.no_border{padding-right:20px;background:url(//img.yakkun.com/page/common/link_arrow.png) right center no-repeat !important;}
+
+table tr.head{
+	background: #ff5d1e;
+	background: linear-gradient(to right,  #ff5d1e 0%,#c21ac0 100%);
+	border: none;
+}
+table tr.head th{
+	background-color: transparent;
+}
+
+#pokemon_icon img{
+	position: relative;
+	z-index: 100;
+}
+#pokemon_icon > span{
+	display: block;
+}
+#pokemon_icon > span > span{
+	position: relative;
+	display: block;
+	text-align: center;
+	margin: -15px auto 10px auto;
+	padding: 2px;
+	font-size: 0.8em;
+	line-height:1.4em;
+	background: #eee;
+	width: 70%;
+	border-radius: 10px;
+}
+#pokemon_icon > span > span::before {
+	content: "";
+	position: absolute;
+	top: -14px;
+	left: 50%;
+	margin-left: -7px;
+	border: 7px solid transparent;
+	border-bottom: 7px solid #eee;
+}
+
+
+table li{margin:0;padding:0;background:transparent;}
+table ul{margin:-5px;padding:5px;}
+table ul.type li{margin:2px 2px -1px 2px;}
+table ul.type a{border:none;background:transparent;}
+table ul.type a:hover{border:none;}
+table ul.evo_list li{margin:15px 0;}
+table ul.evo_list li.evo_arrow{height:20px;margin:4px 0 0 0;background:url("//img.yakkun.com/page/evo_arrow.gif") center center no-repeat;text-indent:-9999px;}
+table ul.evo_list hr{margin:20px 0;border-color:#fd7f97;}
+table ul li.point{color:#f66;}
+table ul li{list-style:none;background:transparent;}
+table img.help{float:right;margin:-2px 0;}
+
+a.switch_link{display:block;text-align:center;margin:10px 0;padding:5px 0;border:none;background:#def;}
+a.switch_link:hover{background:#69c;}
+#reverse_type_aisyou_list{display:none;}
+
+#contents hr.clear{position:relative;top:30px;margin-bottom:50px;_top:0;_margin:5px 0 0 0;}
+
+.c1 a{color:#444;border-color:#444;}
+.c1 a:hover{color:#fff;}
+
+table.encount_table{
+	width:300px;
+	float: left;
+	margin-right: 5px;
+}
+table.encount_table td{
+	vertical-align: middle;
+}
+table.encount_table td.place_name{
+	min-width:120px;
+}
+table.encount_table td.per{
+	width: 55px;
+	padding: 0;
+}
+table.get_table{
+	width: 255px;
+	margin-bottom: 5px;
+}
+table.get_table td.place_name{
+	white-space: nowrap;
+}
+table.get_table th.level{
+	min-width: 30px;
+}
+table#how_to_get td.level{
+	text-align:center;
+	white-space: nowrap;
+}
+
+
+#contents div.move_menu{
+	width: 100%;
+	position: sticky;
+	top:-1px;
+	z-index: 99999;
+	background: #5e9ff1;
+	color: #fff;
+	text-shadow: none;
+}
+ul.move_menu_list{
+	width: 100%;
+	padding: 0;
+	display: flex;
+	background: linear-gradient(to bottom, #FEFEFF, #e3eef5);
+	text-shadow:none;
+	font-size: 12px;
+	border-top: 0.99px solid #ccc;
+}
+ul.move_menu_list li:last-child{
+	border-right: 0.99px solid #ccc;
+}
+ul.move_menu_list li{
+	padding: 0;
+	background: transparent;
+	flex: 1;
+	border-left: 0.99px solid #ccc;
+}
+ul.move_menu_list li.selected{
+	border-radius: 10px 10px 0 0 / 10px 10px 0 0;
+	background: #307ee1;
+	border-left: none;
+}
+ul.move_menu_list li.selected + li{
+	border-left: none;
+}
+ul.move_menu_list li a{
+	display: inline-block;
+	text-align: center;
+	width: 100%;
+	padding: 4px 0;
+	border: none;
+	color: #666;
+}
+ul.move_menu_list li.selected a{
+	color: #fff;
+}
+.move_filter_container{
+	margin: 0;
+	padding: 4px 10px;
+	font-size: 11px;
+	line-height: 20px;
+	background: transparent;
+}
+.move_filter_container > *{
+	margin-right: 5px;
+}
+.move_filter_container input[type="checkbox"]{
+	vertical-align: middle;
+}
+.move_filter_container > label:nth-of-type(1):before{
+	content: "\A" ;
+	white-space: pre;
+}
+#type_mode_select{max-width:120px;}
+#type_mode_select:has(option:not([value="0"]):checked), .move_filter_container select:not(#type_mode_select):has(option:not([value="-1"]):checked){background-color: #87e8ff;}
+
+#move_list{width: 100%}
+#move_list tr.move_main_row td{background:#def;}
+#move_list tr.move_main_row a{border:none;color:#444;border-color:#444;}
+#move_list tr.move_main_row a:hover{color:#fff;}
+#move_list tr.move_main_row .hover a{border-bottom:1px dashed #444;}
+#move_list tr.move_main_row td.move_condition_cell{text-align:center;font-size:10px;}
+#move_list tr.move_main_row td.move_condition_cell span.tm{color:#c21ac0;font-weight:bold;}
+#move_list tr.move_main_row td.move_condition_cell span.tr{color:#ff5d1e;font-weight:bold;}
+#move_list tr.move_main_row td.move_condition_cell span.value{font-size:15px;vertical-align:-1px;color:#444;font-weight:normal;}
+#move_list tr.move_detail_row{text-align:center;}
+#move_list tr.move_detail_row td.dyn{font-size:8px;color:#888;}
+#move_list tr.move_detail_row td.move_ex_cell{width:260px;line-height:14px;font-size:9px;text-align:left !important;}
+
+#move_list.datail_hide tr.float_thead{display:none;}
+#move_list.datail_hide tr.move_detail_row{display:none;}
+#move_list.datail_hide tr.move_main_row td.move_name_cell{background:#fff;}
+#move_list tr.filter_hide{display:none;}
+
+#move_list tr.move_head2 th{
+	position: sticky;
+	top: 0;
+	z-index: 9999;
+}
+#move_list tr.move_head2 th:before{
+	content : "" ;
+	position : absolute;
+	top : 0 ;
+	left : 0 ;
+	width : 100% ;
+	height : 100%;
+	border-top :1px solid #6699CC;
+	pointer-events: none;
+}
+#move_list tr.move_head2 th:after{
+	content : "" ;
+	position : absolute;
+	top : 0 ;
+	left : 0 ;
+	width : 100% ;
+	height : 100%;
+	border-right :1px solid #6699CC;
+	pointer-events: none;
+}
+
+#move_list tr.partition td{
+	height:40px;
+	border-left-style: hidden;
+	border-right-style: hidden;
+}
+#move_list tr.move_note td{
+	border-left-style: hidden;
+	border-right-style: hidden;
+	border-bottom-style: hidden;
+}
+#move_list tr.past_move td{
+	-ms-filter:brightness(90%); 
+	-moz-filter:brightness(90%); 
+	-webkit-filter:brightness(90%); 
+	filter:brightness(90%); 
+}
+
+.move_name_container{display:flex;align-items:center;padding: 5px 0;}
+.move_name{flex:1 0 200px;}
+.move_soft_list{display:flex;gap:5px;align-items: center;}
+.move_soft_list > div{text-align:right;}
+.move_soft_list .soft{padding:5px 5px;font-size:0.6em;line-height:1;border-radius:5px;font-weight:bold;border:1px solid #b9d4ee;background:#fff;}
+.move_soft_list .soft_new{color:#439BD2;}
+.move_soft_list .soft_sv{color:#e64c1f;}
+.move_soft_list .soft_za{color:#4caf5e;}
+.move_soft_list .soft_swsh{color:#327cdc;}
+.move_soft_list .soft_pla{color:#4a618e;}
+.move_soft_list .soft_bdsp{color:#2ca9f0;}
+.move_soft_list .soft_sm{color:#ffa528;}
+.new_move{margin: 0 0 0 10px; padding: 2px 5px; color: #fff; background: #439BD2; font-size:60%;border-radius: 5px; display: inline; text-shadow: none;}
+
+ul.other_move_list{overflow:hidden;}
+ul.other_move_list li{font-size:10px;color:#999;float:left;white-space: nowrap;}
+ul.other_move_list a{font-size:14px;color:#444;border-color:#444;}
+
+.multi_select { display:inline-block; color:#444; font-size: 14px; user-select: none; }
+.ms_btn { display: flex; justify-content: space-between; padding: 0 5px; border: 1px solid #69c; cursor: pointer; background: #deeefe; overflow: hidden; }
+.ms_list { display: none; width: max-content; position: absolute; border: 1px solid #69c; border-radius: 0 0 6px 6px; background: #deeefe; max-height: 80vh; overflow-y: auto; z-index: 10; box-shadow: 0 4px 20px #439bd288; }
+.multi_select.open .ms_list { display: block; }
+.ms_list label { display: flex; align-items: center; gap: 8px; padding: 6px; cursor: pointer; }
+.ms_list label:hover { background: #e1669d; color:#fff; }
+.ms_list label.invalid { color: #aaa; }
+.ms_list input[type="checkbox"] { display: none; }
+.ms_list input.search { background-color:#fff; margin:5px; }
+.ms_list label:has(input:checked) { background:#1d7df1; color:#fff; }
+.ms_val { width: 100px; }
+.ms_tag { display: inline-block; }
+.ms_tag.type_icon { width:30px !important; height:auto !important; line-height: 16px; margin: -3px 0 0 0 !important; }
+.ms_tag.pokemon_tag { position: relative; background:#34a0f9; border-radius: 4px; vertical-align: middle; height: auto !important; padding: 0 5px 0 30px; line-height: 16px; font-size: 8px; font-weight: bold; color: #fff; margin: -3px 0 0 0 !important; white-space:nowrap;}
+.ms_tag.pokemon_tag .poke_icon { margin-top: -12px; position: absolute; left: 0; }
+.ms_tag span { cursor: pointer; margin-left: 2px; }
+.ms_caret { font-size:0.8em; }
+

@@ -1,0 +1,41 @@
+
+$(function($){
+	$("body").append("<div id=\"helpWindow\" style=\"display:none;position:absolute;width:400px;text-align:left;background-color:#fff;border:2px solid #ac7;margin:0;padding:0;z-index:100\" onmouseover=\"mouse_position=1\" onmouseout=\"mouse_position=0\"><div style=\"width:396px;background-color:#fff;border:1px dotted #ac7;margin:1px;padding:0;\"><div id=\"helpWindowIn\" style=\"width:386px;margin:5px\">&nbsp;</div></div></div>");
+});
+
+var flag=0;
+var mouse_position=0;
+
+function helpOpen(e,message,title,offset){
+if(flag)helpClose();
+else{
+message="<p>"+message+"</p>";
+if(title!=undefined)message="<p><strong>"+title+"</strong></p>"+message;
+document.getElementById("helpWindowIn").innerHTML=message;
+if(navigator.appName.indexOf("Microsoft")>-1){x=e.x+10;y=e.y+10;}else{x=e.layerX ? e.layerX:e.x;y=(e.layerY ? e.layerY:e.y)+10;}
+if(offset !== undefined) x+=offset;
+else if(x>300)x-=416;
+if(x < 0) x = 0;
+document.getElementById("helpWindow").style.left=x+"px";
+document.getElementById("helpWindow").style.top=y+"px";
+document.getElementById("helpWindow").style.display="block";
+flag=1;
+}
+}
+
+function helpClose(){
+document.getElementById("helpWindow").style.display="none";
+flag=0;
+}
+
+function helpCursor(){
+oElements=document.getElementsByTagName("img");
+for(i=0;i<oElements.length;i++){
+oElement=oElements[i];
+if(oElement.src.match(/img\/page\/help.gif$/i))oElement.style.cursor="hand";
+}
+}
+
+document.onmousedown=function(){
+if(!mouse_position)helpClose();
+}
