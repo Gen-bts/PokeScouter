@@ -10,6 +10,7 @@ import asyncio
 import base64
 import json
 import logging
+import re
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -22,7 +23,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.data.names import get_id_to_name
 from app.dependencies import get_detector, get_game_data, get_pokemon_matcher, get_recognizer, ocr_lock
 from app.ocr.region import RegionConfig
-from app.recognition.battle_log_parser import BattleLogParser
+from app.recognition.battle_log_parser import BattleLogParser, match_against_party
 from app.recognition.party_register import PartyRegistrationMachine
 from app.recognition.scene_state import SceneStateMachine
 
@@ -51,6 +52,7 @@ class BattleSession:
     _read_once_cache: dict[str, dict] = field(default_factory=dict, repr=False)
     _pokemon_icon_cache: dict[str, dict] = field(default_factory=dict, repr=False)
     _battle_log_parser: BattleLogParser | None = field(default=None, repr=False)
+    _opponent_party: list[dict] = field(default_factory=list, repr=False)
 
     def effective_interval_ms(self, scene_key: str, config: RegionConfig) -> int:
         """現在のシーンに応じた有効インターバル(ms)を返す.
@@ -79,6 +81,10 @@ def _run_scene_detection(frame: np.ndarray, session: BattleSession) -> dict | No
     """
     detector = get_detector()
     sm = session._state_machine
+
+    # 強制遷移クールダウン中は検出をスキップ（スレッド競合防止）
+    if sm.is_force_cooldown_active():
+        return None
 
     candidates = sm.candidates()
     detections = detector.detect(frame, candidates) if candidates else {}
@@ -458,6 +464,24 @@ def _run_ocr_benchmark(frame: np.ndarray, scene: str) -> dict:
     }
 
 
+_HP_DIGITS_RE = re.compile(r"\d+")
+
+
+def _parse_hp_percent(text: str) -> int | None:
+    """OCR テキストから HP パーセンテージを解析する.
+
+    "73%", "100", "73％" などの形式に対応。
+    """
+    cleaned = text.replace("%", "").replace("％", "").strip()
+    m = _HP_DIGITS_RE.search(cleaned)
+    if m is None:
+        return None
+    value = int(m.group())
+    if 0 <= value <= 100:
+        return value
+    return None
+
+
 @router.websocket("/ws/battle")
 async def websocket_battle(websocket: WebSocket) -> None:
     """バトル WebSocket エンドポイント."""
@@ -525,6 +549,7 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         session._last_scene_key = "none"
                         session._read_once_cache.clear()
                         session._pokemon_icon_cache.clear()
+                        session._opponent_party.clear()
                         logger.info("ステートマシンをリセット")
                         await websocket.send_json({
                             "type": "scene_change",
@@ -532,6 +557,31 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             "top_level": "none",
                             "sub_scene": None,
                             "confidence": 0.0,
+                        })
+                    elif data.get("type") == "force_scene":
+                        target = data.get("scene", "")
+                        if not target:
+                            logger.warning("空の強制遷移先")
+                            continue
+                        sub_scenes = set(SceneStateMachine.BATTLE_SUB_SCENES)
+                        if target in sub_scenes:
+                            top_level, sub_scene = "battle", target
+                        else:
+                            top_level, sub_scene = target, None
+                        new_state = session._state_machine.force_transition(top_level, sub_scene)
+                        session._last_scene_key = new_state.scene_key
+                        session._read_once_cache.clear()
+                        session._pokemon_icon_cache.clear()
+                        if session._battle_log_parser is not None:
+                            session._battle_log_parser.reset()
+                        logger.info("強制シーン遷移: %s (top=%s, sub=%s)",
+                                    new_state.scene_key, top_level, sub_scene)
+                        await websocket.send_json({
+                            "type": "scene_change",
+                            "scene": new_state.scene_key,
+                            "top_level": new_state.top_level,
+                            "sub_scene": new_state.sub_scene,
+                            "confidence": new_state.confidence,
                         })
                     elif data.get("type") == "party_register_start":
                         recognizer = get_recognizer()
@@ -642,6 +692,12 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         opponent_team = (
                             pokemon_result["pokemon"] if pokemon_result else []
                         )
+                        # セッションに相手パーティを保存（パーティ限定マッチング用）
+                        session._opponent_party = [
+                            {"species_id": p["pokemon_id"], "name": p["name"]}
+                            for p in opponent_team
+                            if p.get("pokemon_id") is not None
+                        ]
                         await websocket.send_json({
                             "type": "match_teams",
                             "player_team": player_team,
@@ -711,27 +767,30 @@ async def websocket_battle(websocket: WebSocket) -> None:
             session._last_process_time = time.monotonic()
             await websocket.send_json(result)
 
-            # バトルシーンのメインテキストをパースして構造化イベントを送信
+            # バトルシーンの OCR 結果を処理
             if scene_key == "battle" and not session.benchmark:
                 if session._battle_log_parser is None:
                     session._battle_log_parser = BattleLogParser(get_game_data())
                 text1 = ""
                 text2 = ""
-                opponent_name = ""
-                player_name = ""
+                opponent_pokemon_name = ""
+                opponent_hp_text = ""
                 for r in result.get("regions", []):
                     if r["name"] == "メインテキスト１":
                         text1 = r["text"]
                     elif r["name"] == "メインテキスト２":
                         text2 = r["text"]
-                    elif r["name"] == "相手の名前":
-                        opponent_name = r["text"]
-                    elif r["name"] == "自分の名前":
-                        player_name = r["text"]
+                    elif r["name"] == "相手ポケモン名":
+                        opponent_pokemon_name = r["text"].strip()
+                    elif r["name"] == "相手HP":
+                        opponent_hp_text = r["text"].strip()
+
+                # トレーナー名はバトルログテキストから取得（専用リージョンは廃止）
                 session._battle_log_parser.update_context(
-                    opponent_trainer=opponent_name or None,
-                    player_trainer=player_name or None,
+                    opponent_party=session._opponent_party or None,
                 )
+
+                # メインテキストをパースして構造化イベントを送信
                 battle_events = session._battle_log_parser.parse(text1, text2)
                 for ev in battle_events:
                     await websocket.send_json(ev.to_ws_message())
@@ -739,6 +798,28 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         "battle_event: %s side=%s pokemon=%s",
                         ev.event_type, ev.side, ev.pokemon_name,
                     )
+
+                # 相手ポケモン名をパーティ照合 + HP を送信
+                if opponent_pokemon_name and session._opponent_party:
+                    party_match = match_against_party(
+                        opponent_pokemon_name, session._opponent_party,
+                    )
+                    if party_match is not None:
+                        hp_percent = _parse_hp_percent(opponent_hp_text)
+                        await websocket.send_json({
+                            "type": "opponent_active",
+                            "species_id": party_match["species_id"],
+                            "pokemon_name": party_match["matched_name"],
+                            "hp_percent": hp_percent,
+                            "confidence": party_match["confidence"],
+                        })
+                        logger.debug(
+                            "opponent_active: %s (id=%d) HP=%s confidence=%.3f",
+                            party_match["matched_name"],
+                            party_match["species_id"],
+                            hp_percent,
+                            party_match["confidence"],
+                        )
 
     receive_task = asyncio.create_task(receive_loop())
     process_task = asyncio.create_task(process_loop())

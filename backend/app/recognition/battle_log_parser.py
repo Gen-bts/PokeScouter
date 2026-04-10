@@ -19,6 +19,63 @@ from app.data.game_data import GameData
 logger = logging.getLogger(__name__)
 
 
+# ---------------------------------------------------------------------------
+# パーティ限定マッチング
+# ---------------------------------------------------------------------------
+
+def match_against_party(
+    name_candidate: str,
+    party: list[dict],
+    threshold: float = 0.4,
+) -> dict[str, Any] | None:
+    """OCR テキストを既知の相手パーティ（6体）に照合する.
+
+    全ポケモン辞書（~4,400体）ではなく6体だけなので低閾値で誤検出しにくい。
+
+    Args:
+        name_candidate: OCR で読み取ったポケモン名テキスト。
+        party: 相手パーティ情報のリスト。各要素は {"species_id": int, "name": str}。
+        threshold: マッチ判定の最低類似度（デフォルト 0.4）。
+
+    Returns:
+        {"matched_name": str, "species_id": int, "confidence": float} or None。
+    """
+    norm = GameData._ocr_normalize
+    norm_text = norm(name_candidate.strip())
+    if not norm_text:
+        return None
+
+    best_name: str = ""
+    best_id: int = 0
+    best_ratio: float = 0.0
+
+    for member in party:
+        if member.get("name") is None:
+            continue
+        norm_name = norm(member["name"])
+        # 完全一致なら即返却
+        if norm_text == norm_name:
+            return {
+                "matched_name": member["name"],
+                "species_id": member["species_id"],
+                "confidence": 1.0,
+            }
+        ratio = SequenceMatcher(None, norm_text, norm_name).ratio()
+        if ratio > best_ratio:
+            best_ratio = ratio
+            best_name = member["name"]
+            best_id = member["species_id"]
+
+    if best_ratio < threshold:
+        return None
+
+    return {
+        "matched_name": best_name,
+        "species_id": best_id,
+        "confidence": round(best_ratio, 4),
+    }
+
+
 @dataclass(frozen=True, slots=True)
 class BattleEvent:
     """パース済みバトルイベント."""
@@ -80,7 +137,17 @@ def _extract_fainted(
     if not name_candidate:
         return None
 
-    match_result = game_data.fuzzy_match_pokemon_name(name_candidate)
+    # opponent 側: パーティ限定マッチングを先に試行
+    match_result = None
+    if side == "opponent":
+        party = ctx.get("opponent_party", [])
+        if party:
+            match_result = match_against_party(name_candidate, party)
+
+    # パーティマッチング失敗時は全辞書にフォールバック
+    if match_result is None:
+        match_result = game_data.fuzzy_match_pokemon_name(name_candidate)
+
     if match_result is not None:
         pokemon_name = match_result["matched_name"]
         species_id = match_result["species_id"]
@@ -124,7 +191,16 @@ def _extract_opponent_sent_out(
     else:
         trainer_name = ocr_trainer
 
-    match_result = game_data.fuzzy_match_pokemon_name(name_candidate)
+    # パーティ限定マッチングを先に試行
+    match_result = None
+    party = ctx.get("opponent_party", [])
+    if party:
+        match_result = match_against_party(name_candidate, party)
+
+    # パーティマッチング失敗時は全辞書にフォールバック
+    if match_result is None:
+        match_result = game_data.fuzzy_match_pokemon_name(name_candidate)
+
     if match_result is not None:
         pokemon_name = match_result["matched_name"]
         species_id = match_result["species_id"]
@@ -185,12 +261,15 @@ class BattleLogParser:
         *,
         opponent_trainer: str | None = None,
         player_trainer: str | None = None,
+        opponent_party: list[dict] | None = None,
     ) -> None:
         """OCR リージョン等から得たコンテキスト情報を更新する."""
         if opponent_trainer is not None:
             self._context["opponent_trainer"] = opponent_trainer
         if player_trainer is not None:
             self._context["player_trainer"] = player_trainer
+        if opponent_party is not None:
+            self._context["opponent_party"] = opponent_party
 
     def parse(self, line1: str, line2: str) -> list[BattleEvent]:
         """メインテキスト2行をパースし、構造化イベントのリストを返す.
