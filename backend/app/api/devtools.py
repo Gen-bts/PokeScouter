@@ -29,6 +29,9 @@ from .devtools_models import (
     FrameInfo,
     FullMatchBenchmarkRequest,
     PokemonIconUpdate,
+    RegionGroupCreate,
+    RegionGroupSlotUpdate,
+    RegionGroupTemplateUpdate,
     RegionUpdate,
     SceneCreate,
     SceneReorder,
@@ -460,6 +463,160 @@ async def delete_pokemon_icon(scene: str, name: str = Query(...)) -> dict[str, A
     if scene in data["scenes"] and name in data["scenes"][scene].get("pokemon_icons", {}):
         del data["scenes"][scene]["pokemon_icons"][name]
         _write_regions(data)
+    return data
+
+
+# ---------------------------------------------------------------------------
+# リージョングループ API
+# ---------------------------------------------------------------------------
+
+
+def _reload_config() -> None:
+    """メモリ上の RegionConfig を再読み込み."""
+    from app.dependencies import get_recognizer
+
+    try:
+        get_recognizer()._config.reload()
+    except RuntimeError:
+        pass
+
+
+def _get_scene_or_404(data: dict[str, Any], scene: str) -> dict[str, Any]:
+    if scene not in data["scenes"]:
+        raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
+    return data["scenes"][scene]
+
+
+def _get_group_or_404(
+    scene_data: dict[str, Any], group_name: str,
+) -> dict[str, Any]:
+    groups = scene_data.get("region_groups", {})
+    if group_name not in groups:
+        raise HTTPException(
+            status_code=404, detail=f"グループ '{group_name}' が見つかりません",
+        )
+    return groups[group_name]
+
+
+@router.post("/region-groups/{scene}")
+async def create_region_group(scene: str, body: RegionGroupCreate) -> dict[str, Any]:
+    """リージョングループを作成する."""
+    data = _ensure_scenes(_read_regions())
+    scene_data = _get_scene_or_404(data, scene)
+
+    if "region_groups" not in scene_data:
+        scene_data["region_groups"] = {}
+
+    if body.group_name in scene_data["region_groups"]:
+        raise HTTPException(
+            status_code=409, detail=f"グループ '{body.group_name}' は既に存在します",
+        )
+
+    scene_data["region_groups"][body.group_name] = {
+        "template": {
+            name: entry.model_dump() for name, entry in body.template.items()
+        },
+        "slots": [s.model_dump() for s in body.slots],
+    }
+    _write_regions(data)
+    _reload_config()
+    return data
+
+
+@router.delete("/region-groups/{scene}")
+async def delete_region_group(
+    scene: str, group_name: str = Query(...),
+) -> dict[str, Any]:
+    """リージョングループを削除する."""
+    data = _ensure_scenes(_read_regions())
+    scene_data = _get_scene_or_404(data, scene)
+
+    groups = scene_data.get("region_groups", {})
+    if group_name in groups:
+        del groups[group_name]
+        _write_regions(data)
+        _reload_config()
+    return data
+
+
+@router.post("/region-groups/{scene}/{group_name}/template")
+async def upsert_group_template(
+    scene: str, group_name: str, body: RegionGroupTemplateUpdate,
+) -> dict[str, Any]:
+    """テンプレートサブリージョンを追加/更新する."""
+    data = _ensure_scenes(_read_regions())
+    scene_data = _get_scene_or_404(data, scene)
+    group = _get_group_or_404(scene_data, group_name)
+
+    entry: dict[str, Any] = {
+        "dx": body.dx,
+        "dy": body.dy,
+        "w": body.w,
+        "h": body.h,
+        "type": body.type,
+    }
+    if body.type == "region":
+        entry["engine"] = body.engine
+    if body.read_once:
+        entry["read_once"] = True
+
+    group["template"][body.sub_name] = entry
+    _write_regions(data)
+    _reload_config()
+    return data
+
+
+@router.delete("/region-groups/{scene}/{group_name}/template")
+async def delete_group_template(
+    scene: str, group_name: str, sub_name: str = Query(...),
+) -> dict[str, Any]:
+    """テンプレートサブリージョンを削除する."""
+    data = _ensure_scenes(_read_regions())
+    scene_data = _get_scene_or_404(data, scene)
+    group = _get_group_or_404(scene_data, group_name)
+
+    if sub_name in group["template"]:
+        del group["template"][sub_name]
+        _write_regions(data)
+        _reload_config()
+    return data
+
+
+@router.post("/region-groups/{scene}/{group_name}/slots")
+async def upsert_group_slot(
+    scene: str, group_name: str, body: RegionGroupSlotUpdate,
+) -> dict[str, Any]:
+    """スロットを追加/更新する."""
+    data = _ensure_scenes(_read_regions())
+    scene_data = _get_scene_or_404(data, scene)
+    group = _get_group_or_404(scene_data, group_name)
+
+    # 既存スロットを名前で検索し更新、なければ追加
+    for slot in group["slots"]:
+        if slot["name"] == body.name:
+            slot["x"] = body.x
+            slot["y"] = body.y
+            break
+    else:
+        group["slots"].append(body.model_dump())
+
+    _write_regions(data)
+    _reload_config()
+    return data
+
+
+@router.delete("/region-groups/{scene}/{group_name}/slots")
+async def delete_group_slot(
+    scene: str, group_name: str, name: str = Query(...),
+) -> dict[str, Any]:
+    """スロットを削除する."""
+    data = _ensure_scenes(_read_regions())
+    scene_data = _get_scene_or_404(data, scene)
+    group = _get_group_or_404(scene_data, group_name)
+
+    group["slots"] = [s for s in group["slots"] if s["name"] != name]
+    _write_regions(data)
+    _reload_config()
     return data
 
 

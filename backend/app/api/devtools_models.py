@@ -139,3 +139,57 @@ class CropTestRequest(BaseModel):
     y: int
     w: int
     h: int
+
+
+# ---------------------------------------------------------------------------
+# リージョングループ（テンプレート + スロットによる一括定義）
+# ---------------------------------------------------------------------------
+
+
+class RegionGroupTemplateEntry(BaseModel):
+    """リージョングループのテンプレートサブリージョン."""
+
+    dx: int
+    dy: int
+    w: int
+    h: int
+    type: str = "region"  # "region" | "pokemon_icon"
+    engine: str = "paddle"
+    read_once: bool = False
+
+
+class RegionGroupSlot(BaseModel):
+    """リージョングループのスロット（アンカー位置）."""
+
+    name: str
+    x: int
+    y: int
+
+
+class RegionGroupCreate(BaseModel):
+    """リージョングループ作成リクエスト."""
+
+    group_name: str
+    template: dict[str, RegionGroupTemplateEntry] = {}
+    slots: list[RegionGroupSlot] = []
+
+
+class RegionGroupTemplateUpdate(BaseModel):
+    """テンプレートサブリージョン追加/更新リクエスト."""
+
+    sub_name: str
+    dx: int
+    dy: int
+    w: int
+    h: int
+    type: str = "region"
+    engine: str = "paddle"
+    read_once: bool = False
+
+
+class RegionGroupSlotUpdate(BaseModel):
+    """スロットアンカー追加/更新リクエスト."""
+
+    name: str
+    x: int
+    y: int

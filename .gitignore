@@ -8,3 +8,4 @@ backend/tests/fixtures/images/*.png
 backend/tests/fixtures/images/*.jpg
 backend/data/recordings/
 templates/pokemon/
+debug/
