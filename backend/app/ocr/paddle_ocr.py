@@ -56,24 +56,49 @@ class PaddleOCREngine(OCREngine):
 
         results: list[OCRResult] = []
         for page_result in self._ocr.predict(image):
-            texts: list[str] = page_result["rec_texts"]
-            scores: list[float] = page_result["rec_scores"]
-            polys: list[np.ndarray] = page_result["dt_polys"]
-            boxes: np.ndarray = page_result["rec_boxes"]
+            results.extend(self._parse_page_result(page_result))
+        return results
 
-            for i, text in enumerate(texts):
-                bbox = BoundingBox(
-                    x_min=int(boxes[i][0]),
-                    y_min=int(boxes[i][1]),
-                    x_max=int(boxes[i][2]),
-                    y_max=int(boxes[i][3]),
+    def recognize_batch(
+        self, images: list[np.ndarray], lang: str = "ja",
+    ) -> list[list[OCRResult]]:
+        """複数画像をバッチ推論する.
+
+        PaddleOCR の predict() にリストを渡すことで、
+        GPU カーネル起動・メモリ転送のオーバーヘッドを削減する。
+        """
+        if self._ocr is None:
+            raise RuntimeError("エンジン未ロード。先に load() を呼んでください。")
+        if not images:
+            return []
+
+        batch_results: list[list[OCRResult]] = []
+        for page_result in self._ocr.predict(images):
+            batch_results.append(self._parse_page_result(page_result))
+        return batch_results
+
+    @staticmethod
+    def _parse_page_result(page_result: dict) -> list[OCRResult]:
+        """predict() の1ページ分の結果を OCRResult リストに変換する."""
+        results: list[OCRResult] = []
+        texts: list[str] = page_result["rec_texts"]
+        scores: list[float] = page_result["rec_scores"]
+        polys: list[np.ndarray] = page_result["dt_polys"]
+        boxes: np.ndarray = page_result["rec_boxes"]
+
+        for i, text in enumerate(texts):
+            bbox = BoundingBox(
+                x_min=int(boxes[i][0]),
+                y_min=int(boxes[i][1]),
+                x_max=int(boxes[i][2]),
+                y_max=int(boxes[i][3]),
+            )
+            results.append(
+                OCRResult(
+                    text=text,
+                    confidence=float(scores[i]),
+                    bounding_box=bbox,
+                    raw={"polygon": polys[i].tolist()},
                 )
-                results.append(
-                    OCRResult(
-                        text=text,
-                        confidence=float(scores[i]),
-                        bounding_box=bbox,
-                        raw={"polygon": polys[i].tolist()},
-                    )
-                )
+            )
         return results

@@ -41,6 +41,15 @@ class OCRPipeline:
         """
         return self._engine.recognize(image, lang=lang)
 
+    def run_batch(
+        self,
+        images: list[np.ndarray],
+        *,
+        lang: str = "ja",
+    ) -> list[list[OCRResult]]:
+        """複数画像をバッチ認識する."""
+        return self._engine.recognize_batch(images, lang=lang)
+
     def run_from_file(
         self,
         path: str | Path,

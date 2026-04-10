@@ -88,6 +88,14 @@
           "h": 42,
           "engine": "paddle",
           "read_once": true
+        },
+        "相手トレーナー名": {
+          "x": 1564,
+          "y": 96,
+          "w": 281,
+          "h": 46,
+          "engine": "paddle",
+          "read_once": true
         }
       },
       "pokemon_icons": {
@@ -209,14 +217,14 @@
       "interval_ms": 500,
       "detection": {
         "_comment": "テンプレート画像を templates/move_select/ に配置してここに定義する",
-        "たたかう表示": {
-          "x": 1705,
-          "y": 769,
-          "w": 161,
-          "h": 47,
+        "技の説明表示": {
+          "x": 1720,
+          "y": 478,
+          "w": 128,
+          "h": 40,
           "method": "ocr",
           "engine": "paddle",
-          "excluded_text": "たたかう"
+          "expected_text": "技の説明"
         }
       },
       "regions": {
@@ -281,20 +289,6 @@
           "h": 41,
           "engine": "paddle"
         },
-        "自分もちもの": {
-          "x": 148,
-          "y": 468,
-          "w": 320,
-          "h": 86,
-          "engine": "paddle"
-        },
-        "相手もちもの": {
-          "x": 1413,
-          "y": 463,
-          "w": 359,
-          "h": 92,
-          "engine": "paddle"
-        },
         "メインテキスト１": {
           "x": 300,
           "y": 795,
@@ -321,6 +315,34 @@
           "y": 1006,
           "w": 83,
           "h": 44,
+          "engine": "paddle"
+        },
+        "自分もちもの・特性１": {
+          "x": 152,
+          "y": 465,
+          "w": 410,
+          "h": 42,
+          "engine": "paddle"
+        },
+        "自分もちもの・特性２": {
+          "x": 154,
+          "y": 517,
+          "w": 408,
+          "h": 35,
+          "engine": "paddle"
+        },
+        "相手もちもの・特性１": {
+          "x": 1366,
+          "y": 467,
+          "w": 398,
+          "h": 43,
+          "engine": "paddle"
+        },
+        "相手もちもの・特性２": {
+          "x": 1367,
+          "y": 517,
+          "w": 398,
+          "h": 35,
           "engine": "paddle"
         }
       }
@@ -402,73 +424,332 @@
       "display_name": "パーティ登録 画面1",
       "description": "パーティ登録の1枚目の画面",
       "interval_ms": 500,
-      "detection": {},
-      "regions": {
-        "ポケモン１名前": {
-          "x": 266,
-          "y": 299,
-          "w": 229,
-          "h": 40,
+      "detection": {
+        "ステータス": {
+          "x": 1058,
+          "y": 227,
+          "w": 146,
+          "h": 35,
+          "method": "ocr",
           "engine": "paddle",
-          "read_once": true
-        },
-        "ポケモン１特性": {
-          "x": 267,
-          "y": 348,
-          "w": 355,
-          "h": 36,
-          "engine": "paddle",
-          "read_once": true
-        },
-        "ポケモン１もちもの": {
-          "x": 269,
-          "y": 396,
-          "w": 354,
-          "h": 37,
-          "engine": "paddle"
-        },
-        "ポケモン１わざ１": {
-          "x": 678,
-          "y": 307,
-          "w": 240,
-          "h": 32,
-          "engine": "paddle",
-          "read_once": true
-        },
-        "ポケモン１わざ２": {
-          "x": 678,
-          "y": 355,
-          "w": 241,
-          "h": 30,
-          "engine": "paddle",
-          "read_once": true
-        },
-        "ポケモン１わざ３": {
-          "x": 679,
-          "y": 399,
-          "w": 240,
-          "h": 31,
-          "engine": "paddle",
-          "read_once": true
-        },
-        "ポケモン１わざ４": {
-          "x": 679,
-          "y": 444,
-          "w": 241,
-          "h": 30,
-          "engine": "paddle",
-          "read_once": true
+          "expected_text": "ステータス"
         }
       },
+      "region_groups": {
+        "ポケモン": {
+          "template": {
+            "名前": {
+              "dx": 0,
+              "dy": 0,
+              "w": 229,
+              "h": 40,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "特性": {
+              "dx": 1,
+              "dy": 49,
+              "w": 355,
+              "h": 36,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "もちもの": {
+              "dx": 3,
+              "dy": 97,
+              "w": 354,
+              "h": 37,
+              "type": "region",
+              "engine": "paddle"
+            },
+            "わざ１": {
+              "dx": 412,
+              "dy": 8,
+              "w": 240,
+              "h": 32,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "わざ２": {
+              "dx": 412,
+              "dy": 56,
+              "w": 241,
+              "h": 30,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "わざ３": {
+              "dx": 413,
+              "dy": 100,
+              "w": 240,
+              "h": 31,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "わざ４": {
+              "dx": 413,
+              "dy": 145,
+              "w": 241,
+              "h": 30,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            }
+          },
+          "slots": [
+            {
+              "name": "ポケモン１",
+              "x": 266,
+              "y": 299
+            },
+            {
+              "name": "ポケモン２",
+              "x": 1067,
+              "y": 297
+            },
+            {
+              "name": "ポケモン３",
+              "x": 266,
+              "y": 515
+            },
+            {
+              "name": "ポケモン４",
+              "x": 1067,
+              "y": 516
+            },
+            {
+              "name": "ポケモン５",
+              "x": 264,
+              "y": 732
+            },
+            {
+              "name": "ポケモン６",
+              "x": 1069,
+              "y": 733
+            }
+          ]
+        }
+      },
+      "regions": {},
       "pokemon_icons": {}
     },
     "party_screen_2": {
       "display_name": "パーティ登録 画面2",
       "description": "パーティ登録の2枚目の画面",
       "interval_ms": 500,
-      "detection": {},
+      "detection": {
+        "こうげき": {
+          "x": 270,
+          "y": 394,
+          "w": 97,
+          "h": 31,
+          "method": "ocr",
+          "engine": "paddle",
+          "expected_text": "こうげき"
+        }
+      },
       "regions": {},
-      "pokemon_icons": {}
+      "pokemon_icons": {},
+      "region_groups": {
+        "ステータス": {
+          "template": {
+            "名前": {
+              "dx": 165,
+              "dy": 199,
+              "w": 236,
+              "h": 38,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "HP実数値": {
+              "dx": 296,
+              "dy": 247,
+              "w": 59,
+              "h": 33,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "HP努力値": {
+              "dx": 406,
+              "dy": 248,
+              "w": 42,
+              "h": 31,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "こうげき実数値": {
+              "dx": 297,
+              "dy": 294,
+              "w": 59,
+              "h": 30,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "こうげき努力値": {
+              "dx": 405,
+              "dy": 295,
+              "w": 44,
+              "h": 26,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "ぼうぎょ実数値": {
+              "dx": 296,
+              "dy": 339,
+              "w": 61,
+              "h": 30,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "ぼうぎょ努力値": {
+              "dx": 404,
+              "dy": 341,
+              "w": 46,
+              "h": 27,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "とくこう実数値": {
+              "dx": 655,
+              "dy": 248,
+              "w": 51,
+              "h": 28,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "とくこう努力値": {
+              "dx": 757,
+              "dy": 248,
+              "w": 42,
+              "h": 30,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "とくぼう実数値": {
+              "dx": 653,
+              "dy": 291,
+              "w": 55,
+              "h": 31,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "とくぼう努力値": {
+              "dx": 754,
+              "dy": 292,
+              "w": 44,
+              "h": 32,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "すばやさ実数値": {
+              "dx": 653,
+              "dy": 336,
+              "w": 54,
+              "h": 34,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "すばやさ努力値": {
+              "dx": 755,
+              "dy": 340,
+              "w": 42,
+              "h": 29,
+              "type": "region",
+              "engine": "paddle",
+              "read_once": true
+            },
+            "こうげき性格補正": {
+              "dx": 267,
+              "dy": 296,
+              "w": 26,
+              "h": 26,
+              "type": "stat_modifier",
+              "read_once": true
+            },
+            "ぼうぎょ性格補正": {
+              "dx": 265,
+              "dy": 341,
+              "w": 26,
+              "h": 29,
+              "type": "stat_modifier",
+              "read_once": true
+            },
+            "とくこう性格補正": {
+              "dx": 614,
+              "dy": 250,
+              "w": 27,
+              "h": 27,
+              "type": "stat_modifier",
+              "read_once": true
+            },
+            "とくぼう性格補正": {
+              "dx": 616,
+              "dy": 297,
+              "w": 26,
+              "h": 26,
+              "type": "stat_modifier",
+              "read_once": true
+            },
+            "すばやさ性格補正": {
+              "dx": 621,
+              "dy": 340,
+              "w": 26,
+              "h": 29,
+              "type": "stat_modifier",
+              "read_once": true
+            }
+          },
+          "slots": [
+            {
+              "name": "ポケモン１",
+              "x": 101,
+              "y": 99
+            },
+            {
+              "name": "ポケモン２",
+              "x": 900,
+              "y": 100
+            },
+            {
+              "name": "ポケモン３",
+              "x": 100,
+              "y": 317
+            },
+            {
+              "name": "ポケモン４",
+              "x": 900,
+              "y": 317
+            },
+            {
+              "name": "ポケモン５",
+              "x": 98,
+              "y": 534
+            },
+            {
+              "name": "ポケモン６",
+              "x": 901,
+              "y": 535
+            }
+          ]
+        }
+      }
     }
   }
 }

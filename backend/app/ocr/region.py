@@ -154,9 +154,28 @@ class RegionConfig:
     def get_regions(self, scene: str) -> list[Region]:
         """シーン名から全OCR読み取り領域を取得."""
         scene_data = self._data.get("scenes", {}).get(scene, {})
-        regions_data = scene_data.get("regions", {})
-        regions = []
-        for name, cfg in regions_data.items():
+        regions: list[Region] = []
+
+        # region_groups 展開 (type="region" のみ)
+        for _group_name, group in scene_data.get("region_groups", {}).items():
+            template = group.get("template", {})
+            for slot in group.get("slots", []):
+                sx, sy = slot["x"], slot["y"]
+                for sub_name, sub_cfg in template.items():
+                    if sub_cfg.get("type", "region") != "region":
+                        continue
+                    regions.append(Region(
+                        name=f"{slot['name']}{sub_name}",
+                        x=sx + sub_cfg["dx"],
+                        y=sy + sub_cfg["dy"],
+                        w=sub_cfg["w"],
+                        h=sub_cfg["h"],
+                        engine=sub_cfg.get("engine", "paddle"),
+                        read_once=sub_cfg.get("read_once", False),
+                    ))
+
+        # standalone regions
+        for name, cfg in scene_data.get("regions", {}).items():
             if name.startswith("_"):
                 continue
             regions.append(Region(
@@ -195,9 +214,27 @@ class RegionConfig:
     def get_pokemon_icons(self, scene: str) -> list[dict[str, Any]]:
         """シーン名からポケモンアイコン領域を取得."""
         scene_data = self._data.get("scenes", {}).get(scene, {})
-        icons_data = scene_data.get("pokemon_icons", {})
         icons: list[dict[str, Any]] = []
-        for name, cfg in icons_data.items():
+
+        # region_groups 展開 (type="pokemon_icon" のみ)
+        for _group_name, group in scene_data.get("region_groups", {}).items():
+            template = group.get("template", {})
+            for slot in group.get("slots", []):
+                sx, sy = slot["x"], slot["y"]
+                for sub_name, sub_cfg in template.items():
+                    if sub_cfg.get("type") != "pokemon_icon":
+                        continue
+                    icons.append({
+                        "name": f"{slot['name']}{sub_name}",
+                        "x": sx + sub_cfg["dx"],
+                        "y": sy + sub_cfg["dy"],
+                        "w": sub_cfg["w"],
+                        "h": sub_cfg["h"],
+                        "read_once": sub_cfg.get("read_once", False),
+                    })
+
+        # standalone pokemon_icons
+        for name, cfg in scene_data.get("pokemon_icons", {}).items():
             if name.startswith("_"):
                 continue
             icons.append({
@@ -209,6 +246,30 @@ class RegionConfig:
                 "read_once": cfg.get("read_once", False),
             })
         return icons
+
+    def get_stat_modifiers(self, scene: str) -> list[dict[str, Any]]:
+        """シーン名から性格補正領域を取得."""
+        scene_data = self._data.get("scenes", {}).get(scene, {})
+        modifiers: list[dict[str, Any]] = []
+
+        # region_groups 展開 (type="stat_modifier" のみ)
+        for _group_name, group in scene_data.get("region_groups", {}).items():
+            template = group.get("template", {})
+            for slot in group.get("slots", []):
+                sx, sy = slot["x"], slot["y"]
+                for sub_name, sub_cfg in template.items():
+                    if sub_cfg.get("type") != "stat_modifier":
+                        continue
+                    modifiers.append({
+                        "name": f"{slot['name']}{sub_name}",
+                        "x": sx + sub_cfg["dx"],
+                        "y": sy + sub_cfg["dy"],
+                        "w": sub_cfg["w"],
+                        "h": sub_cfg["h"],
+                        "read_once": sub_cfg.get("read_once", False),
+                    })
+
+        return modifiers
 
     @property
     def scenes(self) -> list[str]:
@@ -310,6 +371,45 @@ class RegionRecognizer:
             ))
 
         return results
+
+    def recognize_regions_batched(
+        self, image: np.ndarray, regions: list[Region],
+    ) -> list[RegionResult]:
+        """エンジンごとにバッチ推論で認識する.
+
+        リージョンをエンジン名でグルーピングし、各エンジンに対して
+        1回の run_batch() でまとめて推論する。逐次版と同じ結果を返す。
+        """
+        if not regions:
+            return []
+
+        # エンジン名でグルーピング（元の順序を保持するために index を記録）
+        engine_groups: dict[str, list[tuple[int, Region, np.ndarray]]] = {}
+        for i, region in enumerate(regions):
+            cropped = region.crop(image)
+            engine_groups.setdefault(region.engine, []).append((i, region, cropped))
+
+        # エンジンごとにバッチ推論
+        results_by_index: dict[int, RegionResult] = {}
+        for engine_name, group in engine_groups.items():
+            pipeline = self._get_pipeline(engine_name)
+            images = [cropped for _, _, cropped in group]
+
+            t0 = time.perf_counter()
+            batch_ocr = pipeline.run_batch(images)
+            batch_elapsed = (time.perf_counter() - t0) * 1000
+
+            per_region_ms = batch_elapsed / len(group) if group else 0.0
+            for (idx, region, _cropped), ocr_results in zip(group, batch_ocr):
+                text = "".join(r.text for r in ocr_results)
+                results_by_index[idx] = RegionResult(
+                    region=region,
+                    ocr_results=ocr_results,
+                    text=text,
+                    elapsed_ms=per_region_ms,
+                )
+
+        return [results_by_index[i] for i in range(len(regions))]
 
     def recognize(self, image: np.ndarray, scene: str) -> list[RegionResult]:
         """全体画像から指定シーンの全領域を認識する."""

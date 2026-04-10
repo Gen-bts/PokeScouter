@@ -81,6 +81,16 @@ class OCREngine(ABC):
         """
         ...
 
+    def recognize_batch(
+        self, images: list[np.ndarray], lang: str = "ja",
+    ) -> list[list[OCRResult]]:
+        """複数画像をまとめて OCR する（バッチ推論）.
+
+        デフォルト実装は逐次 recognize() を呼ぶ。
+        バッチ推論をサポートするエンジンはオーバーライドする。
+        """
+        return [self.recognize(img, lang=lang) for img in images]
+
     def recognize_from_file(self, path: str | Path, lang: str = "ja") -> list[OCRResult]:
         """ファイルパスから画像を読み込んで OCR を実行する."""
         import cv2
