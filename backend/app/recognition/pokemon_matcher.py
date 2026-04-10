@@ -256,7 +256,7 @@ class PokemonMatcher:
             for r in results
             if r.candidates and r.candidates[0].confidence >= self._threshold
         )
-        logger.debug(
+        logger.info(
             "チーム識別: %d/%d 成功 (%.1fms)",
             matched,
             len(positions),
@@ -338,13 +338,59 @@ class PokemonMatcher:
             index_elapsed,
         )
 
+    def _normalize_background(self, bgr_image: np.ndarray) -> np.ndarray:
+        """ゲーム画面のクロップ背景を白に置換し、テンプレートとのドメインギャップを軽減する.
+
+        四隅のピクセルから背景色を推定し、近い色のピクセルを白に置き換える。
+        背景が既に白に近い場合（テンプレート画像など）はスキップする。
+        """
+        h, w = bgr_image.shape[:2]
+        if h < 10 or w < 10:
+            return bgr_image
+
+        # 四隅から背景色をサンプリング
+        m = max(2, min(h, w) // 8)
+        corners = np.concatenate([
+            bgr_image[:m, :m].reshape(-1, 3),
+            bgr_image[:m, -m:].reshape(-1, 3),
+            bgr_image[-m:, :m].reshape(-1, 3),
+            bgr_image[-m:, -m:].reshape(-1, 3),
+        ], axis=0).astype(np.float32)
+        bg_color = np.median(corners, axis=0)
+
+        # 背景色が既に白に近い場合はスキップ
+        if np.all(bg_color > 200):
+            return bgr_image
+
+        # 各ピクセルと背景色のユークリッド距離でマスク生成
+        diff = np.linalg.norm(
+            bgr_image.astype(np.float32) - bg_color.reshape(1, 1, 3),
+            axis=2,
+        )
+        bg_mask = (diff < 60).astype(np.uint8) * 255
+
+        # モルフォロジー処理でマスクを整える
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+        bg_mask = cv2.morphologyEx(bg_mask, cv2.MORPH_CLOSE, kernel)
+
+        bg_ratio = np.count_nonzero(bg_mask) / bg_mask.size
+        logger.debug(
+            "背景正規化: bg_color=(%.0f,%.0f,%.0f) bg_ratio=%.1f%%",
+            bg_color[0], bg_color[1], bg_color[2], bg_ratio * 100,
+        )
+
+        result = bgr_image.copy()
+        result[bg_mask > 0] = [255, 255, 255]
+        return result
+
     def _extract_embedding(self, bgr_image: np.ndarray) -> np.ndarray:
         """単一の BGR 画像から L2 正規化済み embedding を抽出する.
 
         Returns:
             shape (1, embed_dim) の float32 配列。
         """
-        rgb = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
+        normalized = self._normalize_background(bgr_image)
+        rgb = cv2.cvtColor(normalized, cv2.COLOR_BGR2RGB)
         tensor = self._transform(rgb).unsqueeze(0).to(self._device)
 
         with torch.no_grad():
@@ -362,7 +408,8 @@ class PokemonMatcher:
         """
         tensors = []
         for img in bgr_images:
-            rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            normalized = self._normalize_background(img)
+            rgb = cv2.cvtColor(normalized, cv2.COLOR_BGR2RGB)
             tensors.append(self._transform(rgb))
 
         batch = torch.stack(tensors).to(self._device)
