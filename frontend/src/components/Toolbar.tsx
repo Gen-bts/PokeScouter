@@ -10,6 +10,7 @@ const STATE_LABELS: Record<ConnectionState, string> = {
 
 interface Props {
   connectionState: ConnectionState;
+  onConnect?: () => void;
   debugOverlay: boolean;
   onToggleDebugOverlay: () => void;
   volume: number;
@@ -24,10 +25,14 @@ interface Props {
   onToggleLeftPanel: () => void;
   rightPanelOpen: boolean;
   onToggleRightPanel: () => void;
+  availableScenes?: Record<string, { display_name: string }>;
+  currentScene?: string;
+  onForceScene?: (scene: string) => void;
 }
 
 export function Toolbar({
   connectionState,
+  onConnect,
   debugOverlay,
   onToggleDebugOverlay,
   volume,
@@ -42,6 +47,9 @@ export function Toolbar({
   onToggleLeftPanel,
   rightPanelOpen,
   onToggleRightPanel,
+  availableScenes,
+  currentScene,
+  onForceScene,
 }: Props) {
   return (
     <div className="toolbar">
@@ -49,10 +57,21 @@ export function Toolbar({
         {leftPanelOpen ? "\u25C0 \u30ED\u30B0" : "\u25B6 \u30ED\u30B0"}
       </button>
 
-      <div className={`toolbar-status ${connectionState}`}>
-        <span className="status-dot" />
-        <span>{STATE_LABELS[connectionState]}</span>
-      </div>
+      {connectionState === "disconnected" && onConnect ? (
+        <button
+          className={`toolbar-status ${connectionState} clickable`}
+          onClick={onConnect}
+          title="クリックして接続"
+        >
+          <span className="status-dot" />
+          <span>{STATE_LABELS[connectionState]}</span>
+        </button>
+      ) : (
+        <div className={`toolbar-status ${connectionState}`}>
+          <span className="status-dot" />
+          <span>{STATE_LABELS[connectionState]}</span>
+        </div>
+      )}
 
       {onSceneReset && (
         <button className="toolbar-btn" onClick={onSceneReset}>
@@ -68,6 +87,22 @@ export function Toolbar({
         >
           {paused ? "再開" : "一時停止"}
         </button>
+      )}
+
+      {onForceScene && availableScenes && (
+        <select
+          className="toolbar-select"
+          value={currentScene || "none"}
+          onChange={(e) => onForceScene(e.target.value)}
+          title="シーン強制切替"
+        >
+          <option value="none">シーン検出待機中</option>
+          {Object.entries(availableScenes).map(([key, meta]) => (
+            <option key={key} value={key}>
+              {meta.display_name}
+            </option>
+          ))}
+        </select>
       )}
 
       <label className="toolbar-checkbox">

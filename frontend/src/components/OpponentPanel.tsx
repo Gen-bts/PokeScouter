@@ -405,7 +405,7 @@ function SlotRow({
   return (
     <div
       ref={slotRef}
-      className={`opponent-slot${slot.isManual ? " opponent-slot-manual" : ""}${slot.pokemonId === null ? " opponent-slot-empty" : ""}`}
+      className={`opponent-slot${slot.isManual ? " opponent-slot-manual" : ""}${slot.pokemonId === null ? " opponent-slot-empty" : ""}${slot.isSelected && !slot.isAlive ? " opponent-slot-fainted" : ""}`}
       style={editing ? { zIndex: 50 } : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -431,16 +431,36 @@ function SlotRow({
           />
         ) : (
           <>
-            <span className="opponent-slot-name">
-              {slot.name ?? "???"}
-            </span>
-            {!slot.isManual && slot.pokemonId !== null && (
-              <span className="opponent-slot-confidence">
-                {(slot.confidence * 100).toFixed(0)}%
+            <div className="opponent-slot-name-row">
+              <span className="opponent-slot-name">
+                {slot.name ?? "???"}
               </span>
-            )}
-            {slot.isManual && (
-              <span className="opponent-slot-badge">手動</span>
+              {slot.isSelected && (
+                <span className="opponent-slot-selected-badge">選出確定</span>
+              )}
+            </div>
+            {slot.isSelected ? (
+              <div className="opponent-slot-hp-row">
+                <div className="opponent-slot-hp-bar">
+                  <div
+                    className={`opponent-slot-hp-fill${!slot.isAlive ? " opponent-slot-hp-fainted" : ""}`}
+                    style={{
+                      width: slot.hpPercent != null
+                        ? `${slot.hpPercent}%`
+                        : (slot.isAlive ? "100%" : "0%"),
+                    }}
+                  />
+                </div>
+                {slot.hpPercent != null && slot.isAlive && (
+                  <span className="opponent-slot-hp-text">{slot.hpPercent}%</span>
+                )}
+              </div>
+            ) : (
+              <>
+                {slot.isManual && (
+                  <span className="opponent-slot-badge">手動</span>
+                )}
+              </>
             )}
           </>
         )}

@@ -6,6 +6,7 @@ import type {
   ConnectionState,
   MatchTeamsMessage,
   OcrResult,
+  OpponentActiveMessage,
   PartyRegisterCompleteMessage,
   PartyRegisterErrorMessage,
   PartyRegisterProgressMessage,
@@ -32,6 +33,7 @@ interface ConnectionStore {
   sendFrame: (blob: Blob) => Promise<void>;
   sendConfig: (config: WsConfig) => void;
   sendReset: () => void;
+  sendForceScene: (scene: string) => void;
   sendPartyRegisterStart: () => void;
   sendPartyRegisterCancel: () => void;
 }
@@ -74,6 +76,7 @@ function doConnect() {
           const hasText = ocrMsg.regions.some((r) => r.text && r.text.trim() !== "");
           if (hasText) {
             useMatchLogStore.getState().addOcrResult(ocrMsg);
+            console.log("[MatchLog] ocr_result", ocrMsg.scene, ocrMsg.regions.map((r) => `${r.name}="${r.text}"`).join(", "));
           }
         } else if (msg.type === "benchmark_result") {
           setState({
@@ -92,25 +95,47 @@ function doConnect() {
             ...(sceneMsg.scene === "none" ? { lastResult: null } : {}),
           });
           useMatchLogStore.getState().addSceneChange(sceneMsg);
+          console.log("[MatchLog] scene_change", sceneMsg.scene, `(${sceneMsg.top_level}${sceneMsg.sub_scene ? "/" + sceneMsg.sub_scene : ""})`, `conf=${sceneMsg.confidence}`);
         } else if (msg.type === "match_teams") {
           const teamsMsg = msg as unknown as MatchTeamsMessage;
           useMatchLogStore.getState().addMatchTeams(teamsMsg);
+          console.log("[MatchLog] match_teams", "player:", teamsMsg.player_team.map((p) => p.name).join(", "), "| opponent:", teamsMsg.opponent_team.map((p) => p.name ?? "?").join(", "));
           useOpponentTeamStore.getState().updateFromMatchTeams(teamsMsg.opponent_team);
         } else if (msg.type === "team_selection") {
           useMatchLogStore.getState().addTeamSelection(msg as unknown as TeamSelectionMessage);
+          console.log("[MatchLog] team_selection", (msg as unknown as TeamSelectionMessage).selected_positions);
         } else if (msg.type === "battle_result") {
           useMatchLogStore.getState().addBattleResult(msg as unknown as BattleResultMessage);
+          console.log("[MatchLog] battle_result", (msg as unknown as BattleResultMessage).result);
         } else if (msg.type === "battle_event") {
-          useMatchLogStore.getState().addBattleEvent(msg as unknown as BattleEventMessage);
+          const battleMsg = msg as unknown as BattleEventMessage;
+          useMatchLogStore.getState().addBattleEvent(battleMsg);
+          console.log("[MatchLog] battle_event", battleMsg.event_type, battleMsg.side, battleMsg.raw_text, battleMsg.pokemon_name ? `(${battleMsg.pokemon_name})` : "", battleMsg.move_name ? `move=${battleMsg.move_name}` : "");
+          if (battleMsg.event_type === "opponent_sent_out" && battleMsg.species_id != null) {
+            useOpponentTeamStore.getState().markSentOut(battleMsg.species_id);
+          } else if (battleMsg.event_type === "pokemon_fainted" && battleMsg.side === "opponent" && battleMsg.species_id != null) {
+            useOpponentTeamStore.getState().markFainted(battleMsg.species_id);
+          }
+        } else if (msg.type === "opponent_active") {
+          const activeMsg = msg as unknown as OpponentActiveMessage;
+          if (activeMsg.species_id != null) {
+            useOpponentTeamStore.getState().updateOpponentActive(
+              activeMsg.species_id,
+              activeMsg.hp_percent,
+            );
+          }
         } else if (msg.type === "party_register_progress") {
           const progressMsg = msg as unknown as PartyRegisterProgressMessage;
           useMyPartyStore.getState().setRegistrationState(progressMsg.state as PartyRegistrationPhase);
         } else if (msg.type === "party_register_screen") {
           const screenMsg = msg as unknown as PartyRegisterScreenMessage;
           useMyPartyStore.getState().updateFromScreen(screenMsg);
+          if (screenMsg.screen === 1 && screenMsg.party_name) {
+            useMyPartyStore.getState().setPartyName(screenMsg.party_name);
+          }
         } else if (msg.type === "party_register_complete") {
           const completeMsg = msg as unknown as PartyRegisterCompleteMessage;
-          useMyPartyStore.getState().updateFromComplete(completeMsg.party);
+          useMyPartyStore.getState().updateFromComplete(completeMsg.party, completeMsg.party_name ?? null);
         } else if (msg.type === "party_register_error") {
           const errorMsg = msg as unknown as PartyRegisterErrorMessage;
           useMyPartyStore.getState().setError(errorMsg.message);
@@ -185,6 +210,11 @@ export const useConnectionStore = create<ConnectionStore>()((set) => ({
   sendReset: () => {
     if (!ws || ws.readyState !== WebSocket.OPEN) return;
     ws.send(JSON.stringify({ type: "reset" }));
+  },
+
+  sendForceScene: (scene: string) => {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    ws.send(JSON.stringify({ type: "force_scene", scene }));
   },
 
   sendPartyRegisterStart: () => {

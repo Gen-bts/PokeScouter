@@ -1,9 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type {
+  MegaFormDetail,
   PartyRegistrationPhase,
   PartyRegisterScreenMessage,
   PartySlotData,
+  SavedParty,
   ValidatedField,
 } from "../types";
 
@@ -12,6 +14,7 @@ export interface MyPartySlot {
   pokemonId: number | null;
   name: string | null;
   fields: Record<string, ValidatedField>;
+  megaForm: MegaFormDetail | null;
 }
 
 function emptySlots(): MyPartySlot[] {
@@ -20,24 +23,42 @@ function emptySlots(): MyPartySlot[] {
     pokemonId: null,
     name: null,
     fields: {},
+    megaForm: null,
   }));
 }
 
 interface MyPartyState {
   slots: MyPartySlot[];
+  partyName: string | null;
+  activePartyId: string | null;
+  savedParties: SavedParty[];
   registrationState: PartyRegistrationPhase;
   error: string | null;
+
   setRegistrationState: (state: PartyRegistrationPhase) => void;
   updateFromScreen: (msg: PartyRegisterScreenMessage) => void;
-  updateFromComplete: (party: PartySlotData[]) => void;
+  updateFromComplete: (party: PartySlotData[], partyName: string | null) => void;
+  setSlotMegaForm: (position: number, megaForm: MegaFormDetail | null) => void;
+  setPartyName: (name: string) => void;
   setError: (message: string) => void;
   clear: () => void;
+
+  fetchSavedParties: () => Promise<void>;
+  saveCurrentParty: () => Promise<string | null>;
+  loadParty: (id: string) => void;
+  overwriteParty: (id: string) => Promise<void>;
+  deleteParty: (id: string) => Promise<void>;
 }
+
+const API_BASE = "/api/parties";
 
 export const useMyPartyStore = create<MyPartyState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       slots: emptySlots(),
+      partyName: null,
+      activePartyId: null,
+      savedParties: [],
       registrationState: "idle",
       error: null,
 
@@ -47,11 +68,9 @@ export const useMyPartyStore = create<MyPartyState>()(
       updateFromScreen: (msg) =>
         set((prev) => {
           const next = [...prev.slots];
-          // 画面のポケモン情報でスロットを更新
           for (const p of msg.pokemon) {
             const idx = p.position - 1;
             if (idx < 0 || idx >= 6) continue;
-            // スロット別に振り分けられたフィールドを取得
             const slotFields = msg.slots[p.position] ?? {};
             const newFields: Record<string, ValidatedField> = {};
             for (const [k, v] of Object.entries(slotFields)) {
@@ -62,12 +81,13 @@ export const useMyPartyStore = create<MyPartyState>()(
               pokemonId: p.pokemon_id,
               name: p.name,
               fields: { ...(next[idx]?.fields), ...newFields },
+              megaForm: next[idx]?.megaForm ?? null,
             };
           }
           return { slots: next };
         }),
 
-      updateFromComplete: (party) =>
+      updateFromComplete: (party, partyName) =>
         set(() => {
           const next = emptySlots();
           for (const p of party) {
@@ -78,22 +98,133 @@ export const useMyPartyStore = create<MyPartyState>()(
               pokemonId: p.pokemon_id,
               name: p.name,
               fields: p.fields,
+              megaForm: null,
             };
           }
-          return { slots: next, registrationState: "done" };
+          return {
+            slots: next,
+            partyName: partyName ?? null,
+            activePartyId: null,
+            registrationState: "done",
+          };
         }),
+
+      setSlotMegaForm: (position, megaForm) =>
+        set((prev) => {
+          const idx = position - 1;
+          if (idx < 0 || idx >= 6) return prev;
+          const next = [...prev.slots];
+          next[idx] = { ...next[idx], megaForm };
+          return { slots: next };
+        }),
+
+      setPartyName: (name) => set({ partyName: name }),
 
       setError: (message) =>
         set({ registrationState: "idle", error: message }),
 
       clear: () =>
-        set({ slots: emptySlots(), registrationState: "idle", error: null }),
+        set({
+          slots: emptySlots(),
+          partyName: null,
+          activePartyId: null,
+          registrationState: "idle",
+          error: null,
+        }),
+
+      fetchSavedParties: async () => {
+        try {
+          const res = await fetch(API_BASE);
+          if (!res.ok) return;
+          const parties: SavedParty[] = await res.json();
+          set({ savedParties: parties });
+        } catch {
+          // サーバー未接続時は無視
+        }
+      },
+
+      saveCurrentParty: async () => {
+        const { slots, partyName } = get();
+        if (!slots.some((s) => s.pokemonId !== null)) return null;
+        const name = partyName || "パーティ";
+        try {
+          const res = await fetch(API_BASE, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, slots }),
+          });
+          if (!res.ok) return null;
+          const entry: SavedParty = await res.json();
+          set({ activePartyId: entry.id, partyName: entry.name });
+          await get().fetchSavedParties();
+          return entry.id;
+        } catch {
+          return null;
+        }
+      },
+
+      loadParty: (id) => {
+        const { savedParties } = get();
+        const saved = savedParties.find((p) => p.id === id);
+        if (!saved) return;
+        set({
+          slots: structuredClone(saved.slots),
+          partyName: saved.name,
+          activePartyId: saved.id,
+          registrationState: "done",
+          error: null,
+        });
+      },
+
+      overwriteParty: async (id) => {
+        const { slots, partyName } = get();
+        try {
+          const res = await fetch(`${API_BASE}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: partyName, slots }),
+          });
+          if (!res.ok) return;
+          set({ activePartyId: id });
+          await get().fetchSavedParties();
+        } catch {
+          // ignore
+        }
+      },
+
+      deleteParty: async (id) => {
+        try {
+          const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
+          if (!res.ok) return;
+          const { activePartyId } = get();
+          if (activePartyId === id) {
+            set({ activePartyId: null });
+          }
+          await get().fetchSavedParties();
+        } catch {
+          // ignore
+        }
+      },
     }),
     {
       name: "my-party-store-v2",
+      version: 1,
       partialize: (state) => ({
         slots: state.slots,
+        partyName: state.partyName,
+        activePartyId: state.activePartyId,
       }),
+      migrate: (persisted: unknown, version: number) => {
+        if (version === 0 || version === undefined) {
+          const old = persisted as Record<string, unknown>;
+          return {
+            slots: old.slots ?? emptySlots(),
+            partyName: null,
+            activePartyId: null,
+          };
+        }
+        return persisted as Record<string, unknown>;
+      },
     },
   ),
 );

@@ -1,7 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { OcrResult, PokemonIdentifiedResult } from "../types";
 import type { SceneMeta } from "../api/devtools";
+import { PauseBanner } from "./PauseBanner";
 import { RegistrationOverlay } from "./RegistrationOverlay";
+import { PokemonIconCandidateSelector } from "./devtools/PokemonIconCandidateSelector";
+import { useOpponentTeamStore } from "../stores/useOpponentTeamStore";
 
 const COLORS = [
   "rgba(255, 107, 107, 0.7)",
@@ -17,6 +20,20 @@ const COLORS = [
 const DETECTION_COLOR = "rgba(0, 255, 255, 0.7)";
 const POKEMON_ICON_COLOR = "rgba(255, 0, 255, 0.7)";
 
+/** API 未取得時のフォールバック用 日本語シーン名 */
+const SCENE_NAMES_JA: Record<string, string> = {
+  none: "シーン検出待機中",
+  pre_match: "バトル開始前",
+  team_select: "選出画面",
+  team_confirm: "選出決定",
+  move_select: "わざ選択",
+  battle: "バトル",
+  pokemon_summary: "ポケモン画面",
+  battle_end: "バトル終了",
+  party_register_1: "パーティ登録 画面1",
+  party_register_2: "パーティ登録 画面2",
+};
+
 interface Props {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -25,6 +42,9 @@ interface Props {
   lastPokemonResult: PokemonIdentifiedResult | null;
   availableScenes: Record<string, SceneMeta>;
   debugOverlay: boolean;
+  paused: boolean;
+  pauseReason: "manual" | "auto" | null;
+  onResume: () => void;
 }
 
 export function VideoCanvas({
@@ -35,10 +55,20 @@ export function VideoCanvas({
   lastPokemonResult,
   availableScenes,
   debugOverlay,
+  paused,
+  pauseReason,
+  onResume,
 }: Props) {
   const overlayRef = useRef<HTMLCanvasElement>(null);
+  const [activeSpritePosition, setActiveSpritePosition] = useState<number | null>(null);
+  const [spriteOverrides, setSpriteOverrides] = useState<
+    Record<number, { pokemon_id: number; name: string }>
+  >({});
+  const manualSet = useOpponentTeamStore((s) => s.manualSet);
 
   useEffect(() => {
+    if (paused) return;
+
     const overlay = overlayRef.current;
     if (!overlay) return;
     const ctx = overlay.getContext("2d");
@@ -198,9 +228,9 @@ export function VideoCanvas({
     }
 
     // === 4. シーン名バッジ (左上、最前面 — 常に表示) ===
-    const sceneName = currentScene === "none"
-      ? "シーン検出待機中"
-      : availableScenes[currentScene]?.display_name ?? currentScene;
+    const sceneName = availableScenes[currentScene]?.display_name
+      ?? SCENE_NAMES_JA[currentScene]
+      ?? currentScene;
     const scaleY = overlay.height / 1080;
     const fontSize = Math.max(14, 16 * scaleY);
     ctx.font = `bold ${fontSize}px sans-serif`;
@@ -231,13 +261,99 @@ export function VideoCanvas({
     // テキスト
     ctx.fillStyle = "#fff";
     ctx.fillText(sceneName, badgeX + badgePadX, badgeY + badgePadY + fontSize * 0.85);
-  }, [currentScene, lastResult, lastPokemonResult, availableScenes, debugOverlay, canvasRef]);
+  }, [paused, currentScene, lastResult, lastPokemonResult, availableScenes, debugOverlay, canvasRef]);
+
+  // シーン変更時にオーバーライドをクリア
+  useEffect(() => {
+    setSpriteOverrides({});
+    setActiveSpritePosition(null);
+  }, [currentScene]);
+
+  // 表示用ポケモン一覧（オーバーライド反映）
+  const isTeamScene = currentScene === "team_select" || currentScene === "team_confirm";
+  const spriteEntries = useMemo(() => {
+    if (!isTeamScene || !lastPokemonResult) return [];
+    return lastPokemonResult.pokemon
+      .filter((p) => p.x != null && p.y != null && p.w != null && p.h != null)
+      .map((p) => {
+        const override = spriteOverrides[p.position];
+        return {
+          position: p.position,
+          pokemonId: override?.pokemon_id ?? p.pokemon_id,
+          name: override?.name ?? p.name ?? null,
+          candidates: p.candidates ?? [],
+          x: p.x!, y: p.y!, w: p.w!, h: p.h!,
+        };
+      })
+      .filter((e) => e.pokemonId != null);
+  }, [isTeamScene, lastPokemonResult, spriteOverrides]);
+
+  const handleSpriteSelect = useCallback(
+    (position: number, pokemonId: number, name: string) => {
+      setSpriteOverrides((prev) => ({
+        ...prev,
+        [position]: { pokemon_id: pokemonId, name },
+      }));
+      manualSet(position, pokemonId, name);
+      setActiveSpritePosition(null);
+    },
+    [manualSet],
+  );
 
   return (
     <main className="video-area">
       <video ref={videoRef} autoPlay playsInline />
       <canvas ref={canvasRef} />
-      <canvas ref={overlayRef} className="debug-overlay" />
+      {!paused && <canvas ref={overlayRef} className="debug-overlay" />}
+      {!paused && spriteEntries.length > 0 && (
+        <div className="sprite-overlay-container">
+          {spriteEntries.map((entry) => {
+            const spriteRefSize = Math.min(entry.h, 80);
+            const leftPct = ((entry.x - spriteRefSize - 8) / 1920) * 100;
+            const topPct = ((entry.y + (entry.h - spriteRefSize) / 2) / 1080) * 100;
+            const widthPct = (spriteRefSize / 1920) * 100;
+            const heightPct = (spriteRefSize / 1080) * 100;
+            return (
+              <div
+                key={entry.position}
+                className="sprite-overlay-item"
+                style={{
+                  left: `${leftPct}%`,
+                  top: `${topPct}%`,
+                  width: `${widthPct}%`,
+                  height: `${heightPct}%`,
+                }}
+                onClick={() =>
+                  setActiveSpritePosition(
+                    activeSpritePosition === entry.position ? null : entry.position,
+                  )
+                }
+              >
+                <img
+                  className="sprite-overlay-img"
+                  src={`/sprites/${entry.pokemonId}.png`}
+                  alt={entry.name ?? ""}
+                />
+                {entry.name && (
+                  <span className="sprite-overlay-name">{entry.name}</span>
+                )}
+                {activeSpritePosition === entry.position && (
+                  <PokemonIconCandidateSelector
+                    candidates={entry.candidates}
+                    onSelect={(id, name) =>
+                      handleSpriteSelect(entry.position, id, name)
+                    }
+                    onClose={() => setActiveSpritePosition(null)}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {paused && pauseReason && (
+        <PauseBanner reason={pauseReason} onResume={onResume} />
+      )}
       <RegistrationOverlay />
     </main>
   );

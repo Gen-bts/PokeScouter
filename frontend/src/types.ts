@@ -149,6 +149,16 @@ export interface BattleEventMessage {
   details: Record<string, unknown>;
 }
 
+// --- 相手アクティブポケモン ---
+
+export interface OpponentActiveMessage {
+  type: "opponent_active";
+  species_id: number;
+  pokemon_name: string;
+  hp_percent: number | null;
+  confidence: number;
+}
+
 // --- パーティ登録 ---
 
 export type PartyRegistrationPhase =
@@ -175,6 +185,7 @@ export interface PartyRegisterScreenMessage {
     confidence: number;
     name_key?: string;
   }>;
+  party_name?: string | null;
 }
 
 export interface MoveMeta {
@@ -191,6 +202,16 @@ export interface ValidatedField {
   matched_id?: number | null;
   matched_identifier?: string | null;
   move_meta?: MoveMeta | null;
+  is_mega_stone?: boolean;
+}
+
+export interface MegaFormDetail {
+  item_id: number;
+  mega_name: string;
+  types: string[];
+  ability: { name: string; effect: string };
+  base_stats: Record<string, number>;
+  stat_deltas: Record<string, number> | null;
 }
 
 export interface PartySlotData {
@@ -203,6 +224,20 @@ export interface PartySlotData {
 export interface PartyRegisterCompleteMessage {
   type: "party_register_complete";
   party: PartySlotData[];
+  party_name?: string | null;
+}
+
+export interface SavedParty {
+  id: string;
+  name: string;
+  slots: Array<{
+    position: number;
+    pokemonId: number | null;
+    name: string | null;
+    fields: Record<string, ValidatedField>;
+    megaForm: MegaFormDetail | null;
+  }>;
+  savedAt: number;
 }
 
 export interface PartyRegisterErrorMessage {
@@ -226,4 +261,33 @@ export interface TypeConsistencyEntry {
 export interface TypeConsistencyResult {
   results: TypeConsistencyEntry[];
   pokemon_count: number;
+}
+
+// --- ダメージ計算 ---
+
+export interface DamageRange {
+  min: number;
+  max: number;
+}
+
+export interface MoveDamageResult {
+  move_id: number;
+  move_name: string;
+  damage: DamageRange;
+  min_percent: number;
+  max_percent: number;
+  guaranteed_ko: number;
+  type_effectiveness: number;
+  description: string;
+  annotations?: Record<string, boolean>;
+}
+
+export interface DefenderDamageResult {
+  defender_species_id: number;
+  defender_hp: number;
+  moves: MoveDamageResult[];
+}
+
+export interface DamageCalcResponse {
+  results: DefenderDamageResult[];
 }

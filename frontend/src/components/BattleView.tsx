@@ -3,6 +3,8 @@ import { VideoCanvas } from "./VideoCanvas";
 import { MyPartyPanel } from "./MyPartyPanel";
 import { MatchLog } from "./MatchLog";
 import { OpponentPanel } from "./OpponentPanel";
+import { DamagePanel } from "./DamagePanel";
+import { useDamageCalc } from "../hooks/useDamageCalc";
 import { useConnectionStore } from "../stores/useConnectionStore";
 import { useSettingsStore } from "../stores/useSettingsStore";
 import { useBenchmarkStore } from "../stores/useBenchmarkStore";
@@ -52,6 +54,9 @@ export function BattleView({
   const benchmarkActive = useBenchmarkStore((s) => s.active);
   const benchmarkAddFrame = useBenchmarkStore((s) => s.addFrame);
 
+  // ダメージ計算フック（副作用のみ）
+  useDamageCalc();
+
   const volume = useSettingsStore((s) => s.volume);
   const muted = useSettingsStore((s) => s.muted);
   const debugOverlay = useSettingsStore((s) => s.debugOverlay);
@@ -65,6 +70,7 @@ export function BattleView({
   const FRAME_INTERVAL_MS = isPartyRegistering ? 150 : 500;
   const [availableScenes, setAvailableScenes] = useState<Record<string, SceneMeta>>({});
   const [paused, setPaused] = useState(false);
+  const [pauseReason, setPauseReason] = useState<"manual" | "auto" | null>(null);
   const [sending, setSending] = useState(false);
 
   // シーン一覧取得
@@ -95,9 +101,17 @@ export function BattleView({
     setPaused((prev) => {
       const next = !prev;
       sendConfig({ paused: next });
+      setPauseReason(next ? "manual" : null);
       return next;
     });
   }, [sendConfig]);
+
+  const handleResume = useCallback(() => {
+    if (!paused) return;
+    setPaused(false);
+    setPauseReason(null);
+    sendConfig({ paused: false });
+  }, [paused, sendConfig]);
 
   // pause toggle を親に公開
   useEffect(() => {
@@ -134,6 +148,18 @@ export function BattleView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionState]);
 
+  // シーン未検出が5分続いたら自動停止
+  const AUTO_PAUSE_MS = 5 * 60 * 1000;
+  useEffect(() => {
+    if (!sending || paused || currentScene !== "none") return;
+    const timer = setTimeout(() => {
+      setPaused(true);
+      setPauseReason("auto");
+      sendConfig({ paused: true });
+    }, AUTO_PAUSE_MS);
+    return () => clearTimeout(timer);
+  }, [currentScene, sending, paused, sendConfig]);
+
   useEffect(() => {
     if (!sending) return;
 
@@ -162,9 +188,13 @@ export function BattleView({
         lastPokemonResult={lastPokemonResult}
         availableScenes={availableScenes}
         debugOverlay={debugOverlay}
+        paused={paused}
+        pauseReason={pauseReason}
+        onResume={handleResume}
       />
       <aside className={`right-panel${rightPanelOpen ? "" : " collapsed"}`}>
         <OpponentPanel />
+        <DamagePanel />
       </aside>
     </>
   );

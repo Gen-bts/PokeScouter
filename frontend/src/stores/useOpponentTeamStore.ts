@@ -12,6 +12,9 @@ export interface OpponentSlot {
   confidence: number;
   isManual: boolean;
   candidates: PokemonCandidate[];
+  isSelected: boolean;
+  isAlive: boolean;
+  hpPercent: number | null;
 }
 
 function emptySlots(): OpponentSlot[] {
@@ -22,6 +25,9 @@ function emptySlots(): OpponentSlot[] {
     confidence: 0,
     isManual: false,
     candidates: [],
+    isSelected: false,
+    isAlive: true,
+    hpPercent: null,
   }));
 }
 
@@ -32,6 +38,9 @@ interface OpponentTeamState {
   ) => void;
   updateFromPokemonIdentified: (pokemon: PokemonIdentified[]) => void;
   manualSet: (position: number, pokemonId: number, name: string) => void;
+  markSentOut: (speciesId: number) => void;
+  markFainted: (speciesId: number) => void;
+  updateOpponentActive: (speciesId: number, hpPercent: number | null) => void;
   clear: () => void;
 }
 
@@ -48,6 +57,8 @@ export const useOpponentTeamStore = create<OpponentTeamState>((set) => ({
         if (state.slots[idx]?.isManual) {
           next[idx] = state.slots[idx];
         } else {
+          const prev = state.slots[idx];
+          const same = prev?.pokemonId === p.pokemon_id;
           next[idx] = {
             position: p.position,
             pokemonId: p.pokemon_id,
@@ -55,6 +66,9 @@ export const useOpponentTeamStore = create<OpponentTeamState>((set) => ({
             confidence: p.confidence,
             isManual: false,
             candidates: [],
+            isSelected: same ? prev.isSelected : false,
+            isAlive: same ? prev.isAlive : true,
+            hpPercent: same ? prev.hpPercent : null,
           };
         }
       }
@@ -74,6 +88,7 @@ export const useOpponentTeamStore = create<OpponentTeamState>((set) => ({
           p.pokemon_id !== null &&
           (next[idx].pokemonId === null || p.confidence > next[idx].confidence)
         ) {
+          const same = next[idx].pokemonId === p.pokemon_id;
           next[idx] = {
             position: p.position,
             pokemonId: p.pokemon_id,
@@ -81,6 +96,9 @@ export const useOpponentTeamStore = create<OpponentTeamState>((set) => ({
             confidence: p.confidence,
             isManual: false,
             candidates: p.candidates ?? [],
+            isSelected: same ? next[idx].isSelected : false,
+            isAlive: same ? next[idx].isAlive : true,
+            hpPercent: same ? next[idx].hpPercent : null,
           };
         }
       }
@@ -99,6 +117,41 @@ export const useOpponentTeamStore = create<OpponentTeamState>((set) => ({
         confidence: 1,
         isManual: true,
         candidates: [],
+        isSelected: false,
+        isAlive: true,
+        hpPercent: null,
+      };
+      return { slots: next };
+    }),
+
+  markSentOut: (speciesId) =>
+    set((state) => {
+      const idx = state.slots.findIndex((s) => s.pokemonId === speciesId);
+      if (idx === -1) return state;
+      const next = [...state.slots];
+      next[idx] = { ...next[idx], isSelected: true, isAlive: true, hpPercent: next[idx].hpPercent ?? 100 };
+      return { slots: next };
+    }),
+
+  markFainted: (speciesId) =>
+    set((state) => {
+      const idx = state.slots.findIndex((s) => s.pokemonId === speciesId);
+      if (idx === -1) return state;
+      const next = [...state.slots];
+      next[idx] = { ...next[idx], isAlive: false, hpPercent: 0 };
+      return { slots: next };
+    }),
+
+  updateOpponentActive: (speciesId, hpPercent) =>
+    set((state) => {
+      const idx = state.slots.findIndex((s) => s.pokemonId === speciesId);
+      if (idx === -1) return state;
+      const next = [...state.slots];
+      next[idx] = {
+        ...next[idx],
+        isSelected: true,
+        isAlive: hpPercent === null || hpPercent > 0,
+        hpPercent: hpPercent ?? next[idx].hpPercent,
       };
       return { slots: next };
     }),

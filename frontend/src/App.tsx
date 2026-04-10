@@ -6,6 +6,7 @@ import { BattleView } from "./components/BattleView";
 import { DevToolsView } from "./components/DevToolsView";
 import { SettingsView } from "./components/SettingsView";
 import { Toolbar } from "./components/Toolbar";
+import { getScenes, type SceneMeta } from "./api/devtools";
 import type { ConnectionState } from "./types";
 import "./App.css";
 
@@ -24,6 +25,10 @@ export default function App() {
   const [sending, setSending] = useState(false);
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [availableScenes, setAvailableScenes] = useState<Record<string, SceneMeta>>({});
+  const currentScene = useConnectionStore((s) => s.currentScene);
+  const sendForceScene = useConnectionStore((s) => s.sendForceScene);
+  const connect = useConnectionStore((s) => s.connect);
   const selectedDeviceId = useSettingsStore((s) => s.selectedDeviceId);
   const selectedAudioDeviceId = useSettingsStore((s) => s.selectedAudioDeviceId);
   const volume = useSettingsStore((s) => s.volume);
@@ -46,6 +51,11 @@ export default function App() {
   // アプリ起動時にバックエンドへ自動接続
   useEffect(() => {
     useConnectionStore.getState().connect();
+  }, []);
+
+  // シーン一覧取得
+  useEffect(() => {
+    getScenes().then(setAvailableScenes);
   }, []);
 
   // 保存済みデバイスが列挙リストにあれば自動でキャプチャ開始
@@ -86,6 +96,7 @@ export default function App() {
       {activeTab === "battle" && (
         <Toolbar
           connectionState={battleConnectionState}
+          onConnect={connect}
           debugOverlay={debugOverlay}
           onToggleDebugOverlay={toggleDebugOverlay}
           volume={volume}
@@ -100,6 +111,9 @@ export default function App() {
           onToggleLeftPanel={() => setLeftPanelOpen((v) => !v)}
           rightPanelOpen={rightPanelOpen}
           onToggleRightPanel={() => setRightPanelOpen((v) => !v)}
+          availableScenes={availableScenes}
+          currentScene={currentScene}
+          onForceScene={sendForceScene}
         />
       )}
 

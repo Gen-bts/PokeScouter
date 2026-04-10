@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTypeConsistency } from "../hooks/useTypeConsistency";
 import { TYPE_LABELS } from "../utils/typeLabels";
 import { TypeBadge } from "./TypeBadge";
@@ -25,6 +25,7 @@ export function TypeConsistencyPanel({
   onTypeHover?: (entry: TypeConsistencyEntry | null) => void;
 }) {
   const { result } = useTypeConsistency();
+  const [collapsed, setCollapsed] = useState(false);
 
   const groups = useMemo<CoverageGroup[]>(() => {
     if (!result || result.pokemon_count === 0) return [];
@@ -50,8 +51,11 @@ export function TypeConsistencyPanel({
 
   return (
     <div className="type-consistency">
-      <h3>タイプ一貫 ({total})</h3>
-      <div className="tc-groups">
+      <h3 className="tc-toggle" onClick={() => setCollapsed((c) => !c)}>
+        <span className="tc-arrow">{collapsed ? "▶" : "▼"}</span>
+        タイプ一貫 ({total})
+      </h3>
+      {!collapsed && <div className="tc-groups">
         {groups.map((g) => (
           <div key={g.count} className="tc-group">
             <div className="tc-group-header">
@@ -76,7 +80,7 @@ export function TypeConsistencyPanel({
             </div>
           </div>
         ))}
-      </div>
+      </div>}
     </div>
   );
 }
