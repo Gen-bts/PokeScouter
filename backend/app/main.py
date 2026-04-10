@@ -12,14 +12,18 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from app.api.damage import router as damage_router
 from app.api.health import router as health_router
 from app.api.devtools import router as devtools_router
+from app.api.parties import router as parties_router
 from app.api.pokemon import router as pokemon_router
 from app.dependencies import (
+    init_calc_client,
     init_detector,
     init_game_data,
     init_pokemon_matcher,
     init_recognizer,
+    shutdown_calc_client,
     shutdown_detector,
     shutdown_pokemon_matcher,
     shutdown_recognizer,
@@ -98,8 +102,15 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     logger.info("PokemonMatcher を初期化中...")
     init_pokemon_matcher()
     logger.info("PokemonMatcher 初期化完了")
+    logger.info("CalcServiceClient を初期化中...")
+    calc_client = init_calc_client()
+    if await calc_client.health_check():
+        logger.info("CalcServiceClient 初期化完了 (calc-service 接続OK)")
+    else:
+        logger.warning("calc-service に接続できません (ダメージ計算は無効)")
     yield
     logger.info("リソースを解放中...")
+    await shutdown_calc_client()
     shutdown_pokemon_matcher()
     shutdown_detector()
     shutdown_recognizer()
@@ -118,7 +129,9 @@ app.add_middleware(
 
 # ルーター登録
 app.include_router(health_router)
+app.include_router(damage_router)
 app.include_router(devtools_router)
+app.include_router(parties_router)
 app.include_router(pokemon_router)
 app.include_router(battle_router)
 
