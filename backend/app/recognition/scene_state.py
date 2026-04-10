@@ -87,6 +87,9 @@ class SceneStateMachine:
     SUB_REVERT_COUNT: int = 3
     """サブシーン未検出がこの回数続いたらデフォルト battle に戻る."""
 
+    FORCE_COOLDOWN_SECONDS: float = 2.0
+    """force_transition 後に auto-detect をスキップする秒数."""
+
     def __init__(self, initial: str = "none") -> None:
         self._state = SceneState(
             top_level=initial,
@@ -104,6 +107,8 @@ class SceneStateMachine:
         self._pending_sub_confidence: float = 0.0
 
         self._no_sub_count: int = 0
+
+        self._force_cooldown_until: float = 0.0
 
     @property
     def state(self) -> SceneState:
@@ -211,6 +216,25 @@ class SceneStateMachine:
         self._reset_top_pending()
         self._reset_sub_pending()
         self._no_sub_count = 0
+        self._force_cooldown_until = 0.0
+
+    def force_transition(self, top_level: str, sub_scene: str | None = None) -> SceneState:
+        """ステートマシンを任意の状態に強制遷移させる（遷移ルール・デバウンスをバイパス）."""
+        self._state = SceneState(
+            top_level=top_level,
+            sub_scene=sub_scene,
+            confidence=1.0,
+            timestamp=time.monotonic(),
+        )
+        self._reset_top_pending()
+        self._reset_sub_pending()
+        self._no_sub_count = 0
+        self._force_cooldown_until = time.monotonic() + self.FORCE_COOLDOWN_SECONDS
+        return self._state
+
+    def is_force_cooldown_active(self) -> bool:
+        """強制遷移後のクールダウン中かどうかを返す."""
+        return time.monotonic() < self._force_cooldown_until
 
     # --- 内部ヘルパー ---
 

@@ -5,6 +5,8 @@ GPU 不要。純粋なロジックテスト。
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 import pytest
 
 from app.recognition.scene_state import SceneState, SceneStateMachine
@@ -250,3 +252,34 @@ class TestConfidence:
         sm.update({"team_select": 0.95})
         sm.update({"team_select": 0.90})
         assert sm.state.confidence == pytest.approx(0.95)
+
+
+class TestForceCooldown:
+    """force_transition() クールダウンのテスト."""
+
+    def test_force_sets_cooldown(self) -> None:
+        sm = SceneStateMachine(initial="none")
+        sm.force_transition("battle", None)
+        assert sm.is_force_cooldown_active()
+
+    def test_cooldown_expires(self) -> None:
+        sm = SceneStateMachine(initial="none")
+        sm.force_transition("battle", None)
+        # クールダウン期限を過去に設定して期限切れをシミュレート
+        sm._force_cooldown_until = 0.0
+        assert not sm.is_force_cooldown_active()
+
+    def test_reset_clears_cooldown(self) -> None:
+        sm = SceneStateMachine(initial="none")
+        sm.force_transition("battle", None)
+        assert sm.is_force_cooldown_active()
+        sm.reset()
+        assert not sm.is_force_cooldown_active()
+
+    def test_force_does_not_affect_state(self) -> None:
+        """クールダウンは状態遷移自体には影響しない."""
+        sm = SceneStateMachine(initial="none")
+        sm.force_transition("battle", "move_select")
+        assert sm.state.top_level == "battle"
+        assert sm.state.sub_scene == "move_select"
+        assert sm.state.confidence == 1.0
