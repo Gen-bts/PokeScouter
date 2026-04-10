@@ -143,6 +143,7 @@ def _validate_fields(
                     "confidence": match["confidence"],
                     "matched_id": match["item_id"],
                     "matched_identifier": item_data.get("identifier"),
+                    "is_mega_stone": item_data.get("category_id") == 44,
                 }
             else:
                 result[name] = _no_match(raw_text)
@@ -477,11 +478,13 @@ class PartyRegistrationMachine:
 
         # スロット別にグルーピングして送信
         grouped_slots = _group_regions_by_slot(region_data)
+        party_name = region_data.get("パーティ名", "").strip() or None
         messages.append({
             "type": "party_register_screen",
             "screen": screen_num,
             "slots": grouped_slots,
             "pokemon": pokemon_data,
+            "party_name": party_name,
             "timing": {
                 "read_total_ms": round(read_total_ms, 1),
                 "ocr_ms": round(ocr_elapsed_ms, 1),
@@ -504,10 +507,17 @@ class PartyRegistrationMachine:
             # 全画面完了
             self._state.phase = "done"
             party = self._build_party_result()
+            # screen 1 からパーティ名を取得
+            complete_party_name = None
+            for sr in self._state.screen_results:
+                if sr.screen == 1:
+                    complete_party_name = sr.regions.get("パーティ名", "").strip() or None
+                    break
             total_elapsed_ms = (time.perf_counter() - self._registration_start_time) * 1000
             messages.append({
                 "type": "party_register_complete",
                 "party": party,
+                "party_name": complete_party_name,
                 "timing": {
                     **self._last_build_timing,
                     "total_elapsed_ms": round(total_elapsed_ms, 1),

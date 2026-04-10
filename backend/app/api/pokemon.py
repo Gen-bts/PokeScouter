@@ -126,6 +126,103 @@ def get_pokemon_detail(pokemon_id: int, lang: str = Query("ja")) -> dict:
     }
 
 
+@router.get("/mega-form")
+def get_mega_form(
+    item_id: int = Query(..., description="メガストーンの item_id"),
+    pokemon_id: int | None = Query(None, description="ベースポケモンの pokemon_id（差分計算用）"),
+    lang: str = Query("ja"),
+) -> dict:
+    """メガストーンに対応するメガフォーム情報を返す."""
+    game_data = get_game_data()
+    mega = game_data.get_mega_form_for_item(item_id)
+    if mega is None:
+        raise HTTPException(status_code=404, detail="Not a mega stone or no mega form found")
+
+    lang_data = game_data.names.get(lang, {})
+
+    # --- メガ名の構築 ---
+    mega_name = mega["mega_form_name"]  # English fallback
+    # ベースポケモン名から言語名を組み立て
+    if mega.get("base_pokemon_id") is not None:
+        base_pdata = game_data.get_pokemon_by_id(mega["base_pokemon_id"])
+        if base_pdata:
+            pokemon_name_map: dict[int, str] = {
+                v: k for k, v in lang_data.get("pokemon", {}).items()
+            }
+            local_name = pokemon_name_map.get(base_pdata.get("species_id", -1))
+            if local_name:
+                suffix = ""
+                if mega_name.endswith(" X"):
+                    suffix = " X"
+                elif mega_name.endswith(" Y"):
+                    suffix = " Y"
+                elif mega_name.endswith(" Z"):
+                    suffix = " Z"
+                mega_name = f"メガ{local_name}{suffix}" if lang == "ja" else f"Mega {local_name}{suffix}"
+
+    # --- とくせい解決 ---
+    ability_id_to_name: dict[int, str] = {
+        v: k for k, v in lang_data.get("abilities", {}).items()
+    }
+    ability_id_by_ident: dict[str, str] = {}
+    for aid, adata in game_data.abilities.items():
+        if aid == "_meta":
+            continue
+        ability_id_by_ident[adata.get("identifier", "")] = aid
+
+    mega_abilities = mega.get("abilities", {})
+    normal_list: list[str] = mega_abilities.get("normal", [])
+    ability_info: dict[str, str] = {"name": "", "effect": ""}
+    if normal_list:
+        identifier = normal_list[0]
+        aid_str = ability_id_by_ident.get(identifier)
+        if aid_str:
+            ability_data = game_data.abilities[aid_str]
+            name = ability_id_to_name.get(int(aid_str), identifier)
+            effect = ""
+            if lang == "ja":
+                effect = ability_data.get("flavor_text_ja", "")
+            if not effect:
+                effect = _strip_wiki_markup(ability_data.get("effect", ""))
+            ability_info = {"name": name, "effect": effect}
+        else:
+            # Champions mega: ability stored as English name, not identifier
+            # Try to find by name or identifier-ized name
+            ident_form = identifier.lower().replace(" ", "-")
+            aid_str = ability_id_by_ident.get(ident_form)
+            if aid_str:
+                ability_data = game_data.abilities[aid_str]
+                name = ability_id_to_name.get(int(aid_str), identifier)
+                effect = ""
+                if lang == "ja":
+                    effect = ability_data.get("flavor_text_ja", "")
+                if not effect:
+                    effect = _strip_wiki_markup(ability_data.get("effect", ""))
+                ability_info = {"name": name, "effect": effect}
+            else:
+                ability_info = {"name": identifier, "effect": ""}
+
+    # --- 種族値差分 ---
+    mega_stats = mega.get("base_stats", {})
+    stat_deltas: dict[str, int] | None = None
+    if pokemon_id is not None:
+        base_pdata = game_data.get_pokemon_by_id(pokemon_id)
+        if base_pdata:
+            base_stats = base_pdata.get("base_stats", {})
+            stat_deltas = {}
+            for key in ("hp", "atk", "def", "spa", "spd", "spe"):
+                stat_deltas[key] = mega_stats.get(key, 0) - base_stats.get(key, 0)
+
+    return {
+        "item_id": item_id,
+        "mega_name": mega_name,
+        "types": mega.get("types", []),
+        "ability": ability_info,
+        "base_stats": mega_stats,
+        "stat_deltas": stat_deltas,
+    }
+
+
 @router.get("/type-consistency")
 def get_type_consistency(
     pokemon_ids: str = Query(..., description="カンマ区切りのポケモンID"),

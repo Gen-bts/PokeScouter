@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from copy import deepcopy
 from difflib import SequenceMatcher
 from pathlib import Path
@@ -70,6 +71,7 @@ class GameData:
         self.learnsets: dict[str, Any] = {}
         self._fuzzy_cache: dict[str, list[tuple[str, str, int]]] = {}
         self._exact_cache: dict[str, dict[str, tuple[str, int]]] = {}
+        self._mega_stone_map: dict[str, dict[str, Any]] = {}
 
     def load(self) -> None:
         """全データを読み込み・マージする。"""
@@ -127,6 +129,7 @@ class GameData:
             lang = lang_file.stem
             self.names[lang] = _load_json(lang_file)
 
+        self._build_mega_stone_map()
         self._log_stats()
 
     def _apply_pokemon_patch(self, patch: dict) -> None:
@@ -283,6 +286,112 @@ class GameData:
     def get_mega_evolution(self, name: str) -> dict | None:
         """チャンピオンズの新メガシンカデータを取得する。"""
         return self.champions_new.get("mega_evolutions", {}).get(name)
+
+    # --- メガストーン → メガフォーム マッピング ---
+
+    _MEGA_EFFECT_RE = re.compile(
+        r"Allows (.+?) to Mega Evolve into (Mega .+?)\.",
+    )
+
+    def _build_mega_stone_map(self) -> None:
+        """メガストーンの item_id → メガフォームデータのマップを構築する。"""
+        # English name → (species_id, pokemon_id) for default forms
+        name_to_default: dict[str, tuple[int, str]] = {}
+        for pid, pdata in self.pokemon.items():
+            if pid == "_meta" or not pdata.get("is_default"):
+                continue
+            name_to_default[pdata.get("name", "")] = (
+                pdata.get("species_id", 0),
+                pid,
+            )
+
+        # (species_id, suffix) → mega form data in pokemon.json
+        mega_forms: dict[tuple[int, str], dict[str, Any]] = {}
+        for pid, pdata in self.pokemon.items():
+            if pid == "_meta":
+                continue
+            ident: str = pdata.get("identifier", "")
+            if "-mega" not in ident:
+                continue
+            sid = pdata.get("species_id", 0)
+            if ident.endswith("-mega-x"):
+                suffix = "X"
+            elif ident.endswith("-mega-y"):
+                suffix = "Y"
+            else:
+                suffix = ""
+            mega_forms[(sid, suffix)] = {
+                "mega_pokemon_id": int(pid),
+                "source": "base",
+                "types": pdata.get("types", []),
+                "base_stats": pdata.get("base_stats", {}),
+                "abilities": pdata.get("abilities", {}),
+            }
+
+        champions_megas = self.champions_new.get("mega_evolutions", {})
+
+        for item_id, item_data in self.items.items():
+            if item_id == "_meta" or item_data.get("category_id") != 44:
+                continue
+            m = self._MEGA_EFFECT_RE.search(item_data.get("effect", ""))
+            if not m:
+                continue
+            base_name = m.group(1)         # e.g. "Charizard"
+            mega_form_name = m.group(2)    # e.g. "Mega Charizard X"
+
+            # Determine suffix from mega form name
+            suffix = ""
+            if mega_form_name.endswith(" X"):
+                suffix = "X"
+            elif mega_form_name.endswith(" Y"):
+                suffix = "Y"
+            elif mega_form_name.endswith(" Z"):
+                suffix = "Z"
+
+            # Try base pokemon.json lookup
+            default_info = name_to_default.get(base_name)
+            if default_info:
+                species_id, default_pid = default_info
+                key = (species_id, suffix)
+                if key in mega_forms:
+                    entry = {
+                        **mega_forms[key],
+                        "mega_form_name": mega_form_name,
+                        "base_pokemon_id": int(default_pid),
+                    }
+                    self._mega_stone_map[item_id] = entry
+                    continue
+
+            # Try champions_new mega_evolutions
+            if mega_form_name in champions_megas:
+                cdata = champions_megas[mega_form_name]
+                entry = {
+                    "mega_pokemon_id": None,
+                    "source": "champions",
+                    "types": cdata.get("types", []),
+                    "base_stats": cdata.get("base_stats", {}),
+                    "abilities": {
+                        "normal": [cdata["ability"]] if cdata.get("ability") else [],
+                        "hidden": None,
+                    },
+                    "mega_form_name": mega_form_name,
+                    "base_pokemon_id": int(default_info[1]) if default_info else None,
+                }
+                self._mega_stone_map[item_id] = entry
+                continue
+
+            logger.debug(
+                "メガストーン '%s' に対応するメガフォームが見つかりません: %s",
+                item_data.get("identifier"), mega_form_name,
+            )
+
+        logger.info(
+            "メガストーンマップ構築完了: %d 件", len(self._mega_stone_map),
+        )
+
+    def get_mega_form_for_item(self, item_id: int) -> dict[str, Any] | None:
+        """メガストーンの item_id からメガフォームデータを取得する。"""
+        return self._mega_stone_map.get(str(item_id))
 
     def get_learnset(self, species_id: int, form: str = "default") -> list[int]:
         """ポケモンが覚える技の move_id リストを取得する。"""
