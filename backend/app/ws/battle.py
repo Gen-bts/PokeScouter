@@ -12,18 +12,23 @@ import json
 import logging
 import time
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from pathlib import Path
 
 import cv2
 import numpy as np
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.data.names import get_id_to_name
-from app.dependencies import get_detector, get_pokemon_matcher, get_recognizer, ocr_lock
+from app.dependencies import get_detector, get_game_data, get_pokemon_matcher, get_recognizer, ocr_lock
 from app.ocr.region import RegionConfig
+from app.recognition.battle_log_parser import BattleLogParser
 from app.recognition.party_register import PartyRegistrationMachine
 from app.recognition.scene_state import SceneStateMachine
 
 logger = logging.getLogger(__name__)
+_audit_logger = logging.getLogger("recognition_audit")
+_RECOGNITION_CROP_DIR = Path(__file__).parent.parent.parent.parent / "debug" / "recognition_crops"
 
 router = APIRouter()
 
@@ -45,6 +50,7 @@ class BattleSession:
     _last_scene_key: str = field(default="none", repr=False)
     _read_once_cache: dict[str, dict] = field(default_factory=dict, repr=False)
     _pokemon_icon_cache: dict[str, dict] = field(default_factory=dict, repr=False)
+    _battle_log_parser: BattleLogParser | None = field(default=None, repr=False)
 
     def effective_interval_ms(self, scene_key: str, config: RegionConfig) -> int:
         """現在のシーンに応じた有効インターバル(ms)を返す.
@@ -91,6 +97,26 @@ def _run_scene_detection(frame: np.ndarray, session: BattleSession) -> dict | No
         }
 
     return None
+
+
+def _save_failed_crop(
+    frame: np.ndarray,
+    pos: dict[str, int],
+    key: str,
+) -> None:
+    """失敗したポケモン認識のクロップ画像をディスクに保存する."""
+    try:
+        _RECOGNITION_CROP_DIR.mkdir(parents=True, exist_ok=True)
+        x, y, w, h = pos["x"], pos["y"], pos["w"], pos["h"]
+        crop = frame[y : y + h, x : x + w]
+        if crop.size == 0:
+            return
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{timestamp}_{key}.png"
+        cv2.imwrite(str(_RECOGNITION_CROP_DIR / filename), crop)
+        logger.debug("Failed crop saved: %s", filename)
+    except Exception:
+        logger.warning("Failed to save crop image for %s", key, exc_info=True)
 
 
 def _run_pokemon_identification(
@@ -206,6 +232,50 @@ def _run_pokemon_identification(
                     "confidence": entry["confidence"],
                     "candidates": entry["candidates"],
                 }
+        # --- ポジション別診断ログ ---
+        is_failed = entry["pokemon_id"] is None
+        is_cached = entry.get("cached", False)
+        confidence = entry.get("confidence", 0.0)
+
+        if is_cached:
+            logger.info(
+                "  [pos %d] %s CACHED: %s (%.3f)",
+                entry["position"], key, entry.get("name", "?"), confidence,
+            )
+        elif is_failed:
+            cands = entry.get("candidates", [])
+            best_conf = cands[0]["confidence"] if cands else 0.0
+            cands_str = ", ".join(
+                f"{c['name']}({c['confidence']:.3f})"
+                for c in cands[:3]
+            )
+            logger.info(
+                "  [pos %d] %s FAILED: best=%.3f thr=%.2f candidates=[%s]",
+                entry["position"], key, best_conf,
+                fresh_map.get(key).threshold if fresh_map.get(key) else 0.60,
+                cands_str,
+            )
+            _save_failed_crop(frame, pos, key)
+        else:
+            logger.info(
+                "  [pos %d] %s OK: %s (%.3f)",
+                entry["position"], key, entry["name"], confidence,
+            )
+
+        # JSONL 監査レコード
+        _audit_logger.info(json.dumps({
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "event": "pokemon_identify",
+            "position": entry["position"],
+            "key": key,
+            "pokemon_id": entry["pokemon_id"],
+            "name": entry.get("name"),
+            "confidence": confidence,
+            "cached": is_cached,
+            "failed": is_failed,
+            "candidates": entry.get("candidates", []),
+        }, ensure_ascii=False))
+
         pokemon_list.append(entry)
 
     return {
@@ -498,9 +568,16 @@ async def websocket_battle(websocket: WebSocket) -> None:
             # インターバル制御（シーン別）
             now = time.monotonic()
             elapsed_since_last = (now - session._last_process_time) * 1000
-            effective_interval = session.effective_interval_ms(
-                session._last_scene_key, get_recognizer()._config,
-            )
+            # パーティ登録中は高速ポーリング（検出は20-35msで済む）
+            if (
+                session._party_machine is not None
+                and session._party_machine.is_active
+            ):
+                effective_interval = 100
+            else:
+                effective_interval = session.effective_interval_ms(
+                    session._last_scene_key, get_recognizer()._config,
+                )
             if elapsed_since_last < effective_interval:
                 continue
 
@@ -532,6 +609,8 @@ async def websocket_battle(websocket: WebSocket) -> None:
                 if scene_change is not None:
                     session._read_once_cache.clear()
                     session._pokemon_icon_cache.clear()
+                    if session._battle_log_parser is not None:
+                        session._battle_log_parser.reset()
                     scene_change["interval_ms"] = session.effective_interval_ms(
                         scene_change["scene"], get_recognizer()._config,
                     )
@@ -631,6 +710,35 @@ async def websocket_battle(websocket: WebSocket) -> None:
 
             session._last_process_time = time.monotonic()
             await websocket.send_json(result)
+
+            # バトルシーンのメインテキストをパースして構造化イベントを送信
+            if scene_key == "battle" and not session.benchmark:
+                if session._battle_log_parser is None:
+                    session._battle_log_parser = BattleLogParser(get_game_data())
+                text1 = ""
+                text2 = ""
+                opponent_name = ""
+                player_name = ""
+                for r in result.get("regions", []):
+                    if r["name"] == "メインテキスト１":
+                        text1 = r["text"]
+                    elif r["name"] == "メインテキスト２":
+                        text2 = r["text"]
+                    elif r["name"] == "相手の名前":
+                        opponent_name = r["text"]
+                    elif r["name"] == "自分の名前":
+                        player_name = r["text"]
+                session._battle_log_parser.update_context(
+                    opponent_trainer=opponent_name or None,
+                    player_trainer=player_name or None,
+                )
+                battle_events = session._battle_log_parser.parse(text1, text2)
+                for ev in battle_events:
+                    await websocket.send_json(ev.to_ws_message())
+                    logger.info(
+                        "battle_event: %s side=%s pokemon=%s",
+                        ev.event_type, ev.side, ev.pokemon_name,
+                    )
 
     receive_task = asyncio.create_task(receive_loop())
     process_task = asyncio.create_task(process_loop())
