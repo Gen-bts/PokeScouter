@@ -57,6 +57,31 @@ export interface PokemonIconDef {
 }
 
 // ---------------------------------------------------------------------------
+// リージョングループ（テンプレート + スロット）
+// ---------------------------------------------------------------------------
+
+export interface RegionGroupTemplateEntry {
+  dx: number;
+  dy: number;
+  w: number;
+  h: number;
+  type: "region" | "pokemon_icon";
+  engine?: string;
+  read_once?: boolean;
+}
+
+export interface RegionGroupSlot {
+  name: string;
+  x: number;
+  y: number;
+}
+
+export interface RegionGroup {
+  template: Record<string, RegionGroupTemplateEntry>;
+  slots: RegionGroupSlot[];
+}
+
+// ---------------------------------------------------------------------------
 // シーン
 // ---------------------------------------------------------------------------
 
@@ -72,6 +97,7 @@ export interface SceneConfig {
   detection: Record<string, DetectionRegionDef>;
   regions: Record<string, RegionDef>;
   pokemon_icons?: Record<string, PokemonIconDef>;
+  region_groups?: Record<string, RegionGroup>;
 }
 
 export interface RegionsConfig {
@@ -289,6 +315,92 @@ export async function deletePokemonIcon(
 ): Promise<RegionsConfig> {
   const res = await fetch(
     `${BASE}/pokemon-icons/${scene}?name=${encodeURIComponent(name)}`,
+    { method: "DELETE" },
+  );
+  return res.json();
+}
+
+// ---------------------------------------------------------------------------
+// リージョングループ
+// ---------------------------------------------------------------------------
+
+export async function createRegionGroup(
+  scene: string,
+  groupName: string,
+  template: Record<string, RegionGroupTemplateEntry> = {},
+  slots: RegionGroupSlot[] = [],
+): Promise<RegionsConfig> {
+  const res = await fetch(`${BASE}/region-groups/${scene}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ group_name: groupName, template, slots }),
+  });
+  return res.json();
+}
+
+export async function deleteRegionGroup(
+  scene: string,
+  groupName: string,
+): Promise<RegionsConfig> {
+  const res = await fetch(
+    `${BASE}/region-groups/${scene}?group_name=${encodeURIComponent(groupName)}`,
+    { method: "DELETE" },
+  );
+  return res.json();
+}
+
+export async function upsertGroupTemplate(
+  scene: string,
+  groupName: string,
+  subName: string,
+  entry: Omit<RegionGroupTemplateEntry, "type"> & { type?: string },
+): Promise<RegionsConfig> {
+  const res = await fetch(
+    `${BASE}/region-groups/${scene}/${encodeURIComponent(groupName)}/template`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sub_name: subName, ...entry }),
+    },
+  );
+  return res.json();
+}
+
+export async function deleteGroupTemplate(
+  scene: string,
+  groupName: string,
+  subName: string,
+): Promise<RegionsConfig> {
+  const res = await fetch(
+    `${BASE}/region-groups/${scene}/${encodeURIComponent(groupName)}/template?sub_name=${encodeURIComponent(subName)}`,
+    { method: "DELETE" },
+  );
+  return res.json();
+}
+
+export async function upsertGroupSlot(
+  scene: string,
+  groupName: string,
+  slot: RegionGroupSlot,
+): Promise<RegionsConfig> {
+  const res = await fetch(
+    `${BASE}/region-groups/${scene}/${encodeURIComponent(groupName)}/slots`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(slot),
+    },
+  );
+  return res.json();
+}
+
+export async function deleteGroupSlot(
+  scene: string,
+  groupName: string,
+  slotName: string,
+): Promise<RegionsConfig> {
+  const res = await fetch(
+    `${BASE}/region-groups/${scene}/${encodeURIComponent(groupName)}/slots?name=${encodeURIComponent(slotName)}`,
     { method: "DELETE" },
   );
   return res.json();

@@ -11,6 +11,12 @@ import {
   deleteDetectionRegion,
   upsertPokemonIcon,
   deletePokemonIcon,
+  createRegionGroup,
+  deleteRegionGroup,
+  upsertGroupTemplate,
+  deleteGroupTemplate,
+  upsertGroupSlot,
+  deleteGroupSlot,
   type SessionMetadata,
   type FrameInfo,
   type RegionDef,
@@ -18,6 +24,8 @@ import {
   type PokemonIconDef,
   type SceneMeta,
   type SceneConfig,
+  type RegionGroup,
+  type RegionGroupTemplateEntry,
 } from "../../api/devtools";
 
 interface Props {
@@ -39,8 +47,9 @@ interface Rect {
   h: number;
 }
 
-type CropType = "regions" | "detection" | "pokemon_icons";
+type CropType = "regions" | "detection" | "pokemon_icons" | "region_groups";
 type InteractionMode = "draw" | "move" | "resize";
+type GroupEditMode = "template" | "slots" | "preview";
 type ResizeHandle = "nw" | "ne" | "sw" | "se";
 
 const HANDLE_SIZE = 10;
@@ -71,6 +80,15 @@ const POKEMON_ICON_COLORS = [
   "#f8b739",
   "#e17055",
   "#fdcb6e",
+];
+
+const SLOT_COLORS = [
+  "#e94560",
+  "#4ecca3",
+  "#4d96ff",
+  "#f0c040",
+  "#c060f0",
+  "#f09060",
 ];
 
 function clampRect(r: Rect): Rect {
@@ -154,6 +172,16 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
 
   const [drawnRect, setDrawnRect] = useState<Rect | null>(null);
 
+  // --- グループモード State ---
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+  const [groupEditMode, setGroupEditMode] = useState<GroupEditMode>("template");
+  const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [newSubName, setNewSubName] = useState("");
+  const [newSubType, setNewSubType] = useState<"region" | "pokemon_icon">("region");
+  const [selectedTemplateName, setSelectedTemplateName] = useState<string | null>(null);
+  const [newSlotName, setNewSlotName] = useState("");
+
   // --- 微調整用 State ---
   const [selectedCropName, setSelectedCropName] = useState<string | null>(null);
   const [editRect, setEditRect] = useState<Rect | null>(null);
@@ -204,6 +232,10 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
     setSelectedCropName(null);
     setEditRect(null);
     setInteractionMode("draw");
+    setSelectedGroup(null);
+    setGroupEditMode("template");
+    setEditingSlotIndex(null);
+    setSelectedTemplateName(null);
   }, [scene, cropType]);
 
   // 現在のシーンのクロップ一覧
@@ -214,13 +246,19 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
   const currentPokemonIcons = Object.fromEntries(
     Object.entries(rawPokemonIcons).filter(([k]) => !k.startsWith("_")),
   );
+  const currentGroups = currentScene?.region_groups || {};
+  const currentGroup: RegionGroup | null =
+    selectedGroup && currentGroups[selectedGroup] ? currentGroups[selectedGroup]! : null;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const currentCrops: Record<string, any> =
     cropType === "regions"
       ? currentRegions
       : cropType === "detection"
         ? currentDetection
-        : currentPokemonIcons;
+        : cropType === "pokemon_icons"
+          ? currentPokemonIcons
+          : {};
   const colors =
     cropType === "regions"
       ? REGION_COLORS
@@ -347,8 +385,132 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
           drawnRect.y + drawnRect.h + 18,
         );
       }
+
+      // --- グループモード描画 ---
+      if (cropType === "region_groups" && currentGroup) {
+        const template = currentGroup.template;
+        const slots = currentGroup.slots;
+        const templateEntries = Object.entries(template);
+
+        if (groupEditMode === "template" && slots.length > 0) {
+          const anchor = slots[0]!;
+          // アンカー位置にクロスヘア
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(anchor.x - 20, anchor.y);
+          ctx.lineTo(anchor.x + 20, anchor.y);
+          ctx.moveTo(anchor.x, anchor.y - 20);
+          ctx.lineTo(anchor.x, anchor.y + 20);
+          ctx.stroke();
+
+          // テンプレートサブリージョンを描画
+          templateEntries.forEach(([subName, sub], i) => {
+            const absX = anchor.x + sub.dx;
+            const absY = anchor.y + sub.dy;
+            const isSelected = subName === selectedTemplateName;
+            const drawX = isSelected && editRect ? editRect.x : absX;
+            const drawY = isSelected && editRect ? editRect.y : absY;
+            const drawW = isSelected && editRect ? editRect.w : sub.w;
+            const drawH = isSelected && editRect ? editRect.h : sub.h;
+            const color = REGION_COLORS[i % REGION_COLORS.length] ?? "#ffffff";
+
+            if (isSelected) {
+              ctx.setLineDash([8, 4]);
+              ctx.strokeStyle = "#ffffff";
+              ctx.lineWidth = 3;
+              ctx.strokeRect(drawX, drawY, drawW, drawH);
+              ctx.setLineDash([]);
+              ctx.strokeStyle = color;
+              ctx.lineWidth = 1;
+              ctx.strokeRect(drawX + 3, drawY + 3, drawW - 6, drawH - 6);
+              ctx.fillStyle = color;
+              ctx.globalAlpha = 0.25;
+              ctx.fillRect(drawX, drawY, drawW, drawH);
+              ctx.globalAlpha = 1;
+              // リサイズハンドル
+              const hs = HANDLE_SIZE;
+              ctx.fillStyle = "#ffffff";
+              for (const [cx, cy] of [
+                [drawX - hs / 2, drawY - hs / 2],
+                [drawX + drawW - hs / 2, drawY - hs / 2],
+                [drawX - hs / 2, drawY + drawH - hs / 2],
+                [drawX + drawW - hs / 2, drawY + drawH - hs / 2],
+              ] as [number, number][]) {
+                ctx.fillRect(cx, cy, hs, hs);
+              }
+            } else {
+              ctx.strokeStyle = color;
+              ctx.lineWidth = 2;
+              ctx.strokeRect(drawX, drawY, drawW, drawH);
+              ctx.fillStyle = color;
+              ctx.globalAlpha = 0.15;
+              ctx.fillRect(drawX, drawY, drawW, drawH);
+              ctx.globalAlpha = 1;
+            }
+
+            ctx.font = "14px sans-serif";
+            ctx.fillStyle = color;
+            ctx.fillText(subName, drawX + 4, drawY - 4);
+          });
+        } else if (groupEditMode === "slots") {
+          // 各スロットにアンカーマーカー + テンプレートゴースト
+          slots.forEach((slot, si) => {
+            const slotColor = SLOT_COLORS[si % SLOT_COLORS.length] ?? "#ffffff";
+            const isSelected = si === editingSlotIndex;
+
+            // アンカーマーカー
+            const ax = isSelected && editRect ? editRect.x : slot.x;
+            const ay = isSelected && editRect ? editRect.y : slot.y;
+            ctx.fillStyle = slotColor;
+            ctx.fillRect(ax - 6, ay - 6, 12, 12);
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = isSelected ? 3 : 1;
+            ctx.strokeRect(ax - 6, ay - 6, 12, 12);
+
+            // ラベル
+            ctx.font = "bold 14px sans-serif";
+            ctx.fillStyle = slotColor;
+            ctx.fillText(slot.name, ax + 10, ay - 4);
+
+            // テンプレートゴースト
+            ctx.globalAlpha = isSelected ? 0.3 : 0.12;
+            for (const [, sub] of templateEntries) {
+              const rx = ax + sub.dx;
+              const ry = ay + sub.dy;
+              ctx.strokeStyle = slotColor;
+              ctx.lineWidth = 1;
+              ctx.strokeRect(rx, ry, sub.w, sub.h);
+              ctx.fillStyle = slotColor;
+              ctx.fillRect(rx, ry, sub.w, sub.h);
+            }
+            ctx.globalAlpha = 1;
+          });
+        } else if (groupEditMode === "preview") {
+          // 全展開リージョンを色分け表示
+          slots.forEach((slot, si) => {
+            const slotColor = SLOT_COLORS[si % SLOT_COLORS.length] ?? "#ffffff";
+            for (const [subName, sub] of templateEntries) {
+              const rx = slot.x + sub.dx;
+              const ry = slot.y + sub.dy;
+              ctx.strokeStyle = slotColor;
+              ctx.lineWidth = 2;
+              ctx.strokeRect(rx, ry, sub.w, sub.h);
+              ctx.fillStyle = slotColor;
+              ctx.globalAlpha = 0.15;
+              ctx.fillRect(rx, ry, sub.w, sub.h);
+              ctx.globalAlpha = 1;
+
+              ctx.font = "12px sans-serif";
+              ctx.fillStyle = slotColor;
+              ctx.fillText(`${slot.name}${subName}`, rx + 2, ry - 2);
+            }
+          });
+        }
+      }
     },
-    [currentCrops, colors, drawnRect, selectedCropName, editRect],
+    [currentCrops, colors, drawnRect, selectedCropName, editRect,
+     cropType, currentGroup, groupEditMode, selectedTemplateName, editingSlotIndex],
   );
 
   // 画像ロード時に再描画
@@ -383,6 +545,68 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       const { x, y } = getCanvasCoords(e);
 
+      // --- グループモード ---
+      if (cropType === "region_groups" && currentGroup) {
+        if (groupEditMode === "template" && currentGroup.slots.length > 0) {
+          const anchor = currentGroup.slots[0]!;
+          // 選択中テンプレートの操作
+          if (selectedTemplateName && editRect) {
+            const handle = hitTestHandle(x, y, editRect);
+            if (handle) {
+              setInteractionMode("resize");
+              setResizeHandle(handle);
+              return;
+            }
+            if (hitTestRect(x, y, editRect)) {
+              setInteractionMode("move");
+              setDragOffset({ dx: x - editRect.x, dy: y - editRect.y });
+              return;
+            }
+            setSelectedTemplateName(null);
+            setEditRect(null);
+          }
+          // テンプレートサブリージョンをクリックで選択
+          for (const [subName, sub] of Object.entries(currentGroup.template)) {
+            const rect = { x: anchor.x + sub.dx, y: anchor.y + sub.dy, w: sub.w, h: sub.h };
+            if (hitTestRect(x, y, rect)) {
+              setSelectedTemplateName(subName);
+              setEditRect(rect);
+              setDrawnRect(null);
+              return;
+            }
+          }
+          // 通常の描画（新規テンプレートサブリージョン）
+          setDrawing({ startX: x, startY: y, endX: x, endY: y });
+          setIsDrawing(true);
+          setDrawnRect(null);
+          return;
+        }
+        if (groupEditMode === "slots") {
+          if (editingSlotIndex != null && editRect) {
+            // 既に選択中のスロット → 移動
+            if (hitTestRect(x, y, { x: editRect.x - 20, y: editRect.y - 20, w: 40, h: 40 })) {
+              setInteractionMode("move");
+              setDragOffset({ dx: x - editRect.x, dy: y - editRect.y });
+              return;
+            }
+            // 選択解除
+            setEditingSlotIndex(null);
+            setEditRect(null);
+          }
+          // スロットアンカーをクリックで選択
+          for (let i = 0; i < currentGroup.slots.length; i++) {
+            const slot = currentGroup.slots[i]!;
+            if (Math.abs(x - slot.x) < 20 && Math.abs(y - slot.y) < 20) {
+              setEditingSlotIndex(i);
+              setEditRect({ x: slot.x, y: slot.y, w: 0, h: 0 });
+              return;
+            }
+          }
+          return;
+        }
+        return; // preview mode: no interaction
+      }
+
       // 選択中クロップがある場合: ハンドル or 移動 or 選択解除
       if (selectedCropName && editRect) {
         const handle = hitTestHandle(x, y, editRect);
@@ -414,6 +638,14 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       const { x, y } = getCanvasCoords(e);
       const canvas = canvasRef.current;
+
+      // --- グループスロット移動 ---
+      if (cropType === "region_groups" && groupEditMode === "slots"
+          && interactionMode === "move" && editRect && dragOffset) {
+        setEditRect({ x: x - dragOffset.dx, y: y - dragOffset.dy, w: 0, h: 0 });
+        redraw();
+        return;
+      }
 
       // --- move モード ---
       if (interactionMode === "move" && editRect && dragOffset) {
@@ -485,6 +717,22 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
   );
 
   const handleMouseUp = useCallback(() => {
+    // グループスロット移動完了
+    if (cropType === "region_groups" && groupEditMode === "slots"
+        && interactionMode === "move" && editingSlotIndex != null && editRect && selectedGroup) {
+      const slot = currentGroup?.slots[editingSlotIndex];
+      if (slot) {
+        upsertGroupSlot(scene, selectedGroup, {
+          name: slot.name,
+          x: Math.round(editRect.x),
+          y: Math.round(editRect.y),
+        }).then((updated) => setSceneConfigs(updated.scenes || {}));
+      }
+      setInteractionMode("draw");
+      setDragOffset(null);
+      return;
+    }
+
     // move / resize 完了
     if (interactionMode === "move" || interactionMode === "resize") {
       setInteractionMode("draw");
@@ -513,12 +761,42 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
     redraw();
   }, [isDrawing, drawing, redraw, interactionMode]);
 
-  // キーボード: 矢印キーで選択クロップを移動
+  // キーボード: 矢印キーで選択クロップ/スロット/テンプレートを移動
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!selectedCropName || !editRect) return;
       const arrowKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
       if (!arrowKeys.includes(e.key)) return;
+
+      // グループモード: テンプレートサブリージョン移動
+      if (cropType === "region_groups" && groupEditMode === "template" && selectedTemplateName && editRect) {
+        e.preventDefault();
+        let { x, y } = editRect;
+        switch (e.key) {
+          case "ArrowUp": y -= step; break;
+          case "ArrowDown": y += step; break;
+          case "ArrowLeft": x -= step; break;
+          case "ArrowRight": x += step; break;
+        }
+        setEditRect({ x, y, w: editRect.w, h: editRect.h });
+        return;
+      }
+
+      // グループモード: スロットアンカー移動
+      if (cropType === "region_groups" && groupEditMode === "slots" && editingSlotIndex != null && editRect) {
+        e.preventDefault();
+        let { x, y } = editRect;
+        switch (e.key) {
+          case "ArrowUp": y -= step; break;
+          case "ArrowDown": y += step; break;
+          case "ArrowLeft": x -= step; break;
+          case "ArrowRight": x += step; break;
+        }
+        setEditRect({ x, y, w: 0, h: 0 });
+        return;
+      }
+
+      // 通常モード
+      if (!selectedCropName || !editRect) return;
       e.preventDefault();
       let { x, y } = editRect;
       switch (e.key) {
@@ -531,7 +809,7 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedCropName, editRect, step]);
+  }, [selectedCropName, editRect, step, cropType, groupEditMode, selectedTemplateName, editingSlotIndex]);
 
   // editRect 変更時に再描画
   useEffect(() => {
@@ -684,6 +962,108 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
     [editRect],
   );
 
+  // --- グループ操作ハンドラ ---
+  const handleCreateGroup = useCallback(async () => {
+    if (!newGroupName.trim() || !scene) return;
+    const updated = await createRegionGroup(scene, newGroupName.trim());
+    setSceneConfigs(updated.scenes || {});
+    setSelectedGroup(newGroupName.trim());
+    setNewGroupName("");
+  }, [newGroupName, scene]);
+
+  const handleDeleteGroup = useCallback(async () => {
+    if (!selectedGroup || !scene) return;
+    const updated = await deleteRegionGroup(scene, selectedGroup);
+    setSceneConfigs(updated.scenes || {});
+    setSelectedGroup(null);
+  }, [selectedGroup, scene]);
+
+  const handleSaveTemplate = useCallback(async () => {
+    if (!drawnRect || !newSubName.trim() || !selectedGroup || !scene) return;
+    const anchor = currentGroup?.slots[0];
+    if (!anchor) return;
+    const entry: RegionGroupTemplateEntry = {
+      dx: drawnRect.x - anchor.x,
+      dy: drawnRect.y - anchor.y,
+      w: drawnRect.w,
+      h: drawnRect.h,
+      type: newSubType,
+      ...(newSubType === "region" ? { engine: newEngine } : {}),
+      ...(newReadOnce ? { read_once: true } : {}),
+    };
+    const updated = await upsertGroupTemplate(scene, selectedGroup, newSubName.trim(), entry);
+    setSceneConfigs(updated.scenes || {});
+    setDrawnRect(null);
+    setNewSubName("");
+    setNewReadOnce(false);
+  }, [drawnRect, newSubName, newSubType, newEngine, newReadOnce, selectedGroup, scene, currentGroup]);
+
+  const handleSaveTemplateEdit = useCallback(async () => {
+    if (!selectedTemplateName || !editRect || !selectedGroup || !scene || !currentGroup) return;
+    const anchor = currentGroup.slots[0];
+    if (!anchor) return;
+    const existing = currentGroup.template[selectedTemplateName];
+    if (!existing) return;
+    const entry: RegionGroupTemplateEntry = {
+      dx: editRect.x - anchor.x,
+      dy: editRect.y - anchor.y,
+      w: editRect.w,
+      h: editRect.h,
+      type: existing.type,
+      ...(existing.type === "region" ? { engine: existing.engine } : {}),
+      ...(editReadOnce ? { read_once: true } : {}),
+    };
+    const updated = await upsertGroupTemplate(scene, selectedGroup, selectedTemplateName, entry);
+    setSceneConfigs(updated.scenes || {});
+    setSelectedTemplateName(null);
+    setEditRect(null);
+  }, [selectedTemplateName, editRect, selectedGroup, scene, currentGroup, editReadOnce]);
+
+  const handleDeleteTemplate = useCallback(async (subName: string) => {
+    if (!selectedGroup || !scene) return;
+    const updated = await deleteGroupTemplate(scene, selectedGroup, subName);
+    setSceneConfigs(updated.scenes || {});
+    if (selectedTemplateName === subName) {
+      setSelectedTemplateName(null);
+      setEditRect(null);
+    }
+  }, [selectedGroup, scene, selectedTemplateName]);
+
+  const handleSaveSlotEdit = useCallback(async () => {
+    if (editingSlotIndex == null || !editRect || !selectedGroup || !scene || !currentGroup) return;
+    const slot = currentGroup.slots[editingSlotIndex];
+    if (!slot) return;
+    const updated = await upsertGroupSlot(scene, selectedGroup, {
+      name: slot.name,
+      x: Math.round(editRect.x),
+      y: Math.round(editRect.y),
+    });
+    setSceneConfigs(updated.scenes || {});
+    setEditingSlotIndex(null);
+    setEditRect(null);
+  }, [editingSlotIndex, editRect, selectedGroup, scene, currentGroup]);
+
+  const handleAddSlot = useCallback(async () => {
+    if (!newSlotName.trim() || !selectedGroup || !scene) return;
+    const updated = await upsertGroupSlot(scene, selectedGroup, {
+      name: newSlotName.trim(),
+      x: 100,
+      y: 100,
+    });
+    setSceneConfigs(updated.scenes || {});
+    setNewSlotName("");
+  }, [newSlotName, selectedGroup, scene]);
+
+  const handleDeleteSlot = useCallback(async (slotName: string) => {
+    if (!selectedGroup || !scene) return;
+    const updated = await deleteGroupSlot(scene, selectedGroup, slotName);
+    setSceneConfigs(updated.scenes || {});
+    if (editingSlotIndex != null && currentGroup?.slots[editingSlotIndex]?.name === slotName) {
+      setEditingSlotIndex(null);
+      setEditRect(null);
+    }
+  }, [selectedGroup, scene, editingSlotIndex, currentGroup]);
+
   const sceneKeys = Object.keys(scenesMap);
 
   // 編集中かどうか（editRect が保存値と異なるか）
@@ -779,6 +1159,12 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
               >
                 ポケモン画像
               </button>
+              <button
+                className={cropType === "region_groups" ? "active" : ""}
+                onClick={() => setCropType("region_groups")}
+              >
+                グループ
+              </button>
             </div>
           </div>
         </div>
@@ -797,6 +1183,321 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
       </div>
 
       <div className="crop-editor-sidebar">
+        {/* === グループモード === */}
+        {cropType === "region_groups" && (
+          <>
+            {/* グループ選択 */}
+            <div className="group-selector">
+              <h3>リージョングループ</h3>
+              <select
+                value={selectedGroup || ""}
+                onChange={(e) => {
+                  setSelectedGroup(e.target.value || null);
+                  setGroupEditMode("template");
+                  setSelectedTemplateName(null);
+                  setEditingSlotIndex(null);
+                  setEditRect(null);
+                  setDrawnRect(null);
+                }}
+              >
+                <option value="">-- 選択 --</option>
+                {Object.keys(currentGroups).map((g) => (
+                  <option key={g} value={g}>{g}</option>
+                ))}
+              </select>
+              <div className="group-actions">
+                <input
+                  type="text"
+                  value={newGroupName}
+                  onChange={(e) => setNewGroupName(e.target.value)}
+                  placeholder="新規グループ名"
+                />
+                <button className="btn-save" onClick={handleCreateGroup} disabled={!newGroupName.trim()}>
+                  作成
+                </button>
+                {selectedGroup && (
+                  <button className="btn-delete" onClick={handleDeleteGroup} title="グループ削除">
+                    ×
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {selectedGroup && currentGroup && (
+              <>
+                {/* サブモード切替 */}
+                <div className="group-mode-toggle">
+                  <button
+                    className={groupEditMode === "template" ? "active" : ""}
+                    onClick={() => { setGroupEditMode("template"); setEditingSlotIndex(null); setEditRect(null); }}
+                  >
+                    テンプレート
+                  </button>
+                  <button
+                    className={groupEditMode === "slots" ? "active" : ""}
+                    onClick={() => { setGroupEditMode("slots"); setSelectedTemplateName(null); setEditRect(null); setDrawnRect(null); }}
+                  >
+                    スロット
+                  </button>
+                  <button
+                    className={groupEditMode === "preview" ? "active" : ""}
+                    onClick={() => { setGroupEditMode("preview"); setSelectedTemplateName(null); setEditingSlotIndex(null); setEditRect(null); }}
+                  >
+                    プレビュー
+                  </button>
+                </div>
+
+                {/* テンプレート編集モード */}
+                {groupEditMode === "template" && (
+                  <>
+                    {/* 選択中テンプレートの微調整 */}
+                    {selectedTemplateName && editRect && currentGroup.slots.length > 0 && (
+                      <div className="edit-region-form">
+                        <h3>テンプレート微調整: {selectedTemplateName}</h3>
+                        <div className="step-size-selector">
+                          <span>ステップ:</span>
+                          {[1, 5, 10].map((s) => (
+                            <button key={s} className={step === s ? "active" : ""} onClick={() => setStep(s)}>
+                              {s}px
+                            </button>
+                          ))}
+                        </div>
+                        {(["x", "y", "w", "h"] as const).map((field) => (
+                          <div className="coord-adjust-row" key={field}>
+                            <label>{field === "x" ? "dx" : field === "y" ? "dy" : field.toUpperCase()}</label>
+                            <button onClick={() => updateEditField(field, editRect[field] - step)}>-</button>
+                            <input
+                              type="number"
+                              value={field === "x" || field === "y"
+                                ? editRect[field] - currentGroup.slots[0]![field === "x" ? "x" : "y"]
+                                : editRect[field]}
+                              onChange={(e) => {
+                                const val = Number(e.target.value);
+                                if (field === "x" || field === "y") {
+                                  const anchorVal = currentGroup.slots[0]![field === "x" ? "x" : "y"];
+                                  updateEditField(field, val + anchorVal);
+                                } else {
+                                  updateEditField(field, val);
+                                }
+                              }}
+                            />
+                            <button onClick={() => updateEditField(field, editRect[field] + step)}>+</button>
+                          </div>
+                        ))}
+                        <label className="read-once-label">
+                          <input type="checkbox" checked={editReadOnce} onChange={(e) => setEditReadOnce(e.target.checked)} />
+                          1度のみ読取
+                        </label>
+                        <div className="edit-actions">
+                          <button className="btn-save" onClick={handleSaveTemplateEdit}>保存</button>
+                          <button className="btn-cancel" onClick={() => { setSelectedTemplateName(null); setEditRect(null); }}>閉じる</button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 新規テンプレート保存フォーム */}
+                    {drawnRect && !selectedTemplateName && currentGroup.slots.length > 0 && (
+                      <div className="new-region-form">
+                        <h3>新規テンプレートサブリージョン</h3>
+                        <div className="region-coords">
+                          dx:{drawnRect.x - currentGroup.slots[0]!.x} dy:{drawnRect.y - currentGroup.slots[0]!.y} w:{drawnRect.w} h:{drawnRect.h}
+                        </div>
+                        <label>名前</label>
+                        <input
+                          type="text"
+                          value={newSubName}
+                          onChange={(e) => setNewSubName(e.target.value)}
+                          placeholder="例: 名前"
+                        />
+                        <label>タイプ</label>
+                        <select value={newSubType} onChange={(e) => setNewSubType(e.target.value as "region" | "pokemon_icon")}>
+                          <option value="region">OCR読取 (region)</option>
+                          <option value="pokemon_icon">画像認識 (pokemon_icon)</option>
+                        </select>
+                        {newSubType === "region" && (
+                          <>
+                            <label>エンジン</label>
+                            <select value={newEngine} onChange={(e) => setNewEngine(e.target.value)}>
+                              <option value="paddle">PaddleOCR</option>
+                              <option value="manga">MangaOCR</option>
+                              <option value="glm">GLM OCR</option>
+                            </select>
+                          </>
+                        )}
+                        <label className="read-once-label">
+                          <input type="checkbox" checked={newReadOnce} onChange={(e) => setNewReadOnce(e.target.checked)} />
+                          1度のみ読取
+                        </label>
+                        <button className="btn-save" onClick={handleSaveTemplate} disabled={!newSubName.trim()}>
+                          保存
+                        </button>
+                      </div>
+                    )}
+
+                    {currentGroup.slots.length === 0 && (
+                      <p className="placeholder">先にスロットモードでスロットを1つ以上追加してください</p>
+                    )}
+
+                    {/* テンプレートサブリージョン一覧 */}
+                    <h3>テンプレート一覧</h3>
+                    <div className="region-list">
+                      {Object.keys(currentGroup.template).length === 0 && (
+                        <p className="placeholder">テンプレートなし</p>
+                      )}
+                      {Object.entries(currentGroup.template).map(([subName, sub], i) => (
+                        <div
+                          className={`region-item ${selectedTemplateName === subName ? "region-item-selected" : ""}`}
+                          key={subName}
+                          onClick={() => {
+                            if (currentGroup.slots.length === 0) return;
+                            const anchor = currentGroup.slots[0]!;
+                            if (selectedTemplateName === subName) {
+                              setSelectedTemplateName(null);
+                              setEditRect(null);
+                            } else {
+                              setSelectedTemplateName(subName);
+                              setEditRect({ x: anchor.x + sub.dx, y: anchor.y + sub.dy, w: sub.w, h: sub.h });
+                              setEditReadOnce(!!sub.read_once);
+                              setDrawnRect(null);
+                            }
+                          }}
+                        >
+                          <div className="region-color" style={{ background: REGION_COLORS[i % REGION_COLORS.length] }} />
+                          <div className="region-details">
+                            <div className="region-name">{subName}</div>
+                            <div className="region-coords">
+                              dx:{sub.dx} dy:{sub.dy} {sub.w}x{sub.h} | {sub.type}
+                              {sub.type === "region" ? ` | ${sub.engine ?? "paddle"}` : ""}
+                              {sub.read_once ? " | 1回" : ""}
+                            </div>
+                          </div>
+                          <button
+                            className="btn-delete"
+                            onClick={(e) => { e.stopPropagation(); handleDeleteTemplate(subName); }}
+                            title="削除"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* スロット配置モード */}
+                {groupEditMode === "slots" && (
+                  <>
+                    {editingSlotIndex != null && editRect && (
+                      <div className="edit-region-form">
+                        <h3>スロット移動: {currentGroup.slots[editingSlotIndex]?.name}</h3>
+                        <div className="step-size-selector">
+                          <span>ステップ:</span>
+                          {[1, 5, 10].map((s) => (
+                            <button key={s} className={step === s ? "active" : ""} onClick={() => setStep(s)}>
+                              {s}px
+                            </button>
+                          ))}
+                        </div>
+                        <div className="coord-adjust-row">
+                          <label>X</label>
+                          <button onClick={() => setEditRect({ ...editRect, x: editRect.x - step })}>-</button>
+                          <input type="number" value={Math.round(editRect.x)} onChange={(e) => setEditRect({ ...editRect, x: Number(e.target.value) })} />
+                          <button onClick={() => setEditRect({ ...editRect, x: editRect.x + step })}>+</button>
+                        </div>
+                        <div className="coord-adjust-row">
+                          <label>Y</label>
+                          <button onClick={() => setEditRect({ ...editRect, y: editRect.y - step })}>-</button>
+                          <input type="number" value={Math.round(editRect.y)} onChange={(e) => setEditRect({ ...editRect, y: Number(e.target.value) })} />
+                          <button onClick={() => setEditRect({ ...editRect, y: editRect.y + step })}>+</button>
+                        </div>
+                        <div className="edit-hint">
+                          Canvas上でドラッグ移動・矢印キーで微調整できます。
+                        </div>
+                        <div className="edit-actions">
+                          <button className="btn-save" onClick={handleSaveSlotEdit}>保存</button>
+                          <button className="btn-cancel" onClick={() => { setEditingSlotIndex(null); setEditRect(null); }}>閉じる</button>
+                        </div>
+                      </div>
+                    )}
+
+                    <h3>スロット一覧 ({currentGroup.slots.length})</h3>
+                    <div className="slot-add-form">
+                      <input
+                        type="text"
+                        value={newSlotName}
+                        onChange={(e) => setNewSlotName(e.target.value)}
+                        placeholder="スロット名 (例: ポケモン２)"
+                      />
+                      <button className="btn-save" onClick={handleAddSlot} disabled={!newSlotName.trim()}>
+                        追加
+                      </button>
+                    </div>
+                    <div className="region-list">
+                      {currentGroup.slots.map((slot, i) => (
+                        <div
+                          className={`region-item ${editingSlotIndex === i ? "region-item-selected" : ""}`}
+                          key={slot.name}
+                          onClick={() => {
+                            if (editingSlotIndex === i) {
+                              setEditingSlotIndex(null);
+                              setEditRect(null);
+                            } else {
+                              setEditingSlotIndex(i);
+                              setEditRect({ x: slot.x, y: slot.y, w: 0, h: 0 });
+                            }
+                          }}
+                        >
+                          <div className="region-color" style={{ background: SLOT_COLORS[i % SLOT_COLORS.length] }} />
+                          <div className="region-details">
+                            <div className="region-name">{slot.name}</div>
+                            <div className="region-coords">x:{slot.x} y:{slot.y}</div>
+                          </div>
+                          <button
+                            className="btn-delete"
+                            onClick={(e) => { e.stopPropagation(); handleDeleteSlot(slot.name); }}
+                            title="削除"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* プレビューモード */}
+                {groupEditMode === "preview" && (
+                  <>
+                    <h3>展開プレビュー ({currentGroup.slots.length * Object.keys(currentGroup.template).length} リージョン)</h3>
+                    <div className="region-list">
+                      {currentGroup.slots.map((slot, si) => (
+                        <div key={slot.name}>
+                          <div className="slot-preview-header" style={{ color: SLOT_COLORS[si % SLOT_COLORS.length] }}>
+                            {slot.name} ({slot.x}, {slot.y})
+                          </div>
+                          {Object.entries(currentGroup.template).map(([subName, sub]) => (
+                            <div className="region-item" key={`${slot.name}${subName}`}>
+                              <div className="region-color" style={{ background: SLOT_COLORS[si % SLOT_COLORS.length] }} />
+                              <div className="region-details">
+                                <div className="region-name">{slot.name}{subName}</div>
+                                <div className="region-coords">
+                                  {slot.x + sub.dx},{slot.y + sub.dy} {sub.w}x{sub.h}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+          </>
+        )}
+
+        {/* === 通常モード（regions / detection / pokemon_icons） === */}
+        {cropType !== "region_groups" && <>
         {/* --- 微調整フォーム --- */}
         {selectedCropName && editRect && (
           <div className="edit-region-form">
@@ -1108,6 +1809,7 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
             </div>
           ))}
         </div>
+        </>}
       </div>
     </div>
   );

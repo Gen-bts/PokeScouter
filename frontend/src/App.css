@@ -575,6 +575,57 @@ button.active {
   color: #f44336;
 }
 
+/* battle_event エントリ */
+.match-log-battle-event {
+  gap: 8px;
+  align-items: center;
+  padding: 4px 8px;
+  border-left: 3px solid transparent;
+}
+
+.match-log-event-opponent {
+  border-left-color: #e94560;
+  background: rgba(233, 69, 96, 0.08);
+}
+
+.match-log-event-player {
+  border-left-color: #4ea8de;
+  background: rgba(78, 168, 222, 0.08);
+}
+
+.match-log-event-text {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ocr_result エントリ */
+.match-log-ocr {
+  flex-direction: column;
+  gap: 2px;
+}
+
+.match-log-ocr-regions {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 0.85em;
+  padding-left: 4px;
+}
+
+.match-log-ocr-region {
+  display: flex;
+  gap: 6px;
+}
+
+.match-log-ocr-name {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.match-log-ocr-text {
+  color: var(--text-primary);
+}
+
 /* ======================================================================
    DevTools
    ====================================================================== */
@@ -1231,6 +1282,9 @@ button.active {
 
 .crop-type-toggle button:last-child {
   border-radius: 0 4px 4px 0;
+}
+
+.crop-type-toggle button + button {
   border-left: none;
 }
 
@@ -1248,6 +1302,85 @@ button.active {
 
 .scene-selector-row select {
   flex: 1;
+}
+
+/* --- リージョングループ --- */
+
+.group-selector {
+  margin-bottom: 12px;
+}
+
+.group-selector h3 {
+  margin: 0 0 6px;
+}
+
+.group-selector select {
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.group-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.group-actions input {
+  flex: 1;
+  min-width: 0;
+}
+
+.group-mode-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 12px;
+}
+
+.group-mode-toggle button {
+  flex: 1;
+  font-size: 11px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.group-mode-toggle button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.group-mode-toggle button:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.group-mode-toggle button + button {
+  border-left: none;
+}
+
+.group-mode-toggle button.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.slot-add-form {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.slot-add-form input {
+  flex: 1;
+  min-width: 0;
+}
+
+.slot-preview-header {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 0 2px;
+  border-bottom: 1px solid var(--border);
+  margin-top: 4px;
 }
 
 /* ======================================================================
@@ -1890,25 +2023,15 @@ button.active {
   border-color: var(--accent-yellow);
 }
 
-.opponent-slot-pos {
-  font-size: 11px;
-  color: var(--text-secondary);
-  font-family: "Consolas", monospace;
-  flex-shrink: 0;
-  width: 20px;
-}
-
 .opponent-slot-img {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  image-rendering: pixelated;
+  width: 52px;
+  height: 52px;
   flex-shrink: 0;
 }
 
 .opponent-slot-placeholder {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1958,6 +2081,195 @@ button.active {
 
 .opponent-slot:hover .opponent-slot-edit {
   opacity: 1;
+}
+
+/* ===== Opponent Tooltip ===== */
+
+.opponent-slot-tooltip {
+  position: fixed;
+  z-index: 1000;
+  transform: translateY(-50%);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  min-width: 200px;
+  max-width: 320px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  color: var(--text-primary);
+  pointer-events: auto;
+}
+
+.opponent-slot-tooltip::before {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: var(--border);
+}
+
+.opponent-slot-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-left-color: var(--bg-secondary);
+  margin-left: -1px;
+}
+
+/* タイプバッジ共通 */
+.type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.type-badge-sm {
+  padding: 1px 5px;
+  font-size: 10px;
+}
+
+.type-badge[data-type="normal"]   { background: #a8a878; }
+.type-badge[data-type="fire"]     { background: #f08030; }
+.type-badge[data-type="water"]    { background: #6890f0; }
+.type-badge[data-type="electric"] { background: #f8d030; color: #333; text-shadow: none; }
+.type-badge[data-type="grass"]    { background: #78c850; }
+.type-badge[data-type="ice"]      { background: #98d8d8; color: #333; text-shadow: none; }
+.type-badge[data-type="fighting"] { background: #c03028; }
+.type-badge[data-type="poison"]   { background: #a040a0; }
+.type-badge[data-type="ground"]   { background: #e0c068; color: #333; text-shadow: none; }
+.type-badge[data-type="flying"]   { background: #a890f0; }
+.type-badge[data-type="psychic"]  { background: #f85888; }
+.type-badge[data-type="bug"]      { background: #a8b820; }
+.type-badge[data-type="rock"]     { background: #b8a038; }
+.type-badge[data-type="ghost"]    { background: #705898; }
+.type-badge[data-type="dragon"]   { background: #7038f8; }
+.type-badge[data-type="dark"]     { background: #705848; }
+.type-badge[data-type="steel"]    { background: #b8b8d0; color: #333; text-shadow: none; }
+.type-badge[data-type="fairy"]    { background: #ee99ac; }
+
+/* ツールチップ内タイプ行 */
+.opponent-tooltip-types {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+/* とくせい */
+.opponent-tooltip-abilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.opponent-tooltip-ability {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--bg-primary);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  position: relative;
+  cursor: help;
+}
+
+.ability-desc-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: normal;
+  width: max-content;
+  max-width: 240px;
+  line-height: 1.4;
+  z-index: 1100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.opponent-tooltip-ability:hover .ability-desc-tooltip {
+  display: block;
+}
+
+.ability-desc-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--bg-primary);
+}
+
+.opponent-tooltip-hidden-tag {
+  font-size: 9px;
+  background: rgba(255, 167, 38, 0.3);
+  color: #ffa726;
+  padding: 0 3px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+/* タイプ相性リスト */
+.opponent-tooltip-eff-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.opponent-tooltip-eff-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: 3px;
+  padding: 1px 3px;
+}
+
+.opponent-tooltip-eff-weak {
+  background: rgba(229, 57, 53, 0.12);
+}
+
+.opponent-tooltip-eff-resist {
+  background: rgba(30, 136, 229, 0.12);
+}
+
+.opponent-tooltip-eff-immune {
+  background: rgba(158, 158, 158, 0.15);
+}
+
+.opponent-tooltip-eff-mult {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.opponent-tooltip-eff-weak .opponent-tooltip-eff-mult {
+  color: #e53935;
+}
+
+.opponent-tooltip-eff-resist .opponent-tooltip-eff-mult {
+  color: #1e88e5;
+}
+
+.opponent-tooltip-eff-immune .opponent-tooltip-eff-mult {
+  color: #9e9e9e;
 }
 
 /* オートコンプリート */
@@ -2074,6 +2386,139 @@ button.active {
   font-size: 13px;
 }
 
+/* === タイプ一貫性パネル === */
+
+.type-consistency {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.type-consistency h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.tc-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tc-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.tc-group-fraction {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tc-group-label {
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tc-group-types {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.tc-type-row {
+  display: block;
+  width: 100%;
+  padding: 2px 8px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+/* ポケモンタイプカラー */
+[data-type="normal"]   { background: #a8a878; }
+[data-type="fire"]     { background: #f08030; }
+[data-type="water"]    { background: #6890f0; }
+[data-type="electric"] { background: #f8d030; color: #333; }
+[data-type="grass"]    { background: #78c850; }
+[data-type="ice"]      { background: #98d8d8; color: #333; }
+[data-type="fighting"] { background: #c03028; }
+[data-type="poison"]   { background: #a040a0; }
+[data-type="ground"]   { background: #e0c068; color: #333; }
+[data-type="flying"]   { background: #a890f0; }
+[data-type="psychic"]  { background: #f85888; }
+[data-type="bug"]      { background: #a8b820; }
+[data-type="rock"]     { background: #b8a038; }
+[data-type="ghost"]    { background: #705898; }
+[data-type="dragon"]   { background: #7038f8; }
+[data-type="dark"]     { background: #705848; }
+[data-type="steel"]    { background: #b8b8d0; color: #333; }
+[data-type="fairy"]    { background: #ee99ac; }
+
+/* === Type Consistency Hover Overlay === */
+
+.slot-eff-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: "Consolas", monospace;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
+  animation: eff-fade-in 0.1s ease-out;
+}
+
+@keyframes eff-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* x2 抜群: オレンジ */
+.slot-eff-super2 {
+  background: rgba(240, 160, 40, 0.22);
+  color: #f0a828;
+  border: 1px solid rgba(240, 160, 40, 0.5);
+}
+
+/* x4 4倍弱点: 赤 + 強調 */
+.slot-eff-super4 {
+  background: rgba(220, 40, 50, 0.35);
+  color: #ff5555;
+  border: 1px solid rgba(220, 40, 50, 0.65);
+  font-size: 18px;
+  text-shadow: 0 0 6px rgba(255, 50, 50, 0.5);
+}
+
+.slot-eff-neutral {
+  background: rgba(160, 160, 176, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid rgba(160, 160, 176, 0.2);
+}
+
+.slot-eff-resist {
+  background: rgba(104, 144, 240, 0.2);
+  color: #7cacf8;
+  border: 1px solid rgba(104, 144, 240, 0.35);
+}
+
+.slot-eff-immune {
+  background: rgba(0, 0, 0, 0.45);
+  color: #888;
+  border: 1px solid rgba(80, 80, 80, 0.5);
+}
+
 /* === MyPartyPanel === */
 
 .my-party-panel {
@@ -2097,42 +2542,40 @@ button.active {
 .my-party-slots {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .my-party-slot {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 8px;
+  padding: 3px 8px;
   background: var(--bg-primary);
   border-radius: 4px;
   border: 1px solid var(--border);
+  cursor: default;
 }
 
 .my-party-slot-empty {
   opacity: 0.5;
 }
 
-.my-party-slot-pos {
-  font-size: 11px;
-  color: var(--text-secondary);
-  font-family: "Consolas", monospace;
+/* スプライトラッパー（もちものオーバーレイ用） */
+.my-party-slot-sprite-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
-  width: 20px;
 }
 
 .my-party-slot-img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  image-rendering: pixelated;
-  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
 }
 
 .my-party-slot-placeholder {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2141,15 +2584,15 @@ button.active {
   border-radius: 4px;
   color: var(--text-secondary);
   font-size: 18px;
-  flex-shrink: 0;
 }
 
-.my-party-slot-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
+/* もちものアイコン: ポケモン画像の右下に重ねる */
+.my-party-slot-item-overlay {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8));
+  pointer-events: none;
 }
 
 .my-party-slot-name {
@@ -2159,24 +2602,162 @@ button.active {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
+  min-width: 0;
 }
 
-.my-party-slot-details {
+/* ホバーツールチップ（position: fixed でパネル外に表示） */
+.my-party-slot-tooltip {
+  position: fixed;
+  z-index: 1000;
+  transform: translateY(-50%);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  min-width: 200px;
+  max-width: 320px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+/* ツールチップ左向き矢印 */
+.my-party-slot-tooltip::before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: var(--border);
+}
+
+.my-party-slot-tooltip::after {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-right-color: var(--bg-secondary);
+  margin-right: -1px;
+}
+
+/* ツールチップ内部 */
+.tooltip-row {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0;
+}
+
+.tooltip-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.tooltip-value {
+  color: var(--text-primary);
+  font-weight: 500;
+  text-align: right;
+}
+
+.tooltip-section {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+
+.tooltip-section-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.tooltip-moves {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 4px;
 }
 
-.my-party-slot-detail {
-  font-size: 10px;
-  color: var(--text-secondary);
+.tooltip-move {
+  display: block;
+  background: var(--bg-primary);
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  text-align: center;
+  cursor: default;
+  position: relative;
+}
+
+.move-detail-popup {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--bg-secondary);
-  padding: 1px 4px;
-  border-radius: 2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
   white-space: nowrap;
-  max-width: 120px;
+  z-index: 1001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.tooltip-move:hover .move-detail-popup {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.move-detail-class {
+  color: var(--text-secondary);
+}
+
+.move-detail-stat {
+  color: var(--text-secondary);
+}
+
+.tooltip-stats-grid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 1px 4px;
+  align-items: baseline;
+}
+
+.tooltip-stat-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.tooltip-stat-value {
+  font-size: 14px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltip-stat-ev {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.nature-up {
+  color: #e53935;
+  font-size: 12px;
+}
+
+.nature-down {
+  color: #1e88e5;
+  font-size: 12px;
 }
 
 .my-party-progress {
@@ -2239,4 +2820,163 @@ button.active {
   color: var(--text-secondary);
   background: var(--bg-primary);
   border: 1px solid var(--border);
+}
+
+/* ===== Registration Overlay ===== */
+
+.registration-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 5%;
+}
+
+/* Color groups */
+.registration-overlay--color-screen1 {
+  --reg-color: rgba(30, 136, 229, 0.8);
+  --reg-glow-duration: 2s;
+}
+
+.registration-overlay--color-screen2 {
+  --reg-color: rgba(255, 167, 38, 0.9);
+  --reg-glow-duration: 1.2s;
+}
+
+.registration-overlay--color-done {
+  --reg-color: rgba(78, 204, 163, 0.8);
+}
+
+/* Glow border for detecting states */
+.registration-overlay--detecting {
+  animation: registration-glow var(--reg-glow-duration, 2s) ease-in-out infinite;
+}
+
+@keyframes registration-glow {
+  0%, 100% {
+    box-shadow: inset 0 0 30px 3px var(--reg-color), inset 0 0 60px 6px rgba(0, 0, 0, 0);
+  }
+  50% {
+    box-shadow: inset 0 0 50px 8px var(--reg-color), inset 0 0 80px 12px rgba(0, 0, 0, 0);
+  }
+}
+
+/* Static glow for reading states */
+.registration-overlay--reading_screen1,
+.registration-overlay--reading_screen2 {
+  box-shadow: inset 0 0 20px 2px var(--reg-color);
+}
+
+/* Scan line for detecting states */
+.registration-overlay--detecting::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--reg-color) 20%,
+    var(--reg-color) 80%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px 2px var(--reg-color);
+  animation: registration-scan 3s linear infinite;
+}
+
+@keyframes registration-scan {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(calc(100vh - 2px)); }
+}
+
+/* Fade-out for done state */
+.registration-overlay--fade-out {
+  box-shadow: inset 0 0 40px 6px var(--reg-color);
+  animation: registration-fade-out 1s ease-out forwards;
+}
+
+@keyframes registration-fade-out {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Banner */
+.registration-overlay__banner {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
+  border-radius: 10px;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Step badge */
+.registration-overlay__step {
+  background: var(--reg-color);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+/* Message */
+.registration-overlay__message {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.registration-overlay__message--urgent {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffa726;
+  animation: registration-pulse-text 1.2s ease-in-out infinite;
+}
+
+@keyframes registration-pulse-text {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+
+.registration-overlay__message--done {
+  color: #4ecdc4;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Bouncing arrow */
+.registration-overlay__arrow {
+  display: inline-block;
+  margin-left: 6px;
+  animation: registration-bounce 0.8s ease-in-out infinite;
+}
+
+@keyframes registration-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(4px); }
+}
+
+/* Spinner */
+.registration-overlay__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: registration-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes registration-spin {
+  to { transform: rotate(360deg); }
 }
