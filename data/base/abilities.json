@@ -1,1849 +1,2156 @@
 {
   "_meta": {
     "source": "PokeAPI",
-    "last_updated": "2026-04-09",
+    "last_updated": "2026-04-10",
     "description": "Auto-generated from PokeAPI CSV data"
   },
   "1": {
     "identifier": "stench",
     "name": "Stench",
     "generation": 3,
-    "effect": "Has a 10% chance of making target Pokémon [flinch]{mechanic:flinch} with each hit."
+    "effect": "Has a 10% chance of making target Pokémon [flinch]{mechanic:flinch} with each hit.",
+    "flavor_text_ja": "くさい においを はなつことによってこうげきした ときに あいてをひるませることが ある。"
   },
   "2": {
     "identifier": "drizzle",
     "name": "Drizzle",
     "generation": 3,
-    "effect": "Summons [rain]{mechanic:rain} that lasts indefinitely upon entering battle."
+    "effect": "Summons [rain]{mechanic:rain} that lasts indefinitely upon entering battle.",
+    "flavor_text_ja": "とうじょう したときにてんきを あめに する。"
   },
   "3": {
     "identifier": "speed-boost",
     "name": "Speed Boost",
     "generation": 3,
-    "effect": "Raises [Speed]{mechanic:speed} one [stage]{mechanic:stat-modifier} after each turn."
+    "effect": "Raises [Speed]{mechanic:speed} one [stage]{mechanic:stat-modifier} after each turn.",
+    "flavor_text_ja": "まいターン すばやさが あがる。"
   },
   "4": {
     "identifier": "battle-armor",
     "name": "Battle Armor",
     "generation": 3,
-    "effect": "Protects against [critical hits]{mechanic:critical-hit}."
+    "effect": "Protects against [critical hits]{mechanic:critical-hit}.",
+    "flavor_text_ja": "かたい こうらに まもられてあいての こうげきがきゅうしょに あたらない。"
   },
   "5": {
     "identifier": "sturdy",
     "name": "Sturdy",
     "generation": 3,
-    "effect": "Prevents being KOed from full [HP]{mechanic:hp}, leaving 1 HP instead.  Protects against the one-hit KO moves regardless of HP."
+    "effect": "Prevents being KOed from full [HP]{mechanic:hp}, leaving 1 HP instead.  Protects against the one-hit KO moves regardless of HP.",
+    "flavor_text_ja": "あいての わざを うけてもいちげきで たおされることが ない。いちげきひっさつわざも きかない。"
   },
   "6": {
     "identifier": "damp",
     "name": "Damp",
     "generation": 3,
-    "effect": "Prevents []{move:self-destruct}, []{move:explosion}, and []{ability:aftermath} from working while the Pokémon is in battle."
+    "effect": "Prevents []{move:self-destruct}, []{move:explosion}, and []{ability:aftermath} from working while the Pokémon is in battle.",
+    "flavor_text_ja": "あたりを しめらせることに よってじばく などの ばくはつする わざをだれも つかえなくなる。"
   },
   "7": {
     "identifier": "limber",
     "name": "Limber",
     "generation": 3,
-    "effect": "Prevents [paralysis]{mechanic:paralysis}."
+    "effect": "Prevents [paralysis]{mechanic:paralysis}.",
+    "flavor_text_ja": "じゅうなんな からだによってまひ じょうたいに ならない。"
   },
   "8": {
     "identifier": "sand-veil",
     "name": "Sand Veil",
     "generation": 3,
-    "effect": "Increases [evasion]{mechanic:evasion} to 1.25× during a [sandstorm]{mechanic:sandstorm}.  Protects against sandstorm damage."
+    "effect": "Increases [evasion]{mechanic:evasion} to 1.25× during a [sandstorm]{mechanic:sandstorm}.  Protects against sandstorm damage.",
+    "flavor_text_ja": "すなあらしの ときかいひりつが あがる。"
   },
   "9": {
     "identifier": "static",
     "name": "Static",
     "generation": 3,
-    "effect": "Has a 30% chance of [paralyzing]{mechanic:paralysis} attacking Pokémon on contact."
+    "effect": "Has a 30% chance of [paralyzing]{mechanic:paralysis} attacking Pokémon on contact.",
+    "flavor_text_ja": "せいでんきを からだに まといさわった あいてをまひさせる ことがある。"
   },
   "10": {
     "identifier": "volt-absorb",
     "name": "Volt Absorb",
     "generation": 3,
-    "effect": "Absorbs []{type:electric} moves, healing for 1/4 max [HP]{mechanic:hp}."
+    "effect": "Absorbs []{type:electric} moves, healing for 1/4 max [HP]{mechanic:hp}.",
+    "flavor_text_ja": "でんきタイプの わざを うけるとダメージを うけずに かいふくする。"
   },
   "11": {
     "identifier": "water-absorb",
     "name": "Water Absorb",
     "generation": 3,
-    "effect": "Absorbs []{type:water} moves, healing for 1/4 max [HP]{mechanic:hp}."
+    "effect": "Absorbs []{type:water} moves, healing for 1/4 max [HP]{mechanic:hp}.",
+    "flavor_text_ja": "みずタイプの わざを うけるとダメージを うけずに かいふくする。"
   },
   "12": {
     "identifier": "oblivious",
     "name": "Oblivious",
     "generation": 3,
-    "effect": "Prevents [infatuation]{mechanic:infatuation} and protects against []{move:captivate}."
+    "effect": "Prevents [infatuation]{mechanic:infatuation} and protects against []{move:captivate}.",
+    "flavor_text_ja": "どんかん なのでメロメロや ちょうはつ じょうたいにならない。"
   },
   "13": {
     "identifier": "cloud-nine",
     "name": "Cloud Nine",
     "generation": 3,
-    "effect": "Negates all effects of [weather]{mechanic:weather}, but does not prevent the weather itself."
+    "effect": "Negates all effects of [weather]{mechanic:weather}, but does not prevent the weather itself.",
+    "flavor_text_ja": "あらゆる てんきの えいきょうがなくなって しまう。"
   },
   "14": {
     "identifier": "compound-eyes",
     "name": "Compound Eyes",
     "generation": 3,
-    "effect": "Increases moves' [accuracy]{mechanic:accuracy} to 1.3×."
+    "effect": "Increases moves' [accuracy]{mechanic:accuracy} to 1.3×.",
+    "flavor_text_ja": "ふくがんを もっているためわざの めいちゅうりつが あがる。"
   },
   "15": {
     "identifier": "insomnia",
     "name": "Insomnia",
     "generation": 3,
-    "effect": "Prevents [sleep]{mechanic:sleep}."
+    "effect": "Prevents [sleep]{mechanic:sleep}.",
+    "flavor_text_ja": "ねむれない たいしつ なのでねむり じょうたいに ならない。"
   },
   "16": {
     "identifier": "color-change",
     "name": "Color Change",
     "generation": 3,
-    "effect": "Changes type to match when hit by a damaging move."
+    "effect": "Changes type to match when hit by a damaging move.",
+    "flavor_text_ja": "あいてから うけた わざの タイプにじぶんの タイプが へんか する。"
   },
   "17": {
     "identifier": "immunity",
     "name": "Immunity",
     "generation": 3,
-    "effect": "Prevents [poison]{mechanic:poison}."
+    "effect": "Prevents [poison]{mechanic:poison}.",
+    "flavor_text_ja": "たいないに めんえきを もっているためどく じょうたいに ならない。"
   },
   "18": {
     "identifier": "flash-fire",
     "name": "Flash Fire",
     "generation": 3,
-    "effect": "Protects against []{type:fire} moves.  Once one has been blocked, the Pokémon's own Fire moves inflict 1.5× damage until it leaves battle."
+    "effect": "Protects against []{type:fire} moves.  Once one has been blocked, the Pokémon's own Fire moves inflict 1.5× damage until it leaves battle.",
+    "flavor_text_ja": "ほのおタイプの わざを うけるとほのおを もらい じぶんが だすほのおタイプの わざが つよくなる。"
   },
   "19": {
     "identifier": "shield-dust",
     "name": "Shield Dust",
     "generation": 3,
-    "effect": "Protects against incoming moves' extra effects."
+    "effect": "Protects against incoming moves' extra effects.",
+    "flavor_text_ja": "りんぷんに まもられてわざの ついかこうかを うけなくなる。"
   },
   "20": {
     "identifier": "own-tempo",
     "name": "Own Tempo",
     "generation": 3,
-    "effect": "Prevents [confusion]{mechanic:confusion}."
+    "effect": "Prevents [confusion]{mechanic:confusion}.",
+    "flavor_text_ja": "マイペースなのでこんらん じょうたいに ならない。"
   },
   "21": {
     "identifier": "suction-cups",
     "name": "Suction Cups",
     "generation": 3,
-    "effect": "Prevents being forced out of battle by other Pokémon's moves."
+    "effect": "Prevents being forced out of battle by other Pokémon's moves.",
+    "flavor_text_ja": "きゅうばんで じめんに はりつきポケモンを いれかえさせるわざや どうぐが きかなくなる。"
   },
   "22": {
     "identifier": "intimidate",
     "name": "Intimidate",
     "generation": 3,
-    "effect": "Lowers opponents' [Attack]{mechanic:attack} one [stage]{mechanic:stat-modifier} upon entering battle."
+    "effect": "Lowers opponents' [Attack]{mechanic:attack} one [stage]{mechanic:stat-modifier} upon entering battle.",
+    "flavor_text_ja": "とうじょう したとき いかくしてあいてを いしゅくさせあいての こうげきを さげて しまう。"
   },
   "23": {
     "identifier": "shadow-tag",
     "name": "Shadow Tag",
     "generation": 3,
-    "effect": "Prevents opponents from fleeing or switching out."
+    "effect": "Prevents opponents from fleeing or switching out.",
+    "flavor_text_ja": "あいての かげを ふみにげたり こうたい できなくする。"
   },
   "24": {
     "identifier": "rough-skin",
     "name": "Rough Skin",
     "generation": 3,
-    "effect": "Damages attacking Pokémon for 1/8 their max [HP]{mechanic:hp} on contact."
+    "effect": "Damages attacking Pokémon for 1/8 their max [HP]{mechanic:hp} on contact.",
+    "flavor_text_ja": "こうげきを うけたときじぶんに ふれた あいてをざらざらの はだで キズつける。"
   },
   "25": {
     "identifier": "wonder-guard",
     "name": "Wonder Guard",
     "generation": 3,
-    "effect": "Protects against damaging moves that are not [super effective]{mechanic:super-effective}."
+    "effect": "Protects against damaging moves that are not [super effective]{mechanic:super-effective}.",
+    "flavor_text_ja": "こうかばつぐんの わざしかあたらない ふしぎな ちから。"
   },
   "26": {
     "identifier": "levitate",
     "name": "Levitate",
     "generation": 3,
-    "effect": "Evades []{type:ground} moves."
+    "effect": "Evades []{type:ground} moves.",
+    "flavor_text_ja": "じめんから うくことによってじめんタイプの わざを うけない。"
   },
   "27": {
     "identifier": "effect-spore",
     "name": "Effect Spore",
     "generation": 3,
-    "effect": "Has a 30% chance of inflcting either [paralysis]{mechanic:paralysis}, [poison]{mechanic:poison}, or [sleep]{mechanic:sleep} on attacking Pokémon on contact."
+    "effect": "Has a 30% chance of inflcting either [paralysis]{mechanic:paralysis}, [poison]{mechanic:poison}, or [sleep]{mechanic:sleep} on attacking Pokémon on contact.",
+    "flavor_text_ja": "こうげきで じぶんに ふれた あいてをどくや まひや ねむり じょうたいにする ことがある。"
   },
   "28": {
     "identifier": "synchronize",
     "name": "Synchronize",
     "generation": 3,
-    "effect": "Copies [burns]{mechanic:burn}, [paralysis]{mechanic:paralysis}, and [poison]{mechanic:poison} received onto the Pokémon that inflicted them."
+    "effect": "Copies [burns]{mechanic:burn}, [paralysis]{mechanic:paralysis}, and [poison]{mechanic:poison} received onto the Pokémon that inflicted them.",
+    "flavor_text_ja": "じぶんが なってしまったどくや まひや やけどをあいてに うつす。"
   },
   "29": {
     "identifier": "clear-body",
     "name": "Clear Body",
     "generation": 3,
-    "effect": "Prevents stats from being [lowered]{mechanic:stat-modifier} by other Pokémon."
+    "effect": "Prevents stats from being [lowered]{mechanic:stat-modifier} by other Pokémon.",
+    "flavor_text_ja": "あいての わざや とくせいでのうりょくを さげられない。"
   },
   "30": {
     "identifier": "natural-cure",
     "name": "Natural Cure",
     "generation": 3,
-    "effect": "Cures any [major status ailment]{mechanic:major-status-ailment} upon switching out."
+    "effect": "Cures any [major status ailment]{mechanic:major-status-ailment} upon switching out.",
+    "flavor_text_ja": "てもちに ひっこむとじょうたい いじょうが なおる。"
   },
   "31": {
     "identifier": "lightning-rod",
     "name": "Lightning Rod",
     "generation": 3,
-    "effect": "Redirects single-target []{type:electric} moves to this Pokémon where possible.  Absorbs Electric moves, raising [Special Attack]{mechanic:special-attack} one [stage]{mechanic:stat-modifier}."
+    "effect": "Redirects single-target []{type:electric} moves to this Pokémon where possible.  Absorbs Electric moves, raising [Special Attack]{mechanic:special-attack} one [stage]{mechanic:stat-modifier}.",
+    "flavor_text_ja": "でんきタイプの わざを じぶんによせつけ ダメージを うけずにとくこうが あがる。"
   },
   "32": {
     "identifier": "serene-grace",
     "name": "Serene Grace",
     "generation": 3,
-    "effect": "Doubles the chance of moves' extra effects occurring."
+    "effect": "Doubles the chance of moves' extra effects occurring.",
+    "flavor_text_ja": "てんのめぐみの おかげでわざの ついかこうかが でやすい。"
   },
   "33": {
     "identifier": "swift-swim",
     "name": "Swift Swim",
     "generation": 3,
-    "effect": "Doubles [Speed]{mechanic:speed} during [rain]{mechanic:rain}."
+    "effect": "Doubles [Speed]{mechanic:speed} during [rain]{mechanic:rain}.",
+    "flavor_text_ja": "てんきが あめのときすばやさが あがる。"
   },
   "34": {
     "identifier": "chlorophyll",
     "name": "Chlorophyll",
     "generation": 3,
-    "effect": "Doubles [Speed]{mechanic:speed} during [strong sunlight]{mechanic:strong-sunlight}."
+    "effect": "Doubles [Speed]{mechanic:speed} during [strong sunlight]{mechanic:strong-sunlight}.",
+    "flavor_text_ja": "てんきが はれのときすばやさが あがる。"
   },
   "35": {
     "identifier": "illuminate",
     "name": "Illuminate",
     "generation": 3,
-    "effect": "Doubles the wild encounter rate."
+    "effect": "Doubles the wild encounter rate.",
+    "flavor_text_ja": "あたりを あかるくする ことでやせいの ポケモンにそうぐう しやすくなる。"
   },
   "36": {
     "identifier": "trace",
     "name": "Trace",
     "generation": 3,
-    "effect": "Copies an opponent's ability upon entering battle."
+    "effect": "Copies an opponent's ability upon entering battle.",
+    "flavor_text_ja": "とうじょう したときあいての とくせいを トレースしておなじ とくせいに なる。"
   },
   "37": {
     "identifier": "huge-power",
     "name": "Huge Power",
     "generation": 3,
-    "effect": "Doubles [Attack]{mechanic:attack} in battle."
+    "effect": "Doubles [Attack]{mechanic:attack} in battle.",
+    "flavor_text_ja": "ぶつり こうげきのいりょくが ２ばいに なる。"
   },
   "38": {
     "identifier": "poison-point",
     "name": "Poison Point",
     "generation": 3,
-    "effect": "Has a 30% chance of [poisoning]{mechanic:poison} attacking Pokémon on contact."
+    "effect": "Has a 30% chance of [poisoning]{mechanic:poison} attacking Pokémon on contact.",
+    "flavor_text_ja": "じぶんに さわった あいてをどく じょうたいに する ことがある。"
   },
   "39": {
     "identifier": "inner-focus",
     "name": "Inner Focus",
     "generation": 3,
-    "effect": "Prevents [flinching]{mechanic:flinching}."
+    "effect": "Prevents [flinching]{mechanic:flinching}.",
+    "flavor_text_ja": "きたえられた せいしんに よってあいての こうげきに ひるまない。"
   },
   "40": {
     "identifier": "magma-armor",
     "name": "Magma Armor",
     "generation": 3,
-    "effect": "Prevents [freezing]{mechanic:freezing}."
+    "effect": "Prevents [freezing]{mechanic:freezing}.",
+    "flavor_text_ja": "あつい マグマを みにまといこおり じょうたいに ならない。"
   },
   "41": {
     "identifier": "water-veil",
     "name": "Water Veil",
     "generation": 3,
-    "effect": "Prevents [burns]{mechanic:burn}."
+    "effect": "Prevents [burns]{mechanic:burn}.",
+    "flavor_text_ja": "みずのベールを みにまといやけど じょうたいに ならない。"
   },
   "42": {
     "identifier": "magnet-pull",
     "name": "Magnet Pull",
     "generation": 3,
-    "effect": "Prevents []{type:steel} opponents from fleeing or switching out."
+    "effect": "Prevents []{type:steel} opponents from fleeing or switching out.",
+    "flavor_text_ja": "はがねタイプの ポケモンをじりょくで ひきつけてにげられなくする。"
   },
   "43": {
     "identifier": "soundproof",
     "name": "Soundproof",
     "generation": 3,
-    "effect": "Protects against sound-based moves."
+    "effect": "Protects against sound-based moves.",
+    "flavor_text_ja": "おとを しゃだん することに よっておとの こうげきを うけない。"
   },
   "44": {
     "identifier": "rain-dish",
     "name": "Rain Dish",
     "generation": 3,
-    "effect": "Heals for 1/16 max [HP]{mechanic:hp} after each turn during [rain]{mechanic:rain}."
+    "effect": "Heals for 1/16 max [HP]{mechanic:hp} after each turn during [rain]{mechanic:rain}.",
+    "flavor_text_ja": "てんきが あめのときすこしずつ ＨＰを かいふくする。"
   },
   "45": {
     "identifier": "sand-stream",
     "name": "Sand Stream",
     "generation": 3,
-    "effect": "Summons a [sandstorm]{mechanic:sandstorm} that lasts indefinitely upon entering battle."
+    "effect": "Summons a [sandstorm]{mechanic:sandstorm} that lasts indefinitely upon entering battle.",
+    "flavor_text_ja": "とうじょう したときてんきを すなあらしに する。"
   },
   "46": {
     "identifier": "pressure",
     "name": "Pressure",
     "generation": 3,
-    "effect": "Increases the [PP]{mechanic:pp} cost of moves targetting the Pokémon by one."
+    "effect": "Increases the [PP]{mechanic:pp} cost of moves targetting the Pokémon by one.",
+    "flavor_text_ja": "プレッシャーを あたえてあいての つかう わざの ＰＰをおおく へらす。"
   },
   "47": {
     "identifier": "thick-fat",
     "name": "Thick Fat",
     "generation": 3,
-    "effect": "Halves damage from []{type:fire} and []{type:ice} moves."
+    "effect": "Halves damage from []{type:fire} and []{type:ice} moves.",
+    "flavor_text_ja": "あつい しぼうで まもられているのでほのおタイプと こおりタイプのわざの ダメージを はんげんさせる。"
   },
   "48": {
     "identifier": "early-bird",
     "name": "Early Bird",
     "generation": 3,
-    "effect": "Makes [sleep]{mechanic:sleep} pass twice as quickly."
+    "effect": "Makes [sleep]{mechanic:sleep} pass twice as quickly.",
+    "flavor_text_ja": "ねむり じょうたいに なっても２ばいの はやさでめざめる ことが できる。"
   },
   "49": {
     "identifier": "flame-body",
     "name": "Flame Body",
     "generation": 3,
-    "effect": "Has a 30% chance of [burning]{mechanic:burn} attacking Pokémon on contact."
+    "effect": "Has a 30% chance of [burning]{mechanic:burn} attacking Pokémon on contact.",
+    "flavor_text_ja": "じぶんに さわった あいてをやけど じょうたいに する ことがある。"
   },
   "50": {
     "identifier": "run-away",
     "name": "Run Away",
     "generation": 3,
-    "effect": "Ensures success fleeing from wild battles."
+    "effect": "Ensures success fleeing from wild battles.",
+    "flavor_text_ja": "やせいの ポケモンからかならず にげられる。"
   },
   "51": {
     "identifier": "keen-eye",
     "name": "Keen Eye",
     "generation": 3,
-    "effect": "Prevents [accuracy]{mechanic:accuracy} from being [lowered]{mechanic:stat-modifier}."
+    "effect": "Prevents [accuracy]{mechanic:accuracy} from being [lowered]{mechanic:stat-modifier}.",
+    "flavor_text_ja": "するどい めの おかげでめいちゅうりつを さげられない。"
   },
   "52": {
     "identifier": "hyper-cutter",
     "name": "Hyper Cutter",
     "generation": 3,
-    "effect": "Prevents [Attack]{mechanic:attack} from being [lowered]{mechanic:stat-modifiers} by other Pokémon."
+    "effect": "Prevents [Attack]{mechanic:attack} from being [lowered]{mechanic:stat-modifiers} by other Pokémon.",
+    "flavor_text_ja": "ちからじまんの ハサミを もっているのであいてに こうげきを さげられない。"
   },
   "53": {
     "identifier": "pickup",
     "name": "Pickup",
     "generation": 3,
-    "effect": "Picks up other Pokémon's used and [Flung]{move:fling} held items.  May also pick up an item after battle."
+    "effect": "Picks up other Pokémon's used and [Flung]{move:fling} held items.  May also pick up an item after battle.",
+    "flavor_text_ja": "あいての つかった どうぐをひろってくることが ある。ぼうけんちゅうも ひろってくる。"
   },
   "54": {
     "identifier": "truant",
     "name": "Truant",
     "generation": 3,
-    "effect": "Skips every second turn."
+    "effect": "Skips every second turn.",
+    "flavor_text_ja": "わざを だすとつぎの ターンは やすんでしまう。"
   },
   "55": {
     "identifier": "hustle",
     "name": "Hustle",
     "generation": 3,
-    "effect": "Strengthens physical moves to inflict 1.5× damage, but decreases their [accuracy]{mechanic:accuracy} to 0.8×."
+    "effect": "Strengthens physical moves to inflict 1.5× damage, but decreases their [accuracy]{mechanic:accuracy} to 0.8×.",
+    "flavor_text_ja": "じぶんの こうげきが たかくなるがめいちゅうりつが さがる。"
   },
   "56": {
     "identifier": "cute-charm",
     "name": "Cute Charm",
     "generation": 3,
-    "effect": "Has a 30% chance of [infatuating]{mechanic:infatuation} attacking Pokémon on contact."
+    "effect": "Has a 30% chance of [infatuating]{mechanic:infatuation} attacking Pokémon on contact.",
+    "flavor_text_ja": "じぶんに さわった あいてをメロメロに することが ある。"
   },
   "57": {
     "identifier": "plus",
     "name": "Plus",
     "generation": 3,
-    "effect": "Increases [Special Attack]{mechanic:special-attack} to 1.5× when a friendly Pokémon has []{ability:plus} or []{ability:minus}."
+    "effect": "Increases [Special Attack]{mechanic:special-attack} to 1.5× when a friendly Pokémon has []{ability:plus} or []{ability:minus}.",
+    "flavor_text_ja": "プラスか マイナスの とくせいを もつポケモンが なかまに いるとじぶんの とくこうが あがる。"
   },
   "58": {
     "identifier": "minus",
     "name": "Minus",
     "generation": 3,
-    "effect": "Increases [Special Attack]{mechanic:special-attack} to 1.5× when a friendly Pokémon has []{ability:plus} or []{ability:minus}."
+    "effect": "Increases [Special Attack]{mechanic:special-attack} to 1.5× when a friendly Pokémon has []{ability:plus} or []{ability:minus}.",
+    "flavor_text_ja": "プラスか マイナスの とくせいを もつポケモンが なかまに いるとじぶんの とくこうが あがる。"
   },
   "59": {
     "identifier": "forecast",
     "name": "Forecast",
     "generation": 3,
-    "effect": "Changes []{pokemon:castform}'s type and form to match the [weather]{mechanic:weather}."
+    "effect": "Changes []{pokemon:castform}'s type and form to match the [weather]{mechanic:weather}.",
+    "flavor_text_ja": "てんきの えいきょうを うけてみずタイプ ほのおタイプ こおりタイプのどれかに へんかする。"
   },
   "60": {
     "identifier": "sticky-hold",
     "name": "Sticky Hold",
     "generation": 3,
-    "effect": "Prevents a held item from being removed by other Pokémon."
+    "effect": "Prevents a held item from being removed by other Pokémon.",
+    "flavor_text_ja": "ねんちゃくしつの からだにどうぐが くっついているためあいてに どうぐを うばわれない。"
   },
   "61": {
     "identifier": "shed-skin",
     "name": "Shed Skin",
     "generation": 3,
-    "effect": "Has a 33% chance of curing any [major status ailment]{mechanic:major-status-ailment} after each turn."
+    "effect": "Has a 33% chance of curing any [major status ailment]{mechanic:major-status-ailment} after each turn.",
+    "flavor_text_ja": "からだの かわを ぬぎすてることでじょうたい いじょうをなおすことが ある。"
   },
   "62": {
     "identifier": "guts",
     "name": "Guts",
     "generation": 3,
-    "effect": "Increases [Attack]{mechanic:attack} to 1.5× with a [major status ailment]{mechanic:major-status-ailment}."
+    "effect": "Increases [Attack]{mechanic:attack} to 1.5× with a [major status ailment]{mechanic:major-status-ailment}.",
+    "flavor_text_ja": "じょうたい いじょうに なるとこんじょうを だしてこうげきが あがる。"
   },
   "63": {
     "identifier": "marvel-scale",
     "name": "Marvel Scale",
     "generation": 3,
-    "effect": "Increases [Defense]{mechanic:defense} to 1.5× with a [major status ailment]{mechanic:major-status-ailment}."
+    "effect": "Increases [Defense]{mechanic:defense} to 1.5× with a [major status ailment]{mechanic:major-status-ailment}.",
+    "flavor_text_ja": "じょうたい いじょうに なるとふしぎなうろこが はんのうしてぼうぎょが あがる。"
   },
   "64": {
     "identifier": "liquid-ooze",
     "name": "Liquid Ooze",
     "generation": 3,
-    "effect": "Damages opponents using leeching moves for as much as they would heal."
+    "effect": "Damages opponents using leeching moves for as much as they would heal.",
+    "flavor_text_ja": "ヘドロえきを すいとった あいてはきょうれつな あくしゅうでダメージを うけて ＨＰを へらす。"
   },
   "65": {
     "identifier": "overgrow",
     "name": "Overgrow",
     "generation": 3,
-    "effect": "Strengthens []{type:grass} moves to inflict 1.5× damage at 1/3 max [HP]{mechanic:hp} or less."
+    "effect": "Strengthens []{type:grass} moves to inflict 1.5× damage at 1/3 max [HP]{mechanic:hp} or less.",
+    "flavor_text_ja": "ＨＰが へったときくさタイプの わざのいりょくが あがる。"
   },
   "66": {
     "identifier": "blaze",
     "name": "Blaze",
     "generation": 3,
-    "effect": "Strengthens []{type:fire} moves to inflict 1.5× damage at 1/3 max [HP]{mechanic:hp} or less."
+    "effect": "Strengthens []{type:fire} moves to inflict 1.5× damage at 1/3 max [HP]{mechanic:hp} or less.",
+    "flavor_text_ja": "ＨＰが へったときほのおタイプの わざのいりょくが あがる。"
   },
   "67": {
     "identifier": "torrent",
     "name": "Torrent",
     "generation": 3,
-    "effect": "Strengthens []{type:water} moves to inflict 1.5× damage at 1/3 max [HP]{mechanic:hp} or less."
+    "effect": "Strengthens []{type:water} moves to inflict 1.5× damage at 1/3 max [HP]{mechanic:hp} or less.",
+    "flavor_text_ja": "ＨＰが へったときみずタイプの わざのいりょくが あがる。"
   },
   "68": {
     "identifier": "swarm",
     "name": "Swarm",
     "generation": 3,
-    "effect": "Strengthens []{type:bug} moves to inflict 1.5× damage at 1/3 max [HP]{mechanic:hp} or less."
+    "effect": "Strengthens []{type:bug} moves to inflict 1.5× damage at 1/3 max [HP]{mechanic:hp} or less.",
+    "flavor_text_ja": "ＨＰが へったときむしタイプの わざのいりょくが あがる。"
   },
   "69": {
     "identifier": "rock-head",
     "name": "Rock Head",
     "generation": 3,
-    "effect": "Protects against recoil damage."
+    "effect": "Protects against recoil damage.",
+    "flavor_text_ja": "はんどうを うける わざを だしてもＨＰが へらない。"
   },
   "70": {
     "identifier": "drought",
     "name": "Drought",
     "generation": 3,
-    "effect": "Summons [strong sunlight]{mechanic:strong-sunlight} that lasts indefinitely upon entering battle."
+    "effect": "Summons [strong sunlight]{mechanic:strong-sunlight} that lasts indefinitely upon entering battle.",
+    "flavor_text_ja": "とうじょう したときにてんきを はれに する。"
   },
   "71": {
     "identifier": "arena-trap",
     "name": "Arena Trap",
     "generation": 3,
-    "effect": "Prevents opponents from fleeing or switching out.  Eluded by []{type:flying}-types and Pokémon in the air."
+    "effect": "Prevents opponents from fleeing or switching out.  Eluded by []{type:flying}-types and Pokémon in the air.",
+    "flavor_text_ja": "せんとうで あいてをにげられなくする。"
   },
   "72": {
     "identifier": "vital-spirit",
     "name": "Vital Spirit",
     "generation": 3,
-    "effect": "Prevents [sleep]{mechanic:sleep}."
+    "effect": "Prevents [sleep]{mechanic:sleep}.",
+    "flavor_text_ja": "やるきを だすことに よってねむり じょうたいに ならない。"
   },
   "73": {
     "identifier": "white-smoke",
     "name": "White Smoke",
     "generation": 3,
-    "effect": "Prevents stats from being [lowered]{mechanic:stat-modifier} by other Pokémon."
+    "effect": "Prevents stats from being [lowered]{mechanic:stat-modifier} by other Pokémon.",
+    "flavor_text_ja": "しろいけむりに まもられてあいてに のうりょくを さげられない。"
   },
   "74": {
     "identifier": "pure-power",
     "name": "Pure Power",
     "generation": 3,
-    "effect": "Doubles [Attack]{mechanic:attack} in battle."
+    "effect": "Doubles [Attack]{mechanic:attack} in battle.",
+    "flavor_text_ja": "ヨガの ちからでぶつり こうげきの いりょくが２ばいに なる。"
   },
   "75": {
     "identifier": "shell-armor",
     "name": "Shell Armor",
     "generation": 3,
-    "effect": "Protects against [critical hits]{mechanic:critical-hit}."
+    "effect": "Protects against [critical hits]{mechanic:critical-hit}.",
+    "flavor_text_ja": "かたい からに まもられあいての こうげきがきゅうしょに あたらない。"
   },
   "76": {
     "identifier": "air-lock",
     "name": "Air Lock",
     "generation": 3,
-    "effect": "Negates all effects of [weather]{mechanic:weather}, but does not prevent the weather itself."
+    "effect": "Negates all effects of [weather]{mechanic:weather}, but does not prevent the weather itself.",
+    "flavor_text_ja": "あらゆる てんきの えいきょうがきえて しまう。"
   },
   "77": {
     "identifier": "tangled-feet",
     "name": "Tangled Feet",
     "generation": 4,
-    "effect": "Doubles [evasion]{mechanic:evasion} when [confused]{mechanic:confusion}."
+    "effect": "Doubles [evasion]{mechanic:evasion} when [confused]{mechanic:confusion}.",
+    "flavor_text_ja": "こんらん じょうたいの ときはかいひりつが アップする。"
   },
   "78": {
     "identifier": "motor-drive",
     "name": "Motor Drive",
     "generation": 4,
-    "effect": "Absorbs []{type:electric} moves, raising [Speed]{mechanic:speed} one [stage]{mechanic:stat-modifier}."
+    "effect": "Absorbs []{type:electric} moves, raising [Speed]{mechanic:speed} one [stage]{mechanic:stat-modifier}.",
+    "flavor_text_ja": "でんきタイプの わざを うけるとダメージを うけずにすばやさが あがる。"
   },
   "79": {
     "identifier": "rivalry",
     "name": "Rivalry",
     "generation": 4,
-    "effect": "Increases damage inflicted to 1.25× against Pokémon of the same gender, but decreases damage to 0.75× against the opposite gender."
+    "effect": "Increases damage inflicted to 1.25× against Pokémon of the same gender, but decreases damage to 0.75× against the opposite gender.",
+    "flavor_text_ja": "せいべつが おなじだととうそうしんを もやして つよくなるせいべつが ちがうと よわくなる"
   },
   "80": {
     "identifier": "steadfast",
     "name": "Steadfast",
     "generation": 4,
-    "effect": "Raises [Speed]{mechanic:speed} one [stage]{mechanic:stat-modifier} upon [flinching]{mechanic:flinching}."
+    "effect": "Raises [Speed]{mechanic:speed} one [stage]{mechanic:stat-modifier} upon [flinching]{mechanic:flinching}.",
+    "flavor_text_ja": "ひるむ たびにふくつのこころを もやしてすばやさが あがる。"
   },
   "81": {
     "identifier": "snow-cloak",
     "name": "Snow Cloak",
     "generation": 4,
-    "effect": "Increases evasion to 1.25× during [hail]{mechanic:hail}.  Protects against hail damage."
+    "effect": "Increases evasion to 1.25× during [hail]{mechanic:hail}.  Protects against hail damage.",
+    "flavor_text_ja": "てんきが あられのときかいひりつが あがる。"
   },
   "82": {
     "identifier": "gluttony",
     "name": "Gluttony",
     "generation": 4,
-    "effect": "Makes the Pokémon eat any held Berry triggered by low [HP]{mechanic:hp} below 1/2 its max HP."
+    "effect": "Makes the Pokémon eat any held Berry triggered by low [HP]{mechanic:hp} below 1/2 its max HP.",
+    "flavor_text_ja": "ＨＰが すくなくなったら たべるきのみを ＨＰ はんぶんのときに たべてしまう。"
   },
   "83": {
     "identifier": "anger-point",
     "name": "Anger Point",
     "generation": 4,
-    "effect": "Raises [Attack]{mechanic:attack} to the maximum of six [stages]{mechanic:stat-modifier} upon receiving a [critical hit]{mechanic:critical-hit}."
+    "effect": "Raises [Attack]{mechanic:attack} to the maximum of six [stages]{mechanic:stat-modifier} upon receiving a [critical hit]{mechanic:critical-hit}.",
+    "flavor_text_ja": "きゅうしょに こうげきが あたるといかりくるって こうげきりょくがさいだいに なる。"
   },
   "84": {
     "identifier": "unburden",
     "name": "Unburden",
     "generation": 4,
-    "effect": "Doubles [Speed]{mechanic:speed} upon using or losing a held item."
+    "effect": "Doubles [Speed]{mechanic:speed} upon using or losing a held item.",
+    "flavor_text_ja": "もっていた どうぐが なくなるとすばやさが あがる。"
   },
   "85": {
     "identifier": "heatproof",
     "name": "Heatproof",
     "generation": 4,
-    "effect": "Halves damage from []{type:fire} moves and [burns]{mechanic:burn}."
+    "effect": "Halves damage from []{type:fire} moves and [burns]{mechanic:burn}.",
+    "flavor_text_ja": "たいねつの からだに よってほのおタイプの わざのダメージを はんげんさせる"
   },
   "86": {
     "identifier": "simple",
     "name": "Simple",
     "generation": 4,
-    "effect": "Doubles the Pokémon's [stat modifiers]{mechanic:stat-modifiers}.  These doubled modifiers are still capped at -6 or 6 stages."
+    "effect": "Doubles the Pokémon's [stat modifiers]{mechanic:stat-modifiers}.  These doubled modifiers are still capped at -6 or 6 stages.",
+    "flavor_text_ja": "のうりょく へんかがいつもの ２ばいに なる。"
   },
   "87": {
     "identifier": "dry-skin",
     "name": "Dry Skin",
     "generation": 4,
-    "effect": "Causes 1/8 max [HP]{mechanic:hp} in damage each turn during [strong sunlight]{mechanic:strong-sunlight}, but heals for 1/8 max HP during [rain]{mechanic:rain}.  Increases damage from []{type:fire} moves to 1.25×, but absorbs []{type:water} moves, healing for 1/4 max HP."
+    "effect": "Causes 1/8 max [HP]{mechanic:hp} in damage each turn during [strong sunlight]{mechanic:strong-sunlight}, but heals for 1/8 max HP during [rain]{mechanic:rain}.  Increases damage from []{type:fire} moves to 1.25×, but absorbs []{type:water} moves, healing for 1/4 max HP.",
+    "flavor_text_ja": "てんきが あめのときや みずタイプのわざで ＨＰが かいふくし はれのときやほのおタイプの わざで へってしまう。"
   },
   "88": {
     "identifier": "download",
     "name": "Download",
     "generation": 4,
-    "effect": "Raises the attack stat corresponding to the opponents' weaker defense one [stage]{mechanic:stat-modifier} upon entering battle."
+    "effect": "Raises the attack stat corresponding to the opponents' weaker defense one [stage]{mechanic:stat-modifier} upon entering battle.",
+    "flavor_text_ja": "あいての ぼうぎょと とくぼうを くらべてひくい ほうの のうりょくに あわせてじぶんの こうげきか とくこうを あげる。"
   },
   "89": {
     "identifier": "iron-fist",
     "name": "Iron Fist",
     "generation": 4,
-    "effect": "Strengthens punch-based moves to 1.2× their power."
+    "effect": "Strengthens punch-based moves to 1.2× their power.",
+    "flavor_text_ja": "パンチを つかう わざのいりょくが あがる。"
   },
   "90": {
     "identifier": "poison-heal",
     "name": "Poison Heal",
     "generation": 4,
-    "effect": "Heals for 1/8 max [HP]{mechanic:hp} after each turn when [poisoned]{mechanic:poison} in place of damage."
+    "effect": "Heals for 1/8 max [HP]{mechanic:hp} after each turn when [poisoned]{mechanic:poison} in place of damage.",
+    "flavor_text_ja": "どくじょうたいに なるとＨＰが へらずに ふえていく。"
   },
   "91": {
     "identifier": "adaptability",
     "name": "Adaptability",
     "generation": 4,
-    "effect": "Increases the [same-type attack bonus]{mechanic:same-type-attack-bonus} from 1.5× to 2×."
+    "effect": "Increases the [same-type attack bonus]{mechanic:same-type-attack-bonus} from 1.5× to 2×.",
+    "flavor_text_ja": "じぶんと おなじ タイプのわざの いりょくが あがる。"
   },
   "92": {
     "identifier": "skill-link",
     "name": "Skill Link",
     "generation": 4,
-    "effect": "Extends two-to-five-hit moves and []{move:triple-kick} to their full length every time."
+    "effect": "Extends two-to-five-hit moves and []{move:triple-kick} to their full length every time.",
+    "flavor_text_ja": "れんぞくわざを つかうと いつもさいこう かいすう だすことが できる。"
   },
   "93": {
     "identifier": "hydration",
     "name": "Hydration",
     "generation": 4,
-    "effect": "Cures any [major status ailment]{mechanic:major-status-ailment} after each turn during [rain]{mechanic:rain}."
+    "effect": "Cures any [major status ailment]{mechanic:major-status-ailment} after each turn during [rain]{mechanic:rain}.",
+    "flavor_text_ja": "てんきが あめのときじょうたい いじょうが なおる。"
   },
   "94": {
     "identifier": "solar-power",
     "name": "Solar Power",
     "generation": 4,
-    "effect": "Increases [Special Attack]{mechanic:special-attack} to 1.5× but costs 1/8 max [HP]{mechanic:hp} after each turn during [strong sunlight]{mechanic:strong-sunlight}."
+    "effect": "Increases [Special Attack]{mechanic:special-attack} to 1.5× but costs 1/8 max [HP]{mechanic:hp} after each turn during [strong sunlight]{mechanic:strong-sunlight}.",
+    "flavor_text_ja": "てんきが はれるととくこうが あがるがまいターン ＨＰが へる。"
   },
   "95": {
     "identifier": "quick-feet",
     "name": "Quick Feet",
     "generation": 4,
-    "effect": "Increases [Speed]{mechanic:speed} to 1.5× with a [major status ailment]{mechanic:major-status-ailment}."
+    "effect": "Increases [Speed]{mechanic:speed} to 1.5× with a [major status ailment]{mechanic:major-status-ailment}.",
+    "flavor_text_ja": "じょうたい いじょうに なるとすばやさが あがる。"
   },
   "96": {
     "identifier": "normalize",
     "name": "Normalize",
     "generation": 4,
-    "effect": "Makes the Pokémon's moves all act []{type:normal}-type."
+    "effect": "Makes the Pokémon's moves all act []{type:normal}-type.",
+    "flavor_text_ja": "どんな タイプの わざでもすべて ノーマルタイプに なる。いりょくが すこし あがる。"
   },
   "97": {
     "identifier": "sniper",
     "name": "Sniper",
     "generation": 4,
-    "effect": "Strengthens [critical hits]{mechanic:critical-hit} to inflict 3× damage rather than 2×."
+    "effect": "Strengthens [critical hits]{mechanic:critical-hit} to inflict 3× damage rather than 2×.",
+    "flavor_text_ja": "こうげきを きゅうしょに あてるといりょくが さらに あがる。"
   },
   "98": {
     "identifier": "magic-guard",
     "name": "Magic Guard",
     "generation": 4,
-    "effect": "Protects against damage not directly caused by a move."
+    "effect": "Protects against damage not directly caused by a move.",
+    "flavor_text_ja": "こうげき いがいではダメージを うけない。"
   },
   "99": {
     "identifier": "no-guard",
     "name": "No Guard",
     "generation": 4,
-    "effect": "Ensures all moves used by and against the Pokémon hit."
+    "effect": "Ensures all moves used by and against the Pokémon hit.",
+    "flavor_text_ja": "ノーガード せんぽうに よっておたがいの だす わざがかならず あたる ようになる。"
   },
   "100": {
     "identifier": "stall",
     "name": "Stall",
     "generation": 4,
-    "effect": "Makes the Pokémon move last within its move's priority bracket."
+    "effect": "Makes the Pokémon move last within its move's priority bracket.",
+    "flavor_text_ja": "わざを だす じゅんばんがかならず さいごに なる。"
   },
   "101": {
     "identifier": "technician",
     "name": "Technician",
     "generation": 4,
-    "effect": "Strengthens moves of 60 base power or less to 1.5× their power."
+    "effect": "Strengthens moves of 60 base power or less to 1.5× their power.",
+    "flavor_text_ja": "いりょくが ひくい わざのいりょくを たかくして こうげきできる。"
   },
   "102": {
     "identifier": "leaf-guard",
     "name": "Leaf Guard",
     "generation": 4,
-    "effect": "Protects against [major status ailments]{mechanic:major-status-ailments} during [strong sunlight]{mechanic:strong-sunlight}."
+    "effect": "Protects against [major status ailments]{mechanic:major-status-ailments} during [strong sunlight]{mechanic:strong-sunlight}.",
+    "flavor_text_ja": "てんきが はれのときはじょうたい いじょうに ならない。"
   },
   "103": {
     "identifier": "klutz",
     "name": "Klutz",
     "generation": 4,
-    "effect": "Prevents the Pokémon from using its held item in battle."
+    "effect": "Prevents the Pokémon from using its held item in battle.",
+    "flavor_text_ja": "もっている どうぐをつかうことが できない。"
   },
   "104": {
     "identifier": "mold-breaker",
     "name": "Mold Breaker",
     "generation": 4,
-    "effect": "Bypasses targets' abilities if they could hinder or prevent a move."
+    "effect": "Bypasses targets' abilities if they could hinder or prevent a move.",
+    "flavor_text_ja": "あいての とくせいにじゃまされる ことなく あいてにわざを だすことが できる。"
   },
   "105": {
     "identifier": "super-luck",
     "name": "Super Luck",
     "generation": 4,
-    "effect": "Raises moves' [critical hit]{mechanic:critical-hit} rates one stage."
+    "effect": "Raises moves' [critical hit]{mechanic:critical-hit} rates one stage.",
+    "flavor_text_ja": "きょううんを もっているためあいての きゅうしょにこうげきが あたりやすい。"
   },
   "106": {
     "identifier": "aftermath",
     "name": "Aftermath",
     "generation": 4,
-    "effect": "Damages the attacker for 1/4 its max [HP]{mechanic:hp} when knocked out by a contact move."
+    "effect": "Damages the attacker for 1/4 its max [HP]{mechanic:hp} when knocked out by a contact move.",
+    "flavor_text_ja": "ひんしに なったときさわった あいてにダメージを あたえる。"
   },
   "107": {
     "identifier": "anticipation",
     "name": "Anticipation",
     "generation": 4,
-    "effect": "Notifies all trainers upon entering battle if an opponent has a [super-effective]{mechanic:super-effective} move, []{move:self-destruct}, []{move:explosion}, or a one-hit KO move."
+    "effect": "Notifies all trainers upon entering battle if an opponent has a [super-effective]{mechanic:super-effective} move, []{move:self-destruct}, []{move:explosion}, or a one-hit KO move.",
+    "flavor_text_ja": "あいての もつ きけんな わざをさっちする ことができる。"
   },
   "108": {
     "identifier": "forewarn",
     "name": "Forewarn",
     "generation": 4,
-    "effect": "Reveals the opponents' strongest move upon entering battle."
+    "effect": "Reveals the opponents' strongest move upon entering battle.",
+    "flavor_text_ja": "とうじょう したときあいての もつ わざをひとつだけ よみとる。"
   },
   "109": {
     "identifier": "unaware",
     "name": "Unaware",
     "generation": 4,
-    "effect": "Ignores other Pokémon's stat modifiers for damage and accuracy calculation."
+    "effect": "Ignores other Pokémon's stat modifiers for damage and accuracy calculation.",
+    "flavor_text_ja": "あいての のうりょくの へんかをむしして こうげきが できる。"
   },
   "110": {
     "identifier": "tinted-lens",
     "name": "Tinted Lens",
     "generation": 4,
-    "effect": "Doubles damage inflicted with [not-very-effective]{mechanic:not-very-effective} moves."
+    "effect": "Doubles damage inflicted with [not-very-effective]{mechanic:not-very-effective} moves.",
+    "flavor_text_ja": "こうかが いまひとつの わざをつうじょうの いりょくでだすことが できる。"
   },
   "111": {
     "identifier": "filter",
     "name": "Filter",
     "generation": 4,
-    "effect": "Decreases damage taken from [super-effective]{mechanic:super-effective} moves by 1/4."
+    "effect": "Decreases damage taken from [super-effective]{mechanic:super-effective} moves by 1/4.",
+    "flavor_text_ja": "こうかばつぐんに なってしまうこうげきの いりょくをよわめる ことが できる。"
   },
   "112": {
     "identifier": "slow-start",
     "name": "Slow Start",
     "generation": 4,
-    "effect": "Halves [Attack]{mechanic:attack} and [Speed]{mechanic:speed} for five turns upon entering battle."
+    "effect": "Halves [Attack]{mechanic:attack} and [Speed]{mechanic:speed} for five turns upon entering battle.",
+    "flavor_text_ja": "５ターンの あいだこうげきと すばやさがはんぶんに なる。"
   },
   "113": {
     "identifier": "scrappy",
     "name": "Scrappy",
     "generation": 4,
-    "effect": "Lets the Pokémon's []{type:normal} and []{type:fighting} moves hit []{type:ghost} Pokémon."
+    "effect": "Lets the Pokémon's []{type:normal} and []{type:fighting} moves hit []{type:ghost} Pokémon.",
+    "flavor_text_ja": "ゴーストタイプの ポケモンにノーマルタイプと かくとうタイプのわざを あてることが できる。"
   },
   "114": {
     "identifier": "storm-drain",
     "name": "Storm Drain",
     "generation": 4,
-    "effect": "Redirects single-target []{type:water} moves to this Pokémon where possible.  Absorbs Water moves, raising [Special Attack]{mechanic:special-attack} one [stage]{mechanic:stat-modifier}."
+    "effect": "Redirects single-target []{type:water} moves to this Pokémon where possible.  Absorbs Water moves, raising [Special Attack]{mechanic:special-attack} one [stage]{mechanic:stat-modifier}.",
+    "flavor_text_ja": "みずタイプの わざを じぶんに よせつけダメージは うけずに とくこうが あがる。"
   },
   "115": {
     "identifier": "ice-body",
     "name": "Ice Body",
     "generation": 4,
-    "effect": "Heals for 1/16 max [HP]{mechanic:hp} after each turn during hail.  Protects against hail damage."
+    "effect": "Heals for 1/16 max [HP]{mechanic:hp} after each turn during hail.  Protects against hail damage.",
+    "flavor_text_ja": "てんきが あられのとき ＨＰをすこしずつ かいふく する。"
   },
   "116": {
     "identifier": "solid-rock",
     "name": "Solid Rock",
     "generation": 4,
-    "effect": "Decreases damage taken from [super-effective]{mechanic:super-effective} moves by 1/4."
+    "effect": "Decreases damage taken from [super-effective]{mechanic:super-effective} moves by 1/4.",
+    "flavor_text_ja": "こうかばつぐんに なってしまうこうげきの いりょくをよわめる ことが できる。"
   },
   "117": {
     "identifier": "snow-warning",
     "name": "Snow Warning",
     "generation": 4,
-    "effect": "Summons [hail]{mechanic:hail} that lasts indefinitely upon entering battle."
+    "effect": "Summons [hail]{mechanic:hail} that lasts indefinitely upon entering battle.",
+    "flavor_text_ja": "とうじょう したときにてんきを あられに する。"
   },
   "118": {
     "identifier": "honey-gather",
     "name": "Honey Gather",
     "generation": 4,
-    "effect": "The Pokémon may pick up []{item:honey} after battle."
+    "effect": "The Pokémon may pick up []{item:honey} after battle.",
+    "flavor_text_ja": "せんとうが おわったときあまいミツを ひろうことが ある。"
   },
   "119": {
     "identifier": "frisk",
     "name": "Frisk",
     "generation": 4,
-    "effect": "Reveals an opponent's held item upon entering battle."
+    "effect": "Reveals an opponent's held item upon entering battle.",
+    "flavor_text_ja": "とうじょう したときあいての もちものをみとおすことが できる。"
   },
   "120": {
     "identifier": "reckless",
     "name": "Reckless",
     "generation": 4,
-    "effect": "Strengthens recoil moves to 1.2× their power."
+    "effect": "Strengthens recoil moves to 1.2× their power.",
+    "flavor_text_ja": "はんどうで ダメージをうける わざの いりょくが あがる。"
   },
   "121": {
     "identifier": "multitype",
     "name": "Multitype",
     "generation": 4,
-    "effect": "Changes []{pokemon:arceus}'s type and form to match its held Plate."
+    "effect": "Changes []{pokemon:arceus}'s type and form to match its held Plate.",
+    "flavor_text_ja": "もっている プレートやＺクリスタルの タイプによってじぶんの タイプが かわる。"
   },
   "122": {
     "identifier": "flower-gift",
     "name": "Flower Gift",
     "generation": 4,
-    "effect": "Increases friendly Pokémon's [Attack]{mechanic:attack} and [Special Defense]{mechanic:special-defense} to 1.5× during [strong sunlight]{mechanic:strong-sunlight}."
+    "effect": "Increases friendly Pokémon's [Attack]{mechanic:attack} and [Special Defense]{mechanic:special-defense} to 1.5× during [strong sunlight]{mechanic:strong-sunlight}.",
+    "flavor_text_ja": "てんきが はれのときじぶんと みかたの こうげきととくぼうの のうりょくが あがる。"
   },
   "123": {
     "identifier": "bad-dreams",
     "name": "Bad Dreams",
     "generation": 4,
-    "effect": "Damages [sleeping]{mechanic:sleep} opponents for 1/8 their max [HP]{mechanic:hp} after each turn."
+    "effect": "Damages [sleeping]{mechanic:sleep} opponents for 1/8 their max [HP]{mechanic:hp} after each turn.",
+    "flavor_text_ja": "ねむり じょうたいの あいてにダメージを あたえる。"
   },
   "124": {
     "identifier": "pickpocket",
     "name": "Pickpocket",
     "generation": 5,
-    "effect": "Steals attacking Pokémon's held items on contact."
+    "effect": "Steals attacking Pokémon's held items on contact.",
+    "flavor_text_ja": "さわられた あいての どうぐをぬすんで しまう。"
   },
   "125": {
     "identifier": "sheer-force",
     "name": "Sheer Force",
     "generation": 5,
-    "effect": "Strengthens moves with extra effects to 1.3× their power, but prevents their extra effects."
+    "effect": "Strengthens moves with extra effects to 1.3× their power, but prevents their extra effects.",
+    "flavor_text_ja": "わざの ついか こうかは なくなるがそのぶん たかい いりょくでわざを だすことが できる。"
   },
   "126": {
     "identifier": "contrary",
     "name": "Contrary",
     "generation": 5,
-    "effect": "Inverts [stat changes]{mechanic:stat-modifiers}."
+    "effect": "Inverts [stat changes]{mechanic:stat-modifiers}.",
+    "flavor_text_ja": "のうりょくの へんかが ぎゃくてんしてあがるときに さがりさがるときに あがる。"
   },
   "127": {
     "identifier": "unnerve",
     "name": "Unnerve",
     "generation": 5,
-    "effect": "Prevents opposing Pokémon from eating held Berries."
+    "effect": "Prevents opposing Pokémon from eating held Berries.",
+    "flavor_text_ja": "あいてを きんちょうさせてきのみを たべられなく させる。"
   },
   "128": {
     "identifier": "defiant",
     "name": "Defiant",
     "generation": 5,
-    "effect": "Raises [Attack]{mechanic:attack} two [stages]{mechanic:stat-modifier} upon having any stat lowered."
+    "effect": "Raises [Attack]{mechanic:attack} two [stages]{mechanic:stat-modifier} upon having any stat lowered.",
+    "flavor_text_ja": "のうりょくを さげられるとこうげきが ぐーんと あがる。"
   },
   "129": {
     "identifier": "defeatist",
     "name": "Defeatist",
     "generation": 5,
-    "effect": "Halves [Attack]{mechanic:attack} and [Special Attack]{mechanic:special-attack} at 50% max [HP]{mechanic:hp} or less."
+    "effect": "Halves [Attack]{mechanic:attack} and [Special Attack]{mechanic:special-attack} at 50% max [HP]{mechanic:hp} or less.",
+    "flavor_text_ja": "ＨＰが はんぶんに なるとよわきに なって こうげきととくこうが はんげんする。"
   },
   "130": {
     "identifier": "cursed-body",
     "name": "Cursed Body",
     "generation": 5,
-    "effect": "Has a 30% chance of [Disabling]{move:disable} any move that hits the Pokémon."
+    "effect": "Has a 30% chance of [Disabling]{move:disable} any move that hits the Pokémon.",
+    "flavor_text_ja": "こうげきを うけると あいての わざをかなしばり じょうたいにすることが ある。"
   },
   "131": {
     "identifier": "healer",
     "name": "Healer",
     "generation": 5,
-    "effect": "Has a 30% chance of curing each adjacent ally of any [major status ailment]{mechanic:major-status-ailment} after each turn."
+    "effect": "Has a 30% chance of curing each adjacent ally of any [major status ailment]{mechanic:major-status-ailment} after each turn.",
+    "flavor_text_ja": "じょうたい いじょうの みかたをたまに なおしてあげる。"
   },
   "132": {
     "identifier": "friend-guard",
     "name": "Friend Guard",
     "generation": 5,
-    "effect": "Decreases all direct damage taken by friendly Pokémon to 0.75×."
+    "effect": "Decreases all direct damage taken by friendly Pokémon to 0.75×.",
+    "flavor_text_ja": "みかたの ダメージをへらすことが できる。"
   },
   "133": {
     "identifier": "weak-armor",
     "name": "Weak Armor",
     "generation": 5,
-    "effect": "Raises [Speed]{mechanic:speed} and lowers [Defense]{mechanic:defense} by one stage each upon being hit by a physical move."
+    "effect": "Raises [Speed]{mechanic:speed} and lowers [Defense]{mechanic:defense} by one stage each upon being hit by a physical move.",
+    "flavor_text_ja": "ぶつりわざで ダメージを うけるとぼうぎょが さがりすばやさが ぐーんと あがる。"
   },
   "134": {
     "identifier": "heavy-metal",
     "name": "Heavy Metal",
     "generation": 5,
-    "effect": "Doubles the Pokémon's weight."
+    "effect": "Doubles the Pokémon's weight.",
+    "flavor_text_ja": "じぶんの おもさが２ばいに なる。"
   },
   "135": {
     "identifier": "light-metal",
     "name": "Light Metal",
     "generation": 5,
-    "effect": "Halves the Pokémon's weight."
+    "effect": "Halves the Pokémon's weight.",
+    "flavor_text_ja": "じぶんの おもさがはんぶんに なる。"
   },
   "136": {
     "identifier": "multiscale",
     "name": "Multiscale",
     "generation": 5,
-    "effect": "Halves damage taken from full [HP]{mechanic:hp}."
+    "effect": "Halves damage taken from full [HP]{mechanic:hp}.",
+    "flavor_text_ja": "ＨＰが まんたんの ときにうける ダメージが すくなくなる。"
   },
   "137": {
     "identifier": "toxic-boost",
     "name": "Toxic Boost",
     "generation": 5,
-    "effect": "Increases [Attack]{mechanic:attack} to 1.5× when [poisoned]{mechanic:poison}."
+    "effect": "Increases [Attack]{mechanic:attack} to 1.5× when [poisoned]{mechanic:poison}.",
+    "flavor_text_ja": "どく じょうたいに なったときぶつりわざの いりょくが あがる。"
   },
   "138": {
     "identifier": "flare-boost",
     "name": "Flare Boost",
     "generation": 5,
-    "effect": "Increases [Special Attack]{mechanic:special-attack} to 1.5× when [burned]{mechanic:burn}."
+    "effect": "Increases [Special Attack]{mechanic:special-attack} to 1.5× when [burned]{mechanic:burn}.",
+    "flavor_text_ja": "やけど じょうたいに なったときとくしゅわざの いりょくが あがる。"
   },
   "139": {
     "identifier": "harvest",
     "name": "Harvest",
     "generation": 5,
-    "effect": "Has a 50% chance of restoring a used Berry after each turn if the Pokémon has held no items in the meantime."
+    "effect": "Has a 50% chance of restoring a used Berry after each turn if the Pokémon has held no items in the meantime.",
+    "flavor_text_ja": "つかった きのみをなんかいも つくりだす。"
   },
   "140": {
     "identifier": "telepathy",
     "name": "Telepathy",
     "generation": 5,
-    "effect": "Protects against friendly Pokémon's damaging moves."
+    "effect": "Protects against friendly Pokémon's damaging moves.",
+    "flavor_text_ja": "みかたの こうげきを よみとってわざを かいひする。"
   },
   "141": {
     "identifier": "moody",
     "name": "Moody",
     "generation": 5,
-    "effect": "Raises a random stat two [stages]{mechanic:stat-modifier} and lowers another one stage after each turn."
+    "effect": "Raises a random stat two [stages]{mechanic:stat-modifier} and lowers another one stage after each turn.",
+    "flavor_text_ja": "まいターン のうりょくの どれかがぐーんと あがって どれかが さがる。"
   },
   "142": {
     "identifier": "overcoat",
     "name": "Overcoat",
     "generation": 5,
-    "effect": "Protects against damage from [weather]{mechanic:weather}."
+    "effect": "Protects against damage from [weather]{mechanic:weather}.",
+    "flavor_text_ja": "すなあらしや あられなどのダメージを うけない。こなの わざを うけない。"
   },
   "143": {
     "identifier": "poison-touch",
     "name": "Poison Touch",
     "generation": 5,
-    "effect": "Has a 30% chance of [poisoning]{mechanic:poison} target Pokémon upon contact."
+    "effect": "Has a 30% chance of [poisoning]{mechanic:poison} target Pokémon upon contact.",
+    "flavor_text_ja": "さわる だけで あいてをどく じょうたいに することがある。"
   },
   "144": {
     "identifier": "regenerator",
     "name": "Regenerator",
     "generation": 5,
-    "effect": "Heals for 1/3 max [HP]{mechanic:hp} upon switching out."
+    "effect": "Heals for 1/3 max [HP]{mechanic:hp} upon switching out.",
+    "flavor_text_ja": "てもちに ひっこむとＨＰが すこし かいふくする。"
   },
   "145": {
     "identifier": "big-pecks",
     "name": "Big Pecks",
     "generation": 5,
-    "effect": "Protects against [Defense]{mechanic:defense} drops."
+    "effect": "Protects against [Defense]{mechanic:defense} drops.",
+    "flavor_text_ja": "ぼうぎょを さげるこうかを うけない。"
   },
   "146": {
     "identifier": "sand-rush",
     "name": "Sand Rush",
     "generation": 5,
-    "effect": "Doubles [Speed]{mechanic:speed} during a [sandstorm]{mechanic:sandstorm}.  Protects against sandstorm damage."
+    "effect": "Doubles [Speed]{mechanic:speed} during a [sandstorm]{mechanic:sandstorm}.  Protects against sandstorm damage.",
+    "flavor_text_ja": "てんきが すなあらし のときすばやさが あがる。"
   },
   "147": {
     "identifier": "wonder-skin",
     "name": "Wonder Skin",
     "generation": 5,
-    "effect": "Lowers incoming non-damaging moves' base [accuracy]{mechanic:accuracy} to exactly 50%."
+    "effect": "Lowers incoming non-damaging moves' base [accuracy]{mechanic:accuracy} to exactly 50%.",
+    "flavor_text_ja": "へんかわざを うけにくいからだに なっている。"
   },
   "148": {
     "identifier": "analytic",
     "name": "Analytic",
     "generation": 5,
-    "effect": "Strengthens moves to 1.3× their power when moving last."
+    "effect": "Strengthens moves to 1.3× their power when moving last.",
+    "flavor_text_ja": "いちばん さいごに わざを だすとわざの いりょくが あがる。"
   },
   "149": {
     "identifier": "illusion",
     "name": "Illusion",
     "generation": 5,
-    "effect": "Takes the appearance of the last conscious party Pokémon upon being sent out until hit by a damaging move."
+    "effect": "Takes the appearance of the last conscious party Pokémon upon being sent out until hit by a damaging move.",
+    "flavor_text_ja": "てもちの いちばん うしろに いるポケモンに なりきって とうじょうしてあいてを ばかす。"
   },
   "150": {
     "identifier": "imposter",
     "name": "Imposter",
     "generation": 5,
-    "effect": "[Transforms]{move:transform} upon entering battle."
+    "effect": "[Transforms]{move:transform} upon entering battle.",
+    "flavor_text_ja": "めのまえの ポケモンにへんしん してしまう。"
   },
   "151": {
     "identifier": "infiltrator",
     "name": "Infiltrator",
     "generation": 5,
-    "effect": "Bypasses []{move:light-screen}, []{move:reflect}, and []{move:safeguard}."
+    "effect": "Bypasses []{move:light-screen}, []{move:reflect}, and []{move:safeguard}.",
+    "flavor_text_ja": "あいての かべや みがわりをすりぬけて こうげき できる"
   },
   "152": {
     "identifier": "mummy",
     "name": "Mummy",
     "generation": 5,
-    "effect": "Changes attacking Pokémon's abilities to Mummy on contact."
+    "effect": "Changes attacking Pokémon's abilities to Mummy on contact.",
+    "flavor_text_ja": "あいてに さわられるとあいてを ミイラに してしまう。"
   },
   "153": {
     "identifier": "moxie",
     "name": "Moxie",
     "generation": 5,
-    "effect": "Raises [Attack]{mechanic:attack} one stage upon KOing a Pokémon."
+    "effect": "Raises [Attack]{mechanic:attack} one stage upon KOing a Pokémon.",
+    "flavor_text_ja": "あいてを たおすとじしんが ついてこうげきが あがる。"
   },
   "154": {
     "identifier": "justified",
     "name": "Justified",
     "generation": 5,
-    "effect": "Raises [Attack]{mechanic:attack} one stage upon taking damage from a []{type:dark} move."
+    "effect": "Raises [Attack]{mechanic:attack} one stage upon taking damage from a []{type:dark} move.",
+    "flavor_text_ja": "あくタイプの こうげきを うけるとせいぎかんで こうげきが あがる。"
   },
   "155": {
     "identifier": "rattled",
     "name": "Rattled",
     "generation": 5,
-    "effect": "Raises [Speed]{mechanic:speed} one [stage]{mechanic:stat-modifier} upon being hit by a []{type:dark}, []{type:ghost}, or []{type:bug} move."
+    "effect": "Raises [Speed]{mechanic:speed} one [stage]{mechanic:stat-modifier} upon being hit by a []{type:dark}, []{type:ghost}, or []{type:bug} move.",
+    "flavor_text_ja": "あくタイプと ゴーストタイプとむしタイプの わざを うけるとびびって すばやさが あがる。"
   },
   "156": {
     "identifier": "magic-bounce",
     "name": "Magic Bounce",
     "generation": 5,
-    "effect": "Reflects most non-damaging moves back at their user."
+    "effect": "Reflects most non-damaging moves back at their user.",
+    "flavor_text_ja": "あいてに だされた へんかわざを うけずにそのまま かえす ことが できる。"
   },
   "157": {
     "identifier": "sap-sipper",
     "name": "Sap Sipper",
     "generation": 5,
-    "effect": "Absorbs []{type:grass} moves, raising [Attack]{mechanic:attack} one [stage]{mechanic:stat-modifier}."
+    "effect": "Absorbs []{type:grass} moves, raising [Attack]{mechanic:attack} one [stage]{mechanic:stat-modifier}.",
+    "flavor_text_ja": "くさタイプの わざを うけるとダメージを うけずにこうげきが あがる。"
   },
   "158": {
     "identifier": "prankster",
     "name": "Prankster",
     "generation": 5,
-    "effect": "Raises non-damaging moves' priority by one stage."
+    "effect": "Raises non-damaging moves' priority by one stage.",
+    "flavor_text_ja": "へんかわざを せんせいでだすことが できる。"
   },
   "159": {
     "identifier": "sand-force",
     "name": "Sand Force",
     "generation": 5,
-    "effect": "Strengthens []{type:rock}, []{type:ground}, and []{type:steel} moves to 1.3× their power during a [sandstorm]{mechanic:sandstorm}.  Protects against sandstorm damage."
+    "effect": "Strengthens []{type:rock}, []{type:ground}, and []{type:steel} moves to 1.3× their power during a [sandstorm]{mechanic:sandstorm}.  Protects against sandstorm damage.",
+    "flavor_text_ja": "てんきが すなあらしの ときいわタイプと じめんタイプとはがねタイプの いりょくが あがる。"
   },
   "160": {
     "identifier": "iron-barbs",
     "name": "Iron Barbs",
     "generation": 5,
-    "effect": "Damages attacking Pokémon for 1/8 their max [HP]{mechanic:hp} on contact."
+    "effect": "Damages attacking Pokémon for 1/8 their max [HP]{mechanic:hp} on contact.",
+    "flavor_text_ja": "じぶんに さわった あいてにてつのトゲで ダメージを あたえる。"
   },
   "161": {
     "identifier": "zen-mode",
     "name": "Zen Mode",
     "generation": 5,
-    "effect": "Changes []{pokemon:darmanitan}'s form after each turn depending on its [HP]{mechanic:hp}: Zen Mode below 50% max HP, and Standard Mode otherwise."
+    "effect": "Changes []{pokemon:darmanitan}'s form after each turn depending on its [HP]{mechanic:hp}: Zen Mode below 50% max HP, and Standard Mode otherwise.",
+    "flavor_text_ja": "ＨＰが はんぶん いかに なるとすがたが へんかする。"
   },
   "162": {
     "identifier": "victory-star",
     "name": "Victory Star",
     "generation": 5,
-    "effect": "Increases moves' accuracy to 1.1× for friendly Pokémon."
+    "effect": "Increases moves' accuracy to 1.1× for friendly Pokémon.",
+    "flavor_text_ja": "じぶんや みかたのめいちゅうりつが あがる。"
   },
   "163": {
     "identifier": "turboblaze",
     "name": "Turboblaze",
     "generation": 5,
-    "effect": "Bypasses targets' abilities if they could hinder or prevent moves."
+    "effect": "Bypasses targets' abilities if they could hinder or prevent moves.",
+    "flavor_text_ja": "あいての とくせいに じゃまされずあいてに わざを だすことが できる。"
   },
   "164": {
     "identifier": "teravolt",
     "name": "Teravolt",
     "generation": 5,
-    "effect": "Bypasses targets' abilities if they could hinder or prevent moves."
+    "effect": "Bypasses targets' abilities if they could hinder or prevent moves.",
+    "flavor_text_ja": "あいての とくせいに じゃまされずあいてに わざを だすことが できる。"
   },
   "165": {
     "identifier": "aroma-veil",
     "name": "Aroma Veil",
     "generation": 6,
-    "effect": "Protects allies against moves that affect their mental state."
+    "effect": "Protects allies against moves that affect their mental state.",
+    "flavor_text_ja": "じぶんと みかたへの メンタルこうげきを ふせぐことが できる。"
   },
   "166": {
     "identifier": "flower-veil",
     "name": "Flower Veil",
     "generation": 6,
-    "effect": "Protects friendly []{type:grass} Pokémon from having their stats lowered by other Pokémon."
+    "effect": "Protects friendly []{type:grass} Pokémon from having their stats lowered by other Pokémon.",
+    "flavor_text_ja": "みかたの くさポケモンはのうりょくが さがらずじょうたい いじょうにも ならない。"
   },
   "167": {
     "identifier": "cheek-pouch",
     "name": "Cheek Pouch",
     "generation": 6,
-    "effect": "Restores HP upon eating a Berry, in addition to the Berry's effect."
+    "effect": "Restores HP upon eating a Berry, in addition to the Berry's effect.",
+    "flavor_text_ja": "どんな きのみでもたべると ＨＰも かいふくする。"
   },
   "168": {
     "identifier": "protean",
     "name": "Protean",
     "generation": 6,
-    "effect": "Changes the bearer's type to match each move it uses."
+    "effect": "Changes the bearer's type to match each move it uses.",
+    "flavor_text_ja": "じぶんが だす わざとおなじ タイプに へんかする。"
   },
   "169": {
     "identifier": "fur-coat",
     "name": "Fur Coat",
     "generation": 6,
-    "effect": "Halves damage from physical attacks."
+    "effect": "Halves damage from physical attacks.",
+    "flavor_text_ja": "あいてから うける ぶつりわざのダメージが はんぶんに なる。"
   },
   "170": {
     "identifier": "magician",
     "name": "Magician",
     "generation": 6,
-    "effect": "Steals the target's held item when the bearer uses a damaging move."
+    "effect": "Steals the target's held item when the bearer uses a damaging move.",
+    "flavor_text_ja": "わざを あてた あいてのどうぐを うばってしまう。"
   },
   "171": {
     "identifier": "bulletproof",
     "name": "Bulletproof",
     "generation": 6,
-    "effect": "Protects against bullet, ball, and bomb-based moves."
+    "effect": "Protects against bullet, ball, and bomb-based moves.",
+    "flavor_text_ja": "あいての たまや ばくだんなどのわざを ふせぐことが できる。"
   },
   "172": {
     "identifier": "competitive",
     "name": "Competitive",
     "generation": 6,
-    "effect": "Raises Special Attack by two stages upon having any stat lowered."
+    "effect": "Raises Special Attack by two stages upon having any stat lowered.",
+    "flavor_text_ja": "のうりょくを さげられるととくこうが ぐーんと あがる。"
   },
   "173": {
     "identifier": "strong-jaw",
     "name": "Strong Jaw",
     "generation": 6,
-    "effect": "Strengthens biting moves to 1.5× their power."
+    "effect": "Strengthens biting moves to 1.5× their power.",
+    "flavor_text_ja": "あごが がんじょうでかむ わざの いりょくがたかくなる。"
   },
   "174": {
     "identifier": "refrigerate",
     "name": "Refrigerate",
     "generation": 6,
-    "effect": "Turns the bearer's []{type:normal} moves into []{type:ice} moves and strengthens them to 1.3× their power."
+    "effect": "Turns the bearer's []{type:normal} moves into []{type:ice} moves and strengthens them to 1.3× their power.",
+    "flavor_text_ja": "ノーマルタイプの わざがこおりタイプになる。いりょくが すこし あがる。"
   },
   "175": {
     "identifier": "sweet-veil",
     "name": "Sweet Veil",
     "generation": 6,
-    "effect": "Prevents friendly Pokémon from sleeping."
+    "effect": "Prevents friendly Pokémon from sleeping.",
+    "flavor_text_ja": "みかたの ポケモンはねむらなくなる。"
   },
   "176": {
     "identifier": "stance-change",
     "name": "Stance Change",
     "generation": 6,
-    "effect": "Changes []{pokemon:aegislash} to Blade Forme before using a damaging move, or Shield Forme before using []{move:kings-shield}."
+    "effect": "Changes []{pokemon:aegislash} to Blade Forme before using a damaging move, or Shield Forme before using []{move:kings-shield}.",
+    "flavor_text_ja": "こうげきわざを だすと ブレードフォルムにわざ キングシールドを だすとシールドフォルムに へんかする。"
   },
   "177": {
     "identifier": "gale-wings",
     "name": "Gale Wings",
     "generation": 6,
-    "effect": "Raises []{type:flying} moves' priority by one stage."
+    "effect": "Raises []{type:flying} moves' priority by one stage.",
+    "flavor_text_ja": "ＨＰが まんたん だとひこうタイプの わざをせんせいで だすことが できる。"
   },
   "178": {
     "identifier": "mega-launcher",
     "name": "Mega Launcher",
     "generation": 6,
-    "effect": "Strengthens aura and pulse moves to 1.5× their power."
+    "effect": "Strengthens aura and pulse moves to 1.5× their power.",
+    "flavor_text_ja": "はどうの わざのいりょくが たかくなる。"
   },
   "179": {
     "identifier": "grass-pelt",
     "name": "Grass Pelt",
     "generation": 6,
-    "effect": "Boosts Defense while []{move:grassy-terrain} is in effect."
+    "effect": "Boosts Defense while []{move:grassy-terrain} is in effect.",
+    "flavor_text_ja": "グラスフィールドのときぼうぎょが あがる。"
   },
   "180": {
     "identifier": "symbiosis",
     "name": "Symbiosis",
     "generation": 6,
-    "effect": "Passes the bearer's held item to an ally when the ally uses up its item."
+    "effect": "Passes the bearer's held item to an ally when the ally uses up its item.",
+    "flavor_text_ja": "みかたが どうぐを つかうとじぶんの もっている どうぐをみかたに わたす。"
   },
   "181": {
     "identifier": "tough-claws",
     "name": "Tough Claws",
     "generation": 6,
-    "effect": "Strengthens moves that make contact to 1.33× their power."
+    "effect": "Strengthens moves that make contact to 1.33× their power.",
+    "flavor_text_ja": "あいてに せっしょくする わざのいりょくが たかくなる。"
   },
   "182": {
     "identifier": "pixilate",
     "name": "Pixilate",
     "generation": 6,
-    "effect": "Turns the bearer's []{type:normal} moves into []{type:fairy} moves and strengthens them to 1.3× their power."
+    "effect": "Turns the bearer's []{type:normal} moves into []{type:fairy} moves and strengthens them to 1.3× their power.",
+    "flavor_text_ja": "ノーマルタイプの わざがフェアリータイプになる。いりょくが すこし あがる。"
   },
   "183": {
     "identifier": "gooey",
     "name": "Gooey",
     "generation": 6,
-    "effect": "Lowers attacking Pokémon's Speed by one stage on contact."
+    "effect": "Lowers attacking Pokémon's Speed by one stage on contact.",
+    "flavor_text_ja": "こうげきで じぶんに ふれた あいてのすばやさを さげる。"
   },
   "184": {
     "identifier": "aerilate",
     "name": "Aerilate",
     "generation": 6,
-    "effect": "Turns the bearer's []{type:normal} moves into []{type:flying} moves and strengthens them to 1.3× their power."
+    "effect": "Turns the bearer's []{type:normal} moves into []{type:flying} moves and strengthens them to 1.3× their power.",
+    "flavor_text_ja": "ノーマルタイプの わざがひこうタイプになる。いりょくが すこし あがる。"
   },
   "185": {
     "identifier": "parental-bond",
     "name": "Parental Bond",
     "generation": 6,
-    "effect": "Lets the bearer hit twice with damaging moves.  The second hit has half power."
+    "effect": "Lets the bearer hit twice with damaging moves.  The second hit has half power.",
+    "flavor_text_ja": "おやこ ２ひきで ２かいこうげきする ことが できる。"
   },
   "186": {
     "identifier": "dark-aura",
     "name": "Dark Aura",
     "generation": 6,
-    "effect": "Strengthens []{type:dark} moves to 1.33× their power for all friendly and opposing Pokémon."
+    "effect": "Strengthens []{type:dark} moves to 1.33× their power for all friendly and opposing Pokémon.",
+    "flavor_text_ja": "ぜんいんの あくタイプのわざが つよくなる。"
   },
   "187": {
     "identifier": "fairy-aura",
     "name": "Fairy Aura",
     "generation": 6,
-    "effect": "Strengthens []{type:fairy} moves to 1.33× their power for all friendly and opposing Pokémon."
+    "effect": "Strengthens []{type:fairy} moves to 1.33× their power for all friendly and opposing Pokémon.",
+    "flavor_text_ja": "ぜんいんの フェアリータイプのわざが つよくなる。"
   },
   "188": {
     "identifier": "aura-break",
     "name": "Aura Break",
     "generation": 6,
-    "effect": "Makes []{ability:dark-aura} and []{ability:fairy-aura} weaken moves of their respective types."
+    "effect": "Makes []{ability:dark-aura} and []{ability:fairy-aura} weaken moves of their respective types.",
+    "flavor_text_ja": "オーラの こうかを ぎゃくてんさせていりょくを さげる。"
   },
   "189": {
     "identifier": "primordial-sea",
     "name": "Primordial Sea",
     "generation": 6,
-    "effect": "Creates heavy rain, which has all the properties of Rain Dance, cannot be replaced, and causes damaging Fire moves to fail."
+    "effect": "Creates heavy rain, which has all the properties of Rain Dance, cannot be replaced, and causes damaging Fire moves to fail.",
+    "flavor_text_ja": "ほのおタイプの こうげきをうけない てんきにする。"
   },
   "190": {
     "identifier": "desolate-land",
     "name": "Desolate Land",
     "generation": 6,
-    "effect": "Creates extremely harsh sunlight, which has all the properties of Sunny Day, cannot be replaced, and causes damaging Water moves to fail."
+    "effect": "Creates extremely harsh sunlight, which has all the properties of Sunny Day, cannot be replaced, and causes damaging Water moves to fail.",
+    "flavor_text_ja": "みずタイプの こうげきをうけない てんきにする。"
   },
   "191": {
     "identifier": "delta-stream",
     "name": "Delta Stream",
     "generation": 6,
-    "effect": "Creates a mysterious air current, which cannot be replaced and causes moves to never be super effective against Flying Pokémon."
+    "effect": "Creates a mysterious air current, which cannot be replaced and causes moves to never be super effective against Flying Pokémon.",
+    "flavor_text_ja": "ひこうタイプの じゃくてんがなくなる てんきにする。"
   },
   "192": {
     "identifier": "stamina",
     "name": "Stamina",
     "generation": 7,
-    "effect": "Raises this Pokémon's Defense by one stage when it takes damage from a move."
+    "effect": "Raises this Pokémon's Defense by one stage when it takes damage from a move.",
+    "flavor_text_ja": "こうげきを うけるとぼうぎょが あがる。"
   },
   "193": {
     "identifier": "wimp-out",
     "name": "Wimp Out",
     "generation": 7,
-    "effect": "This Pokémon automatically switches out when its HP drops below half."
+    "effect": "This Pokémon automatically switches out when its HP drops below half.",
+    "flavor_text_ja": "ＨＰが はんぶんに なるとあわてて にげだしててもちに ひっこんで しまう。"
   },
   "194": {
     "identifier": "emergency-exit",
     "name": "Emergency Exit",
     "generation": 7,
-    "effect": "This Pokémon automatically switches out when its HP drops below half."
+    "effect": "This Pokémon automatically switches out when its HP drops below half.",
+    "flavor_text_ja": "ＨＰが はんぶんに なるときけんを かいひするためてもちに ひっこんで しまう。"
   },
   "195": {
     "identifier": "water-compaction",
     "name": "Water Compaction",
     "generation": 7,
-    "effect": "Raises this Pokémon's Defense by two stages when it's hit by a Water move."
+    "effect": "Raises this Pokémon's Defense by two stages when it's hit by a Water move.",
+    "flavor_text_ja": "みずタイプの わざを うけるとぼうぎょが ぐーんと あがる。"
   },
   "196": {
     "identifier": "merciless",
     "name": "Merciless",
     "generation": 7,
-    "effect": "This Pokémon's moves critical hit against poisoned targets."
+    "effect": "This Pokémon's moves critical hit against poisoned targets.",
+    "flavor_text_ja": "どく じょうたいのあいてを こうげきするとかならず きゅうしょに あたる。"
   },
   "197": {
     "identifier": "shields-down",
     "name": "Shields Down",
     "generation": 7,
-    "effect": "Transforms this Minior between Core Form and Meteor Form.  Prevents major status ailments and drowsiness while in Meteor Form."
+    "effect": "Transforms this Minior between Core Form and Meteor Form.  Prevents major status ailments and drowsiness while in Meteor Form.",
+    "flavor_text_ja": "ＨＰが はんぶんに なるとからが こわれてこうげきてきに なる。"
   },
   "198": {
     "identifier": "stakeout",
     "name": "Stakeout",
     "generation": 7,
-    "effect": "This Pokémon's moves have double power against Pokémon that switched in this turn."
+    "effect": "This Pokémon's moves have double power against Pokémon that switched in this turn.",
+    "flavor_text_ja": "こうたいで でてきた あいてに２ばいの ダメージで こうげき できる。"
   },
   "199": {
     "identifier": "water-bubble",
     "name": "Water Bubble",
     "generation": 7,
-    "effect": "Halves damage from Fire moves, doubles damage of Water moves, and prevents burns."
+    "effect": "Halves damage from Fire moves, doubles damage of Water moves, and prevents burns.",
+    "flavor_text_ja": "じぶんに たいする ほのおタイプのわざの いりょくを さげる。やけど しない。"
   },
   "200": {
     "identifier": "steelworker",
     "name": "Steelworker",
     "generation": 7,
-    "effect": "This Pokémon's Steel moves have 1.5× power."
+    "effect": "This Pokémon's Steel moves have 1.5× power.",
+    "flavor_text_ja": "はがねタイプの わざのいりょくが あがる。"
   },
   "201": {
     "identifier": "berserk",
     "name": "Berserk",
     "generation": 7,
-    "effect": "Raises this Pokémon's Special Attack by one stage every time its HP drops below half."
+    "effect": "Raises this Pokémon's Special Attack by one stage every time its HP drops below half.",
+    "flavor_text_ja": "あいての こうげきでＨＰが はんぶんに なるととくこうが あがる。"
   },
   "202": {
     "identifier": "slush-rush",
     "name": "Slush Rush",
     "generation": 7,
-    "effect": "During Hail, this Pokémon has double Speed."
+    "effect": "During Hail, this Pokémon has double Speed.",
+    "flavor_text_ja": "てんきが あられ のときすばやさが あがる。"
   },
   "203": {
     "identifier": "long-reach",
     "name": "Long Reach",
     "generation": 7,
-    "effect": "This Pokémon's moves do not make contact."
+    "effect": "This Pokémon's moves do not make contact.",
+    "flavor_text_ja": "すべての わざをあいてに せっしょく しないでだすことが できる。"
   },
   "204": {
     "identifier": "liquid-voice",
     "name": "Liquid Voice",
     "generation": 7,
-    "effect": "Sound-based moves become Water-type."
+    "effect": "Sound-based moves become Water-type.",
+    "flavor_text_ja": "すべての おとわざがみずタイプに なる。"
   },
   "205": {
     "identifier": "triage",
     "name": "Triage",
     "generation": 7,
-    "effect": "This Pokémon's healing moves have their priority increased by 3."
+    "effect": "This Pokémon's healing moves have their priority increased by 3.",
+    "flavor_text_ja": "かいふくわざを せんせいでだすことが できる。"
   },
   "206": {
     "identifier": "galvanize",
     "name": "Galvanize",
     "generation": 7,
-    "effect": "This Pokémon's Normal moves are Electric and have their power increased to 1.2×."
+    "effect": "This Pokémon's Normal moves are Electric and have their power increased to 1.2×.",
+    "flavor_text_ja": "ノーマルタイプの わざがでんきタイプになる。いりょくが すこし あがる。"
   },
   "207": {
     "identifier": "surge-surfer",
     "name": "Surge Surfer",
     "generation": 7,
-    "effect": "Doubles this Pokémon's Speed on Electric Terrain."
+    "effect": "Doubles this Pokémon's Speed on Electric Terrain.",
+    "flavor_text_ja": "エレキフィールド のときすばやさが ２ばいに なる。"
   },
   "208": {
     "identifier": "schooling",
     "name": "Schooling",
     "generation": 7,
-    "effect": "Wishiwashi becomes Schooling Form when its HP is 25% or higher."
+    "effect": "Wishiwashi becomes Schooling Form when its HP is 25% or higher.",
+    "flavor_text_ja": "ＨＰが おおいときは むれて つよくなる。ＨＰの のこりが すくなくなるとむれは ちりぢりに なってしまう。"
   },
   "209": {
     "identifier": "disguise",
     "name": "Disguise",
     "generation": 7,
-    "effect": "Prevents the first instance of battle damage."
+    "effect": "Prevents the first instance of battle damage.",
+    "flavor_text_ja": "からだを おおう ばけのかわで１かい こうげきを ふせぐことが できる。"
   },
   "210": {
     "identifier": "battle-bond",
     "name": "Battle Bond",
     "generation": 7,
-    "effect": "Transforms this Pokémon into Ash-Greninja after fainting an opponent.  Water Shuriken's power is 20 and always hits three times."
+    "effect": "Transforms this Pokémon into Ash-Greninja after fainting an opponent.  Water Shuriken's power is 20 and always hits three times.",
+    "flavor_text_ja": "あいてを たおすと トレーナーとのきずなが ふかまり サトシゲッコウガにへんげする。みずしゅりけんが つよくなる。"
   },
   "211": {
     "identifier": "power-construct",
     "name": "Power Construct",
     "generation": 7,
-    "effect": "Transforms 10% or 50% Zygarde into Complete Forme when its HP is below 50%."
+    "effect": "Transforms 10% or 50% Zygarde into Complete Forme when its HP is below 50%.",
+    "flavor_text_ja": "ＨＰが はんぶんに なるとセルたちが おうえんに かけつけパーフェクトフォルムに すがたを かえる。"
   },
   "212": {
     "identifier": "corrosion",
     "name": "Corrosion",
     "generation": 7,
-    "effect": "This Pokémon can inflict poison on Poison and Steel Pokémon."
+    "effect": "This Pokémon can inflict poison on Poison and Steel Pokémon.",
+    "flavor_text_ja": "はがねタイプや どくタイプもどく じょうたいに することが できる。"
   },
   "213": {
     "identifier": "comatose",
     "name": "Comatose",
     "generation": 7,
-    "effect": "This Pokémon always  acts as though it were Asleep."
+    "effect": "This Pokémon always  acts as though it were Asleep.",
+    "flavor_text_ja": "つねに ゆめうつつの じょうたいでぜったいに めざめない。ねむったまま こうげきが できる。"
   },
   "214": {
     "identifier": "queenly-majesty",
     "name": "Queenly Majesty",
     "generation": 7,
-    "effect": "Opposing Pokémon cannot use priority attacks."
+    "effect": "Opposing Pokémon cannot use priority attacks.",
+    "flavor_text_ja": "あいてに いあつかんを あたえこちらに むかって せんせいわざをだせない ようにする。"
   },
   "215": {
     "identifier": "innards-out",
     "name": "Innards Out",
     "generation": 7,
-    "effect": "When this Pokémon faints from an opponent's move, that opponent takes damage equal to the HP this Pokémon had remaining."
+    "effect": "When this Pokémon faints from an opponent's move, that opponent takes damage equal to the HP this Pokémon had remaining.",
+    "flavor_text_ja": "あいてに たおされたときＨＰの のこりの ぶんだけあいてに ダメージを あたえる。"
   },
   "216": {
     "identifier": "dancer",
     "name": "Dancer",
     "generation": 7,
-    "effect": "Whenever another Pokémon uses a dance move, this Pokémon will use the same move immediately afterwards."
+    "effect": "Whenever another Pokémon uses a dance move, this Pokémon will use the same move immediately afterwards.",
+    "flavor_text_ja": "だれかが おどりわざを つかうとじぶんも それに つづいておどりわざを だすことが できる。"
   },
   "217": {
     "identifier": "battery",
     "name": "Battery",
     "generation": 7,
-    "effect": "Ally Pokémon's moves have their power increased to 1.3×."
+    "effect": "Ally Pokémon's moves have their power increased to 1.3×.",
+    "flavor_text_ja": "みかたの とくしゅわざのいりょくを あげる。"
   },
   "218": {
     "identifier": "fluffy",
     "name": "Fluffy",
     "generation": 7,
-    "effect": "Damage from contact moves is halved.  Damage from Fire moves is doubled."
+    "effect": "Damage from contact moves is halved.  Damage from Fire moves is doubled.",
+    "flavor_text_ja": "あいてから うけた せっしょくする わざのダメージを はんげんするが ほのおタイプのわざの ダメージは ２ばいになる。"
   },
   "219": {
     "identifier": "dazzling",
     "name": "Dazzling",
     "generation": 7,
-    "effect": "Opposing Pokémon cannot use priority attacks."
+    "effect": "Opposing Pokémon cannot use priority attacks.",
+    "flavor_text_ja": "あいてを びっくり させてこちらに むかって せんせいわざをだせない ようにする。"
   },
   "220": {
     "identifier": "soul-heart",
     "name": "Soul-Heart",
     "generation": 7,
-    "effect": "This Pokémon's Special Attack rises by one stage every time any Pokémon faints."
+    "effect": "This Pokémon's Special Attack rises by one stage every time any Pokémon faints.",
+    "flavor_text_ja": "ポケモンが ひんしに なるたびにとくこうが あがる。"
   },
   "221": {
     "identifier": "tangling-hair",
     "name": "Tangling Hair",
     "generation": 7,
-    "effect": "When this Pokémon takes regular damage from a contact move, the attacking Pokémon's Speed lowers by one stage."
+    "effect": "When this Pokémon takes regular damage from a contact move, the attacking Pokémon's Speed lowers by one stage.",
+    "flavor_text_ja": "こうげきで じぶんに ふれた あいてのすばやさを さげる。"
   },
   "222": {
     "identifier": "receiver",
     "name": "Receiver",
     "generation": 7,
-    "effect": "When an ally faints, this Pokémon gains its Ability."
+    "effect": "When an ally faints, this Pokémon gains its Ability.",
+    "flavor_text_ja": "たおされた みかたの とくせいをうけついで おなじ とくせいに なる。"
   },
   "223": {
     "identifier": "power-of-alchemy",
     "name": "Power of Alchemy",
     "generation": 7,
-    "effect": "When an ally faints, this Pokémon gains its Ability."
+    "effect": "When an ally faints, this Pokémon gains its Ability.",
+    "flavor_text_ja": "たおされた みかたの とくせいを うけつぎおなじ とくせいに かわる。"
   },
   "224": {
     "identifier": "beast-boost",
     "name": "Beast Boost",
     "generation": 7,
-    "effect": "Raises this Pokémon's highest stat by one stage when it faints another Pokémon."
+    "effect": "Raises this Pokémon's highest stat by one stage when it faints another Pokémon.",
+    "flavor_text_ja": "あいてを たおしたときじぶんの いちばん たかいのうりょくが あがる。"
   },
   "225": {
     "identifier": "rks-system",
     "name": "RKS System",
     "generation": 7,
-    "effect": "Changes this Pokémon's type to match its held Memory."
+    "effect": "Changes this Pokémon's type to match its held Memory.",
+    "flavor_text_ja": "もっている メモリでじぶんの タイプが かわる。"
   },
   "226": {
     "identifier": "electric-surge",
     "name": "Electric Surge",
     "generation": 7,
-    "effect": "When this Pokémon enters battle, it changes the terrain to Electric Terrain."
+    "effect": "When this Pokémon enters battle, it changes the terrain to Electric Terrain.",
+    "flavor_text_ja": "とうじょう したときにエレキフィールドを はりめぐらせる。"
   },
   "227": {
     "identifier": "psychic-surge",
     "name": "Psychic Surge",
     "generation": 7,
-    "effect": "When this Pokémon enters battle, it changes the terrain to Psychic Terrain."
+    "effect": "When this Pokémon enters battle, it changes the terrain to Psychic Terrain.",
+    "flavor_text_ja": "とうじょう したときにサイコフィールドを はりめぐらせる。"
   },
   "228": {
     "identifier": "misty-surge",
     "name": "Misty Surge",
     "generation": 7,
-    "effect": "When this Pokémon enters battle, it changes the terrain to Misty Terrain."
+    "effect": "When this Pokémon enters battle, it changes the terrain to Misty Terrain.",
+    "flavor_text_ja": "とうじょう したときにミストフィールドを はりめぐらせる。"
   },
   "229": {
     "identifier": "grassy-surge",
     "name": "Grassy Surge",
     "generation": 7,
-    "effect": "When this Pokémon enters battle, it changes the terrain to Grassy Terrain."
+    "effect": "When this Pokémon enters battle, it changes the terrain to Grassy Terrain.",
+    "flavor_text_ja": "とうじょう したときにグラスフィールドを はりめぐらせる。"
   },
   "230": {
     "identifier": "full-metal-body",
     "name": "Full Metal Body",
     "generation": 7,
-    "effect": "Other Pokémon cannot lower this Pokémon's stats."
+    "effect": "Other Pokémon cannot lower this Pokémon's stats.",
+    "flavor_text_ja": "あいての わざや とくせいでのうりょくを さげられない。"
   },
   "231": {
     "identifier": "shadow-shield",
     "name": "Shadow Shield",
     "generation": 7,
-    "effect": "When this Pokémon has full HP, regular damage from moves is halved."
+    "effect": "When this Pokémon has full HP, regular damage from moves is halved.",
+    "flavor_text_ja": "ＨＰが まんたんの ときにうける ダメージが すくなくなる。"
   },
   "232": {
     "identifier": "prism-armor",
     "name": "Prism Armor",
     "generation": 7,
-    "effect": "Reduces super-effective damage to 0.75×."
+    "effect": "Reduces super-effective damage to 0.75×.",
+    "flavor_text_ja": "こうかばつぐんに なってしまうこうげきの いりょくをよわめる ことが できる。"
   },
   "233": {
     "identifier": "neuroforce",
     "name": "Neuroforce",
     "generation": 7,
-    "effect": "Increases super-effective damage dealt to 1.25×."
+    "effect": "Increases super-effective damage dealt to 1.25×.",
+    "flavor_text_ja": "こうかばつぐんの こうげきでいりょくが さらに あがる。"
   },
   "234": {
     "identifier": "intrepid-sword",
     "name": "Intrepid Sword",
     "generation": 8,
-    "effect": "Boosts Attack in battle."
+    "effect": "Boosts Attack in battle.",
+    "flavor_text_ja": "とうじょう したときにこうげきが あがる。"
   },
   "235": {
     "identifier": "dauntless-shield",
     "name": "Dauntless Shield",
     "generation": 8,
-    "effect": "Boosts Defense in battle."
+    "effect": "Boosts Defense in battle.",
+    "flavor_text_ja": "とうじょう したときにぼうぎょが あがる。"
   },
   "236": {
     "identifier": "libero",
     "name": "Libero",
     "generation": 8,
-    "effect": "Libero changes the Pokémon's type to that of its previously used attack."
+    "effect": "Libero changes the Pokémon's type to that of its previously used attack.",
+    "flavor_text_ja": "じぶんが だす わざとおなじ タイプに へんかする。"
   },
   "237": {
     "identifier": "ball-fetch",
     "name": "Ball Fetch",
     "generation": 8,
-    "effect": "If the Pokémon is not holding an item, it will fetch the Poké Ball from the first failed throw of the battle."
+    "effect": "If the Pokémon is not holding an item, it will fetch the Poké Ball from the first failed throw of the battle.",
+    "flavor_text_ja": "どうぐを もっていない ばあい１かいめに なげて しっぱい したモンスターボールを ひろってくる。"
   },
   "238": {
     "identifier": "cotton-down",
     "name": "Cotton Down",
     "generation": 8,
-    "effect": "When Ignores moves and abilities that draw in moves."
+    "effect": "When Ignores moves and abilities that draw in moves.",
+    "flavor_text_ja": "こうげきを うけると わたげを ばらまいてじぶんいがいの ポケモン すべてのすばやさを さげる。"
   },
   "239": {
     "identifier": "propeller-tail",
     "name": "Propeller Tail",
     "generation": 8,
-    "effect": "Ignores moves and abilities that draw in moves."
+    "effect": "Ignores moves and abilities that draw in moves.",
+    "flavor_text_ja": "あいての わざを ひきうけるとくせいや わざのえいきょうを むし できる。"
   },
   "240": {
     "identifier": "mirror-armor",
     "name": "Mirror Armor",
     "generation": 8,
-    "effect": "Reflects any stat-lowering effects."
+    "effect": "Reflects any stat-lowering effects.",
+    "flavor_text_ja": "じぶんが うけたのうりょく ダウンのこうか だけを はねかえす。"
   },
   "241": {
     "identifier": "gulp-missile",
     "name": "Gulp Missile",
     "generation": 8,
-    "effect": "If a Cramorant with Gulp Missile uses Surf or Dive, it catches prey and changes its form depending on its remaining HP."
+    "effect": "If a Cramorant with Gulp Missile uses Surf or Dive, it catches prey and changes its form depending on its remaining HP.",
+    "flavor_text_ja": "なみのりか ダイビングを するとえものを くわえてくる。 ダメージをうけると えものを はきだして こうげき。"
   },
   "242": {
     "identifier": "stalwart",
     "name": "Stalwart",
     "generation": 8,
-    "effect": "Ignores moves and abilities that draw in moves."
+    "effect": "Ignores moves and abilities that draw in moves.",
+    "flavor_text_ja": "あいての わざを ひきうけるとくせいや わざのえいきょうを むし できる。"
   },
   "243": {
     "identifier": "steam-engine",
     "name": "Steam Engine",
     "generation": 8,
-    "effect": "Boosts the Speed stat drastically when the Pokémon is hit by a Fire- or Water-type move."
+    "effect": "Boosts the Speed stat drastically when the Pokémon is hit by a Fire- or Water-type move.",
+    "flavor_text_ja": "みずタイプ ほのおタイプのわざを うけるとすばやさが ぐぐーんと あがる。"
   },
   "244": {
     "identifier": "punk-rock",
     "name": "Punk Rock",
     "generation": 8,
-    "effect": "Boosts sound-based moves and halves damage from the same moves."
+    "effect": "Boosts sound-based moves and halves damage from the same moves.",
+    "flavor_text_ja": "おとわざの いりょくが あがる。うけた おとわざのダメージは はんぶんに なる。"
   },
   "245": {
     "identifier": "sand-spit",
     "name": "Sand Spit",
     "generation": 8,
-    "effect": "Creates a sandstorm when hit by an attack."
+    "effect": "Creates a sandstorm when hit by an attack.",
+    "flavor_text_ja": "こうげきを うけるとすなあらしを おこす。"
   },
   "246": {
     "identifier": "ice-scales",
     "name": "Ice Scales",
     "generation": 8,
-    "effect": "Halves damage from Special moves."
+    "effect": "Halves damage from Special moves.",
+    "flavor_text_ja": "こおりのりんぷんに まもられてとくしゅこうげきで うけるダメージが はんげん する。"
   },
   "247": {
     "identifier": "ripen",
     "name": "Ripen",
     "generation": 8,
-    "effect": "Doubles the effect of berries."
+    "effect": "Doubles the effect of berries.",
+    "flavor_text_ja": "じゅくせい させることできのみの こうかがばいに なる。"
   },
   "248": {
     "identifier": "ice-face",
     "name": "Ice Face",
     "generation": 8,
-    "effect": "The Pokémon’s ice head can take a physical attack as a substitute, but the attack also changes the Pokémon’s appearance. The ice will be restored when it snows."
+    "effect": "The Pokémon’s ice head can take a physical attack as a substitute, but the attack also changes the Pokémon’s appearance. The ice will be restored when it snows.",
+    "flavor_text_ja": "ぶつりこうげきは あたまの こおりがみがわりに なるが すがたも かわる。こおりは あられが ふると もとにもどる。"
   },
   "249": {
     "identifier": "power-spot",
     "name": "Power Spot",
     "generation": 8,
-    "effect": "Just being next to the Pokémon powers up moves."
+    "effect": "Just being next to the Pokémon powers up moves.",
+    "flavor_text_ja": "となりに いるだけでわざの いりょくが あがる。"
   },
   "250": {
     "identifier": "mimicry",
     "name": "Mimicry",
     "generation": 8,
-    "effect": "Changes type depending on the terrain."
+    "effect": "Changes type depending on the terrain.",
+    "flavor_text_ja": "フィールドの じょうたいに あわせてポケモンの タイプが かわる。"
   },
   "251": {
     "identifier": "screen-cleaner",
     "name": "Screen Cleaner",
     "generation": 8,
-    "effect": "Nullifies effects of Light Screen, Reflect, and Aurora Veil."
+    "effect": "Nullifies effects of Light Screen, Reflect, and Aurora Veil.",
+    "flavor_text_ja": "とうじょう したときに てきと みかたのひかりのかべ リフレクターオーロラベールの こうかが きえる。"
   },
   "252": {
     "identifier": "steely-spirit",
     "name": "Steely Spirit",
     "generation": 8,
-    "effect": "Powers up ally Pokémon's Steel-type moves."
+    "effect": "Powers up ally Pokémon's Steel-type moves.",
+    "flavor_text_ja": "みかたの はがねタイプのこうげきの いりょくが あがる。"
   },
   "253": {
     "identifier": "perish-body",
     "name": "Perish Body",
     "generation": 8,
-    "effect": "When hit by a move that makes direct contact, the Pokémon and the attacker will faint after three turns unless they switch out of battle."
+    "effect": "When hit by a move that makes direct contact, the Pokémon and the attacker will faint after three turns unless they switch out of battle.",
+    "flavor_text_ja": "せっしょくする わざを うけるとおたがい ３ターン たつと ひんしになる。こうたいすると こうかは なくなる。"
   },
   "254": {
     "identifier": "wandering-spirit",
     "name": "Wandering Spirit",
     "generation": 8,
-    "effect": "Swaps abilities with opponents on contact."
+    "effect": "Swaps abilities with opponents on contact.",
+    "flavor_text_ja": "せっしょくする わざでこうげき してきた ポケモンととくせいを いれかえる。"
   },
   "255": {
     "identifier": "gorilla-tactics",
     "name": "Gorilla Tactics",
     "generation": 8,
-    "effect": "Boosts the Pokémon's Attack stat but only allows the use of the first selected move."
+    "effect": "Boosts the Pokémon's Attack stat but only allows the use of the first selected move.",
+    "flavor_text_ja": "こうげきは あがるがさいしょに えらんだわざしか だせなくなる。"
   },
   "256": {
     "identifier": "neutralizing-gas",
     "name": "Neutralizing Gas",
     "generation": 8,
-    "effect": "Neutralizes abilities of all Pokémon in battle."
+    "effect": "Neutralizes abilities of all Pokémon in battle.",
+    "flavor_text_ja": "かがくへんかガスの ポケモンが ばにいるとすべての ポケモンの とくせいのこうかが きえたり はつどう しなくなる。"
   },
   "257": {
     "identifier": "pastel-veil",
     "name": "Pastel Veil",
     "generation": 8,
-    "effect": "Prevents the Pokémon and its allies from being poisoned."
+    "effect": "Prevents the Pokémon and its allies from being poisoned.",
+    "flavor_text_ja": "じぶんも みかたもどくの じょうたいいじょうをうけなくなる。"
   },
   "258": {
     "identifier": "hunger-switch",
     "name": "Hunger Switch",
     "generation": 8,
-    "effect": "Causes Morpeko to change its form each turn, alternating between Full Belly Mode and Hangry Mode"
+    "effect": "Causes Morpeko to change its form each turn, alternating between Full Belly Mode and Hangry Mode",
+    "flavor_text_ja": "ターンの おわりに まんぷくもようはらぺこもよう まんぷくもよう……とこうごに すがたを かえる。"
   },
   "259": {
     "identifier": "quick-draw",
     "name": "Quick Draw",
     "generation": 8,
-    "effect": "Enables the Pokémon to move first occasionally."
+    "effect": "Enables the Pokémon to move first occasionally.",
+    "flavor_text_ja": "あいてより さきにこうどう できることが ある。"
   },
   "260": {
     "identifier": "unseen-fist",
     "name": "Unseen Fist",
     "generation": 8,
-    "effect": "Contact moves can strike through Protect/Detect."
+    "effect": "Contact moves can strike through Protect/Detect.",
+    "flavor_text_ja": "あいてに せっしょくする わざならまもりの こうかをむしして こうげき することが できる。"
   },
   "261": {
     "identifier": "curious-medicine",
     "name": "Curious Medicine",
     "generation": 8,
-    "effect": "Resets all stat changes upon entering battlefield."
+    "effect": "Resets all stat changes upon entering battlefield.",
+    "flavor_text_ja": "とうじょう したときにかいがらから くすりを ふりまいてみかたの のうりょくへんかを もとにもどす。"
   },
   "262": {
     "identifier": "transistor",
     "name": "Transistor",
     "generation": 8,
-    "effect": "Powers up Electric-type moves."
+    "effect": "Powers up Electric-type moves.",
+    "flavor_text_ja": "でんきタイプの わざのいりょくが あがる。"
   },
   "263": {
     "identifier": "dragons-maw",
     "name": "Dragon’s Maw",
     "generation": 8,
-    "effect": "Powers up Dragon-type moves."
+    "effect": "Powers up Dragon-type moves.",
+    "flavor_text_ja": "ドラゴンタイプの わざのいりょくが あがる。"
   },
   "264": {
     "identifier": "chilling-neigh",
     "name": "Chilling Neigh",
     "generation": 8,
-    "effect": "Boosts Attack after knocking out a Pokémon."
+    "effect": "Boosts Attack after knocking out a Pokémon.",
+    "flavor_text_ja": "あいてを たおすとつめたい こえで いなないてこうげきが あがる。"
   },
   "265": {
     "identifier": "grim-neigh",
     "name": "Grim Neigh",
     "generation": 8,
-    "effect": "Boosts Special Attack after knocking out a Pokémon."
+    "effect": "Boosts Special Attack after knocking out a Pokémon.",
+    "flavor_text_ja": "あいてを たおすとおそろしい こえで いなないてとくこうが あがる。"
   },
   "266": {
     "identifier": "as-one-glastrier",
     "name": "As One",
     "generation": 8,
-    "effect": ""
+    "effect": "",
+    "flavor_text_ja": "バドレックスの きんちょうかんとブリザポスの しろのいななきのふたつの とくせいを あわせもつ。"
   },
   "267": {
     "identifier": "as-one-spectrier",
     "name": "As One",
     "generation": 8,
-    "effect": ""
+    "effect": "",
+    "flavor_text_ja": "バドレックスの きんちょうかんとレイスポスの くろのいななきのふたつの とくせいを あわせもつ。"
   },
   "268": {
     "identifier": "lingering-aroma",
     "name": "Lingering Aroma",
     "generation": 9,
-    "effect": "Contact changes the attacker's Ability to Lingering Aroma."
+    "effect": "Contact changes the attacker's Ability to Lingering Aroma.",
+    "flavor_text_ja": ""
   },
   "269": {
     "identifier": "seed-sower",
     "name": "Seed Sower",
     "generation": 9,
-    "effect": "Turns the ground into Grassy Terrain when the Pokémon is hit by an attack."
+    "effect": "Turns the ground into Grassy Terrain when the Pokémon is hit by an attack.",
+    "flavor_text_ja": ""
   },
   "270": {
     "identifier": "thermal-exchange",
     "name": "Thermal Exchange",
     "generation": 9,
-    "effect": "Raises Attack when hit by a Fire-type move. Cannot be burned."
+    "effect": "Raises Attack when hit by a Fire-type move. Cannot be burned.",
+    "flavor_text_ja": ""
   },
   "271": {
     "identifier": "anger-shell",
     "name": "Anger Shell",
     "generation": 9,
-    "effect": "When the Pokémon's HP drops below half, Anger Shell lowers its Defense and Special Defense but its Attack, Special Attack and Speed are raised."
+    "effect": "When the Pokémon's HP drops below half, Anger Shell lowers its Defense and Special Defense but its Attack, Special Attack and Speed are raised.",
+    "flavor_text_ja": ""
   },
   "272": {
     "identifier": "purifying-salt",
     "name": "Purifying Salt",
     "generation": 9,
-    "effect": "Protects from status conditions and halves damage from Ghost-type moves."
+    "effect": "Protects from status conditions and halves damage from Ghost-type moves.",
+    "flavor_text_ja": ""
   },
   "273": {
     "identifier": "well-baked-body",
     "name": "Well-Baked Body",
     "generation": 9,
-    "effect": "Immune to Fire-type moves, and Defense is sharply boosted."
+    "effect": "Immune to Fire-type moves, and Defense is sharply boosted.",
+    "flavor_text_ja": ""
   },
   "274": {
     "identifier": "wind-rider",
     "name": "Wind Rider",
     "generation": 9,
-    "effect": "Gives immunity to wind moves, and causes the Pokémon's Attack to increase by one stage when hit by one."
+    "effect": "Gives immunity to wind moves, and causes the Pokémon's Attack to increase by one stage when hit by one.",
+    "flavor_text_ja": ""
   },
   "275": {
     "identifier": "guard-dog",
     "name": "Guard Dog",
     "generation": 9,
-    "effect": "Boosts Attack if intimidated, and prevents being forced to switch out."
+    "effect": "Boosts Attack if intimidated, and prevents being forced to switch out.",
+    "flavor_text_ja": ""
   },
   "276": {
     "identifier": "rocky-payload",
     "name": "Rocky Payload",
     "generation": 9,
-    "effect": "Powers up Rock-type moves."
+    "effect": "Powers up Rock-type moves.",
+    "flavor_text_ja": ""
   },
   "277": {
     "identifier": "wind-power",
     "name": "Wind Power",
     "generation": 9,
-    "effect": "When hit by a wind move, the power of the next Electric-type move it uses is doubled."
+    "effect": "When hit by a wind move, the power of the next Electric-type move it uses is doubled.",
+    "flavor_text_ja": ""
   },
   "278": {
     "identifier": "zero-to-hero",
     "name": "Zero to Hero",
     "generation": 9,
-    "effect": "Transforms into its Hero Form when switching out."
+    "effect": "Transforms into its Hero Form when switching out.",
+    "flavor_text_ja": ""
   },
   "279": {
     "identifier": "commander",
     "name": "Commander",
     "generation": 9,
-    "effect": "Goes inside the mouth of an ally Dondozo if one is on the field."
+    "effect": "Goes inside the mouth of an ally Dondozo if one is on the field.",
+    "flavor_text_ja": ""
   },
   "280": {
     "identifier": "electromorphosis",
     "name": "Electromorphosis",
     "generation": 9,
-    "effect": "When hit by an attack, the power of the next Electric-type move it uses is doubled."
+    "effect": "When hit by an attack, the power of the next Electric-type move it uses is doubled.",
+    "flavor_text_ja": ""
   },
   "281": {
     "identifier": "protosynthesis",
     "name": "Protosynthesis",
     "generation": 9,
-    "effect": "Raises highest stat in harsh sunlight, or if holding Booster Energy."
+    "effect": "Raises highest stat in harsh sunlight, or if holding Booster Energy.",
+    "flavor_text_ja": ""
   },
   "282": {
     "identifier": "quark-drive",
     "name": "Quark Drive",
     "generation": 9,
-    "effect": "Raises highest stat on Electric Terrain, or if holding Booster Energy."
+    "effect": "Raises highest stat on Electric Terrain, or if holding Booster Energy.",
+    "flavor_text_ja": ""
   },
   "283": {
     "identifier": "good-as-gold",
     "name": "Good as Gold",
     "generation": 9,
-    "effect": "Gives immunity to status moves."
+    "effect": "Gives immunity to status moves.",
+    "flavor_text_ja": ""
   },
   "284": {
     "identifier": "vessel-of-ruin",
     "name": "Vessel of Ruin",
     "generation": 9,
-    "effect": "Lowers Special Attack of all Pokémon except itself."
+    "effect": "Lowers Special Attack of all Pokémon except itself.",
+    "flavor_text_ja": ""
   },
   "285": {
     "identifier": "sword-of-ruin",
     "name": "Sword of Ruin",
     "generation": 9,
-    "effect": "Lowers Defense of all Pokémon except itself."
+    "effect": "Lowers Defense of all Pokémon except itself.",
+    "flavor_text_ja": ""
   },
   "286": {
     "identifier": "tablets-of-ruin",
     "name": "Tablets of Ruin",
     "generation": 9,
-    "effect": "Lowers Attack of all Pokémon except itself."
+    "effect": "Lowers Attack of all Pokémon except itself.",
+    "flavor_text_ja": ""
   },
   "287": {
     "identifier": "beads-of-ruin",
     "name": "Beads of Ruin",
     "generation": 9,
-    "effect": "Lowers Special Defense of all Pokémon except itself."
+    "effect": "Lowers Special Defense of all Pokémon except itself.",
+    "flavor_text_ja": ""
   },
   "288": {
     "identifier": "orichalcum-pulse",
     "name": "Orichalcum Pulse",
     "generation": 9,
-    "effect": "Turns the sunlight harsh when entering battle, and boosts Attack while active."
+    "effect": "Turns the sunlight harsh when entering battle, and boosts Attack while active.",
+    "flavor_text_ja": ""
   },
   "289": {
     "identifier": "hadron-engine",
     "name": "Hadron Engine",
     "generation": 9,
-    "effect": "Creates an Electric Terrain when entering battle, and boosts Special Attack while active."
+    "effect": "Creates an Electric Terrain when entering battle, and boosts Special Attack while active.",
+    "flavor_text_ja": ""
   },
   "290": {
     "identifier": "opportunist",
     "name": "Opportunist",
     "generation": 9,
-    "effect": "Copies stat boosts by the opponent."
+    "effect": "Copies stat boosts by the opponent.",
+    "flavor_text_ja": ""
   },
   "291": {
     "identifier": "cud-chew",
     "name": "Cud Chew",
     "generation": 9,
-    "effect": "Causes the Pokémon to reuse an already consumed Berry at the end of the next turn."
+    "effect": "Causes the Pokémon to reuse an already consumed Berry at the end of the next turn.",
+    "flavor_text_ja": ""
   },
   "292": {
     "identifier": "sharpness",
     "name": "Sharpness",
     "generation": 9,
-    "effect": "Powers up slicing moves."
+    "effect": "Powers up slicing moves.",
+    "flavor_text_ja": ""
   },
   "293": {
     "identifier": "supreme-overlord",
     "name": "Supreme Overlord",
     "generation": 9,
-    "effect": "Attack and Special Attack are boosted for each party Pokémon that has been defeated."
+    "effect": "Attack and Special Attack are boosted for each party Pokémon that has been defeated.",
+    "flavor_text_ja": ""
   },
   "294": {
     "identifier": "costar",
     "name": "Costar",
     "generation": 9,
-    "effect": "Copies ally's stat changes on entering battle."
+    "effect": "Copies ally's stat changes on entering battle.",
+    "flavor_text_ja": ""
   },
   "295": {
     "identifier": "toxic-debris",
     "name": "Toxic Debris",
     "generation": 9,
-    "effect": "Scatters poison spikes at the feet of the opposing team when the Pokémon takes damage from physical moves."
+    "effect": "Scatters poison spikes at the feet of the opposing team when the Pokémon takes damage from physical moves.",
+    "flavor_text_ja": ""
   },
   "296": {
     "identifier": "armor-tail",
     "name": "Armor Tail",
     "generation": 9,
-    "effect": "Prevents the opponent from using any moves that have priority, such as Quick Attack."
+    "effect": "Prevents the opponent from using any moves that have priority, such as Quick Attack.",
+    "flavor_text_ja": ""
   },
   "297": {
     "identifier": "earth-eater",
     "name": "Earth Eater",
     "generation": 9,
-    "effect": "Restores HP when hit by a Ground-type move."
+    "effect": "Restores HP when hit by a Ground-type move.",
+    "flavor_text_ja": ""
   },
   "298": {
     "identifier": "mycelium-might",
     "name": "Mycelium Might",
     "generation": 9,
-    "effect": "Status moves go last, but are not affected by the opponent's ability."
+    "effect": "Status moves go last, but are not affected by the opponent's ability.",
+    "flavor_text_ja": ""
   },
   "299": {
     "identifier": "minds-eye",
     "name": "Mind’s Eye",
     "generation": 9,
-    "effect": "The Pokémon ignores changes to opponents' evasiveness, its accuracy can't be lowered, and it can hit Ghost types with Normal- and Fighting-type moves."
+    "effect": "The Pokémon ignores changes to opponents' evasiveness, its accuracy can't be lowered, and it can hit Ghost types with Normal- and Fighting-type moves.",
+    "flavor_text_ja": ""
   },
   "300": {
     "identifier": "supersweet-syrup",
     "name": "Supersweet Syrup",
     "generation": 9,
-    "effect": "Once per battle, when a Pokémon with Supersweet Syrup enters the battle, it lowers the evasion stat of all adjacent opponents by one stage. "
+    "effect": "Once per battle, when a Pokémon with Supersweet Syrup enters the battle, it lowers the evasion stat of all adjacent opponents by one stage. ",
+    "flavor_text_ja": ""
   },
   "301": {
     "identifier": "hospitality",
     "name": "Hospitality",
     "generation": 9,
-    "effect": "When a Pokémon with Hospitality enters a battle, it restores HP for an ally by 25%."
+    "effect": "When a Pokémon with Hospitality enters a battle, it restores HP for an ally by 25%.",
+    "flavor_text_ja": ""
   },
   "302": {
     "identifier": "toxic-chain",
     "name": "Toxic Chain",
     "generation": 9,
-    "effect": "May cause bad poisoning when the Pokémon hits an opponent with a move."
+    "effect": "May cause bad poisoning when the Pokémon hits an opponent with a move.",
+    "flavor_text_ja": ""
   },
   "303": {
     "identifier": "embody-aspect",
     "name": "Embody Aspect",
     "generation": 9,
-    "effect": "Embody Aspect boosts a particular stat, depending on the form of a Terastallized Ogerpon"
+    "effect": "Embody Aspect boosts a particular stat, depending on the form of a Terastallized Ogerpon",
+    "flavor_text_ja": ""
   },
   "304": {
     "identifier": "tera-shift",
     "name": "Tera Shift",
     "generation": 9,
-    "effect": "When Terapagos enters the battle, it turns into its Terastal Form until the end of the battle. "
+    "effect": "When Terapagos enters the battle, it turns into its Terastal Form until the end of the battle. ",
+    "flavor_text_ja": ""
   },
   "305": {
     "identifier": "tera-shell",
     "name": "Tera Shell",
     "generation": 9,
-    "effect": "All damage-dealing moves that hit the Pokémon when its HP is full will not be very effective."
+    "effect": "All damage-dealing moves that hit the Pokémon when its HP is full will not be very effective.",
+    "flavor_text_ja": ""
   },
   "306": {
     "identifier": "teraform-zero",
     "name": "Teraform Zero",
     "generation": 9,
-    "effect": "As soon as Terapagos assumes its Stellar Form, it will immediately neutralize weather and terrain effects. "
+    "effect": "As soon as Terapagos assumes its Stellar Form, it will immediately neutralize weather and terrain effects. ",
+    "flavor_text_ja": ""
   },
   "307": {
     "identifier": "poison-puppeteer",
     "name": "Poison Puppeteer",
     "generation": 9,
-    "effect": "Pokémon poisoned by Pecharunt's moves will also become confused."
+    "effect": "Pokémon poisoned by Pecharunt's moves will also become confused.",
+    "flavor_text_ja": ""
   }
 }

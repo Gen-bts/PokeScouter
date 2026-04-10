@@ -224,6 +224,22 @@ def build_abilities(csv_dir: Path) -> dict:
         if int(row["local_language_id"]) == 9:
             en_effects[int(row["ability_id"])] = row["short_effect"]
 
+    # 日本語フレーバーテキスト (ability_flavor_text, lang=1=ja-hrkt)
+    # 各 ability の最新 version_group のテキストを採用
+    flavor_rows = read_csv(csv_dir / "ability_flavor_text.csv")
+    ja_flavor: dict[int, str] = {}
+    ja_flavor_vg: dict[int, int] = {}  # 最新 version_group 追跡用
+    for row in flavor_rows:
+        if int(row["language_id"]) != 1:
+            continue
+        aid = int(row["ability_id"])
+        vg = int(row["version_group_id"])
+        if aid not in ja_flavor_vg or vg > ja_flavor_vg[aid]:
+            ja_flavor_vg[aid] = vg
+            # 全角スペースと改行を整形
+            text = row["flavor_text"].replace("\u3000", " ").replace("\n", "")
+            ja_flavor[aid] = text
+
     result: dict[str, dict] = {}
     for row in rows:
         aid = int(row["id"])
@@ -234,6 +250,7 @@ def build_abilities(csv_dir: Path) -> dict:
             "name": en_names.get(aid, row["identifier"]),
             "generation": int(row["generation_id"]),
             "effect": en_effects.get(aid, ""),
+            "flavor_text_ja": ja_flavor.get(aid, ""),
         }
 
     return result
@@ -346,6 +363,8 @@ def build_name_dicts(csv_dir: Path, out_dir: Path) -> None:
     """多言語名辞書を data/names/ に出力する。"""
     species_names = read_csv(csv_dir / "pokemon_species_names.csv")
     move_names_rows = read_csv(csv_dir / "move_names.csv")
+    ability_names_rows = read_csv(csv_dir / "ability_names.csv")
+    item_names_rows = read_csv(csv_dir / "item_names.csv")
 
     for lang_id, filename in LANG_MAP.items():
         # ポケモン名: 表示名 → species_id
@@ -360,6 +379,18 @@ def build_name_dicts(csv_dir: Path, out_dir: Path) -> None:
             if int(row["local_language_id"]) == lang_id and row["name"]:
                 move_dict[row["name"]] = int(row["move_id"])
 
+        # 特性名: 表示名 → ability_id
+        ability_dict: dict[str, int] = {}
+        for row in ability_names_rows:
+            if int(row["local_language_id"]) == lang_id and row["name"]:
+                ability_dict[row["name"]] = int(row["ability_id"])
+
+        # アイテム名: 表示名 → item_id
+        item_dict: dict[str, int] = {}
+        for row in item_names_rows:
+            if int(row["local_language_id"]) == lang_id and row["name"]:
+                item_dict[row["name"]] = int(row["item_id"])
+
         data = {
             "_meta": {
                 "source": "PokeAPI",
@@ -368,11 +399,16 @@ def build_name_dicts(csv_dir: Path, out_dir: Path) -> None:
             },
             "pokemon": pokemon_dict,
             "moves": move_dict,
+            "abilities": ability_dict,
+            "items": item_dict,
         }
 
         out_path = out_dir / f"{filename}.json"
         _write_json(out_path, data)
-        print(f"  {out_path} ({len(pokemon_dict)} pokemon, {len(move_dict)} moves)")
+        print(
+            f"  {out_path} ({len(pokemon_dict)} pokemon, {len(move_dict)} moves, "
+            f"{len(ability_dict)} abilities, {len(item_dict)} items)",
+        )
 
 
 # --- ヘルパー ---
