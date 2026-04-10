@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import logging
 from copy import deepcopy
+from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
@@ -67,6 +68,8 @@ class GameData:
         self.season: dict[str, Any] = {}
         self.champions_new: dict[str, Any] = {}
         self.learnsets: dict[str, Any] = {}
+        self._fuzzy_cache: dict[str, list[tuple[str, str, int]]] = {}
+        self._exact_cache: dict[str, dict[str, tuple[str, int]]] = {}
 
     def load(self) -> None:
         """全データを読み込み・マージする。"""
@@ -231,6 +234,52 @@ class GameData:
         efficacy = self.types.get("efficacy", {})
         return efficacy.get(atk_type, {}).get(def_type, 1.0)
 
+    # 除外するタイプ（ゲーム内の通常攻撃タイプではない）
+    _EXCLUDED_TYPES = frozenset({"stellar"})
+
+    def calc_type_consistency(self, pokemon_ids: list[int]) -> list[dict]:
+        """相手チーム全員に等倍以上が取れる攻撃タイプを算出する（タイプ一貫性）.
+
+        Returns:
+            各攻撃タイプについて一貫性の判定結果リスト。
+        """
+        type_registry = self.types.get("types", {})
+        atk_types = [
+            t for t in type_registry
+            if t not in self._EXCLUDED_TYPES
+        ]
+
+        # 各ポケモンの防御タイプを事前取得
+        team_types: list[tuple[int, list[str]]] = []
+        for pid in pokemon_ids:
+            pdata = self.get_pokemon_by_id(pid)
+            if pdata:
+                team_types.append((pid, pdata.get("types", [])))
+
+        results: list[dict] = []
+        for atk in atk_types:
+            per_pokemon: list[dict] = []
+            min_eff = float("inf")
+            for pid, def_types in team_types:
+                eff = 1.0
+                for dt in def_types:
+                    eff *= self.get_type_efficacy(atk, dt)
+                per_pokemon.append({"pokemon_id": pid, "effectiveness": eff})
+                if eff < min_eff:
+                    min_eff = eff
+
+            if not team_types:
+                min_eff = 1.0
+
+            results.append({
+                "type": atk,
+                "name": type_registry[atk].get("name", atk),
+                "consistent": min_eff >= 1.0,
+                "min_effectiveness": min_eff,
+                "per_pokemon": per_pokemon,
+            })
+        return results
+
     def get_mega_evolution(self, name: str) -> dict | None:
         """チャンピオンズの新メガシンカデータを取得する。"""
         return self.champions_new.get("mega_evolutions", {}).get(name)
@@ -248,3 +297,162 @@ class GameData:
         if not legal:
             return True  # リストが空なら全ポケモン使用可
         return species_id in legal
+
+    # --- あいまい検索 ---
+
+    # OCR 誤認識の正規化テーブル: 視覚的に類似する文字の統一
+    # ゲーム内で捨て仮名（小文字）が大きく表示されるため、大小を同一視する
+    _OCR_NORMALIZE_TABLE = str.maketrans({
+        # 漢字 → カタカナ (形状が酷似)
+        "三": "ミ",
+        "二": "ニ",
+        "一": "ー",
+        "口": "ロ",
+        "力": "カ",
+        "夕": "タ",
+        "工": "エ",
+        "卜": "ト",
+        # 捨て仮名 → 通常仮名 (ゲームでは大きく表示されるため OCR が区別できない)
+        "ァ": "ア", "ィ": "イ", "ゥ": "ウ", "ェ": "エ", "ォ": "オ",
+        "ッ": "ツ",
+        "ャ": "ヤ", "ュ": "ユ", "ョ": "ヨ",
+        "ぁ": "あ", "ぃ": "い", "ぅ": "う", "ぇ": "え", "ぉ": "お",
+        "っ": "つ",
+        "ゃ": "や", "ゅ": "ゆ", "ょ": "よ",
+    })
+
+    @staticmethod
+    def _ocr_normalize(text: str) -> str:
+        """OCR 比較用に文字列を正規化する。"""
+        return text.translate(GameData._OCR_NORMALIZE_TABLE)
+
+    def _get_fuzzy_list(
+        self, category: str, lang: str,
+    ) -> list[tuple[str, str, int]]:
+        """辞書のキーリストをキャッシュ付きで取得する。
+
+        Returns:
+            [(original_name, normalized_name, id), ...]
+        """
+        cache_key = f"{lang}:{category}"
+        if cache_key not in self._fuzzy_cache:
+            lang_data = self.names.get(lang, {})
+            entries = lang_data.get(category, {})
+            fuzzy_list: list[tuple[str, str, int]] = []
+            exact_map: dict[str, tuple[str, int]] = {}
+            for name, id_ in entries.items():
+                norm = self._ocr_normalize(name)
+                fuzzy_list.append((name, norm, id_))
+                exact_map[norm] = (name, id_)
+            self._fuzzy_cache[cache_key] = fuzzy_list
+            self._exact_cache[cache_key] = exact_map
+        return self._fuzzy_cache[cache_key]
+
+    def _fuzzy_match(
+        self,
+        category: str,
+        id_key: str,
+        ocr_text: str,
+        lang: str = "ja",
+        threshold: float = 0.6,
+    ) -> dict[str, Any] | None:
+        """OCR テキストを辞書照合する共通ロジック.
+
+        正規化テーブルで OCR 誤認識（三→ミ、捨て仮名の大小）を吸収してから
+        SequenceMatcher で類似度を計算する。
+        """
+        text = ocr_text.strip()
+        if not text:
+            return None
+
+        candidates = self._get_fuzzy_list(category, lang)
+        if not candidates:
+            return None
+
+        norm_text = self._ocr_normalize(text)
+
+        # 高速パス: 正規化済み exact match でO(1)辞書引き
+        cache_key = f"{lang}:{category}"
+        exact = self._exact_cache.get(cache_key, {}).get(norm_text)
+        if exact is not None:
+            return {
+                "matched_name": exact[0],
+                id_key: exact[1],
+                "confidence": 1.0,
+            }
+
+        best_name: str = ""
+        best_id: int = 0
+        best_ratio: float = 0.0
+
+        for orig_name, norm_name, entry_id in candidates:
+            ratio = SequenceMatcher(None, norm_text, norm_name).ratio()
+            if ratio > best_ratio:
+                best_ratio = ratio
+                best_name = orig_name
+                best_id = entry_id
+
+        if best_ratio < threshold:
+            return None
+
+        return {
+            "matched_name": best_name,
+            id_key: best_id,
+            "confidence": round(best_ratio, 4),
+        }
+
+    def fuzzy_match_pokemon_name(
+        self,
+        ocr_text: str,
+        lang: str = "ja",
+        threshold: float = 0.6,
+    ) -> dict[str, Any] | None:
+        """OCR テキストからポケモン名を辞書照合する（あいまい検索）.
+
+        Returns:
+            {"matched_name": str, "species_id": int, "confidence": float}
+            マッチなしなら None。
+        """
+        return self._fuzzy_match("pokemon", "species_id", ocr_text, lang, threshold)
+
+    def fuzzy_match_move_name(
+        self,
+        ocr_text: str,
+        lang: str = "ja",
+        threshold: float = 0.6,
+    ) -> dict[str, Any] | None:
+        """OCR テキストからわざ名を辞書照合する（あいまい検索）.
+
+        Returns:
+            {"matched_name": str, "move_id": int, "confidence": float}
+            マッチなしなら None。
+        """
+        return self._fuzzy_match("moves", "move_id", ocr_text, lang, threshold)
+
+    def fuzzy_match_ability_name(
+        self,
+        ocr_text: str,
+        lang: str = "ja",
+        threshold: float = 0.6,
+    ) -> dict[str, Any] | None:
+        """OCR テキストからとくせい名を辞書照合する（あいまい検索）.
+
+        Returns:
+            {"matched_name": str, "ability_id": int, "confidence": float}
+            マッチなしなら None。
+        """
+        return self._fuzzy_match("abilities", "ability_id", ocr_text, lang, threshold)
+
+    def fuzzy_match_item_name(
+        self,
+        ocr_text: str,
+        lang: str = "ja",
+        threshold: float = 0.6,
+    ) -> dict[str, Any] | None:
+        """OCR テキストからアイテム名を辞書照合する（あいまい検索）.
+
+        Returns:
+            {"matched_name": str, "item_id": int, "confidence": float}
+            マッチなしなら None。
+        """
+        return self._fuzzy_match("items", "item_id", ocr_text, lang, threshold)
