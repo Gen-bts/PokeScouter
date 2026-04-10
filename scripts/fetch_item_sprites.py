@@ -29,7 +29,13 @@ from urllib.error import HTTPError, URLError
 socket.setdefaulttimeout(5)
 
 _REPO = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items"
-_URL_TEMPLATE = f"{_REPO}/{{identifier}}.png"
+_URL_TEMPLATES = [
+    f"{_REPO}/{{identifier}}.png",
+    f"{_REPO}/gen9/{{identifier}}.png",
+    f"{_REPO}/gen8/{{identifier}}.png",
+    f"{_REPO}/gen5/{{identifier}}.png",
+    f"{_REPO}/gen3/{{identifier}}.png",
+]
 
 _DEFAULT_OUTPUT_DIR = Path(__file__).parent.parent / "templates" / "items"
 _ITEMS_JSON = Path(__file__).parent.parent / "data" / "base" / "items.json"
@@ -53,6 +59,8 @@ def _fetch(url: str) -> bytes | None:
 def download_item_sprite(identifier: str, output_dir: Path) -> bool:
     """単一アイテムのスプライトを取得する.
 
+    ルート → gen9 → gen8 → gen5 → gen3 の順にフォールバックして探す。
+
     Args:
         identifier: アイテム識別子 (例: "leftovers", "choice-band")。
         output_dir: 保存先ディレクトリ。
@@ -64,11 +72,12 @@ def download_item_sprite(identifier: str, output_dir: Path) -> bool:
     if output_path.exists():
         return True
 
-    url = _URL_TEMPLATE.format(identifier=identifier)
-    data = _fetch(url)
-    if data is not None:
-        output_path.write_bytes(data)
-        return True
+    for url_template in _URL_TEMPLATES:
+        url = url_template.format(identifier=identifier)
+        data = _fetch(url)
+        if data is not None:
+            output_path.write_bytes(data)
+            return True
 
     return False
 
