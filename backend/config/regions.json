@@ -9,7 +9,7 @@
     "pre_match": {
       "display_name": "バトル開始前",
       "description": "",
-      "interval_ms": 1000,
+      "interval_ms": 500,
       "detection": {
         "_comment": "テンプレート画像を templates/pre_match/ に配置してここに定義する",
         "マッチング待機表示": {
@@ -27,17 +27,17 @@
     "team_select": {
       "display_name": "選出画面",
       "description": "",
-      "interval_ms": 800,
+      "interval_ms": 500,
       "detection": {
         "_comment": "テンプレート画像を templates/team_select/ に配置してここに定義する",
-        "ランクバトル表示": {
-          "x": 742,
-          "y": 26,
-          "w": 184,
-          "h": 38,
+        "シングルバトル": {
+          "x": 967,
+          "y": 23,
+          "w": 211,
+          "h": 41,
           "method": "ocr",
           "engine": "paddle",
-          "expected_text": "ランクバトル"
+          "expected_text": "シングルバトル"
         }
       },
       "regions": {
@@ -96,6 +96,14 @@
           "h": 46,
           "engine": "paddle",
           "read_once": true
+        },
+        "バトル形式": {
+          "x": 966,
+          "y": 22,
+          "w": 212,
+          "h": 42,
+          "engine": "paddle",
+          "read_once": true
         }
       },
       "pokemon_icons": {
@@ -147,7 +155,7 @@
     "team_confirm": {
       "display_name": "選出決定",
       "description": "",
-      "interval_ms": 800,
+      "interval_ms": 500,
       "detection": {
         "_comment": "テンプレート画像を templates/team_confirm/ に配置してここに定義する",
         "自分待機中表示": {
@@ -262,20 +270,77 @@
         }
       }
     },
+    "battle_Neutral": {
+      "display_name": "ニュートラルバトル画面",
+      "description": "",
+      "detection": {
+        "たたかう表示": {
+          "x": 1715,
+          "y": 768,
+          "w": 149,
+          "h": 46,
+          "method": "ocr",
+          "engine": "paddle",
+          "expected_text": "たたかう"
+        }
+      },
+      "regions": {
+        "相手ポケモン名": {
+          "x": 1599,
+          "y": 50,
+          "w": 214,
+          "h": 43,
+          "engine": "paddle",
+          "read_once": true
+        },
+        "自分ポケモン名": {
+          "x": 161,
+          "y": 936,
+          "w": 213,
+          "h": 38,
+          "engine": "paddle",
+          "read_once": true
+        },
+        "相手HP": {
+          "x": 1720,
+          "y": 124,
+          "w": 91,
+          "h": 44,
+          "engine": "paddle",
+          "read_once": true
+        },
+        "自分HP最大値": {
+          "x": 349,
+          "y": 1020,
+          "w": 56,
+          "h": 28,
+          "engine": "paddle",
+          "read_once": true
+        },
+        "自分HP現在値": {
+          "x": 242,
+          "y": 1003,
+          "w": 100,
+          "h": 48,
+          "engine": "paddle",
+          "read_once": true
+        }
+      }
+    },
     "battle": {
       "display_name": "バトル",
       "description": "",
       "interval_ms": 500,
       "detection": {},
       "regions": {
-        "自分の名前": {
+        "自分ポケモン名": {
           "x": 140,
           "y": 934,
           "w": 240,
           "h": 43,
           "engine": "paddle"
         },
-        "相手の名前": {
+        "相手ポケモン名": {
           "x": 1602,
           "y": 47,
           "w": 218,
@@ -393,29 +458,14 @@
       "interval_ms": 1000,
       "detection": {
         "_comment": "テンプレート画像を templates/battle_end/ に配置してここに定義する",
-        "自分勝敗": {
-          "x": 221,
-          "y": 596,
-          "w": 518,
-          "h": 219,
+        "対戦を続ける表示": {
+          "x": 1380,
+          "y": 962,
+          "w": 259,
+          "h": 61,
           "method": "ocr",
           "engine": "paddle",
-          "expected_text": [
-            "WIN",
-            "LOSE"
-          ]
-        },
-        "相手勝敗": {
-          "x": 1162,
-          "y": 578,
-          "w": 540,
-          "h": 248,
-          "method": "ocr",
-          "engine": "paddle",
-          "expected_text": [
-            "WIN",
-            "LOSE"
-          ]
+          "expected_text": "対戦を続ける"
         }
       },
       "regions": {}
@@ -535,7 +585,16 @@
           ]
         }
       },
-      "regions": {},
+      "regions": {
+        "パーティ名": {
+          "x": 449,
+          "y": 101,
+          "w": 487,
+          "h": 58,
+          "engine": "paddle",
+          "read_once": true
+        }
+      },
       "pokemon_icons": {}
     },
     "party_screen_2": {
