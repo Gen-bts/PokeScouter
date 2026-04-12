@@ -6,11 +6,10 @@
  */
 
 import type {
-  AttackerInput,
-  DefenderInput,
   FieldInput,
-  MoveInput,
   MoveResult,
+  ResolvedMoveInput,
+  ResolvedPokemonInput,
 } from "../types.js";
 
 /** -ize 系特性（ノーマル技を別タイプに変換 + 1.2 倍） */
@@ -32,7 +31,7 @@ const ANNOTATION_ABILITIES: Record<string, string> = {
 };
 
 export interface PreprocessResult {
-  moves: MoveInput[];
+  moves: ResolvedMoveInput[];
   field: FieldInput;
   /** 攻撃側の特性を @smogon/calc が認識するものに置換した場合の値 */
   sanitizedAbility: string | null;
@@ -47,9 +46,9 @@ export interface PreprocessResult {
  * @returns 変換後の moves, field, 注釈情報
  */
 export function preprocessRequest(
-  attacker: AttackerInput,
-  defender: DefenderInput,
-  moves: MoveInput[],
+  attacker: ResolvedPokemonInput,
+  defender: ResolvedPokemonInput,
+  moves: ResolvedMoveInput[],
   field: FieldInput,
 ): PreprocessResult {
   let processedMoves = [...moves];
@@ -104,7 +103,7 @@ export function preprocessRequest(
 export function applyAnnotations(
   result: MoveResult,
   annotations: Record<string, boolean>,
-  move: MoveInput,
+  move: ResolvedMoveInput,
 ): MoveResult {
   const merged = { ...annotations };
 

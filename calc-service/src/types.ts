@@ -1,3 +1,5 @@
+export type CalcEngine = "smogon" | "pkmn";
+
 // --- Request Types ---
 
 export interface StatsTable {
@@ -10,36 +12,26 @@ export interface StatsTable {
 }
 
 export interface AttackerInput {
-  species_id: number;
-  name: string;
-  types: string[];
+  pokemon_key: string;
   stats: StatsTable;
-  ability: string | null;
-  item: string | null;
+  ability_key?: string | null;
+  item_key?: string | null;
   boosts?: Partial<StatsTable>;
   status?: string;
-  is_mega?: boolean;
 }
 
 export interface DefenderInput {
-  species_id: number;
-  name: string;
-  types: string[];
+  pokemon_key: string;
   stats: StatsTable;
-  ability: string | null;
-  item: string | null;
+  ability_key?: string | null;
+  item_key?: string | null;
   boosts?: Partial<StatsTable>;
   status?: string;
   cur_hp?: number;
 }
 
 export interface MoveInput {
-  move_id: number;
-  name: string;
-  type: string;
-  power: number | null;
-  damage_class: string;
-  makes_contact?: boolean;
+  move_key: string;
 }
 
 export interface SideInput {
@@ -63,12 +55,35 @@ export interface DamageRequest {
   defenders: DefenderInput[];
   moves: MoveInput[];
   field?: FieldInput;
+  engine?: CalcEngine;
+}
+
+export interface ResolvedPokemonInput {
+  pokemon_key: string;
+  name: string;
+  types: string[];
+  stats: StatsTable;
+  ability: string | null;
+  item: string | null;
+  boosts?: Partial<StatsTable>;
+  status?: string;
+  cur_hp?: number;
+}
+
+export interface ResolvedMoveInput {
+  move_key: string;
+  name: string;
+  type: string;
+  power: number | null;
+  damage_class: string;
+  makes_contact?: boolean;
 }
 
 // --- Response Types ---
 
 export interface MoveResult {
-  move_id: number;
+  move_key: string;
+  move_id: string;
   move_name: string;
   damage: { min: number; max: number };
   min_percent: number;
@@ -80,7 +95,8 @@ export interface MoveResult {
 }
 
 export interface DefenderResult {
-  defender_species_id: number;
+  defender_pokemon_key: string;
+  defender_species_id: string;
   defender_hp: number;
   moves: MoveResult[];
 }

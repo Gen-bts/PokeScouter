@@ -1,6 +1,6 @@
 import { Router } from "express";
 import type { DamageRequest } from "../types.js";
-import { calculateDamage } from "../calc/damage-calc.js";
+import { getEngine } from "../calc/engine-factory.js";
 
 const router = Router();
 
@@ -26,7 +26,8 @@ router.post("/calc/damage", (req, res) => {
   }
 
   try {
-    const result = calculateDamage(body);
+    const engine = getEngine(body.engine);
+    const result = engine.calculateDamage(body);
     res.json(result);
   } catch (err) {
     console.error("Damage calculation error:", err);
