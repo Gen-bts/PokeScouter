@@ -1,4 +1,6 @@
-export function ItemSprite({
+import { memo } from "react";
+
+export const ItemSprite = memo(function ItemSprite({
   identifier,
   size = 20,
   className,
@@ -20,4 +22,4 @@ export function ItemSprite({
       }}
     />
   );
-}
+});

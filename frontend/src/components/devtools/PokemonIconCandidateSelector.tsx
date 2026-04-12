@@ -4,7 +4,7 @@ import type { PokemonCandidate } from "../../types";
 
 interface Props {
   candidates: PokemonCandidate[];
-  onSelect: (pokemonId: number, name: string) => void;
+  onSelect: (pokemonId: string, name: string) => void;
   onClose: () => void;
 }
 
@@ -48,7 +48,7 @@ function CandidateList({
   onManualInput,
 }: {
   candidates: PokemonCandidate[];
-  onSelect: (pokemonId: number, name: string) => void;
+  onSelect: (pokemonId: string, name: string) => void;
   onClose: () => void;
   onManualInput: () => void;
 }) {
@@ -129,7 +129,7 @@ function ManualSearch({
   onClose,
   onBack,
 }: {
-  onSelect: (pokemonId: number, name: string) => void;
+  onSelect: (pokemonId: string, name: string) => void;
   onClose: () => void;
   onBack?: () => void;
 }) {
@@ -149,7 +149,7 @@ function ManualSearch({
       String.fromCharCode(ch.charCodeAt(0) + 0x60),
     );
     const q = katakana.toLowerCase();
-    const matched: Array<{ name: string; id: number }> = [];
+    const matched: Array<{ name: string; id: string }> = [];
     for (const [name, id] of Object.entries(names)) {
       if (name.toLowerCase().includes(q)) {
         matched.push({ name, id });
@@ -160,7 +160,7 @@ function ManualSearch({
   }, [query, names]);
 
   const select = useCallback(
-    (name: string, id: number) => {
+    (name: string, id: string) => {
       onSelect(id, name);
     },
     [onSelect],

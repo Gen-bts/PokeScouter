@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 
 /**
  * ポケモンスプライト画像を透過部分を除いて目一杯に表示するコンポーネント。
@@ -6,13 +6,13 @@ import { useEffect, useRef, useState } from "react";
  * Canvas で画像を読み込み、不透明ピクセルのバウンディングボックスを計測して
  * その領域だけをアスペクト比維持で拡大描画する。
  */
-export function PokemonSprite({
+export const PokemonSprite = memo(function PokemonSprite({
   pokemonId,
   size = 48,
   className,
   placeholderClass,
 }: {
-  pokemonId: number | null;
+  pokemonId: string | null;
   size?: number;
   className?: string;
   placeholderClass?: string;
@@ -48,7 +48,7 @@ export function PokemonSprite({
       let maxY = 0;
       for (let y = 0; y < img.height; y++) {
         for (let x = 0; x < img.width; x++) {
-          if (data[(y * img.width + x) * 4 + 3] > 10) {
+          if ((data[(y * img.width + x) * 4 + 3] ?? 0) > 10) {
             if (x < minX) minX = x;
             if (x > maxX) maxX = x;
             if (y < minY) minY = y;
@@ -104,4 +104,4 @@ export function PokemonSprite({
       style={{ width: size, height: size }}
     />
   );
-}
+});

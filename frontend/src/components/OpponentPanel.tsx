@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { useTooltipClamp } from "../hooks/useTooltipClamp";
 import {
   useOpponentTeamStore,
   type OpponentSlot,
@@ -6,9 +8,12 @@ import {
 import { usePokemonNames } from "../hooks/usePokemonNames";
 import { usePokemonDetail, type PokemonDetail } from "../hooks/usePokemonDetail";
 import { PokemonSprite } from "./PokemonSprite";
+import { ItemSprite } from "./ItemSprite";
 import { TypeConsistencyPanel } from "./TypeConsistencyPanel";
 import { TypeBadge } from "./TypeBadge";
-import type { PokemonCandidate, TypeConsistencyEntry } from "../types";
+import { TypeEffectivenessSection, formatMultiplier } from "./TypeEffectivenessSection";
+import type { MegaFormDetail, PokemonCandidate, TypeConsistencyEntry } from "../types";
+import { useConnectionStore } from "../stores/useConnectionStore";
 
 const STAT_LABELS: Record<string, string> = {
   hp: "HP", atk: "こうげき", def: "ぼうぎょ",
@@ -17,21 +22,97 @@ const STAT_LABELS: Record<string, string> = {
 
 const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"] as const;
 
-function formatMultiplier(m: number): string {
-  if (m === 0) return "x0";
-  if (m === 0.25) return "x1/4";
-  if (m === 0.5) return "x1/2";
-  if (m === 2) return "x2";
-  if (m === 4) return "x4";
-  return `x${m}`;
-}
-
 function getEffClass(eff: number): string {
   if (eff === 0) return "immune";
   if (eff < 1) return "resist";
   if (eff === 1) return "neutral";
   if (eff >= 4) return "super4";
   return "super2";
+}
+
+function AbilityWithTooltip({ name, effect, isHidden }: { name: string; effect?: string; isHidden?: boolean }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [hovered, setHovered] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+
+  const handleMouseEnter = useCallback(() => {
+    if (ref.current) {
+      const r = ref.current.getBoundingClientRect();
+      setPos({ top: r.top - 6, left: r.left + r.width / 2 });
+    }
+    setHovered(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => setHovered(false), []);
+
+  return (
+    <span
+      ref={ref}
+      className={`opponent-tooltip-ability${isHidden ? " opponent-tooltip-ability-hidden" : ""}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {name}
+      {isHidden && <span className="opponent-tooltip-hidden-tag">夢</span>}
+      {effect && hovered && createPortal(
+        <span className="ability-desc-tooltip ability-desc-tooltip-visible" style={{ top: pos.top, left: pos.left }}>
+          {effect}
+          <span className="ability-desc-tooltip-arrow" />
+        </span>,
+        document.body
+      )}
+    </span>
+  );
+}
+
+function OpponentMegaSection({ megaForm }: { megaForm: MegaFormDetail }) {
+  return (
+    <div className="tooltip-section mega-section">
+      <div className="mega-header">
+        <span className="mega-name">{megaForm.mega_name}</span>
+        <span className="mega-types">
+          {megaForm.types.map((t) => (
+            <TypeBadge key={t} type={t} size="sm" />
+          ))}
+        </span>
+      </div>
+      {megaForm.ability.name && (
+        <div className="opponent-tooltip-abilities">
+          <AbilityWithTooltip name={megaForm.ability.name} effect={megaForm.ability.effect} />
+        </div>
+      )}
+      <div className="mega-stats-grid">
+        {STAT_ORDER.map((key) => {
+          const val = megaForm.base_stats[key];
+          const delta = megaForm.stat_deltas?.[key];
+          return (
+            <span key={key} className="tooltip-stat-label">
+              {STAT_LABELS[key]}
+              <span className="tooltip-stat-value">{val ?? "?"}</span>
+              <span
+                className={`mega-stat-delta${
+                  delta != null && delta > 0
+                    ? " stat-delta-up"
+                    : delta != null && delta < 0
+                      ? " stat-delta-down"
+                      : ""
+                }`}
+              >
+                {delta != null && delta !== 0
+                  ? delta > 0
+                    ? `+${delta}`
+                    : `${delta}`
+                  : ""}
+              </span>
+            </span>
+          );
+        })}
+      </div>
+      {megaForm.type_effectiveness && (
+        <TypeEffectivenessSection typeEffectiveness={megaForm.type_effectiveness} />
+      )}
+    </div>
+  );
 }
 
 function OpponentTooltipContent({ detail }: { detail: PokemonDetail }) {
@@ -49,21 +130,14 @@ function OpponentTooltipContent({ detail }: { detail: PokemonDetail }) {
         <div className="tooltip-section-label">とくせい</div>
         <div className="opponent-tooltip-abilities">
           {detail.abilities.normal.map((a) => (
-            <span key={a.name} className="opponent-tooltip-ability">
-              {a.name}
-              {a.effect && (
-                <span className="ability-desc-tooltip">{a.effect}</span>
-              )}
-            </span>
+            <AbilityWithTooltip key={a.name} name={a.name} effect={a.effect} />
           ))}
           {detail.abilities.hidden && (
-            <span className="opponent-tooltip-ability opponent-tooltip-ability-hidden">
-              {detail.abilities.hidden.name}
-              <span className="opponent-tooltip-hidden-tag">夢</span>
-              {detail.abilities.hidden.effect && (
-                <span className="ability-desc-tooltip">{detail.abilities.hidden.effect}</span>
-              )}
-            </span>
+            <AbilityWithTooltip
+              name={detail.abilities.hidden.name}
+              effect={detail.abilities.hidden.effect}
+              isHidden
+            />
           )}
         </div>
       </div>
@@ -85,45 +159,11 @@ function OpponentTooltipContent({ detail }: { detail: PokemonDetail }) {
       </div>
 
       {/* タイプ相性 */}
-      {detail.type_effectiveness.weak.length > 0 && (
-        <div className="tooltip-section">
-          <div className="tooltip-section-label">弱点</div>
-          <div className="opponent-tooltip-eff-list">
-            {detail.type_effectiveness.weak.map((e) => (
-              <span key={e.type} className="opponent-tooltip-eff-item opponent-tooltip-eff-weak">
-                <TypeBadge type={e.type} size="sm" />
-                <span className="opponent-tooltip-eff-mult">{formatMultiplier(e.multiplier)}</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-      {detail.type_effectiveness.resist.length > 0 && (
-        <div className="tooltip-section">
-          <div className="tooltip-section-label">耐性</div>
-          <div className="opponent-tooltip-eff-list">
-            {detail.type_effectiveness.resist.map((e) => (
-              <span key={e.type} className="opponent-tooltip-eff-item opponent-tooltip-eff-resist">
-                <TypeBadge type={e.type} size="sm" />
-                <span className="opponent-tooltip-eff-mult">{formatMultiplier(e.multiplier)}</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-      {detail.type_effectiveness.immune.length > 0 && (
-        <div className="tooltip-section">
-          <div className="tooltip-section-label">無効</div>
-          <div className="opponent-tooltip-eff-list">
-            {detail.type_effectiveness.immune.map((e) => (
-              <span key={e.type} className="opponent-tooltip-eff-item opponent-tooltip-eff-immune">
-                <TypeBadge type={e.type} size="sm" />
-                <span className="opponent-tooltip-eff-mult">{formatMultiplier(e.multiplier)}</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      <TypeEffectivenessSection typeEffectiveness={detail.type_effectiveness} />
+      {/* メガシンカ */}
+      {detail.mega_forms?.map((mf) => (
+        <OpponentMegaSection key={mf.item_key} megaForm={mf} />
+      ))}
     </>
   );
 }
@@ -137,6 +177,7 @@ function PokemonAutocomplete({
 }) {
   const { names } = usePokemonNames();
   const manualSet = useOpponentTeamStore((s) => s.manualSet);
+  const sendSetOpponentPokemon = useConnectionStore((s) => s.sendSetOpponentPokemon);
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
@@ -153,7 +194,7 @@ function PokemonAutocomplete({
       String.fromCharCode(ch.charCodeAt(0) + 0x60),
     );
     const q = katakana.toLowerCase();
-    const results: Array<{ name: string; id: number }> = [];
+    const results: Array<{ name: string; id: string }> = [];
     for (const [name, id] of Object.entries(names)) {
       if (name.toLowerCase().includes(q)) {
         results.push({ name, id });
@@ -168,11 +209,12 @@ function PokemonAutocomplete({
   }, [candidates.length]);
 
   const select = useCallback(
-    (name: string, id: number) => {
+    (name: string, id: string) => {
       manualSet(position, id, name);
+      sendSetOpponentPokemon(position, id, name);
       onClose();
     },
-    [position, manualSet, onClose],
+    [position, manualSet, sendSetOpponentPokemon, onClose],
   );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -186,8 +228,8 @@ function PokemonAutocomplete({
       setSelectedIdx((i) => Math.max(i - 1, 0));
     } else if (e.key === "Enter" && candidates.length > 0) {
       e.preventDefault();
-      const c = candidates[selectedIdx];
-      if (c) select(c.name, c.id);
+      const c2 = candidates[selectedIdx];
+      if (c2) select(c2.name, c2.id);
     }
   };
 
@@ -200,7 +242,11 @@ function PokemonAutocomplete({
   }, [selectedIdx]);
 
   return (
-    <div className="opponent-autocomplete">
+    <div
+      className="opponent-autocomplete"
+      onClick={(event) => event.stopPropagation()}
+      onMouseDown={(event) => event.stopPropagation()}
+    >
       <input
         ref={inputRef}
         type="text"
@@ -252,6 +298,7 @@ function CandidateSelector({
   onManualInput: () => void;
 }) {
   const manualSet = useOpponentTeamStore((s) => s.manualSet);
+  const sendSetOpponentPokemon = useConnectionStore((s) => s.sendSetOpponentPokemon);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -265,9 +312,10 @@ function CandidateSelector({
   const select = useCallback(
     (c: PokemonCandidate) => {
       manualSet(position, c.pokemon_id, c.name);
+      sendSetOpponentPokemon(position, c.pokemon_id, c.name);
       onClose();
     },
-    [position, manualSet, onClose],
+    [position, manualSet, sendSetOpponentPokemon, onClose],
   );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -282,7 +330,8 @@ function CandidateSelector({
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (selectedIdx < candidates.length) {
-        select(candidates[selectedIdx]);
+        const c = candidates[selectedIdx];
+        if (c) select(c);
       } else {
         onManualInput();
       }
@@ -294,6 +343,8 @@ function CandidateSelector({
       className="opponent-candidates"
       ref={listRef}
       tabIndex={-1}
+      onClick={(event) => event.stopPropagation()}
+      onMouseDown={(event) => event.stopPropagation()}
       onKeyDown={handleKeyDown}
       onBlur={(e) => {
         if (e.relatedTarget?.closest(".opponent-candidates")) return;
@@ -334,18 +385,22 @@ function CandidateSelector({
   );
 }
 
-function SlotRow({
+const SlotRow = memo(function SlotRow({
   slot,
   isTooltipActive,
   setActiveTooltip,
   closeTimerRef,
   hoveredTypeEntry,
+  isDisplaySelected,
+  onSelectDisplayTarget,
 }: {
   slot: OpponentSlot;
   isTooltipActive: boolean;
   setActiveTooltip: (position: number | null) => void;
   closeTimerRef: React.RefObject<ReturnType<typeof setTimeout> | null>;
   hoveredTypeEntry: TypeConsistencyEntry | null;
+  isDisplaySelected: boolean;
+  onSelectDisplayTarget: (position: number) => void;
 }) {
   const [editing, setEditing] = useState<false | "candidates" | "manual">(
     false,
@@ -357,9 +412,18 @@ function SlotRow({
   const effectivenessInfo = useMemo(() => {
     if (!hoveredTypeEntry || slot.pokemonId === null) return null;
     return hoveredTypeEntry.per_pokemon.find(
-      (p) => p.pokemon_id === slot.pokemonId,
+      (p) => (p.pokemon_key ?? p.pokemon_id) === slot.pokemonId,
     ) ?? null;
   }, [hoveredTypeEntry, slot.pokemonId]);
+
+  const displayAbility = useMemo(() => {
+    if (slot.ability) return slot.ability;
+    if (!slot.wasSentOut || !detail) return null;
+    if (detail.abilities.normal.length === 1 && !detail.abilities.hidden) {
+      return detail.abilities.normal[0]?.name ?? null;
+    }
+    return "？？？";
+  }, [slot.ability, slot.wasSentOut, detail]);
 
   const openEdit = useCallback(() => {
     if (slot.candidates.length > 0) {
@@ -401,21 +465,35 @@ function SlotRow({
   };
 
   const showTooltip = isTooltipActive && tooltipPos && detail && !editing;
+  const { tooltipRef, clampedTop } = useTooltipClamp(
+    tooltipPos?.top ?? null,
+    !!showTooltip,
+  );
 
   return (
     <div
       ref={slotRef}
-      className={`opponent-slot${slot.isManual ? " opponent-slot-manual" : ""}${slot.pokemonId === null ? " opponent-slot-empty" : ""}${slot.isSelected && !slot.isAlive ? " opponent-slot-fainted" : ""}`}
+      className={`opponent-slot${slot.pokemonId === null ? " opponent-slot-empty" : " opponent-slot-clickable"}${slot.wasSentOut ? " opponent-slot-sent-out" : ""}${slot.isSelected && !slot.isAlive ? " opponent-slot-fainted" : ""}${isDisplaySelected ? " opponent-slot-display-selected" : ""}`}
       style={editing ? { zIndex: 50 } : undefined}
+      onClick={() => slot.pokemonId !== null && onSelectDisplayTarget(slot.position)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <PokemonSprite
-        pokemonId={slot.pokemonId}
-        size={52}
-        className="opponent-slot-img"
-        placeholderClass="opponent-slot-placeholder"
-      />
+      <div className="opponent-slot-sprite-wrap">
+        <PokemonSprite
+          pokemonId={slot.pokemonId}
+          size={52}
+          className="opponent-slot-img"
+          placeholderClass="opponent-slot-placeholder"
+        />
+        {slot.itemIdentifier && (
+          <ItemSprite
+            identifier={slot.itemIdentifier}
+            size={28}
+            className="opponent-slot-item-overlay"
+          />
+        )}
+      </div>
       <div className="opponent-slot-info">
         {editing === "candidates" ? (
           <CandidateSelector
@@ -435,10 +513,27 @@ function SlotRow({
               <span className="opponent-slot-name">
                 {slot.name ?? "???"}
               </span>
-              {slot.isSelected && (
+              {isDisplaySelected && (
+                <span className="opponent-slot-display-badge">表示中</span>
+              )}
+              {slot.wasSentOut && (
                 <span className="opponent-slot-selected-badge">選出確定</span>
               )}
             </div>
+            {(displayAbility || slot.item) && (
+              <div className="opponent-slot-trait-row">
+                {displayAbility && (
+                  <span className={`opponent-slot-trait opponent-slot-trait-ability${displayAbility === "？？？" ? " opponent-slot-trait-unknown" : ""}`}>
+                    {displayAbility}
+                  </span>
+                )}
+                {slot.item && (
+                  <span className="opponent-slot-trait opponent-slot-trait-item">
+                    {slot.item}
+                  </span>
+                )}
+              </div>
+            )}
             {slot.isSelected ? (
               <div className="opponent-slot-hp-row">
                 <div className="opponent-slot-hp-bar">
@@ -455,12 +550,21 @@ function SlotRow({
                   <span className="opponent-slot-hp-text">{slot.hpPercent}%</span>
                 )}
               </div>
-            ) : (
-              <>
-                {slot.isManual && (
-                  <span className="opponent-slot-badge">手動</span>
-                )}
-              </>
+            ) : null}
+            {slot.wasSentOut && (
+              <div className="opponent-slot-moves">
+                {Array.from({ length: 4 }, (_, i) => {
+                  const move = slot.knownMoves[i];
+                  return (
+                    <span
+                      key={i}
+                      className={`opponent-slot-move${move ? "" : " opponent-slot-move-unknown"}`}
+                    >
+                      {move ? move.name : "？？？"}
+                    </span>
+                  );
+                })}
+              </div>
             )}
           </>
         )}
@@ -468,7 +572,10 @@ function SlotRow({
       {!editing && (
         <button
           className="btn-icon opponent-slot-edit"
-          onClick={openEdit}
+          onClick={(event) => {
+            event.stopPropagation();
+            openEdit();
+          }}
           title="手動で設定"
         >
           &#9998;
@@ -476,15 +583,19 @@ function SlotRow({
       )}
       {showTooltip && (
         <div
+          ref={tooltipRef}
           className="opponent-slot-tooltip"
           style={{
-            top: tooltipPos.top,
+            top: clampedTop ?? tooltipPos.top,
             right: tooltipPos.right,
+            transform: clampedTop != null ? "none" : "translateY(-50%)",
           }}
           onMouseEnter={handleTooltipMouseEnter}
           onMouseLeave={handleTooltipMouseLeave}
         >
-          <OpponentTooltipContent detail={detail} />
+          <div className="opponent-slot-tooltip-inner">
+            <OpponentTooltipContent detail={detail} />
+          </div>
         </div>
       )}
       {effectivenessInfo && (
@@ -496,10 +607,13 @@ function SlotRow({
       )}
     </div>
   );
-}
+});
 
-export function OpponentPanel() {
+export const OpponentPanel = memo(function OpponentPanel() {
   const slots = useOpponentTeamStore((s) => s.slots);
+  const displaySelectedPosition = useOpponentTeamStore((s) => s.displaySelectedPosition);
+  const displaySelectionMode = useOpponentTeamStore((s) => s.displaySelectionMode);
+  const selectDisplayTarget = useOpponentTeamStore((s) => s.selectDisplayTarget);
   const clear = useOpponentTeamStore((s) => s.clear);
 
   const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
@@ -527,10 +641,19 @@ export function OpponentPanel() {
             setActiveTooltip={setActiveTooltip}
             closeTimerRef={closeTimerRef}
             hoveredTypeEntry={hoveredType}
+            isDisplaySelected={displaySelectedPosition === slot.position}
+            onSelectDisplayTarget={(position) =>
+              selectDisplayTarget(
+                displaySelectionMode === "manual" &&
+                displaySelectedPosition === position
+                  ? null
+                  : position,
+              )
+            }
           />
         ))}
       </div>
       <TypeConsistencyPanel onTypeHover={setHoveredType} />
     </div>
   );
-}
+});

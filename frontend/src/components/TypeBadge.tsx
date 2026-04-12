@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { TYPE_LABELS } from "../utils/typeLabels";
 
-export function TypeBadge({
+export const TypeBadge = memo(function TypeBadge({
   type,
   size = "normal",
   className,
@@ -32,4 +33,4 @@ export function TypeBadge({
       {children ?? (TYPE_LABELS[type] ?? type)}
     </span>
   );
-}
+});

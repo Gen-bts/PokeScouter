@@ -1,12 +1,16 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, memo, useEffect, useRef, useState } from "react";
+import { useTooltipClamp } from "../hooks/useTooltipClamp";
 import { useMyPartyStore, type MyPartySlot } from "../stores/useMyPartyStore";
 import { useConnectionStore } from "../stores/useConnectionStore";
 import { useDamageCalcStore } from "../stores/useDamageCalcStore";
 import type { MegaFormDetail, ValidatedField } from "../types";
 import { useMegaForm } from "../hooks/useMegaForm";
+import { calcChampionsHp, calcChampionsStat } from "../utils/statCalc";
+import { usePokemonDetail, type PokemonDetail } from "../hooks/usePokemonDetail";
 import { PokemonSprite } from "./PokemonSprite";
 import { ItemSprite } from "./ItemSprite";
 import { TypeBadge } from "./TypeBadge";
+import { TypeEffectivenessSection } from "./TypeEffectivenessSection";
 
 const PHASE_LABELS: Record<string, string> = {
   detecting_screen1: "画面1を検出中...",
@@ -70,18 +74,27 @@ function groupFields(fields: Record<string, ValidatedField>) {
   }
 
   const mergedStats: MergedStat[] = STAT_ORDER
-    .filter((base) => statMap[base])
-    .map((base) => ({
-      base,
-      actual: statMap[base].actual ?? null,
-      ev: statMap[base].ev ?? null,
-      mod: modifiers[`${base}性格補正`] ?? null,
-    }));
+    .flatMap((base) => {
+      const entry = statMap[base];
+      if (!entry) return [];
+      return [{
+        base,
+        actual: entry.actual ?? null,
+        ev: entry.ev ?? null,
+        mod: modifiers[`${base}性格補正`] ?? null,
+      }];
+    });
 
   return { identity, moves, mergedStats, modifiers };
 }
 
-function MegaEvolutionSection({ megaForm }: { megaForm: MegaFormDetail }) {
+function MegaEvolutionSection({
+  megaForm,
+  fields,
+}: {
+  megaForm: MegaFormDetail;
+  fields: Record<string, ValidatedField>;
+}) {
   return (
     <div className="tooltip-section mega-section">
       <div className="tooltip-section-label">メガシンカ</div>
@@ -101,14 +114,45 @@ function MegaEvolutionSection({ megaForm }: { megaForm: MegaFormDetail }) {
       )}
       <div className="mega-stats-grid">
         {MEGA_STAT_ORDER.map((key) => {
-          const val = megaForm.base_stats[key];
-          const delta = megaForm.stat_deltas?.[key];
+          const megaBase = megaForm.base_stats[key];
+          const label = STAT_KEY_TO_LABEL[key] ?? key;
+
+          // fields から努力値・性格補正を取得して実数値を計算
+          const evField = fields[`${label}努力値`];
+          const statPoints = evField
+            ? parseInt(evField.validated ?? evField.raw, 10) || 0
+            : 0;
+          const modField = fields[`${label}性格補正`];
+          const natureMod =
+            modField?.validated === "up"
+              ? 1.1
+              : modField?.validated === "down"
+                ? 0.9
+                : 1.0;
+
+          const actual =
+            megaBase != null
+              ? key === "hp"
+                ? calcChampionsHp(megaBase, statPoints)
+                : calcChampionsStat(megaBase, statPoints, natureMod)
+              : null;
+
+          // 通常形態の実数値との差分
+          const baseActualField = fields[`${label}実数値`];
+          const baseActual = baseActualField
+            ? parseInt(baseActualField.validated ?? baseActualField.raw, 10)
+            : null;
+          const delta =
+            actual != null && baseActual != null ? actual - baseActual : null;
+
           return (
             <Fragment key={key}>
               <span className="tooltip-stat-label">
-                {STAT_KEY_TO_LABEL[key] ?? key}
+                {label}
+                {modField?.validated === "up" && <span className="nature-up" title="上昇補正">▲</span>}
+                {modField?.validated === "down" && <span className="nature-down" title="下降補正">▼</span>}
               </span>
-              <span className="tooltip-stat-value">{val ?? "?"}</span>
+              <span className="tooltip-stat-value">{actual ?? "?"}</span>
               <span
                 className={`mega-stat-delta${
                   delta != null && delta > 0
@@ -128,6 +172,9 @@ function MegaEvolutionSection({ megaForm }: { megaForm: MegaFormDetail }) {
           );
         })}
       </div>
+      {megaForm.type_effectiveness && (
+        <TypeEffectivenessSection typeEffectiveness={megaForm.type_effectiveness} />
+      )}
     </div>
   );
 }
@@ -137,16 +184,27 @@ function SlotTooltipContent({
   moves,
   mergedStats,
   megaForm,
+  fields,
+  detail,
 }: {
   identity: [string, string][];
   moves: [string, string, ValidatedField][];
   mergedStats: MergedStat[];
   megaForm: MegaFormDetail | null;
+  fields: Record<string, ValidatedField>;
+  detail: PokemonDetail | null;
 }) {
   const filteredIdentity = identity.filter(([k]) => k !== "名前");
 
   return (
     <>
+      {detail && (
+        <div className="opponent-tooltip-types">
+          {detail.types.map((t) => (
+            <TypeBadge key={t} type={t} />
+          ))}
+        </div>
+      )}
       {filteredIdentity.map(([key, val]) => (
         <div key={key} className="tooltip-row">
           <span className="tooltip-label">{key}</span>
@@ -203,12 +261,13 @@ function SlotTooltipContent({
           </div>
         </div>
       )}
-      {megaForm && <MegaEvolutionSection megaForm={megaForm} />}
+      {detail && <TypeEffectivenessSection typeEffectiveness={detail.type_effectiveness} />}
+      {megaForm && <MegaEvolutionSection megaForm={megaForm} fields={fields} />}
     </>
   );
 }
 
-function SlotRow({
+const SlotRow = memo(function SlotRow({
   slot,
   isTooltipActive,
   setActiveTooltip,
@@ -229,12 +288,23 @@ function SlotRow({
   const hasDetails = identity.length > 0 || moves.length > 0 || mergedStats.length > 0;
 
   const itemField = slot.fields["もちもの"];
-  const itemIdentifier = itemField?.matched_identifier ?? null;
+  const itemIdentifier =
+    itemField?.matched_identifier ??
+    itemField?.matched_key ??
+    itemField?.matched_id ??
+    null;
   const isMegaStone = itemField?.is_mega_stone ?? false;
   const { megaForm } = useMegaForm(
     isMegaStone ? (itemField?.matched_id ?? null) : null,
     slot.pokemonId,
     slot.position,
+  );
+  const { detail } = usePokemonDetail(slot.pokemonId);
+
+  const showTooltip = isTooltipActive && tooltipPos && hasDetails;
+  const { tooltipRef, clampedTop } = useTooltipClamp(
+    tooltipPos?.top ?? null,
+    !!showTooltip,
   );
 
   const handleMouseEnter = () => {
@@ -268,8 +338,6 @@ function SlotRow({
     setActiveTooltip(null);
   };
 
-  const showTooltip = isTooltipActive && tooltipPos && hasDetails;
-
   return (
     <div
       ref={slotRef}
@@ -301,10 +369,12 @@ function SlotRow({
 
       {showTooltip && (
         <div
+          ref={tooltipRef}
           className="my-party-slot-tooltip"
           style={{
-            top: tooltipPos.top,
+            top: clampedTop ?? tooltipPos.top,
             left: tooltipPos.left,
+            transform: clampedTop != null ? "none" : "translateY(-50%)",
           }}
           onMouseEnter={handleTooltipMouseEnter}
           onMouseLeave={handleTooltipMouseLeave}
@@ -314,14 +384,16 @@ function SlotRow({
             moves={moves}
             mergedStats={mergedStats}
             megaForm={megaForm}
+            fields={slot.fields}
+            detail={detail}
           />
         </div>
       )}
     </div>
   );
-}
+});
 
-export function MyPartyPanel() {
+export const MyPartyPanel = memo(function MyPartyPanel() {
   const slots = useMyPartyStore((s) => s.slots);
   const partyName = useMyPartyStore((s) => s.partyName);
   const activePartyId = useMyPartyStore((s) => s.activePartyId);
@@ -521,4 +593,4 @@ export function MyPartyPanel() {
       )}
     </div>
   );
-}
+});

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   listSessions,
   listFrames,
-  thumbnailUrl,
   frameUrl,
   runOcrTest,
   runPokemonTest,
@@ -56,7 +55,7 @@ export function FrameViewer({ onOpenInCropEditor }: Props) {
     const list = await listFrames(sessionId);
     setFrames(list);
     if (list.length > 0) {
-      setSelectedFrame(list[0]);
+      setSelectedFrame(list[0] ?? null);
     }
   }, []);
 
@@ -69,15 +68,6 @@ export function FrameViewer({ onOpenInCropEditor }: Props) {
       }
     },
     [frames],
-  );
-
-  // サムネイルクリック
-  const handleThumbnailClick = useCallback(
-    (frame: FrameInfo, index: number) => {
-      setSelectedFrame(frame);
-      setSliderIndex(index);
-    },
-    [],
   );
 
   // フレーム変更時にテスト結果リセット

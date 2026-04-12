@@ -30,7 +30,6 @@ export function SettingsView({ devices, audioDevices, startCapture }: Props) {
   const benchmarkStart = useBenchmarkStore((s) => s.start);
   const benchmarkStop = useBenchmarkStore((s) => s.stop);
 
-  const [quality, setQuality] = useState(0.8);
   const [videoReady, setVideoReady] = useState(!!selectedDeviceId);
 
   const handleDeviceChange = useCallback(
@@ -93,8 +92,6 @@ export function SettingsView({ devices, audioDevices, startCapture }: Props) {
         audioDevices={audioDevices}
         selectedAudioDeviceId={selectedAudioDeviceId}
         onAudioDeviceChange={handleAudioDeviceChange}
-        quality={quality}
-        onQualityChange={setQuality}
         connected={isConnected}
         onConnectToggle={handleConnectToggle}
         connectDisabled={!videoReady}

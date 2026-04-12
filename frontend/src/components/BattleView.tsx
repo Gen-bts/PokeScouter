@@ -12,6 +12,25 @@ import { useMyPartyStore } from "../stores/useMyPartyStore";
 import { getScenes, type SceneMeta } from "../api/devtools";
 import type { ConnectionState } from "../types";
 
+/** ベンチマーク結果をストアに蓄積する副作用専用コンポーネント（BattleView の再描画を防止） */
+function BenchmarkSync() {
+  const lastBenchmarkResult = useConnectionStore((s) => s.lastBenchmarkResult);
+  const benchmarkActive = useBenchmarkStore((s) => s.active);
+  const benchmarkAddFrame = useBenchmarkStore((s) => s.addFrame);
+  useEffect(() => {
+    if (benchmarkActive && lastBenchmarkResult) {
+      benchmarkAddFrame(lastBenchmarkResult.regions);
+    }
+  }, [benchmarkActive, lastBenchmarkResult, benchmarkAddFrame]);
+  return null;
+}
+
+/** ダメージ計算をトリガーする副作用専用コンポーネント（BattleView の再描画を防止） */
+function DamageCalcSync() {
+  useDamageCalc();
+  return null;
+}
+
 interface Props {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -44,22 +63,15 @@ export function BattleView({
   const isConnected = useConnectionStore((s) => s.isConnected);
   const connectionState = useConnectionStore((s) => s.connectionState);
   const currentScene = useConnectionStore((s) => s.currentScene);
-  const lastResult = useConnectionStore((s) => s.lastResult);
-  const lastBenchmarkResult = useConnectionStore((s) => s.lastBenchmarkResult);
-  const lastPokemonResult = useConnectionStore((s) => s.lastPokemonResult);
   const sendFrame = useConnectionStore((s) => s.sendFrame);
   const sendConfig = useConnectionStore((s) => s.sendConfig);
   const sendReset = useConnectionStore((s) => s.sendReset);
 
-  const benchmarkActive = useBenchmarkStore((s) => s.active);
-  const benchmarkAddFrame = useBenchmarkStore((s) => s.addFrame);
-
-  // ダメージ計算フック（副作用のみ）
-  useDamageCalc();
-
   const volume = useSettingsStore((s) => s.volume);
   const muted = useSettingsStore((s) => s.muted);
   const debugOverlay = useSettingsStore((s) => s.debugOverlay);
+  const jpegQuality = useSettingsStore((s) => s.jpegQuality);
+  const autoPauseMinutes = useSettingsStore((s) => s.autoPauseMinutes);
 
   const partyRegState = useMyPartyStore((s) => s.registrationState);
   const isPartyRegistering =
@@ -67,7 +79,7 @@ export function BattleView({
     partyRegState === "reading_screen1" ||
     partyRegState === "detecting_screen2" ||
     partyRegState === "reading_screen2";
-  const FRAME_INTERVAL_MS = isPartyRegistering ? 150 : 500;
+  const FRAME_INTERVAL_MS = isPartyRegistering ? 150 : 100;
   const [availableScenes, setAvailableScenes] = useState<Record<string, SceneMeta>>({});
   const [paused, setPaused] = useState(false);
   const [pauseReason, setPauseReason] = useState<"manual" | "auto" | null>(null);
@@ -128,13 +140,6 @@ export function BattleView({
     onSendingStateChange(sending);
   }, [sending, onSendingStateChange]);
 
-  // ベンチマーク結果をストアに蓄積
-  useEffect(() => {
-    if (benchmarkActive && lastBenchmarkResult) {
-      benchmarkAddFrame(lastBenchmarkResult.regions);
-    }
-  }, [benchmarkActive, lastBenchmarkResult, benchmarkAddFrame]);
-
   useEffect(() => {
     if (connectionState === "connected" && !sending) {
       setSending(true);
@@ -148,24 +153,24 @@ export function BattleView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionState]);
 
-  // シーン未検出が5分続いたら自動停止
-  const AUTO_PAUSE_MS = 5 * 60 * 1000;
+  // シーン未検出が一定時間続いたら自動停止
+  const autoPauseMs = autoPauseMinutes * 60 * 1000;
   useEffect(() => {
     if (!sending || paused || currentScene !== "none") return;
     const timer = setTimeout(() => {
       setPaused(true);
       setPauseReason("auto");
       sendConfig({ paused: true });
-    }, AUTO_PAUSE_MS);
+    }, autoPauseMs);
     return () => clearTimeout(timer);
-  }, [currentScene, sending, paused, sendConfig]);
+  }, [currentScene, sending, paused, sendConfig, autoPauseMs]);
 
   useEffect(() => {
     if (!sending) return;
 
     const id = setInterval(async () => {
       if (pausedRef.current || !isConnected) return;
-      const blob = await captureFrame(0.8);
+      const blob = await captureFrame(jpegQuality);
       if (blob) {
         sendFrame(blob);
       }
@@ -176,6 +181,8 @@ export function BattleView({
 
   return (
     <>
+      <BenchmarkSync />
+      <DamageCalcSync />
       <aside className={`left-panel${leftPanelOpen ? "" : " collapsed"}`}>
         <MyPartyPanel />
         <MatchLog />
@@ -184,8 +191,6 @@ export function BattleView({
         videoRef={videoRef}
         canvasRef={canvasRef}
         currentScene={currentScene}
-        lastResult={lastResult}
-        lastPokemonResult={lastPokemonResult}
         availableScenes={availableScenes}
         debugOverlay={debugOverlay}
         paused={paused}

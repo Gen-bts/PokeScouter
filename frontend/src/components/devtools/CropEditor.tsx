@@ -200,12 +200,12 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
   >({});
   const [testingCrops, setTestingCrops] = useState<Set<string>>(new Set());
   const [pokemonOverrides, setPokemonOverrides] = useState<
-    Record<string, { pokemon_id: number; name: string }>
+    Record<string, { pokemon_id: string; name: string }>
   >({});
   const [activeCandidateSelector, setActiveCandidateSelector] = useState<
     string | null
   >(null);
-  const spriteImagesRef = useRef<Record<number, HTMLImageElement>>({});
+  const spriteImagesRef = useRef<Record<string, HTMLImageElement>>({});
 
   // 初期ロード
   useEffect(() => {
@@ -1135,7 +1135,7 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
     (
       cropName: string,
     ): {
-      pokemonId: number | null;
+      pokemonId: string | null;
       name: string | null;
       confidence: number | null;
     } => {
@@ -1198,7 +1198,7 @@ export function CropEditor({ initialSessionId, initialFrame }: Props) {
   // スプライト画像プリロード（Canvas描画用）
   const displayedPokemonMap = useMemo(() => {
     if (cropType !== "pokemon_icons") return {};
-    const map: Record<string, { pokemonId: number | null; name: string | null }> = {};
+    const map: Record<string, { pokemonId: string | null; name: string | null }> = {};
     for (const name of Object.keys(currentPokemonIcons)) {
       const d = getDisplayedPokemon(name);
       map[name] = d;

@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { OcrResult, PokemonIdentifiedResult } from "../types";
 import type { SceneMeta } from "../api/devtools";
+import { BattleStateOverlay } from "./BattleStateOverlay";
+import { BattleInfoOverlay } from "./BattleInfoOverlay";
 import { PauseBanner } from "./PauseBanner";
 import { RegistrationOverlay } from "./RegistrationOverlay";
 import { PokemonIconCandidateSelector } from "./devtools/PokemonIconCandidateSelector";
 import { useOpponentTeamStore } from "../stores/useOpponentTeamStore";
+import { useConnectionStore } from "../stores/useConnectionStore";
 
 const COLORS = [
   "rgba(255, 107, 107, 0.7)",
@@ -28,6 +30,7 @@ const SCENE_NAMES_JA: Record<string, string> = {
   team_confirm: "選出決定",
   move_select: "わざ選択",
   battle: "バトル",
+  battle_Neutral: "ニュートラルバトル",
   pokemon_summary: "ポケモン画面",
   battle_end: "バトル終了",
   party_register_1: "パーティ登録 画面1",
@@ -38,8 +41,6 @@ interface Props {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   currentScene: string;
-  lastResult: OcrResult | null;
-  lastPokemonResult: PokemonIdentifiedResult | null;
   availableScenes: Record<string, SceneMeta>;
   debugOverlay: boolean;
   paused: boolean;
@@ -51,8 +52,6 @@ export function VideoCanvas({
   videoRef,
   canvasRef,
   currentScene,
-  lastResult,
-  lastPokemonResult,
   availableScenes,
   debugOverlay,
   paused,
@@ -62,9 +61,12 @@ export function VideoCanvas({
   const overlayRef = useRef<HTMLCanvasElement>(null);
   const [activeSpritePosition, setActiveSpritePosition] = useState<number | null>(null);
   const [spriteOverrides, setSpriteOverrides] = useState<
-    Record<number, { pokemon_id: number; name: string }>
+    Record<number, { pokemon_id: string; name: string }>
   >({});
+  const lastResult = useConnectionStore((s) => s.lastResult);
+  const lastPokemonResult = useConnectionStore((s) => s.lastPokemonResult);
   const manualSet = useOpponentTeamStore((s) => s.manualSet);
+  const sendSetOpponentPokemon = useConnectionStore((s) => s.sendSetOpponentPokemon);
 
   useEffect(() => {
     if (paused) return;
@@ -136,7 +138,8 @@ export function VideoCanvas({
       // === 2. OCR 読み取りリージョン (既存、実線カラー) ===
       for (let i = 0; i < lastResult.regions.length; i++) {
         const region = lastResult.regions[i];
-        const color = COLORS[i % COLORS.length];
+        if (!region) continue;
+        const color = COLORS[i % COLORS.length] ?? COLORS[0]!;
 
         const rx = region.x * scaleX;
         const ry = region.y * scaleY;
@@ -184,6 +187,7 @@ export function VideoCanvas({
 
         for (let i = 0; i < pokemonIcons.length; i++) {
           const icon = pokemonIcons[i];
+          if (!icon) continue;
           const rx = icon.x * scaleX;
           const ry = icon.y * scaleY;
           const rw = icon.w * scaleX;
@@ -279,7 +283,7 @@ export function VideoCanvas({
         const override = spriteOverrides[p.position];
         return {
           position: p.position,
-          pokemonId: override?.pokemon_id ?? p.pokemon_id,
+          pokemonId: override?.pokemon_id ?? p.pokemon_key ?? p.pokemon_id,
           name: override?.name ?? p.name ?? null,
           candidates: p.candidates ?? [],
           x: p.x!, y: p.y!, w: p.w!, h: p.h!,
@@ -289,15 +293,16 @@ export function VideoCanvas({
   }, [isTeamScene, lastPokemonResult, spriteOverrides]);
 
   const handleSpriteSelect = useCallback(
-    (position: number, pokemonId: number, name: string) => {
+    (position: number, pokemonId: string, name: string) => {
       setSpriteOverrides((prev) => ({
         ...prev,
         [position]: { pokemon_id: pokemonId, name },
       }));
       manualSet(position, pokemonId, name);
+      sendSetOpponentPokemon(position, pokemonId, name);
       setActiveSpritePosition(null);
     },
-    [manualSet],
+    [manualSet, sendSetOpponentPokemon],
   );
 
   return (
@@ -351,6 +356,8 @@ export function VideoCanvas({
           })}
         </div>
       )}
+      {debugOverlay && <BattleStateOverlay />}
+      <BattleInfoOverlay currentScene={currentScene} />
       {paused && pauseReason && (
         <PauseBanner reason={pauseReason} onResume={onResume} />
       )}

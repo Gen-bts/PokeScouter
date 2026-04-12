@@ -1,22 +1,10 @@
+import { memo } from "react";
 import { useDamageCalcStore } from "../stores/useDamageCalcStore";
 import { useMyPartyStore } from "../stores/useMyPartyStore";
 import { useOpponentTeamStore } from "../stores/useOpponentTeamStore";
 import { PokemonSprite } from "./PokemonSprite";
+import { getKoClass, getKoLabel } from "../utils/damageFormat";
 import type { DefenderDamageResult, MoveDamageResult } from "../types";
-
-function getKoClass(guaranteedKo: number): string {
-  if (guaranteedKo === 1) return "dmg-ohko";
-  if (guaranteedKo === 2) return "dmg-2hko";
-  if (guaranteedKo === 3) return "dmg-3hko";
-  return "dmg-weak";
-}
-
-function getKoLabel(guaranteedKo: number, typeEff: number): string {
-  if (typeEff === 0) return "無効";
-  if (guaranteedKo <= 0) return "";
-  if (guaranteedKo === 1) return "確1";
-  return `確${guaranteedKo}`;
-}
 
 function DamageMoveLine({ move }: { move: MoveDamageResult }) {
   const barWidth = Math.min(move.max_percent, 100);
@@ -45,11 +33,9 @@ function DamageMoveLine({ move }: { move: MoveDamageResult }) {
 }
 
 function DamageDefenderSection({ result }: { result: DefenderDamageResult }) {
-  const opponentSlots = useOpponentTeamStore((s) => s.slots);
-  const slot = opponentSlots.find(
-    (s) => s.pokemonId === result.defender_species_id,
-  );
-  const name = slot?.name ?? `#${result.defender_species_id}`;
+  const name = useOpponentTeamStore(
+    (s) => s.slots.find((sl) => sl.pokemonId === result.defender_species_id)?.name,
+  ) ?? `#${result.defender_species_id}`;
 
   return (
     <div className="damage-defender">
@@ -69,15 +55,14 @@ function DamageDefenderSection({ result }: { result: DefenderDamageResult }) {
   );
 }
 
-export function DamagePanel() {
+export const DamagePanel = memo(function DamagePanel() {
   const selectedPos = useDamageCalcStore((s) => s.selectedAttackerPosition);
   const results = useDamageCalcStore((s) => s.results);
   const loading = useDamageCalcStore((s) => s.loading);
   const error = useDamageCalcStore((s) => s.error);
-  const partySlots = useMyPartyStore((s) => s.slots);
-
-  const attacker =
-    selectedPos != null ? partySlots[selectedPos - 1] : null;
+  const attackerName = useMyPartyStore(
+    (s) => selectedPos != null ? s.slots[selectedPos - 1]?.name : null,
+  );
 
   if (!selectedPos) {
     return (
@@ -93,7 +78,7 @@ export function DamagePanel() {
       <div className="damage-panel-header">
         <h2>ダメージ計算</h2>
         <span className="damage-attacker-name">
-          {attacker?.name ?? "???"}
+          {attackerName ?? "???"}
         </span>
       </div>
 
@@ -114,4 +99,4 @@ export function DamagePanel() {
         ))}
     </div>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useVideoCapture } from "./hooks/useVideoCapture";
 import { useSettingsStore } from "./stores/useSettingsStore";
 import { useConnectionStore } from "./stores/useConnectionStore";
@@ -29,8 +29,6 @@ export default function App() {
   const currentScene = useConnectionStore((s) => s.currentScene);
   const sendForceScene = useConnectionStore((s) => s.sendForceScene);
   const connect = useConnectionStore((s) => s.connect);
-  const selectedDeviceId = useSettingsStore((s) => s.selectedDeviceId);
-  const selectedAudioDeviceId = useSettingsStore((s) => s.selectedAudioDeviceId);
   const volume = useSettingsStore((s) => s.volume);
   const storeSetVolume = useSettingsStore((s) => s.setVolume);
   const muted = useSettingsStore((s) => s.muted);
@@ -58,17 +56,28 @@ export default function App() {
     getScenes().then(setAvailableScenes);
   }, []);
 
-  // 保存済みデバイスが列挙リストにあれば自動でキャプチャ開始
+  // Zustand persist hydration 完了を待つ
+  const [hydrated, setHydrated] = useState(
+    useSettingsStore.persist.hasHydrated(),
+  );
   useEffect(() => {
-    if (
-      selectedDeviceId &&
-      devices.length > 0 &&
-      devices.some((d) => d.deviceId === selectedDeviceId)
-    ) {
-      startCapture(selectedDeviceId, selectedAudioDeviceId || undefined);
+    if (hydrated) return;
+    return useSettingsStore.persist.onFinishHydration(() => setHydrated(true));
+  }, [hydrated]);
+
+  // 保存済みデバイスが列挙リストにあれば自動でキャプチャ開始
+  const autoCaptureRan = useRef(false);
+  useEffect(() => {
+    if (!hydrated || devices.length === 0 || autoCaptureRan.current) return;
+
+    const deviceId = useSettingsStore.getState().selectedDeviceId;
+    const audioDeviceId = useSettingsStore.getState().selectedAudioDeviceId;
+
+    if (deviceId && devices.some((d) => d.deviceId === deviceId)) {
+      autoCaptureRan.current = true;
+      startCapture(deviceId, audioDeviceId || undefined);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [devices]);
+  }, [hydrated, devices, startCapture]);
 
   return (
     <div className="app-root">

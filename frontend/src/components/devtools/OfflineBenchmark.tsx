@@ -30,15 +30,16 @@ export function OfflineBenchmark() {
     listSessions().then((list) => {
       const completed = list.filter((s) => s.status === "completed");
       setSessions(completed);
-      if (completed.length > 0 && !selectedSession) {
-        setSelectedSession(completed[0].session_id);
+      const first = completed[0];
+      if (first && !selectedSession) {
+        setSelectedSession(first.session_id);
       }
     });
     getScenes().then((s) => {
       setScenes(s);
-      const keys = Object.keys(s);
-      if (keys.length > 0 && !selectedScene) {
-        setSelectedScene(keys[0]);
+      const firstKey = Object.keys(s)[0];
+      if (firstKey && !selectedScene) {
+        setSelectedScene(firstKey);
       }
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

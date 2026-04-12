@@ -5,7 +5,6 @@ import {
   updateScene,
   deleteScene,
   reorderScenes,
-  type SceneMeta,
 } from "../../api/devtools";
 
 interface SceneEntry {
@@ -98,6 +97,7 @@ export function SceneManager() {
 
       const reordered = [...scenes];
       const [moved] = reordered.splice(index, 1);
+      if (!moved) return;
       reordered.splice(newIndex, 0, moved);
       setScenes(reordered);
 
