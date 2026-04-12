@@ -8,6 +8,11 @@ import numpy as np
 import pytest
 
 
+def _skip_missing_dependency(exc: ModuleNotFoundError) -> None:
+    missing = exc.name or "optional dependency"
+    pytest.skip(f"{missing} is not installed in this environment", allow_module_level=False)
+
+
 @pytest.fixture(scope="session")
 def fixtures_dir() -> Path:
     return Path(__file__).parent / "fixtures"
@@ -31,10 +36,16 @@ def dummy_text_image() -> np.ndarray:
 @pytest.fixture(scope="session")
 def paddle_engine():
     """PaddleOCR エンジン（セッション全体で1回だけロード）."""
-    from app.ocr.paddle_ocr import PaddleOCREngine
+    try:
+        from app.ocr.paddle_ocr import PaddleOCREngine
+    except ModuleNotFoundError as exc:
+        _skip_missing_dependency(exc)
 
     engine = PaddleOCREngine()
-    engine.load()
+    try:
+        engine.load()
+    except ModuleNotFoundError as exc:
+        _skip_missing_dependency(exc)
     yield engine
     engine.unload()
 
@@ -42,10 +53,16 @@ def paddle_engine():
 @pytest.fixture(scope="session")
 def manga_engine():
     """manga-ocr エンジン（セッション全体で1回だけロード）."""
-    from app.ocr.manga_ocr import MangaOCREngine
+    try:
+        from app.ocr.manga_ocr import MangaOCREngine
+    except ModuleNotFoundError as exc:
+        _skip_missing_dependency(exc)
 
     engine = MangaOCREngine()
-    engine.load()
+    try:
+        engine.load()
+    except ModuleNotFoundError as exc:
+        _skip_missing_dependency(exc)
     yield engine
     engine.unload()
 
@@ -53,9 +70,15 @@ def manga_engine():
 @pytest.fixture(scope="session")
 def glm_engine():
     """GLM-OCR エンジン（セッション全体で1回だけロード）."""
-    from app.ocr.glm_ocr import GLMOCREngine
+    try:
+        from app.ocr.glm_ocr import GLMOCREngine
+    except ModuleNotFoundError as exc:
+        _skip_missing_dependency(exc)
 
     engine = GLMOCREngine()
-    engine.load()
+    try:
+        engine.load()
+    except ModuleNotFoundError as exc:
+        _skip_missing_dependency(exc)
     yield engine
     engine.unload()

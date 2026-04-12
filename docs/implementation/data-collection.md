@@ -2,6 +2,11 @@
 
 ## 調査日: 2026-04-09
 
+> 更新メモ（2026-04-11）:
+> Showdown 公開データを起点にした Champions BSS データ取得調査を別紙に整理。
+> 現在の結論は「base データと `champions` 差分をマージすれば、必要データはほぼ取得可能」。
+> 詳細は [Showdown Champions BSS データ調査](./showdown-champions-bss-data.md) を参照。
+
 チャンピオンズ発売日（2026-04-08）翌日時点での調査結果。
 
 ---

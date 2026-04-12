@@ -141,7 +141,7 @@ disconnected → connecting → connected ⇄ processing
 | 方向 | 形式 | 内容 |
 |---|---|---|
 | 送信 | binary (ArrayBuffer) | JPEG フレームデータ |
-| 送信 | JSON | `{ type: "config", scene?, interval_ms?, paused? }` |
+| 送信 | JSON | `{ type: "config", scene?, paused?, debug_crops?, benchmark? }` |
 | 受信 | JSON | `{ type: "ocr_result", regions: Region[], elapsed_ms, scene }` |
 | 受信 | JSON | `{ type: "status", status: "processing" \| "connected" }` |
 
@@ -195,9 +195,9 @@ interface OcrResult {
 }
 
 interface WsConfig {
-  scene?: string;        // 認識対象シーン
-  interval_ms?: number;  // フレーム送信間隔
   paused?: boolean;      // 一時停止
+  debug_crops?: boolean; // デバッグ用クロップ画像送信
+  benchmark?: boolean;   // ベンチマークモード
 }
 ```
 

@@ -54,6 +54,7 @@ class TestCandidates:
         assert "battle_end" in candidates
         assert "move_select" in candidates
         assert "pokemon_summary" in candidates
+        assert "battle_Neutral" in candidates
         assert "team_select" not in candidates
 
     def test_none_candidates(self) -> None:
@@ -200,6 +201,38 @@ class TestBattleSubScenes:
             sm.update({})
         assert sm.state.sub_scene is None
         assert sm.state.scene_key == "battle"
+
+    def test_battle_neutral_detection(self) -> None:
+        """battle_Neutral がサブシーンとして検出される."""
+        sm = SceneStateMachine(initial="battle")
+        for _ in range(sm.SUB_DEBOUNCE):
+            sm.update({"battle_Neutral": 0.9})
+        assert sm.state.top_level == "battle"
+        assert sm.state.sub_scene == "battle_Neutral"
+        assert sm.state.scene_key == "battle_Neutral"
+
+    def test_battle_neutral_reverts_to_battle(self) -> None:
+        """battle_Neutral 未検出が続くとデフォルト（sub_scene=None）に戻る."""
+        sm = SceneStateMachine(initial="battle")
+        for _ in range(sm.SUB_DEBOUNCE):
+            sm.update({"battle_Neutral": 0.9})
+        assert sm.state.sub_scene == "battle_Neutral"
+
+        for _ in range(sm.SUB_REVERT_COUNT):
+            sm.update({})
+        assert sm.state.sub_scene is None
+        assert sm.state.scene_key == "battle"
+
+    def test_battle_neutral_to_move_select(self) -> None:
+        """battle_Neutral から move_select へのサブシーン切り替え."""
+        sm = SceneStateMachine(initial="battle")
+        for _ in range(sm.SUB_DEBOUNCE):
+            sm.update({"battle_Neutral": 0.9})
+        assert sm.state.sub_scene == "battle_Neutral"
+
+        for _ in range(sm.SUB_DEBOUNCE):
+            sm.update({"move_select": 0.88})
+        assert sm.state.sub_scene == "move_select"
 
     def test_battle_end_from_sub_scene(self) -> None:
         """サブシーン中でも battle_end を検出できる."""

@@ -390,6 +390,17 @@ python -m tools.live_ocr --device 0 --scene battle --interval 0.5
 
 ---
 
+## バトルログパーサー (`app/recognition/battle_log_parser.py`)
+
+メインテキスト OCR を結合し、正規表現でイベント化する。`BattleLogParser` は `app/ws/battle.py` のバトルシーン処理から利用される。
+
+- **技名の照合**: 覚える技リスト（`data/champions_override/learnsets.json`）に対し `SequenceMatcher` で類似度を取る。デフォルト閾値は **0.88**（低すぎると別技に吸われるため）。閾値未満のときは `move_id` を付けず OCR 生テキストのまま送る。
+- **ステータス変化**: ひらがな（こうげき）に加え、UI が **漢字（攻撃・防御 等）** のときも `stat_change` にマッチさせ、同じ行が `move_used` にならないようにする。
+- **叙述行**: 「眠気を誘った」などわざ名ではないフレーズは `move_used` から除外する。
+- **learnset データ**: Champions で実際に使用可能な技が `learnsets.json` に無いと照合できない（`move_id` が付かない）。不足は同ファイルへ追記する。
+
+---
+
 ## テスト
 
 ### 実行

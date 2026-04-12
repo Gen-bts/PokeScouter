@@ -201,3 +201,108 @@ class TestFuzzyMatchItemName:
 
     def test_empty_string_returns_none(self, game_data: GameData) -> None:
         assert game_data.fuzzy_match_item_name("") is None
+
+
+@pytest.fixture()
+def game_data_with_forms(tmp_path):
+    """フォーム違いを含むポケモンデータで GameData を構築する."""
+    import json
+
+    base = tmp_path / "base"
+    base.mkdir()
+    override = tmp_path / "champions_override"
+    override.mkdir()
+    seasons = tmp_path / "seasons"
+    seasons.mkdir()
+    names_dir = tmp_path / "names"
+    names_dir.mkdir()
+
+    pokemon = {
+        "479": {
+            "identifier": "rotom", "species_id": 479, "is_default": True,
+            "name": "Rotom", "types": ["electric", "ghost"],
+        },
+        "10008": {
+            "identifier": "rotom-heat", "species_id": 479, "is_default": False,
+            "name": "Rotom", "types": ["electric", "fire"],
+        },
+        "10009": {
+            "identifier": "rotom-wash", "species_id": 479, "is_default": False,
+            "name": "Rotom", "types": ["electric", "water"],
+        },
+        "10010": {
+            "identifier": "rotom-frost", "species_id": 479, "is_default": False,
+            "name": "Rotom", "types": ["electric", "ice"],
+        },
+        "10011": {
+            "identifier": "rotom-fan", "species_id": 479, "is_default": False,
+            "name": "Rotom", "types": ["electric", "flying"],
+        },
+        "10012": {
+            "identifier": "rotom-mow", "species_id": 479, "is_default": False,
+            "name": "Rotom", "types": ["electric", "grass"],
+        },
+        "25": {
+            "identifier": "pikachu", "species_id": 25, "is_default": True,
+            "name": "Pikachu", "types": ["electric"],
+        },
+        "6": {
+            "identifier": "charizard", "species_id": 6, "is_default": True,
+            "name": "Charizard", "types": ["fire", "flying"],
+        },
+        "10034": {
+            "identifier": "charizard-mega-x", "species_id": 6, "is_default": False,
+            "name": "Charizard", "types": ["fire", "dragon"],
+        },
+    }
+
+    (base / "pokemon.json").write_text(
+        json.dumps(pokemon, ensure_ascii=False), encoding="utf-8",
+    )
+    for fname in ["moves.json", "abilities.json",
+                  "types.json", "items.json", "natures.json"]:
+        (base / fname).write_text("{}", encoding="utf-8")
+    for fname in ["pokemon_patch.json", "moves_patch.json",
+                  "new_entries.json", "learnsets.json"]:
+        (override / fname).write_text("{}", encoding="utf-8")
+    (seasons / "current.json").write_text('{"current_season": ""}', encoding="utf-8")
+    (names_dir / "ja.json").write_text("{}", encoding="utf-8")
+
+    gd = GameData(data_dir=tmp_path)
+    gd.load()
+    return gd
+
+
+class TestExpandSpeciesToPokemonIds:
+    """expand_species_to_pokemon_ids のテスト."""
+
+    def test_rotom_expands_all_forms(self, game_data_with_forms: GameData) -> None:
+        """species_id=479 でロトム全フォームの pokemon_id が返る."""
+        result = game_data_with_forms.expand_species_to_pokemon_ids([479])
+        assert sorted(result) == [479, 10008, 10009, 10010, 10011, 10012]
+
+    def test_no_forms_returns_single(self, game_data_with_forms: GameData) -> None:
+        """フォーム違いが無いポケモンは pokemon_id のみ."""
+        result = game_data_with_forms.expand_species_to_pokemon_ids([25])
+        assert result == [25]
+
+    def test_multiple_species(self, game_data_with_forms: GameData) -> None:
+        """複数の species_id を展開できる."""
+        result = game_data_with_forms.expand_species_to_pokemon_ids([25, 479])
+        assert 25 in result
+        assert 479 in result
+        assert 10008 in result
+
+    def test_empty_list(self, game_data_with_forms: GameData) -> None:
+        """空リストは空リストを返す."""
+        assert game_data_with_forms.expand_species_to_pokemon_ids([]) == []
+
+    def test_unknown_species(self, game_data_with_forms: GameData) -> None:
+        """存在しない species_id はそのまま返す."""
+        result = game_data_with_forms.expand_species_to_pokemon_ids([9999])
+        assert result == [9999]
+
+    def test_includes_mega_forms(self, game_data_with_forms: GameData) -> None:
+        """メガシンカフォームも pokemon_id として含まれる."""
+        result = game_data_with_forms.expand_species_to_pokemon_ids([6])
+        assert sorted(result) == [6, 10034]
