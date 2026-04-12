@@ -73,10 +73,10 @@ class SceneStateMachine:
     )
     """画像検出で判定するトップレベル状態（battle は推定なので含まない）."""
 
-    BATTLE_SUB_SCENES: list[str] = ["move_select", "pokemon_summary"]
+    BATTLE_SUB_SCENES: list[str] = ["move_select", "pokemon_summary", "battle_Neutral"]
     """バトル内のサブシーン一覧. regions.json に detection 定義があるもの."""
 
-    # --- デバウンス設定 ---
+    # --- デバウンス設定（クラスデフォルト） ---
 
     TOP_DEBOUNCE: int = 3
     """トップレベル遷移に必要な連続検出フレーム数."""
@@ -90,7 +90,18 @@ class SceneStateMachine:
     FORCE_COOLDOWN_SECONDS: float = 2.0
     """force_transition 後に auto-detect をスキップする秒数."""
 
-    def __init__(self, initial: str = "none") -> None:
+    def __init__(
+        self,
+        initial: str = "none",
+        scene_state_config: object | None = None,
+    ) -> None:
+        # 設定値でクラスデフォルトを上書き
+        if scene_state_config is not None:
+            cfg = scene_state_config
+            self.TOP_DEBOUNCE = cfg.top_debounce  # type: ignore[attr-defined]
+            self.SUB_DEBOUNCE = cfg.sub_debounce  # type: ignore[attr-defined]
+            self.SUB_REVERT_COUNT = cfg.sub_revert_count  # type: ignore[attr-defined]
+            self.FORCE_COOLDOWN_SECONDS = cfg.force_cooldown_seconds  # type: ignore[attr-defined]
         self._state = SceneState(
             top_level=initial,
             sub_scene=None,

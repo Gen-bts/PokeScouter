@@ -56,11 +56,15 @@ class SceneDetector:
         region_config: RegionConfig,
         template_dir: str | Path = _DEFAULT_TEMPLATE_DIR,
         recognizer: RegionRecognizer | None = None,
+        default_threshold: float = _DEFAULT_THRESHOLD,
+        default_ocr_threshold: float = _DEFAULT_OCR_THRESHOLD,
     ) -> None:
         self._config = region_config
         self._template_dir = Path(template_dir)
         self._template_cache: dict[str, np.ndarray] = {}
         self._recognizer = recognizer
+        self._default_threshold = default_threshold
+        self._default_ocr_threshold = default_ocr_threshold
 
     def detect(
         self, frame: np.ndarray, candidates: list[str]
@@ -173,16 +177,16 @@ class SceneDetector:
                 region.name,
                 scene,
             )
-            return 0.0, _DEFAULT_THRESHOLD, 0.0
+            return 0.0, self._default_threshold, 0.0
 
         template = self._load_template(template_path)
         if template is None:
-            return 0.0, _DEFAULT_THRESHOLD, 0.0
+            return 0.0, self._default_threshold, 0.0
 
         t0 = time.perf_counter()
         confidence = self._match_template(cropped, template)
         elapsed = (time.perf_counter() - t0) * 1000
-        threshold = region.params.get("threshold", _DEFAULT_THRESHOLD)
+        threshold = region.params.get("threshold", self._default_threshold)
         return confidence, threshold, elapsed
 
     def _detect_ocr(
@@ -204,7 +208,7 @@ class SceneDetector:
                 "OCR 検出が要求されましたが recognizer が未設定です (領域 '%s')",
                 region.name,
             )
-            return 0.0, _DEFAULT_OCR_THRESHOLD, 0.0
+            return 0.0, self._default_ocr_threshold, 0.0
 
         raw_expected = region.params.get("expected_text", [])
         if isinstance(raw_expected, str):
@@ -223,7 +227,7 @@ class SceneDetector:
                 "検出領域 '%s' に expected_text/excluded_text が未定義",
                 region.name,
             )
-            return 0.0, _DEFAULT_OCR_THRESHOLD, 0.0
+            return 0.0, self._default_ocr_threshold, 0.0
 
         engine_name = region.params.get("engine", "paddle")
         pipeline = self._recognizer._get_pipeline(engine_name)
@@ -251,7 +255,7 @@ class SceneDetector:
         )
 
         confidence = 1.0 if matched else 0.0
-        threshold = region.params.get("threshold", _DEFAULT_OCR_THRESHOLD)
+        threshold = region.params.get("threshold", self._default_ocr_threshold)
         return confidence, threshold, elapsed
 
     def _match_template(

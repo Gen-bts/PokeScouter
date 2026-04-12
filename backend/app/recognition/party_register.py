@@ -72,7 +72,22 @@ def _group_regions_by_slot(
 
 
 def _no_match(raw_text: str) -> dict[str, Any]:
-    return {"raw": raw_text, "validated": None, "confidence": 0.0, "matched_id": None}
+    return {
+        "raw": raw_text,
+        "validated": None,
+        "confidence": 0.0,
+        "matched_id": None,
+        "matched_key": None,
+    }
+
+
+def _coerce_legacy_value(value: Any) -> Any:
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return value
 
 
 def _validate_fields(
@@ -96,23 +111,29 @@ def _validate_fields(
         if name == "名前":
             match = game_data.fuzzy_match_pokemon_name(raw_text)
             if match:
+                matched_key = match.get("pokemon_key")
+                matched_id = match.get("species_id", _coerce_legacy_value(matched_key))
                 result[name] = {
                     "raw": raw_text,
                     "validated": match["matched_name"],
                     "confidence": match["confidence"],
-                    "matched_id": match["species_id"],
+                    "matched_id": matched_id,
+                    "matched_key": matched_key or str(matched_id),
                 }
             else:
                 result[name] = _no_match(raw_text)
         elif _MOVE_FIELD_RE.match(name):
             match = game_data.fuzzy_match_move_name(raw_text)
             if match:
-                move_data = game_data.moves.get(str(match["move_id"]), {})
+                matched_key = match.get("move_key")
+                matched_id = match.get("move_id", _coerce_legacy_value(matched_key))
+                move_data = game_data.moves.get(str(matched_key), {}) if matched_key is not None else {}
                 result[name] = {
                     "raw": raw_text,
                     "validated": match["matched_name"],
                     "confidence": match["confidence"],
-                    "matched_id": match["move_id"],
+                    "matched_id": matched_id,
+                    "matched_key": matched_key or str(matched_id),
                     "move_meta": {
                         "type": move_data.get("type"),
                         "power": move_data.get("power"),
@@ -125,25 +146,31 @@ def _validate_fields(
         elif name == "特性":
             match = game_data.fuzzy_match_ability_name(raw_text)
             if match:
+                matched_key = match.get("ability_key")
+                matched_id = match.get("ability_id", _coerce_legacy_value(matched_key))
                 result[name] = {
                     "raw": raw_text,
                     "validated": match["matched_name"],
                     "confidence": match["confidence"],
-                    "matched_id": match["ability_id"],
+                    "matched_id": matched_id,
+                    "matched_key": matched_key or str(matched_id),
                 }
             else:
                 result[name] = _no_match(raw_text)
         elif name == "もちもの":
             match = game_data.fuzzy_match_item_name(raw_text)
             if match:
-                item_data = game_data.items.get(str(match["item_id"]), {})
+                matched_key = match.get("item_key")
+                matched_id = match.get("item_id", _coerce_legacy_value(matched_key))
+                item_data = game_data.items.get(str(matched_key), {}) if matched_key is not None else {}
                 result[name] = {
                     "raw": raw_text,
                     "validated": match["matched_name"],
                     "confidence": match["confidence"],
-                    "matched_id": match["item_id"],
-                    "matched_identifier": item_data.get("identifier"),
-                    "is_mega_stone": item_data.get("category_id") == 44,
+                    "matched_id": matched_id,
+                    "matched_key": matched_key or str(matched_id),
+                    "matched_identifier": item_data.get("identifier") or matched_key or str(matched_id),
+                    "is_mega_stone": bool(item_data.get("mega_stone")),
                 }
             else:
                 result[name] = _no_match(raw_text)
@@ -156,6 +183,7 @@ def _validate_fields(
                     "validated": cleaned,
                     "confidence": 1.0,
                     "matched_id": None,
+                    "matched_key": None,
                 }
             else:
                 result[name] = {
@@ -163,6 +191,7 @@ def _validate_fields(
                     "validated": None,
                     "confidence": 1.0,
                     "matched_id": None,
+                    "matched_key": None,
                 }
         elif "実数値" in name or "努力値" in name:
             # 数値フィールド: int パースで検証
@@ -174,6 +203,7 @@ def _validate_fields(
                     "validated": cleaned,
                     "confidence": 1.0,
                     "matched_id": None,
+                    "matched_key": None,
                 }
             except ValueError:
                 result[name] = _no_match(raw_text)
@@ -227,12 +257,28 @@ class PartyRegistrationMachine:
         recognizer: RegionRecognizer,
         config: RegionConfig,
         pokemon_matcher: Any | None = None,
+        party_register_config: Any | None = None,
     ) -> None:
         self._detector = detector
         self._recognizer = recognizer
         self._config = config
         self._pokemon_matcher = pokemon_matcher
         self._state = PartyRegistrationState()
+
+        # 設定値（config が渡されなければモジュール定数をフォールバック）
+        cfg = party_register_config
+        self._detection_debounce: int = (
+            cfg.detection_debounce if cfg else DETECTION_DEBOUNCE
+        )
+        self._detection_debounce_high_conf: int = (
+            cfg.detection_debounce_high_conf if cfg else DETECTION_DEBOUNCE_HIGH_CONF
+        )
+        self._high_confidence_threshold: float = (
+            cfg.high_confidence_threshold if cfg else HIGH_CONFIDENCE_THRESHOLD
+        )
+        self._detection_timeout_s: float = (
+            cfg.detection_timeout_s if cfg else DETECTION_TIMEOUT_S
+        )
 
         # デバウンス
         self._pending_scene: str | None = None
@@ -289,7 +335,7 @@ class PartyRegistrationMachine:
         # タイムアウトチェック
         if phase.startswith("detecting_"):
             elapsed = time.monotonic() - self._phase_start_time
-            if elapsed > DETECTION_TIMEOUT_S:
+            if elapsed > self._detection_timeout_s:
                 screen_num = "1" if "1" in phase else "2"
                 error_msg = f"画面{screen_num}の検出がタイムアウトしました"
                 logger.warning("パーティ登録: %s", error_msg)
@@ -330,9 +376,9 @@ class PartyRegistrationMachine:
                 self._pending_count = 1
 
             required = (
-                DETECTION_DEBOUNCE_HIGH_CONF
-                if confidence >= HIGH_CONFIDENCE_THRESHOLD
-                else DETECTION_DEBOUNCE
+                self._detection_debounce_high_conf
+                if confidence >= self._high_confidence_threshold
+                else self._detection_debounce
             )
             if self._pending_count >= required:
                 logger.info(
@@ -448,16 +494,19 @@ class PartyRegistrationMachine:
                         best = icon_results[i].candidates[0]
                         threshold = icon_results[i].threshold
                         if best.confidence >= threshold:
-                            entry["pokemon_id"] = best.pokemon_id
+                            entry["pokemon_key"] = best.pokemon_key
+                            entry["pokemon_id"] = best.pokemon_key
                             entry["name"] = id_to_name.get(
-                                best.pokemon_id, f"#{best.pokemon_id}",
+                                best.pokemon_key, best.pokemon_key,
                             )
                             entry["confidence"] = round(best.confidence, 3)
                         else:
+                            entry["pokemon_key"] = None
                             entry["pokemon_id"] = None
                             entry["name"] = None
                             entry["confidence"] = 0.0
                     else:
+                        entry["pokemon_key"] = None
                         entry["pokemon_id"] = None
                         entry["name"] = None
                         entry["confidence"] = 0.0
@@ -578,19 +627,23 @@ class PartyRegistrationMachine:
             validated = validated_map[pos]
 
             icon = icon_by_pos.get(pos, {})
-            pokemon_id = icon.get("pokemon_id")
+            pokemon_key = icon.get("pokemon_key") or icon.get("pokemon_id")
             pokemon_name = icon.get("name")
 
-            # アイコンマッチング失敗時、名前照合の species_id をフォールバック
-            if pokemon_id is None:
+            # アイコンマッチング失敗時、名前照合結果をフォールバック
+            if pokemon_key is None:
                 name_field = validated.get("名前", {})
-                if name_field.get("matched_id") is not None:
-                    pokemon_id = name_field["matched_id"]
+                fallback_key = name_field.get("matched_key")
+                if fallback_key is None:
+                    fallback_key = name_field.get("matched_id")
+                if fallback_key is not None:
+                    pokemon_key = fallback_key
                     pokemon_name = name_field.get("validated") or pokemon_name
 
             party.append({
                 "position": pos,
-                "pokemon_id": pokemon_id,
+                "pokemon_key": pokemon_key,
+                "pokemon_id": _coerce_legacy_value(pokemon_key),
                 "name": pokemon_name,
                 "fields": validated,
             })
