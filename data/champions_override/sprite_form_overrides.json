@@ -1,0 +1,30 @@
+{
+  "_meta": {
+    "description": "Bulbagarden Champions menu sprite form overrides",
+    "source": "Bulbagarden Archives"
+  },
+  "compact_suffix_to_form_slug": {
+    "caramelswirl": "caramel-swirl",
+    "highplains": "high-plains",
+    "icysnow": "icy-snow",
+    "lareine": "la-reine",
+    "lemoncream": "lemon-cream",
+    "matchacream": "matcha-cream",
+    "megax": "mega-x",
+    "megay": "mega-y",
+    "mintcream": "mint-cream",
+    "paldeaaqua": "paldea-aqua",
+    "paldeablaze": "paldea-blaze",
+    "paldeacombat": "paldea-combat",
+    "pokeball": "poke-ball",
+    "rainbowswirl": "rainbow-swirl",
+    "rubycream": "ruby-cream",
+    "rubyswirl": "ruby-swirl",
+    "saltedcream": "salted-cream"
+  },
+  "key_form_slug_overrides": {
+    "basculegionf": "female",
+    "gourgeistsuper": "jumbo",
+    "mausholdfour": "three"
+  }
+}

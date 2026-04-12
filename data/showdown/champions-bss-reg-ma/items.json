@@ -1,0 +1,5253 @@
+{
+  "_meta": {
+    "source": "pokemon-showdown",
+    "showdown_commit": "00d8fc0afd3c589043cff60878989b2c892f05f7"
+  },
+  "abilityshield": {
+    "item_key": "abilityshield",
+    "name": "Ability Shield",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Ability cannot be changed, suppressed, or ignored by any effect.",
+    "effect": "Holder's Ability cannot be changed, suppressed, or ignored by any effect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "abomasite": {
+    "item_key": "abomasite",
+    "name": "Abomasite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Abomasnow, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Abomasnow, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "absolite": {
+    "item_key": "absolite",
+    "name": "Absolite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Absol, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Absol, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "absorbbulb": {
+    "item_key": "absorbbulb",
+    "name": "Absorb Bulb",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Sp. Atk by 1 stage if hit by a Water-type attack. Single use.",
+    "effect": "Raises holder's Sp. Atk by 1 stage if hit by a Water-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "adamantcrystal": {
+    "item_key": "adamantcrystal",
+    "name": "Adamant Crystal",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Dialga, its Steel- and Dragon-type attacks have 1.2x power.",
+    "effect": "If held by a Dialga, its Steel- and Dragon-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "adamantorb": {
+    "item_key": "adamantorb",
+    "name": "Adamant Orb",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Dialga, its Steel- and Dragon-type attacks have 1.2x power.",
+    "effect": "If held by a Dialga, its Steel- and Dragon-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "adrenalineorb": {
+    "item_key": "adrenalineorb",
+    "name": "Adrenaline Orb",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Speed by 1 stage if it gets affected by Intimidate. Single use.",
+    "effect": "Raises holder's Speed by 1 stage if it gets affected by Intimidate. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "aerodactylite": {
+    "item_key": "aerodactylite",
+    "name": "Aerodactylite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Aerodactyl, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Aerodactyl, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "aggronite": {
+    "item_key": "aggronite",
+    "name": "Aggronite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Aggron, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Aggron, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "aguavberry": {
+    "item_key": "aguavberry",
+    "name": "Aguav Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -SpD Nature. Single use.",
+    "effect": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -SpD Nature. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "airballoon": {
+    "item_key": "airballoon",
+    "name": "Air Balloon",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder is immune to Ground-type attacks. Pops when holder is hit.",
+    "effect": "Holder is immune to Ground-type attacks. Pops when holder is hit.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "alakazite": {
+    "item_key": "alakazite",
+    "name": "Alakazite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Alakazam, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Alakazam, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "altarianite": {
+    "item_key": "altarianite",
+    "name": "Altarianite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Altaria, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Altaria, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "ampharosite": {
+    "item_key": "ampharosite",
+    "name": "Ampharosite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Ampharos, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Ampharos, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "apicotberry": {
+    "item_key": "apicotberry",
+    "name": "Apicot Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Sp. Def by 1 stage when at 1/4 max HP or less. Single use.",
+    "effect": "Raises holder's Sp. Def by 1 stage when at 1/4 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "assaultvest": {
+    "item_key": "assaultvest",
+    "name": "Assault Vest",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Sp. Def is 1.5x, but it can only select damaging moves.",
+    "effect": "Holder's Sp. Def is 1.5x, but it can only select damaging moves.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "audinite": {
+    "item_key": "audinite",
+    "name": "Audinite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Audino, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Audino, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "auspiciousarmor": {
+    "item_key": "auspiciousarmor",
+    "name": "Auspicious Armor",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Charcadet into Armarouge when used.",
+    "effect": "Evolves Charcadet into Armarouge when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "banettite": {
+    "item_key": "banettite",
+    "name": "Banettite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Banette, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Banette, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "beastball": {
+    "item_key": "beastball",
+    "name": "Beast Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A special Poke Ball designed to catch Ultra Beasts.",
+    "effect": "A special Poke Ball designed to catch Ultra Beasts.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "beedrillite": {
+    "item_key": "beedrillite",
+    "name": "Beedrillite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Beedrill, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Beedrill, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "berrysweet": {
+    "item_key": "berrysweet",
+    "name": "Berry Sweet",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Milcery into Alcremie when held and spun around.",
+    "effect": "Evolves Milcery into Alcremie when held and spun around.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "bignugget": {
+    "item_key": "bignugget",
+    "name": "Big Nugget",
+    "is_nonstandard": "Past",
+    "short_desc": "A big nugget of pure gold that gives off a lustrous gleam.",
+    "effect": "A big nugget of pure gold that gives off a lustrous gleam.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "bigroot": {
+    "item_key": "bigroot",
+    "name": "Big Root",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder gains 1.3x HP from draining/Aqua Ring/Ingrain/Leech Seed/Strength Sap.",
+    "effect": "Holder gains 1.3x HP from draining/Aqua Ring/Ingrain/Leech Seed/Strength Sap.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "bindingband": {
+    "item_key": "bindingband",
+    "name": "Binding Band",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's partial-trapping moves deal 1/6 max HP per turn instead of 1/8.",
+    "effect": "Holder's partial-trapping moves deal 1/6 max HP per turn instead of 1/8.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "blacksludge": {
+    "item_key": "blacksludge",
+    "name": "Black Sludge",
+    "is_nonstandard": "Past",
+    "short_desc": "Each turn, if holder is a Poison type, restores 1/16 max HP; loses 1/8 if not.",
+    "effect": "Each turn, if holder is a Poison type, restores 1/16 max HP; loses 1/8 if not.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "blastoisinite": {
+    "item_key": "blastoisinite",
+    "name": "Blastoisinite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Blastoise, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Blastoise, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "blunderpolicy": {
+    "item_key": "blunderpolicy",
+    "name": "Blunder Policy",
+    "is_nonstandard": "Past",
+    "short_desc": "If the holder misses due to accuracy, its Speed is raised by 2 stages. Single use.",
+    "effect": "If the holder misses due to accuracy, its Speed is raised by 2 stages. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "boosterenergy": {
+    "item_key": "boosterenergy",
+    "name": "Booster Energy",
+    "is_nonstandard": "Past",
+    "short_desc": "Activates the Protosynthesis or Quark Drive Abilities. Single use.",
+    "effect": "Activates the Protosynthesis or Quark Drive Abilities. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "bottlecap": {
+    "item_key": "bottlecap",
+    "name": "Bottle Cap",
+    "is_nonstandard": "Past",
+    "short_desc": "Used for Hyper Training. One of a Pokemon's stats is calculated with an IV of 31.",
+    "effect": "Used for Hyper Training. One of a Pokemon's stats is calculated with an IV of 31.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "cameruptite": {
+    "item_key": "cameruptite",
+    "name": "Cameruptite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Camerupt, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Camerupt, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "cellbattery": {
+    "item_key": "cellbattery",
+    "name": "Cell Battery",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Attack by 1 if hit by an Electric-type attack. Single use.",
+    "effect": "Raises holder's Attack by 1 if hit by an Electric-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "chandelurite": {
+    "item_key": "chandelurite",
+    "name": "Chandelurite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Chandelure, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Chandelure, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "charizarditex": {
+    "item_key": "charizarditex",
+    "name": "Charizardite X",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Charizard, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Charizard, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "charizarditey": {
+    "item_key": "charizarditey",
+    "name": "Charizardite Y",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Charizard, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Charizard, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "chesnaughtite": {
+    "item_key": "chesnaughtite",
+    "name": "Chesnaughtite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Chesnaught, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Chesnaught, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "chimechite": {
+    "item_key": "chimechite",
+    "name": "Chimechite",
+    "is_nonstandard": null,
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "chippedpot": {
+    "item_key": "chippedpot",
+    "name": "Chipped Pot",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Sinistea-Antique into Polteageist-Antique when used.",
+    "effect": "Evolves Sinistea-Antique into Polteageist-Antique when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "choiceband": {
+    "item_key": "choiceband",
+    "name": "Choice Band",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Attack is 1.5x, but it can only select the first move it executes.",
+    "effect": "Holder's Attack is 1.5x, but it can only select the first move it executes.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "choicespecs": {
+    "item_key": "choicespecs",
+    "name": "Choice Specs",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Sp. Atk is 1.5x, but it can only select the first move it executes.",
+    "effect": "Holder's Sp. Atk is 1.5x, but it can only select the first move it executes.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "clearamulet": {
+    "item_key": "clearamulet",
+    "name": "Clear Amulet",
+    "is_nonstandard": "Past",
+    "short_desc": "Prevents other Pokemon from lowering the holder's stat stages.",
+    "effect": "Prevents other Pokemon from lowering the holder's stat stages.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "clefablite": {
+    "item_key": "clefablite",
+    "name": "Clefablite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Clefable, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Clefable, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "cloversweet": {
+    "item_key": "cloversweet",
+    "name": "Clover Sweet",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Milcery into Alcremie when held and spun around.",
+    "effect": "Evolves Milcery into Alcremie when held and spun around.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "cornerstonemask": {
+    "item_key": "cornerstonemask",
+    "name": "Cornerstone Mask",
+    "is_nonstandard": "Past",
+    "short_desc": "Ogerpon-Cornerstone: 1.2x power attacks; Terastallize to gain Embody Aspect.",
+    "effect": "Ogerpon-Cornerstone: 1.2x power attacks; Terastallize to gain Embody Aspect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "covertcloak": {
+    "item_key": "covertcloak",
+    "name": "Covert Cloak",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder is not affected by the secondary effect of another Pokemon's attack.",
+    "effect": "The holder is not affected by the secondary effect of another Pokemon's attack. Attacks with secondary effects that are prevented include those with a chance (even 100%) to paralyze, sleep, freeze, burn, poison, confuse, cause the holder to flinch, cause the holder's stat stages to be lowered, as well as Anchor Shot, Eerie Spell, Fling, Psychic Noise, Salt Cure, Spirit Shackle, Syrup Bomb, and Throat Chop. The effect of Sparkling Aria is prevented if the holder is the only target. Secondary effects added by King's Rock, Razor Fang, and the Poison Touch, Stench, and Toxic Chain Abilities are also prevented against the holder.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "crabominite": {
+    "item_key": "crabominite",
+    "name": "Crabominite",
+    "is_nonstandard": null,
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "crackedpot": {
+    "item_key": "crackedpot",
+    "name": "Cracked Pot",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Sinistea into Polteageist when used.",
+    "effect": "Evolves Sinistea into Polteageist when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "custapberry": {
+    "item_key": "custapberry",
+    "name": "Custap Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder moves first in its priority bracket when at 1/4 max HP or less. Single use.",
+    "effect": "Holder moves first in its priority bracket when at 1/4 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "damprock": {
+    "item_key": "damprock",
+    "name": "Damp Rock",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's use of Rain Dance lasts 8 turns instead of 5.",
+    "effect": "Holder's use of Rain Dance lasts 8 turns instead of 5.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "darkranite": {
+    "item_key": "darkranite",
+    "name": "Darkranite",
+    "is_nonstandard": "Past",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "dawnstone": {
+    "item_key": "dawnstone",
+    "name": "Dawn Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves certain species of Pokemon when used.",
+    "effect": "Evolves male Kirlia into Gallade and female Snorunt into Froslass when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "delphoxite": {
+    "item_key": "delphoxite",
+    "name": "Delphoxite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Delphox, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Delphox, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "destinyknot": {
+    "item_key": "destinyknot",
+    "name": "Destiny Knot",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder becomes infatuated, the other Pokemon also becomes infatuated.",
+    "effect": "If holder becomes infatuated, the other Pokemon also becomes infatuated.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "diveball": {
+    "item_key": "diveball",
+    "name": "Dive Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball that works especially well on Pokemon that live underwater.",
+    "effect": "A Poke Ball that works especially well on Pokemon that live underwater.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "dracoplate": {
+    "item_key": "dracoplate",
+    "name": "Draco Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Dragon-type attacks have 1.2x power. Judgment is Dragon type.",
+    "effect": "Holder's Dragon-type attacks have 1.2x power. Judgment is Dragon type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "dragalgite": {
+    "item_key": "dragalgite",
+    "name": "Dragalgite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Dragalge, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Dragalge, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "dragoninite": {
+    "item_key": "dragoninite",
+    "name": "Dragoninite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Dragonite, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Dragonite, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "dragonscale": {
+    "item_key": "dragonscale",
+    "name": "Dragon Scale",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Seadra into Kingdra when traded.",
+    "effect": "Evolves Seadra into Kingdra when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "drampanite": {
+    "item_key": "drampanite",
+    "name": "Drampanite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Drampa, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Drampa, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "dreadplate": {
+    "item_key": "dreadplate",
+    "name": "Dread Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Dark-type attacks have 1.2x power. Judgment is Dark type.",
+    "effect": "Holder's Dark-type attacks have 1.2x power. Judgment is Dark type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "dreamball": {
+    "item_key": "dreamball",
+    "name": "Dream Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball that makes it easier to catch wild Pokémon while they're asleep.",
+    "effect": "A Poke Ball that makes it easier to catch wild Pokémon while they're asleep.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "dubiousdisc": {
+    "item_key": "dubiousdisc",
+    "name": "Dubious Disc",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Porygon2 into Porygon-Z when traded.",
+    "effect": "Evolves Porygon2 into Porygon-Z when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "duskball": {
+    "item_key": "duskball",
+    "name": "Dusk Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball that makes it easier to catch wild Pokemon at night or in caves.",
+    "effect": "A Poke Ball that makes it easier to catch wild Pokemon at night or in caves.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "duskstone": {
+    "item_key": "duskstone",
+    "name": "Dusk Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves certain species of Pokemon when used.",
+    "effect": "Evolves Murkrow into Honchkrow, Misdreavus into Mismagius, Lampent into Chandelure, and Doublade into Aegislash when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "earthplate": {
+    "item_key": "earthplate",
+    "name": "Earth Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Ground-type attacks have 1.2x power. Judgment is Ground type.",
+    "effect": "Holder's Ground-type attacks have 1.2x power. Judgment is Ground type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "eelektrossite": {
+    "item_key": "eelektrossite",
+    "name": "Eelektrossite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by an Eelektross, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Eelektross, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "ejectbutton": {
+    "item_key": "ejectbutton",
+    "name": "Eject Button",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder survives a hit, it immediately switches out to a chosen ally. Single use.",
+    "effect": "If holder survives a hit, it immediately switches out to a chosen ally. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "ejectpack": {
+    "item_key": "ejectpack",
+    "name": "Eject Pack",
+    "is_nonstandard": "Past",
+    "short_desc": "If the holder's stat stages are lowered, it switches to a chosen ally. Single use.",
+    "effect": "If the holder's stat stages are lowered, it switches to a chosen ally. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "electirizer": {
+    "item_key": "electirizer",
+    "name": "Electirizer",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Electabuzz into Electivire when traded.",
+    "effect": "Evolves Electabuzz into Electivire when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "electricseed": {
+    "item_key": "electricseed",
+    "name": "Electric Seed",
+    "is_nonstandard": "Past",
+    "short_desc": "If the terrain is Electric Terrain, raises holder's Defense by 1 stage. Single use.",
+    "effect": "If the terrain is Electric Terrain, raises holder's Defense by 1 stage. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "emboarite": {
+    "item_key": "emboarite",
+    "name": "Emboarite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Emboar, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Emboar, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "enigmaberry": {
+    "item_key": "enigmaberry",
+    "name": "Enigma Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Restores 1/4 max HP after holder is hit by a supereffective move. Single use.",
+    "effect": "Restores 1/4 max HP after holder is hit by a supereffective move. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "eviolite": {
+    "item_key": "eviolite",
+    "name": "Eviolite",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder's species can evolve, its Defense and Sp. Def are 1.5x.",
+    "effect": "If holder's species can evolve, its Defense and Sp. Def are 1.5x.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "excadrite": {
+    "item_key": "excadrite",
+    "name": "Excadrite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Excadrill, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Excadrill, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "expertbelt": {
+    "item_key": "expertbelt",
+    "name": "Expert Belt",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's attacks that are super effective against the target do 1.2x damage.",
+    "effect": "Holder's attacks that are super effective against the target do 1.2x damage.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "falinksite": {
+    "item_key": "falinksite",
+    "name": "Falinksite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Falinks, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Falinks, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "fastball": {
+    "item_key": "fastball",
+    "name": "Fast Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball that makes it easier to catch Pokemon which are quick to run away.",
+    "effect": "A Poke Ball that makes it easier to catch Pokemon which are quick to run away.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "feraligite": {
+    "item_key": "feraligite",
+    "name": "Feraligite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Feraligatr, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Feraligatr, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "figyberry": {
+    "item_key": "figyberry",
+    "name": "Figy Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -Atk Nature. Single use.",
+    "effect": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -Atk Nature. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "firestone": {
+    "item_key": "firestone",
+    "name": "Fire Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves certain species of Pokemon when used.",
+    "effect": "Evolves Vulpix into Ninetales, Growlithe into Arcanine, Eevee into Flareon, and Pansear into Simisear when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fistplate": {
+    "item_key": "fistplate",
+    "name": "Fist Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Fighting-type attacks have 1.2x power. Judgment is Fighting type.",
+    "effect": "Holder's Fighting-type attacks have 1.2x power. Judgment is Fighting type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "flameorb": {
+    "item_key": "flameorb",
+    "name": "Flame Orb",
+    "is_nonstandard": "Past",
+    "short_desc": "At the end of every turn, this item attempts to burn the holder.",
+    "effect": "At the end of every turn, this item attempts to burn the holder.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "flameplate": {
+    "item_key": "flameplate",
+    "name": "Flame Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Fire-type attacks have 1.2x power. Judgment is Fire type.",
+    "effect": "Holder's Fire-type attacks have 1.2x power. Judgment is Fire type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "floatstone": {
+    "item_key": "floatstone",
+    "name": "Float Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's weight is halved.",
+    "effect": "Holder's weight is halved.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "floettite": {
+    "item_key": "floettite",
+    "name": "Floettite",
+    "is_nonstandard": null,
+    "short_desc": "If held by an Eternal Flower Floette, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by an Eternal Flower Floette, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "flowersweet": {
+    "item_key": "flowersweet",
+    "name": "Flower Sweet",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Milcery into Alcremie when held and spun around.",
+    "effect": "Evolves Milcery into Alcremie when held and spun around.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "friendball": {
+    "item_key": "friendball",
+    "name": "Friend Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball that makes caught Pokemon more friendly.",
+    "effect": "A Poke Ball that makes caught Pokemon more friendly.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "froslassite": {
+    "item_key": "froslassite",
+    "name": "Froslassite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Froslass, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Froslass, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "galaricacuff": {
+    "item_key": "galaricacuff",
+    "name": "Galarica Cuff",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Galarian Slowpoke into Galarian Slowbro when used.",
+    "effect": "Evolves Galarian Slowpoke into Galarian Slowbro when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "galaricawreath": {
+    "item_key": "galaricawreath",
+    "name": "Galarica Wreath",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Galarian Slowpoke into Galarian Slowking when used.",
+    "effect": "Evolves Galarian Slowpoke into Galarian Slowking when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "galladite": {
+    "item_key": "galladite",
+    "name": "Galladite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Gallade, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Gallade, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "ganlonberry": {
+    "item_key": "ganlonberry",
+    "name": "Ganlon Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Defense by 1 stage when at 1/4 max HP or less. Single use.",
+    "effect": "Raises holder's Defense by 1 stage when at 1/4 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "garchompite": {
+    "item_key": "garchompite",
+    "name": "Garchompite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Garchomp, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Garchomp, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "gardevoirite": {
+    "item_key": "gardevoirite",
+    "name": "Gardevoirite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Gardevoir, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Gardevoir, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "gengarite": {
+    "item_key": "gengarite",
+    "name": "Gengarite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Gengar, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Gengar, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "glalitite": {
+    "item_key": "glalitite",
+    "name": "Glalitite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Glalie, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Glalie, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "glimmoranite": {
+    "item_key": "glimmoranite",
+    "name": "Glimmoranite",
+    "is_nonstandard": null,
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "goldbottlecap": {
+    "item_key": "goldbottlecap",
+    "name": "Gold Bottle Cap",
+    "is_nonstandard": "Past",
+    "short_desc": "Used for Hyper Training. All of a Pokemon's stats are calculated with an IV of 31.",
+    "effect": "Used for Hyper Training. All of a Pokemon's stats are calculated with an IV of 31.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "golisopite": {
+    "item_key": "golisopite",
+    "name": "Golisopite",
+    "is_nonstandard": "Past",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "golurkite": {
+    "item_key": "golurkite",
+    "name": "Golurkite",
+    "is_nonstandard": null,
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "grassyseed": {
+    "item_key": "grassyseed",
+    "name": "Grassy Seed",
+    "is_nonstandard": "Past",
+    "short_desc": "If the terrain is Grassy Terrain, raises holder's Defense by 1 stage. Single use.",
+    "effect": "If the terrain is Grassy Terrain, raises holder's Defense by 1 stage. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "greatball": {
+    "item_key": "greatball",
+    "name": "Great Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A high-performance Ball that provides a higher catch rate than a Poke Ball.",
+    "effect": "A high-performance Ball that provides a higher catch rate than a Poke Ball.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "greninjite": {
+    "item_key": "greninjite",
+    "name": "Greninjite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Greninja, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Greninja, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "grepaberry": {
+    "item_key": "grepaberry",
+    "name": "Grepa Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "gripclaw": {
+    "item_key": "gripclaw",
+    "name": "Grip Claw",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's partial-trapping moves always last 7 turns.",
+    "effect": "Holder's partial-trapping moves always last 7 turns.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "griseouscore": {
+    "item_key": "griseouscore",
+    "name": "Griseous Core",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Giratina, its Ghost- and Dragon-type attacks have 1.2x power.",
+    "effect": "If held by a Giratina, its Ghost- and Dragon-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "griseousorb": {
+    "item_key": "griseousorb",
+    "name": "Griseous Orb",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Giratina, its Ghost- and Dragon-type attacks have 1.2x power.",
+    "effect": "If held by a Giratina, its Ghost- and Dragon-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "gyaradosite": {
+    "item_key": "gyaradosite",
+    "name": "Gyaradosite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Gyarados, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Gyarados, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "hawluchanite": {
+    "item_key": "hawluchanite",
+    "name": "Hawluchanite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Hawlucha, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Hawlucha, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "healball": {
+    "item_key": "healball",
+    "name": "Heal Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A remedial Poke Ball that restores the caught Pokemon's HP and status problem.",
+    "effect": "A remedial Poke Ball that restores the caught Pokemon's HP and status problem.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "hearthflamemask": {
+    "item_key": "hearthflamemask",
+    "name": "Hearthflame Mask",
+    "is_nonstandard": "Past",
+    "short_desc": "Ogerpon-Hearthflame: 1.2x power attacks; Terastallize to gain Embody Aspect.",
+    "effect": "Ogerpon-Hearthflame: 1.2x power attacks; Terastallize to gain Embody Aspect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "heatranite": {
+    "item_key": "heatranite",
+    "name": "Heatranite",
+    "is_nonstandard": "Past",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "heatrock": {
+    "item_key": "heatrock",
+    "name": "Heat Rock",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's use of Sunny Day lasts 8 turns instead of 5.",
+    "effect": "Holder's use of Sunny Day lasts 8 turns instead of 5.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "heavyball": {
+    "item_key": "heavyball",
+    "name": "Heavy Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball for catching very heavy Pokemon.",
+    "effect": "A Poke Ball for catching very heavy Pokemon.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "heavydutyboots": {
+    "item_key": "heavydutyboots",
+    "name": "Heavy-Duty Boots",
+    "is_nonstandard": "Past",
+    "short_desc": "When switching in, the holder is unaffected by hazards on its side of the field.",
+    "effect": "When switching in, the holder is unaffected by hazards on its side of the field.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "heracronite": {
+    "item_key": "heracronite",
+    "name": "Heracronite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Heracross, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Heracross, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "hondewberry": {
+    "item_key": "hondewberry",
+    "name": "Hondew Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "houndoominite": {
+    "item_key": "houndoominite",
+    "name": "Houndoominite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Houndoom, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Houndoom, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "iapapaberry": {
+    "item_key": "iapapaberry",
+    "name": "Iapapa Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -Def Nature. Single use.",
+    "effect": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -Def Nature. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "icestone": {
+    "item_key": "icestone",
+    "name": "Ice Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves certain species of Pokemon when used.",
+    "effect": "Evolves Alolan Sandshrew into Alolan Sandslash, Alolan Vulpix into Alolan Ninetales, Eevee into Glaceon, and Galarian Darumaka into Galarian Darmanitan when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "icicleplate": {
+    "item_key": "icicleplate",
+    "name": "Icicle Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Ice-type attacks have 1.2x power. Judgment is Ice type.",
+    "effect": "Holder's Ice-type attacks have 1.2x power. Judgment is Ice type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "icyrock": {
+    "item_key": "icyrock",
+    "name": "Icy Rock",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's use of Snowscape lasts 8 turns instead of 5.",
+    "effect": "Holder's use of Snowscape lasts 8 turns instead of 5.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "insectplate": {
+    "item_key": "insectplate",
+    "name": "Insect Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Bug-type attacks have 1.2x power. Judgment is Bug type.",
+    "effect": "Holder's Bug-type attacks have 1.2x power. Judgment is Bug type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "ironball": {
+    "item_key": "ironball",
+    "name": "Iron Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder is grounded, Speed halved. If Flying type, takes neutral Ground damage.",
+    "effect": "Holder is grounded, Speed halved. If Flying type, takes neutral Ground damage.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "ironplate": {
+    "item_key": "ironplate",
+    "name": "Iron Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Steel-type attacks have 1.2x power. Judgment is Steel type.",
+    "effect": "Holder's Steel-type attacks have 1.2x power. Judgment is Steel type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "jabocaberry": {
+    "item_key": "jabocaberry",
+    "name": "Jaboca Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder is hit by a physical move, attacker loses 1/8 of its max HP. Single use.",
+    "effect": "If holder is hit by a physical move, attacker loses 1/8 of its max HP. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "kangaskhanite": {
+    "item_key": "kangaskhanite",
+    "name": "Kangaskhanite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Kangaskhan, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Kangaskhan, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "keeberry": {
+    "item_key": "keeberry",
+    "name": "Kee Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Defense by 1 stage after it is hit by a physical attack. Single use.",
+    "effect": "Raises holder's Defense by 1 stage after it is hit by a physical attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "kelpsyberry": {
+    "item_key": "kelpsyberry",
+    "name": "Kelpsy Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "laggingtail": {
+    "item_key": "laggingtail",
+    "name": "Lagging Tail",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder moves last in its priority bracket.",
+    "effect": "Holder moves last in its priority bracket.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lansatberry": {
+    "item_key": "lansatberry",
+    "name": "Lansat Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder gains the Focus Energy effect when at 1/4 max HP or less. Single use.",
+    "effect": "Holder gains the Focus Energy effect when at 1/4 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "leafstone": {
+    "item_key": "leafstone",
+    "name": "Leaf Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves certain species of Pokemon when used.",
+    "effect": "Evolves Gloom into Vileplume, Weepinbell into Victreebel, Exeggcute into Exeggutor or Alolan Exeggutor, Eevee into Leafeon, Nuzleaf into Shiftry, and Pansage into Simisage when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "levelball": {
+    "item_key": "levelball",
+    "name": "Level Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball for catching Pokemon that are a lower level than your own.",
+    "effect": "A Poke Ball for catching Pokemon that are a lower level than your own.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "liechiberry": {
+    "item_key": "liechiberry",
+    "name": "Liechi Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Attack by 1 stage when at 1/4 max HP or less. Single use.",
+    "effect": "Raises holder's Attack by 1 stage when at 1/4 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lifeorb": {
+    "item_key": "lifeorb",
+    "name": "Life Orb",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's attacks do 1.3x damage, and it loses 1/10 its max HP after the attack.",
+    "effect": "Holder's attacks do 1.3x damage, and it loses 1/10 its max HP after the attack.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lightclay": {
+    "item_key": "lightclay",
+    "name": "Light Clay",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's use of Aurora Veil, Light Screen, or Reflect lasts 8 turns instead of 5.",
+    "effect": "Holder's use of Aurora Veil, Light Screen, or Reflect lasts 8 turns instead of 5.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "loadeddice": {
+    "item_key": "loadeddice",
+    "name": "Loaded Dice",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's moves that hit 2-5 times hit 4-5 times; Population Bomb hits 4-10 times.",
+    "effect": "The holder's moves that normally hit 2 to 5 times instead hit 4 or 5 times. If the first hit is successful, the holder's use of Triple Kick or Triple Axel hits 3 times, and Population Bomb hits 4 to 10 times, at random.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lopunnite": {
+    "item_key": "lopunnite",
+    "name": "Lopunnite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Lopunny, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Lopunny, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "loveball": {
+    "item_key": "loveball",
+    "name": "Love Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "Poke Ball for catching Pokemon that are the opposite gender of your Pokemon.",
+    "effect": "Poke Ball for catching Pokemon that are the opposite gender of your Pokemon.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lovesweet": {
+    "item_key": "lovesweet",
+    "name": "Love Sweet",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Milcery into Alcremie when held and spun around.",
+    "effect": "Evolves Milcery into Alcremie when held and spun around.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lucarionite": {
+    "item_key": "lucarionite",
+    "name": "Lucarionite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Lucario, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Lucario, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "luminousmoss": {
+    "item_key": "luminousmoss",
+    "name": "Luminous Moss",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Sp. Def by 1 stage if hit by a Water-type attack. Single use.",
+    "effect": "Raises holder's Sp. Def by 1 stage if hit by a Water-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lureball": {
+    "item_key": "lureball",
+    "name": "Lure Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball for catching Pokemon hooked by a Rod when fishing.",
+    "effect": "A Poke Ball for catching Pokemon hooked by a Rod when fishing.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lustrousglobe": {
+    "item_key": "lustrousglobe",
+    "name": "Lustrous Globe",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Palkia, its Water- and Dragon-type attacks have 1.2x power.",
+    "effect": "If held by a Palkia, its Water- and Dragon-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lustrousorb": {
+    "item_key": "lustrousorb",
+    "name": "Lustrous Orb",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Palkia, its Water- and Dragon-type attacks have 1.2x power.",
+    "effect": "If held by a Palkia, its Water- and Dragon-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "luxuryball": {
+    "item_key": "luxuryball",
+    "name": "Luxury Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A comfortable Poke Ball that makes a caught wild Pokemon quickly grow friendly.",
+    "effect": "A comfortable Poke Ball that makes a caught wild Pokemon quickly grow friendly.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "magmarizer": {
+    "item_key": "magmarizer",
+    "name": "Magmarizer",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Magmar into Magmortar when traded.",
+    "effect": "Evolves Magmar into Magmortar when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "magoberry": {
+    "item_key": "magoberry",
+    "name": "Mago Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -Spe Nature. Single use.",
+    "effect": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -Spe Nature. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "maliciousarmor": {
+    "item_key": "maliciousarmor",
+    "name": "Malicious Armor",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Charcadet into Ceruledge when used.",
+    "effect": "Evolves Charcadet into Ceruledge when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "manectite": {
+    "item_key": "manectite",
+    "name": "Manectite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Manectric, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Manectric, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "marangaberry": {
+    "item_key": "marangaberry",
+    "name": "Maranga Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Sp. Def by 1 stage after it is hit by a special attack. Single use.",
+    "effect": "Raises holder's Sp. Def by 1 stage after it is hit by a special attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "masterball": {
+    "item_key": "masterball",
+    "name": "Master Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "The best Ball with the ultimate performance. It will catch any wild Pokemon.",
+    "effect": "The best Ball with the ultimate performance. It will catch any wild Pokemon.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "masterpieceteacup": {
+    "item_key": "masterpieceteacup",
+    "name": "Masterpiece Teacup",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Poltchageist-Artisan into Sinistcha-Masterpiece when used.",
+    "effect": "Evolves Poltchageist-Artisan into Sinistcha-Masterpiece when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "meadowplate": {
+    "item_key": "meadowplate",
+    "name": "Meadow Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Grass-type attacks have 1.2x power. Judgment is Grass type.",
+    "effect": "Holder's Grass-type attacks have 1.2x power. Judgment is Grass type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "medichamite": {
+    "item_key": "medichamite",
+    "name": "Medichamite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Medicham, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Medicham, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "meganiumite": {
+    "item_key": "meganiumite",
+    "name": "Meganiumite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Meganium, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Meganium, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "meowsticite": {
+    "item_key": "meowsticite",
+    "name": "Meowsticite",
+    "is_nonstandard": null,
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "metalalloy": {
+    "item_key": "metalalloy",
+    "name": "Metal Alloy",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Duraludon into Archaludon when used.",
+    "effect": "Evolves Duraludon into Archaludon when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "metronome": {
+    "item_key": "metronome",
+    "name": "Metronome",
+    "is_nonstandard": "Past",
+    "short_desc": "Damage of moves used on consecutive turns is increased. Max 2x after 5 turns.",
+    "effect": "Damage of moves used on consecutive turns is increased. Max 2x after 5 turns.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "micleberry": {
+    "item_key": "micleberry",
+    "name": "Micle Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's next move has 1.2x accuracy when at 1/4 max HP or less. Single use.",
+    "effect": "Holder's next move has 1.2x accuracy when at 1/4 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "mindplate": {
+    "item_key": "mindplate",
+    "name": "Mind Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Psychic-type attacks have 1.2x power. Judgment is Psychic type.",
+    "effect": "Holder's Psychic-type attacks have 1.2x power. Judgment is Psychic type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "mirrorherb": {
+    "item_key": "mirrorherb",
+    "name": "Mirror Herb",
+    "is_nonstandard": "Past",
+    "short_desc": "When an opposing Pokemon raises a stat stage, the holder copies it. Single use.",
+    "effect": "When an opposing Pokemon raises a stat stage, the holder copies it. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "mistyseed": {
+    "item_key": "mistyseed",
+    "name": "Misty Seed",
+    "is_nonstandard": "Past",
+    "short_desc": "If the terrain is Misty Terrain, raises holder's Sp. Def by 1 stage. Single use.",
+    "effect": "If the terrain is Misty Terrain, raises holder's Sp. Def by 1 stage. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "moonball": {
+    "item_key": "moonball",
+    "name": "Moon Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball for catching Pokemon that evolve using the Moon Stone.",
+    "effect": "A Poke Ball for catching Pokemon that evolve using the Moon Stone.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "moonstone": {
+    "item_key": "moonstone",
+    "name": "Moon Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves certain species of Pokemon when used.",
+    "effect": "Evolves Nidorina into Nidoqueen, Nidorino into Nidoking, Clefairy into Clefable, Jigglypuff into Wigglytuff, Skitty into Delcatty, and Munna into Musharna when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "muscleband": {
+    "item_key": "muscleband",
+    "name": "Muscle Band",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's physical attacks have 1.1x power.",
+    "effect": "Holder's physical attacks have 1.1x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "nestball": {
+    "item_key": "nestball",
+    "name": "Nest Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball that works especially well on weaker Pokemon in the wild.",
+    "effect": "A Poke Ball that works especially well on weaker Pokemon in the wild.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "netball": {
+    "item_key": "netball",
+    "name": "Net Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball that works especially well on Water- and Bug-type Pokemon.",
+    "effect": "A Poke Ball that works especially well on Water- and Bug-type Pokemon.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "normalgem": {
+    "item_key": "normalgem",
+    "name": "Normal Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Normal-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Normal-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "ovalstone": {
+    "item_key": "ovalstone",
+    "name": "Oval Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Happiny into Chansey when held and leveled up during the day.",
+    "effect": "Evolves Happiny into Chansey when held and leveled up during the day.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "parkball": {
+    "item_key": "parkball",
+    "name": "Park Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A special Poke Ball for the Pal Park.",
+    "effect": "A special Poke Ball for the Pal Park.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "petayaberry": {
+    "item_key": "petayaberry",
+    "name": "Petaya Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Sp. Atk by 1 stage when at 1/4 max HP or less. Single use.",
+    "effect": "Raises holder's Sp. Atk by 1 stage when at 1/4 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "pidgeotite": {
+    "item_key": "pidgeotite",
+    "name": "Pidgeotite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Pidgeot, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Pidgeot, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "pinsirite": {
+    "item_key": "pinsirite",
+    "name": "Pinsirite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Pinsir, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Pinsir, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "pixieplate": {
+    "item_key": "pixieplate",
+    "name": "Pixie Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Fairy-type attacks have 1.2x power. Judgment is Fairy type.",
+    "effect": "Holder's Fairy-type attacks have 1.2x power. Judgment is Fairy type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "pokeball": {
+    "item_key": "pokeball",
+    "name": "Poke Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A device for catching wild Pokemon. It is designed as a capsule system.",
+    "effect": "A device for catching wild Pokemon. It is designed as a capsule system.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "pomegberry": {
+    "item_key": "pomegberry",
+    "name": "Pomeg Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "poweranklet": {
+    "item_key": "poweranklet",
+    "name": "Power Anklet",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "effect": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "powerband": {
+    "item_key": "powerband",
+    "name": "Power Band",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "effect": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "powerbelt": {
+    "item_key": "powerbelt",
+    "name": "Power Belt",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "effect": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "powerbracer": {
+    "item_key": "powerbracer",
+    "name": "Power Bracer",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "effect": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "powerherb": {
+    "item_key": "powerherb",
+    "name": "Power Herb",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's two-turn moves complete in one turn (except Sky Drop). Single use.",
+    "effect": "Holder's two-turn moves complete in one turn (except Sky Drop). Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "powerlens": {
+    "item_key": "powerlens",
+    "name": "Power Lens",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "effect": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "powerweight": {
+    "item_key": "powerweight",
+    "name": "Power Weight",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "effect": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "premierball": {
+    "item_key": "premierball",
+    "name": "Premier Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A rare Poke Ball that has been crafted to commemorate an event.",
+    "effect": "A rare Poke Ball that has been crafted to commemorate an event.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "prettyfeather": {
+    "item_key": "prettyfeather",
+    "name": "Pretty Feather",
+    "is_nonstandard": "Past",
+    "short_desc": "Though this feather is beautiful, it's just a regular feather and has no effect.",
+    "effect": "Though this feather is beautiful, it's just a regular feather and has no effect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "prismscale": {
+    "item_key": "prismscale",
+    "name": "Prism Scale",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Feebas into Milotic when traded.",
+    "effect": "Evolves Feebas into Milotic when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "protectivepads": {
+    "item_key": "protectivepads",
+    "name": "Protective Pads",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's moves are protected from adverse contact effects, except Pickpocket.",
+    "effect": "Holder's moves are protected from adverse contact effects, except Pickpocket.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "protector": {
+    "item_key": "protector",
+    "name": "Protector",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Rhydon into Rhyperior when traded.",
+    "effect": "Evolves Rhydon into Rhyperior when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "psychicseed": {
+    "item_key": "psychicseed",
+    "name": "Psychic Seed",
+    "is_nonstandard": "Past",
+    "short_desc": "If the terrain is Psychic Terrain, raises holder's Sp. Def by 1 stage. Single use.",
+    "effect": "If the terrain is Psychic Terrain, raises holder's Sp. Def by 1 stage. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "punchingglove": {
+    "item_key": "punchingglove",
+    "name": "Punching Glove",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's punch-based attacks have 1.1x power and do not make contact.",
+    "effect": "Holder's punch-based attacks have 1.1x power and do not make contact.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "qualotberry": {
+    "item_key": "qualotberry",
+    "name": "Qualot Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "quickball": {
+    "item_key": "quickball",
+    "name": "Quick Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball that provides a better catch rate at the start of a wild encounter.",
+    "effect": "A Poke Ball that provides a better catch rate at the start of a wild encounter.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rarebone": {
+    "item_key": "rarebone",
+    "name": "Rare Bone",
+    "is_nonstandard": "Past",
+    "short_desc": "No competitive use other than when used with Fling.",
+    "effect": "No competitive use other than when used with Fling.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "razorclaw": {
+    "item_key": "razorclaw",
+    "name": "Razor Claw",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's critical hit ratio is raised by 1 stage.",
+    "effect": "Holder's critical hit ratio is raised by 1 stage. Evolves Sneasel into Weavile when held and leveled up during the night.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "razorfang": {
+    "item_key": "razorfang",
+    "name": "Razor Fang",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's attacks without a chance to flinch gain a 10% chance to flinch.",
+    "effect": "Holder's attacks without a chance to make the target flinch gain a 10% chance to make the target flinch. Evolves Gligar into Gliscor when held and leveled up during the night.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "reapercloth": {
+    "item_key": "reapercloth",
+    "name": "Reaper Cloth",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Dusclops into Dusknoir when traded.",
+    "effect": "Evolves Dusclops into Dusknoir when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "redcard": {
+    "item_key": "redcard",
+    "name": "Red Card",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder survives a hit, attacker is forced to switch to a random ally. Single use.",
+    "effect": "If holder survives a hit, attacker is forced to switch to a random ally. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "repeatball": {
+    "item_key": "repeatball",
+    "name": "Repeat Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball that works well on Pokemon species that were previously caught.",
+    "effect": "A Poke Ball that works well on Pokemon species that were previously caught.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "ribbonsweet": {
+    "item_key": "ribbonsweet",
+    "name": "Ribbon Sweet",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Milcery into Alcremie when held and spun around.",
+    "effect": "Evolves Milcery into Alcremie when held and spun around.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "ringtarget": {
+    "item_key": "ringtarget",
+    "name": "Ring Target",
+    "is_nonstandard": "Past",
+    "short_desc": "The holder's type immunities granted solely by its typing are negated.",
+    "effect": "The holder's type immunities granted solely by its typing are negated.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rockyhelmet": {
+    "item_key": "rockyhelmet",
+    "name": "Rocky Helmet",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder is hit by a contact move, the attacker loses 1/6 of its max HP.",
+    "effect": "If holder is hit by a contact move, the attacker loses 1/6 of its max HP.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "roomservice": {
+    "item_key": "roomservice",
+    "name": "Room Service",
+    "is_nonstandard": "Past",
+    "short_desc": "If Trick Room is active, the holder's Speed is lowered by 1 stage. Single use.",
+    "effect": "If Trick Room is active, the holder's Speed is lowered by 1 stage. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rowapberry": {
+    "item_key": "rowapberry",
+    "name": "Rowap Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder is hit by a special move, attacker loses 1/8 of its max HP. Single use.",
+    "effect": "If holder is hit by a special move, attacker loses 1/8 of its max HP. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rustedshield": {
+    "item_key": "rustedshield",
+    "name": "Rusted Shield",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Zamazenta, this item changes its forme to Crowned Shield.",
+    "effect": "If held by a Zamazenta, this item changes its forme to Crowned Shield.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rustedsword": {
+    "item_key": "rustedsword",
+    "name": "Rusted Sword",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Zacian, this item changes its forme to Crowned Sword.",
+    "effect": "If held by a Zacian, this item changes its forme to Crowned Sword.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "sablenite": {
+    "item_key": "sablenite",
+    "name": "Sablenite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Sableye, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Sableye, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "safariball": {
+    "item_key": "safariball",
+    "name": "Safari Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A special Poke Ball that is used only in the Safari Zone and Great Marsh.",
+    "effect": "A special Poke Ball that is used only in the Safari Zone and Great Marsh.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "safetygoggles": {
+    "item_key": "safetygoggles",
+    "name": "Safety Goggles",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder is immune to powder moves and damage from Sandstorm or Hail.",
+    "effect": "Holder is immune to powder moves and damage from Sandstorm or Hail.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "salacberry": {
+    "item_key": "salacberry",
+    "name": "Salac Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Speed by 1 stage when at 1/4 max HP or less. Single use.",
+    "effect": "Raises holder's Speed by 1 stage when at 1/4 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "scizorite": {
+    "item_key": "scizorite",
+    "name": "Scizorite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Scizor, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Scizor, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "scovillainite": {
+    "item_key": "scovillainite",
+    "name": "Scovillainite",
+    "is_nonstandard": null,
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "sharpedonite": {
+    "item_key": "sharpedonite",
+    "name": "Sharpedonite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Sharpedo, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Sharpedo, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "shedshell": {
+    "item_key": "shedshell",
+    "name": "Shed Shell",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder cannot be prevented from choosing to switch out by any effect.",
+    "effect": "Holder cannot be prevented from choosing to switch out by any effect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "shinystone": {
+    "item_key": "shinystone",
+    "name": "Shiny Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves certain species of Pokemon when used.",
+    "effect": "Evolves Togetic into Togekiss, Roselia into Roserade, Minccino into Cinccino, and Floette into Florges when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "skarmorite": {
+    "item_key": "skarmorite",
+    "name": "Skarmorite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Skarmory, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Skarmory, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "skyplate": {
+    "item_key": "skyplate",
+    "name": "Sky Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Flying-type attacks have 1.2x power. Judgment is Flying type.",
+    "effect": "Holder's Flying-type attacks have 1.2x power. Judgment is Flying type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "slowbronite": {
+    "item_key": "slowbronite",
+    "name": "Slowbronite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Slowbro, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Slowbro, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "smoothrock": {
+    "item_key": "smoothrock",
+    "name": "Smooth Rock",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's use of Sandstorm lasts 8 turns instead of 5.",
+    "effect": "Holder's use of Sandstorm lasts 8 turns instead of 5.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "snowball": {
+    "item_key": "snowball",
+    "name": "Snowball",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Attack by 1 if hit by an Ice-type attack. Single use.",
+    "effect": "Raises holder's Attack by 1 if hit by an Ice-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "souldew": {
+    "item_key": "souldew",
+    "name": "Soul Dew",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Latias/Latios, its Dragon- and Psychic-type moves have 1.2x power.",
+    "effect": "If held by a Latias/Latios, its Dragon- and Psychic-type moves have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "spelltag": {
+    "item_key": "spelltag",
+    "name": "Spell Tag",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Ghost-type attacks have 1.2x power.",
+    "effect": "Holder's Ghost-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "splashplate": {
+    "item_key": "splashplate",
+    "name": "Splash Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Water-type attacks have 1.2x power. Judgment is Water type.",
+    "effect": "Holder's Water-type attacks have 1.2x power. Judgment is Water type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "spookyplate": {
+    "item_key": "spookyplate",
+    "name": "Spooky Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Ghost-type attacks have 1.2x power. Judgment is Ghost type.",
+    "effect": "Holder's Ghost-type attacks have 1.2x power. Judgment is Ghost type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "sportball": {
+    "item_key": "sportball",
+    "name": "Sport Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A special Poke Ball for the Bug-Catching Contest.",
+    "effect": "A special Poke Ball for the Bug-Catching Contest.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "starfberry": {
+    "item_key": "starfberry",
+    "name": "Starf Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises a random stat by 2 when at 1/4 max HP or less (not acc/eva). Single use.",
+    "effect": "Raises a random stat by 2 when at 1/4 max HP or less (not acc/eva). Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "starminite": {
+    "item_key": "starminite",
+    "name": "Starminite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Starmie, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Starmie, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "starsweet": {
+    "item_key": "starsweet",
+    "name": "Star Sweet",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Milcery into Alcremie when held and spun around.",
+    "effect": "Evolves Milcery into Alcremie when held and spun around.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "steelixite": {
+    "item_key": "steelixite",
+    "name": "Steelixite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Steelix, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Steelix, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "stickybarb": {
+    "item_key": "stickybarb",
+    "name": "Sticky Barb",
+    "is_nonstandard": "Past",
+    "short_desc": "Each turn, holder loses 1/8 max HP. An attacker making contact can receive it.",
+    "effect": "Each turn, holder loses 1/8 max HP. An attacker making contact can receive it.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "stoneplate": {
+    "item_key": "stoneplate",
+    "name": "Stone Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Rock-type attacks have 1.2x power. Judgment is Rock type.",
+    "effect": "Holder's Rock-type attacks have 1.2x power. Judgment is Rock type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "strangeball": {
+    "item_key": "strangeball",
+    "name": "Strange Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "Placeholder if caught in Poke Ball not in current game.",
+    "effect": "Placeholder if caught in Poke Ball not in current game.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "strawberrysweet": {
+    "item_key": "strawberrysweet",
+    "name": "Strawberry Sweet",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Milcery into Alcremie when held and spun around.",
+    "effect": "Evolves Milcery into Alcremie when held and spun around.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "sunstone": {
+    "item_key": "sunstone",
+    "name": "Sun Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves certain species of Pokemon when used.",
+    "effect": "Evolves Gloom into Bellossom, Sunkern into Sunflora, Cottonee into Whimsicott, Petilil into Lilligant, and Helioptile into Heliolisk when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "sweetapple": {
+    "item_key": "sweetapple",
+    "name": "Sweet Apple",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Applin into Appletun when used.",
+    "effect": "Evolves Applin into Appletun when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "syrupyapple": {
+    "item_key": "syrupyapple",
+    "name": "Syrupy Apple",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Applin into Dipplin when used.",
+    "effect": "Evolves Applin into Dipplin when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tamatoberry": {
+    "item_key": "tamatoberry",
+    "name": "Tamato Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tartapple": {
+    "item_key": "tartapple",
+    "name": "Tart Apple",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Applin into Flapple when used.",
+    "effect": "Evolves Applin into Flapple when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "terrainextender": {
+    "item_key": "terrainextender",
+    "name": "Terrain Extender",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's use of Electric/Grassy/Misty/Psychic Terrain lasts 8 turns instead of 5.",
+    "effect": "Holder's use of Electric/Grassy/Misty/Psychic Terrain lasts 8 turns instead of 5.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "throatspray": {
+    "item_key": "throatspray",
+    "name": "Throat Spray",
+    "is_nonstandard": "Past",
+    "short_desc": "Raises holder's Special Attack by 1 stage after it uses a sound move. Single use.",
+    "effect": "Raises holder's Special Attack by 1 stage after it uses a sound move. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "thunderstone": {
+    "item_key": "thunderstone",
+    "name": "Thunder Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves certain species of Pokemon when used.",
+    "effect": "Evolves Pikachu into Raichu or Alolan Raichu, Eevee into Jolteon, Eelektrik into Eelektross, and Charjabug into Vikavolt when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "timerball": {
+    "item_key": "timerball",
+    "name": "Timer Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "A Poke Ball that becomes better the more turns there are in a battle.",
+    "effect": "A Poke Ball that becomes better the more turns there are in a battle.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "toxicorb": {
+    "item_key": "toxicorb",
+    "name": "Toxic Orb",
+    "is_nonstandard": "Past",
+    "short_desc": "At the end of every turn, this item attempts to badly poison the holder.",
+    "effect": "At the end of every turn, this item attempts to badly poison the holder.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "toxicplate": {
+    "item_key": "toxicplate",
+    "name": "Toxic Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Poison-type attacks have 1.2x power. Judgment is Poison type.",
+    "effect": "Holder's Poison-type attacks have 1.2x power. Judgment is Poison type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tyranitarite": {
+    "item_key": "tyranitarite",
+    "name": "Tyranitarite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Tyranitar, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Tyranitar, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "ultraball": {
+    "item_key": "ultraball",
+    "name": "Ultra Ball",
+    "is_nonstandard": "Past",
+    "short_desc": "An ultra-performance Ball that provides a higher catch rate than a Great Ball.",
+    "effect": "An ultra-performance Ball that provides a higher catch rate than a Great Ball.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "unremarkableteacup": {
+    "item_key": "unremarkableteacup",
+    "name": "Unremarkable Teacup",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Poltchageist into Sinistcha when used.",
+    "effect": "Evolves Poltchageist into Sinistcha when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "upgrade": {
+    "item_key": "upgrade",
+    "name": "Up-Grade",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Porygon into Porygon2 when traded.",
+    "effect": "Evolves Porygon into Porygon2 when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "utilityumbrella": {
+    "item_key": "utilityumbrella",
+    "name": "Utility Umbrella",
+    "is_nonstandard": "Past",
+    "short_desc": "The holder ignores rain- and sun-based effects.",
+    "effect": "The holder ignores rain- and sun-based effects, including those of its Ability unless it is Orichalcum Pulse or Protosynthesis. Damage and accuracy calculations from attacks used by the holder are affected by rain and sun, but not attacks used against the holder.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "venusaurite": {
+    "item_key": "venusaurite",
+    "name": "Venusaurite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Venusaur, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Venusaur, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "victreebelite": {
+    "item_key": "victreebelite",
+    "name": "Victreebelite",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Victreebel, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Victreebel, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "waterstone": {
+    "item_key": "waterstone",
+    "name": "Water Stone",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves certain species of Pokemon when used.",
+    "effect": "Evolves Poliwhirl into Poliwrath, Shellder into Cloyster, Staryu into Starmie, Eevee into Vaporeon, Lombre into Ludicolo, and Panpour into Simipour when used.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "weaknesspolicy": {
+    "item_key": "weaknesspolicy",
+    "name": "Weakness Policy",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder is hit super effectively, raises Attack, Sp. Atk by 2 stages. Single use.",
+    "effect": "If holder is hit super effectively, raises Attack, Sp. Atk by 2 stages. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "wellspringmask": {
+    "item_key": "wellspringmask",
+    "name": "Wellspring Mask",
+    "is_nonstandard": "Past",
+    "short_desc": "Ogerpon-Wellspring: 1.2x power attacks; Terastallize to gain Embody Aspect.",
+    "effect": "Ogerpon-Wellspring: 1.2x power attacks; Terastallize to gain Embody Aspect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "whiteherb": {
+    "item_key": "whiteherb",
+    "name": "White Herb",
+    "is_nonstandard": null,
+    "short_desc": "Restores all lowered stat stages to 0 when one is less than 0. Single use.",
+    "effect": "Restores all lowered stat stages to 0 when one is less than 0. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "widelens": {
+    "item_key": "widelens",
+    "name": "Wide Lens",
+    "is_nonstandard": "Past",
+    "short_desc": "The accuracy of attacks by the holder is 1.1x.",
+    "effect": "The accuracy of attacks by the holder is 1.1x.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "wikiberry": {
+    "item_key": "wikiberry",
+    "name": "Wiki Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -SpA Nature. Single use.",
+    "effect": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -SpA Nature. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "wiseglasses": {
+    "item_key": "wiseglasses",
+    "name": "Wise Glasses",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's special attacks have 1.1x power.",
+    "effect": "Holder's special attacks have 1.1x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "zapplate": {
+    "item_key": "zapplate",
+    "name": "Zap Plate",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Electric-type attacks have 1.2x power. Judgment is Electric type.",
+    "effect": "Holder's Electric-type attacks have 1.2x power. Judgment is Electric type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "zoomlens": {
+    "item_key": "zoomlens",
+    "name": "Zoom Lens",
+    "is_nonstandard": "Past",
+    "short_desc": "The accuracy of attacks by the holder is 1.2x if it moves after its target.",
+    "effect": "The accuracy of attacks by the holder is 1.2x if it moves after its target.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "absolitez": {
+    "item_key": "absolitez",
+    "name": "Absolite Z",
+    "is_nonstandard": "Future",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "aloraichiumz": {
+    "item_key": "aloraichiumz",
+    "name": "Aloraichium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by an Alolan Raichu with Thunderbolt, it can use Stoked Sparksurfer.",
+    "effect": "If held by an Alolan Raichu with Thunderbolt, it can use Stoked Sparksurfer.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "armorfossil": {
+    "item_key": "armorfossil",
+    "name": "Armor Fossil",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Shieldon.",
+    "effect": "Can be revived into Shieldon.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "aspearberry": {
+    "item_key": "aspearberry",
+    "name": "Aspear Berry",
+    "is_nonstandard": null,
+    "short_desc": "Holder is cured if it is frozen. Single use.",
+    "effect": "Holder is cured if it is frozen. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "babiriberry": {
+    "item_key": "babiriberry",
+    "name": "Babiri Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Steel-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Steel-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "barbaracite": {
+    "item_key": "barbaracite",
+    "name": "Barbaracite",
+    "is_nonstandard": "Future",
+    "short_desc": "If held by a Barbaracle, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Barbaracle, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "baxcalibrite": {
+    "item_key": "baxcalibrite",
+    "name": "Baxcalibrite",
+    "is_nonstandard": "Future",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "belueberry": {
+    "item_key": "belueberry",
+    "name": "Belue Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "berryjuice": {
+    "item_key": "berryjuice",
+    "name": "Berry Juice",
+    "is_nonstandard": "Past",
+    "short_desc": "Restores 20 HP when at 1/2 max HP or less. Single use.",
+    "effect": "Restores 20 HP when at 1/2 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "blackbelt": {
+    "item_key": "blackbelt",
+    "name": "Black Belt",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Fighting-type attacks have 1.2x power.",
+    "effect": "Holder's Fighting-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "blackglasses": {
+    "item_key": "blackglasses",
+    "name": "Black Glasses",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Dark-type attacks have 1.2x power.",
+    "effect": "Holder's Dark-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "blazikenite": {
+    "item_key": "blazikenite",
+    "name": "Blazikenite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Blaziken, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Blaziken, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "blueorb": {
+    "item_key": "blueorb",
+    "name": "Blue Orb",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Kyogre, this item triggers its Primal Reversion in battle.",
+    "effect": "If held by a Kyogre, this item triggers its Primal Reversion in battle.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "blukberry": {
+    "item_key": "blukberry",
+    "name": "Bluk Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "brightpowder": {
+    "item_key": "brightpowder",
+    "name": "Bright Powder",
+    "is_nonstandard": null,
+    "short_desc": "The accuracy of attacks against the holder is 0.9x.",
+    "effect": "The accuracy of attacks against the holder is 0.9x.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "buggem": {
+    "item_key": "buggem",
+    "name": "Bug Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Bug-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Bug-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "buginiumz": {
+    "item_key": "buginiumz",
+    "name": "Buginium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Bug move, this item allows it to use a Bug Z-Move.",
+    "effect": "If holder has a Bug move, this item allows it to use a Bug Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "bugmemory": {
+    "item_key": "bugmemory",
+    "name": "Bug Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Bug type.",
+    "effect": "Holder's Multi-Attack is Bug type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "burndrive": {
+    "item_key": "burndrive",
+    "name": "Burn Drive",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Techno Blast is Fire type.",
+    "effect": "Holder's Techno Blast is Fire type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "charcoal": {
+    "item_key": "charcoal",
+    "name": "Charcoal",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Fire-type attacks have 1.2x power.",
+    "effect": "Holder's Fire-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "chartiberry": {
+    "item_key": "chartiberry",
+    "name": "Charti Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Rock-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Rock-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "cheriberry": {
+    "item_key": "cheriberry",
+    "name": "Cheri Berry",
+    "is_nonstandard": null,
+    "short_desc": "Holder cures itself if it is paralyzed. Single use.",
+    "effect": "Holder cures itself if it is paralyzed. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "cherishball": {
+    "item_key": "cherishball",
+    "name": "Cherish Ball",
+    "is_nonstandard": "Unobtainable",
+    "short_desc": "A rare Poke Ball that has been crafted to commemorate an occasion.",
+    "effect": "A rare Poke Ball that has been crafted to commemorate an occasion.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "chestoberry": {
+    "item_key": "chestoberry",
+    "name": "Chesto Berry",
+    "is_nonstandard": null,
+    "short_desc": "Holder wakes up if it is asleep. Single use.",
+    "effect": "Holder wakes up if it is asleep. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "chilanberry": {
+    "item_key": "chilanberry",
+    "name": "Chilan Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a Normal-type attack. Single use.",
+    "effect": "Halves damage taken from a Normal-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "chilldrive": {
+    "item_key": "chilldrive",
+    "name": "Chill Drive",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Techno Blast is Ice type.",
+    "effect": "Holder's Techno Blast is Ice type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "choicescarf": {
+    "item_key": "choicescarf",
+    "name": "Choice Scarf",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Speed is 1.5x, but it can only select the first move it executes.",
+    "effect": "Holder's Speed is 1.5x, but it can only select the first move it executes.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "chopleberry": {
+    "item_key": "chopleberry",
+    "name": "Chople Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Fighting-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Fighting-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "clawfossil": {
+    "item_key": "clawfossil",
+    "name": "Claw Fossil",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Anorith.",
+    "effect": "Can be revived into Anorith.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "cobaberry": {
+    "item_key": "cobaberry",
+    "name": "Coba Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Flying-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Flying-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "colburberry": {
+    "item_key": "colburberry",
+    "name": "Colbur Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Dark-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Dark-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "cornnberry": {
+    "item_key": "cornnberry",
+    "name": "Cornn Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "coverfossil": {
+    "item_key": "coverfossil",
+    "name": "Cover Fossil",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Tirtouga.",
+    "effect": "Can be revived into Tirtouga.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "darkgem": {
+    "item_key": "darkgem",
+    "name": "Dark Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Dark-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Dark-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "darkiniumz": {
+    "item_key": "darkiniumz",
+    "name": "Darkinium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Dark move, this item allows it to use a Dark Z-Move.",
+    "effect": "If holder has a Dark move, this item allows it to use a Dark Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "darkmemory": {
+    "item_key": "darkmemory",
+    "name": "Dark Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Dark type.",
+    "effect": "Holder's Multi-Attack is Dark type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "decidiumz": {
+    "item_key": "decidiumz",
+    "name": "Decidium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Decidueye with Spirit Shackle, it can use Sinister Arrow Raid.",
+    "effect": "If held by a Decidueye with Spirit Shackle, it can use Sinister Arrow Raid.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "deepseascale": {
+    "item_key": "deepseascale",
+    "name": "Deep Sea Scale",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Clamperl, its Sp. Def is doubled.",
+    "effect": "If held by a Clamperl, its Sp. Def is doubled. Evolves Clamperl into Gorebyss when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "deepseatooth": {
+    "item_key": "deepseatooth",
+    "name": "Deep Sea Tooth",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Clamperl, its Sp. Atk is doubled.",
+    "effect": "If held by a Clamperl, its Sp. Atk is doubled. Evolves Clamperl into Huntail when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "diancite": {
+    "item_key": "diancite",
+    "name": "Diancite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Diancie, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Diancie, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "domefossil": {
+    "item_key": "domefossil",
+    "name": "Dome Fossil",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Kabuto.",
+    "effect": "Can be revived into Kabuto.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "dousedrive": {
+    "item_key": "dousedrive",
+    "name": "Douse Drive",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Techno Blast is Water type.",
+    "effect": "Holder's Techno Blast is Water type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "dragonfang": {
+    "item_key": "dragonfang",
+    "name": "Dragon Fang",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Dragon-type attacks have 1.2x power.",
+    "effect": "Holder's Dragon-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "dragongem": {
+    "item_key": "dragongem",
+    "name": "Dragon Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Dragon-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Dragon-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "dragoniumz": {
+    "item_key": "dragoniumz",
+    "name": "Dragonium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Dragon move, this item allows it to use a Dragon Z-Move.",
+    "effect": "If holder has a Dragon move, this item allows it to use a Dragon Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "dragonmemory": {
+    "item_key": "dragonmemory",
+    "name": "Dragon Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Dragon type.",
+    "effect": "Holder's Multi-Attack is Dragon type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "durinberry": {
+    "item_key": "durinberry",
+    "name": "Durin Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "eeviumz": {
+    "item_key": "eeviumz",
+    "name": "Eevium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by an Eevee with Last Resort, it can use Extreme Evoboost.",
+    "effect": "If held by an Eevee with Last Resort, it can use Extreme Evoboost.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "electricgem": {
+    "item_key": "electricgem",
+    "name": "Electric Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Electric-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Electric-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "electricmemory": {
+    "item_key": "electricmemory",
+    "name": "Electric Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Electric type.",
+    "effect": "Holder's Multi-Attack is Electric type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "electriumz": {
+    "item_key": "electriumz",
+    "name": "Electrium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has an Electric move, this item allows it to use an Electric Z-Move.",
+    "effect": "If holder has an Electric move, this item allows it to use an Electric Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fairiumz": {
+    "item_key": "fairiumz",
+    "name": "Fairium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Fairy move, this item allows it to use a Fairy Z-Move.",
+    "effect": "If holder has a Fairy move, this item allows it to use a Fairy Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fairyfeather": {
+    "item_key": "fairyfeather",
+    "name": "Fairy Feather",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Fairy-type attacks have 1.2x power.",
+    "effect": "Holder's Fairy-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fairygem": {
+    "item_key": "fairygem",
+    "name": "Fairy Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Fairy-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Fairy-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fairymemory": {
+    "item_key": "fairymemory",
+    "name": "Fairy Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Fairy type.",
+    "effect": "Holder's Multi-Attack is Fairy type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fightinggem": {
+    "item_key": "fightinggem",
+    "name": "Fighting Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Fighting-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Fighting-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fightingmemory": {
+    "item_key": "fightingmemory",
+    "name": "Fighting Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Fighting type.",
+    "effect": "Holder's Multi-Attack is Fighting type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fightiniumz": {
+    "item_key": "fightiniumz",
+    "name": "Fightinium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Fighting move, this item allows it to use a Fighting Z-Move.",
+    "effect": "If holder has a Fighting move, this item allows it to use a Fighting Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "firegem": {
+    "item_key": "firegem",
+    "name": "Fire Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Fire-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Fire-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "firememory": {
+    "item_key": "firememory",
+    "name": "Fire Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Fire type.",
+    "effect": "Holder's Multi-Attack is Fire type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "firiumz": {
+    "item_key": "firiumz",
+    "name": "Firium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Fire move, this item allows it to use a Fire Z-Move.",
+    "effect": "If holder has a Fire move, this item allows it to use a Fire Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "flyinggem": {
+    "item_key": "flyinggem",
+    "name": "Flying Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Flying-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Flying-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "flyingmemory": {
+    "item_key": "flyingmemory",
+    "name": "Flying Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Flying type.",
+    "effect": "Holder's Multi-Attack is Flying type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "flyiniumz": {
+    "item_key": "flyiniumz",
+    "name": "Flyinium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Flying move, this item allows it to use a Flying Z-Move.",
+    "effect": "If holder has a Flying move, this item allows it to use a Flying Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "focusband": {
+    "item_key": "focusband",
+    "name": "Focus Band",
+    "is_nonstandard": null,
+    "short_desc": "Holder has a 10% chance to survive an attack that would KO it with 1 HP.",
+    "effect": "Holder has a 10% chance to survive an attack that would KO it with 1 HP.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "focussash": {
+    "item_key": "focussash",
+    "name": "Focus Sash",
+    "is_nonstandard": null,
+    "short_desc": "If holder's HP is full, will survive an attack that would KO it with 1 HP. Single use.",
+    "effect": "If holder's HP is full, will survive an attack that would KO it with 1 HP. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fossilizedbird": {
+    "item_key": "fossilizedbird",
+    "name": "Fossilized Bird",
+    "is_nonstandard": "Past",
+    "short_desc": "Can revive into Dracozolt with Fossilized Drake or Arctozolt with Fossilized Dino.",
+    "effect": "Can revive into Dracozolt with Fossilized Drake or Arctozolt with Fossilized Dino.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fossilizeddino": {
+    "item_key": "fossilizeddino",
+    "name": "Fossilized Dino",
+    "is_nonstandard": "Past",
+    "short_desc": "Can revive into Arctovish with Fossilized Fish or Arctozolt with Fossilized Bird.",
+    "effect": "Can revive into Arctovish with Fossilized Fish or Arctozolt with Fossilized Bird.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fossilizeddrake": {
+    "item_key": "fossilizeddrake",
+    "name": "Fossilized Drake",
+    "is_nonstandard": "Past",
+    "short_desc": "Can revive into Dracozolt with Fossilized Bird or Dracovish with Fossilized Fish.",
+    "effect": "Can revive into Dracozolt with Fossilized Bird or Dracovish with Fossilized Fish.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fossilizedfish": {
+    "item_key": "fossilizedfish",
+    "name": "Fossilized Fish",
+    "is_nonstandard": "Past",
+    "short_desc": "Can revive into Dracovish with Fossilized Drake or Arctovish with Fossilized Dino.",
+    "effect": "Can revive into Dracovish with Fossilized Drake or Arctovish with Fossilized Dino.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "fullincense": {
+    "item_key": "fullincense",
+    "name": "Full Incense",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder moves last in its priority bracket.",
+    "effect": "Holder moves last in its priority bracket.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "garchompitez": {
+    "item_key": "garchompitez",
+    "name": "Garchompite Z",
+    "is_nonstandard": "Future",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "ghostgem": {
+    "item_key": "ghostgem",
+    "name": "Ghost Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Ghost-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Ghost-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "ghostiumz": {
+    "item_key": "ghostiumz",
+    "name": "Ghostium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Ghost move, this item allows it to use a Ghost Z-Move.",
+    "effect": "If holder has a Ghost move, this item allows it to use a Ghost Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "ghostmemory": {
+    "item_key": "ghostmemory",
+    "name": "Ghost Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Ghost type.",
+    "effect": "Holder's Multi-Attack is Ghost type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "grassgem": {
+    "item_key": "grassgem",
+    "name": "Grass Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Grass-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Grass-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "grassiumz": {
+    "item_key": "grassiumz",
+    "name": "Grassium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Grass move, this item allows it to use a Grass Z-Move.",
+    "effect": "If holder has a Grass move, this item allows it to use a Grass Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "grassmemory": {
+    "item_key": "grassmemory",
+    "name": "Grass Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Grass type.",
+    "effect": "Holder's Multi-Attack is Grass type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "groundgem": {
+    "item_key": "groundgem",
+    "name": "Ground Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Ground-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Ground-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "groundiumz": {
+    "item_key": "groundiumz",
+    "name": "Groundium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Ground move, this item allows it to use a Ground Z-Move.",
+    "effect": "If holder has a Ground move, this item allows it to use a Ground Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "groundmemory": {
+    "item_key": "groundmemory",
+    "name": "Ground Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Ground type.",
+    "effect": "Holder's Multi-Attack is Ground type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "habanberry": {
+    "item_key": "habanberry",
+    "name": "Haban Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Dragon-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Dragon-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "hardstone": {
+    "item_key": "hardstone",
+    "name": "Hard Stone",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Rock-type attacks have 1.2x power.",
+    "effect": "Holder's Rock-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "helixfossil": {
+    "item_key": "helixfossil",
+    "name": "Helix Fossil",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Omanyte.",
+    "effect": "Can be revived into Omanyte.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "icegem": {
+    "item_key": "icegem",
+    "name": "Ice Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Ice-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Ice-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "icememory": {
+    "item_key": "icememory",
+    "name": "Ice Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Ice type.",
+    "effect": "Holder's Multi-Attack is Ice type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "iciumz": {
+    "item_key": "iciumz",
+    "name": "Icium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has an Ice move, this item allows it to use an Ice Z-Move.",
+    "effect": "If holder has an Ice move, this item allows it to use an Ice Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "inciniumz": {
+    "item_key": "inciniumz",
+    "name": "Incinium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by an Incineroar with Darkest Lariat, it can use Malicious Moonsault.",
+    "effect": "If held by an Incineroar with Darkest Lariat, it can use Malicious Moonsault.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "jawfossil": {
+    "item_key": "jawfossil",
+    "name": "Jaw Fossil",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Tyrunt.",
+    "effect": "Can be revived into Tyrunt.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "kasibberry": {
+    "item_key": "kasibberry",
+    "name": "Kasib Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Ghost-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Ghost-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "kebiaberry": {
+    "item_key": "kebiaberry",
+    "name": "Kebia Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Poison-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Poison-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "kingsrock": {
+    "item_key": "kingsrock",
+    "name": "King's Rock",
+    "is_nonstandard": null,
+    "short_desc": "Holder's attacks without a chance to flinch gain a 10% chance to flinch.",
+    "effect": "Holder's attacks without a chance to make the target flinch gain a 10% chance to make the target flinch. Evolves Poliwhirl into Politoed and Slowpoke into Slowking when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "kommoniumz": {
+    "item_key": "kommoniumz",
+    "name": "Kommonium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Kommo-o with Clanging Scales, it can use Clangorous Soulblaze.",
+    "effect": "If held by a Kommo-o with Clanging Scales, it can use Clangorous Soulblaze.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "latiasite": {
+    "item_key": "latiasite",
+    "name": "Latiasite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Latias, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Latias, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "latiosite": {
+    "item_key": "latiosite",
+    "name": "Latiosite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Latios, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Latios, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "laxincense": {
+    "item_key": "laxincense",
+    "name": "Lax Incense",
+    "is_nonstandard": "Past",
+    "short_desc": "The accuracy of attacks against the holder is 0.9x.",
+    "effect": "The accuracy of attacks against the holder is 0.9x.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "leek": {
+    "item_key": "leek",
+    "name": "Leek",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Farfetch’d or Sirfetch’d, its critical hit ratio is raised by 2 stages.",
+    "effect": "If held by a Farfetch’d or Sirfetch’d, its critical hit ratio is raised by 2 stages.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "leftovers": {
+    "item_key": "leftovers",
+    "name": "Leftovers",
+    "is_nonstandard": null,
+    "short_desc": "At the end of every turn, holder restores 1/16 of its max HP.",
+    "effect": "At the end of every turn, holder restores 1/16 of its max HP.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "leppaberry": {
+    "item_key": "leppaberry",
+    "name": "Leppa Berry",
+    "is_nonstandard": null,
+    "short_desc": "Restores 10 PP to the first of the holder's moves to reach 0 PP. Single use.",
+    "effect": "Restores 10 PP to the first of the holder's moves to reach 0 PP. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lightball": {
+    "item_key": "lightball",
+    "name": "Light Ball",
+    "is_nonstandard": null,
+    "short_desc": "If held by a Pikachu, its Attack and Sp. Atk are doubled.",
+    "effect": "If held by a Pikachu, its Attack and Sp. Atk are doubled.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lucarionitez": {
+    "item_key": "lucarionitez",
+    "name": "Lucarionite Z",
+    "is_nonstandard": "Future",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "luckypunch": {
+    "item_key": "luckypunch",
+    "name": "Lucky Punch",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Chansey, its critical hit ratio is raised by 2 stages.",
+    "effect": "If held by a Chansey, its critical hit ratio is raised by 2 stages.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lumberry": {
+    "item_key": "lumberry",
+    "name": "Lum Berry",
+    "is_nonstandard": null,
+    "short_desc": "Holder cures itself if it has a non-volatile status or is confused. Single use.",
+    "effect": "Holder cures itself if it has a non-volatile status or is confused. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lunaliumz": {
+    "item_key": "lunaliumz",
+    "name": "Lunalium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "Lunala or Dawn Wings Necrozma with Moongeist Beam can use a special Z-Move.",
+    "effect": "Lunala or Dawn Wings Necrozma with Moongeist Beam can use a special Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "lycaniumz": {
+    "item_key": "lycaniumz",
+    "name": "Lycanium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Lycanroc forme with Stone Edge, it can use Splintered Stormshards.",
+    "effect": "If held by a Lycanroc forme with Stone Edge, it can use Splintered Stormshards.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "machobrace": {
+    "item_key": "machobrace",
+    "name": "Macho Brace",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "effect": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "magearnite": {
+    "item_key": "magearnite",
+    "name": "Magearnite",
+    "is_nonstandard": "Future",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "magnet": {
+    "item_key": "magnet",
+    "name": "Magnet",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Electric-type attacks have 1.2x power.",
+    "effect": "Holder's Electric-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "magostberry": {
+    "item_key": "magostberry",
+    "name": "Magost Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "mail": {
+    "item_key": "mail",
+    "name": "Mail",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be given to or taken from a Pokemon, except by Covet/Knock Off/Thief.",
+    "effect": "Cannot be given to or taken from a Pokemon, except by Covet/Knock Off/Thief.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "malamarite": {
+    "item_key": "malamarite",
+    "name": "Malamarite",
+    "is_nonstandard": "Future",
+    "short_desc": "If held by a Malamar, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Malamar, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "marshadiumz": {
+    "item_key": "marshadiumz",
+    "name": "Marshadium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by Marshadow with Spectral Thief, it can use Soul-Stealing 7-Star Strike.",
+    "effect": "If held by Marshadow with Spectral Thief, it can use Soul-Stealing 7-Star Strike.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "mawilite": {
+    "item_key": "mawilite",
+    "name": "Mawilite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Mawile, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Mawile, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "mentalherb": {
+    "item_key": "mentalherb",
+    "name": "Mental Herb",
+    "is_nonstandard": null,
+    "short_desc": "Cures holder of Attract, Disable, Encore, Heal Block, Taunt, Torment. Single use.",
+    "effect": "Cures holder of Attract, Disable, Encore, Heal Block, Taunt, Torment. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "metagrossite": {
+    "item_key": "metagrossite",
+    "name": "Metagrossite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Metagross, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Metagross, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "metalcoat": {
+    "item_key": "metalcoat",
+    "name": "Metal Coat",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Steel-type attacks have 1.2x power.",
+    "effect": "Holder's Steel-type attacks have 1.2x power. Evolves Onix into Steelix and Scyther into Scizor when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "metalpowder": {
+    "item_key": "metalpowder",
+    "name": "Metal Powder",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Ditto that hasn't Transformed, its Defense is doubled.",
+    "effect": "If held by a Ditto that hasn't Transformed, its Defense is doubled.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "mewniumz": {
+    "item_key": "mewniumz",
+    "name": "Mewnium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Mew with Psychic, it can use Genesis Supernova.",
+    "effect": "If held by a Mew with Psychic, it can use Genesis Supernova.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "mewtwonitex": {
+    "item_key": "mewtwonitex",
+    "name": "Mewtwonite X",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Mewtwo, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Mewtwo, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "mewtwonitey": {
+    "item_key": "mewtwonitey",
+    "name": "Mewtwonite Y",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Mewtwo, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Mewtwo, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "mimikiumz": {
+    "item_key": "mimikiumz",
+    "name": "Mimikium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Mimikyu with Play Rough, it can use Let's Snuggle Forever.",
+    "effect": "If held by a Mimikyu with Play Rough, it can use Let's Snuggle Forever.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "miracleseed": {
+    "item_key": "miracleseed",
+    "name": "Miracle Seed",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Grass-type attacks have 1.2x power.",
+    "effect": "Holder's Grass-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "mysticwater": {
+    "item_key": "mysticwater",
+    "name": "Mystic Water",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Water-type attacks have 1.2x power.",
+    "effect": "Holder's Water-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "nanabberry": {
+    "item_key": "nanabberry",
+    "name": "Nanab Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "nevermeltice": {
+    "item_key": "nevermeltice",
+    "name": "Never-Melt Ice",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Ice-type attacks have 1.2x power.",
+    "effect": "Holder's Ice-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "nomelberry": {
+    "item_key": "nomelberry",
+    "name": "Nomel Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "normaliumz": {
+    "item_key": "normaliumz",
+    "name": "Normalium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Normal move, this item allows it to use a Normal Z-Move.",
+    "effect": "If holder has a Normal move, this item allows it to use a Normal Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "occaberry": {
+    "item_key": "occaberry",
+    "name": "Occa Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Fire-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Fire-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "oddincense": {
+    "item_key": "oddincense",
+    "name": "Odd Incense",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Psychic-type attacks have 1.2x power.",
+    "effect": "Holder's Psychic-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "oldamber": {
+    "item_key": "oldamber",
+    "name": "Old Amber",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Aerodactyl.",
+    "effect": "Can be revived into Aerodactyl.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "oranberry": {
+    "item_key": "oranberry",
+    "name": "Oran Berry",
+    "is_nonstandard": null,
+    "short_desc": "Restores 10 HP when at 1/2 max HP or less. Single use.",
+    "effect": "Restores 10 HP when at 1/2 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "pamtreberry": {
+    "item_key": "pamtreberry",
+    "name": "Pamtre Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "passhoberry": {
+    "item_key": "passhoberry",
+    "name": "Passho Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Water-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Water-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "payapaberry": {
+    "item_key": "payapaberry",
+    "name": "Payapa Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Psychic-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Psychic-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "pechaberry": {
+    "item_key": "pechaberry",
+    "name": "Pecha Berry",
+    "is_nonstandard": null,
+    "short_desc": "Holder is cured if it is poisoned. Single use.",
+    "effect": "Holder is cured if it is poisoned. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "persimberry": {
+    "item_key": "persimberry",
+    "name": "Persim Berry",
+    "is_nonstandard": null,
+    "short_desc": "Holder is cured if it is confused. Single use.",
+    "effect": "Holder is cured if it is confused. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "pikaniumz": {
+    "item_key": "pikaniumz",
+    "name": "Pikanium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Pikachu with Volt Tackle, it can use Catastropika.",
+    "effect": "If held by a Pikachu with Volt Tackle, it can use Catastropika.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "pikashuniumz": {
+    "item_key": "pikashuniumz",
+    "name": "Pikashunium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by cap Pikachu with Thunderbolt, it can use 10,000,000 Volt Thunderbolt.",
+    "effect": "If held by cap Pikachu with Thunderbolt, it can use 10,000,000 Volt Thunderbolt.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "pinapberry": {
+    "item_key": "pinapberry",
+    "name": "Pinap Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "plumefossil": {
+    "item_key": "plumefossil",
+    "name": "Plume Fossil",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Archen.",
+    "effect": "Can be revived into Archen.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "poisonbarb": {
+    "item_key": "poisonbarb",
+    "name": "Poison Barb",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Poison-type attacks have 1.2x power.",
+    "effect": "Holder's Poison-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "poisongem": {
+    "item_key": "poisongem",
+    "name": "Poison Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Poison-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Poison-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "poisoniumz": {
+    "item_key": "poisoniumz",
+    "name": "Poisonium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Poison move, this item allows it to use a Poison Z-Move.",
+    "effect": "If holder has a Poison move, this item allows it to use a Poison Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "poisonmemory": {
+    "item_key": "poisonmemory",
+    "name": "Poison Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Poison type.",
+    "effect": "Holder's Multi-Attack is Poison type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "primariumz": {
+    "item_key": "primariumz",
+    "name": "Primarium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Primarina with Sparkling Aria, it can use Oceanic Operetta.",
+    "effect": "If held by a Primarina with Sparkling Aria, it can use Oceanic Operetta.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "psychicgem": {
+    "item_key": "psychicgem",
+    "name": "Psychic Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Psychic-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Psychic-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "psychicmemory": {
+    "item_key": "psychicmemory",
+    "name": "Psychic Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Psychic type.",
+    "effect": "Holder's Multi-Attack is Psychic type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "psychiumz": {
+    "item_key": "psychiumz",
+    "name": "Psychium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Psychic move, this item allows it to use a Psychic Z-Move.",
+    "effect": "If holder has a Psychic move, this item allows it to use a Psychic Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "pyroarite": {
+    "item_key": "pyroarite",
+    "name": "Pyroarite",
+    "is_nonstandard": "Future",
+    "short_desc": "If held by a Pyroar, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Pyroar, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "quickclaw": {
+    "item_key": "quickclaw",
+    "name": "Quick Claw",
+    "is_nonstandard": null,
+    "short_desc": "Each turn, holder has a 20% chance to move first in its priority bracket.",
+    "effect": "Each turn, holder has a 20% chance to move first in its priority bracket.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "quickpowder": {
+    "item_key": "quickpowder",
+    "name": "Quick Powder",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Ditto that hasn't Transformed, its Speed is doubled.",
+    "effect": "If held by a Ditto that hasn't Transformed, its Speed is doubled.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rabutaberry": {
+    "item_key": "rabutaberry",
+    "name": "Rabuta Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "raichunitex": {
+    "item_key": "raichunitex",
+    "name": "Raichunite X",
+    "is_nonstandard": "Future",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "raichunitey": {
+    "item_key": "raichunitey",
+    "name": "Raichunite Y",
+    "is_nonstandard": "Future",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "rawstberry": {
+    "item_key": "rawstberry",
+    "name": "Rawst Berry",
+    "is_nonstandard": null,
+    "short_desc": "Holder is cured if it is burned. Single use.",
+    "effect": "Holder is cured if it is burned. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "razzberry": {
+    "item_key": "razzberry",
+    "name": "Razz Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "redorb": {
+    "item_key": "redorb",
+    "name": "Red Orb",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Groudon, this item triggers its Primal Reversion in battle.",
+    "effect": "If held by a Groudon, this item triggers its Primal Reversion in battle.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rindoberry": {
+    "item_key": "rindoberry",
+    "name": "Rindo Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Grass-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Grass-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rockgem": {
+    "item_key": "rockgem",
+    "name": "Rock Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Rock-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Rock-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rockincense": {
+    "item_key": "rockincense",
+    "name": "Rock Incense",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Rock-type attacks have 1.2x power.",
+    "effect": "Holder's Rock-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rockiumz": {
+    "item_key": "rockiumz",
+    "name": "Rockium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Rock move, this item allows it to use a Rock Z-Move.",
+    "effect": "If holder has a Rock move, this item allows it to use a Rock Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rockmemory": {
+    "item_key": "rockmemory",
+    "name": "Rock Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Rock type.",
+    "effect": "Holder's Multi-Attack is Rock type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "rootfossil": {
+    "item_key": "rootfossil",
+    "name": "Root Fossil",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Lileep.",
+    "effect": "Can be revived into Lileep.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "roseincense": {
+    "item_key": "roseincense",
+    "name": "Rose Incense",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Grass-type attacks have 1.2x power.",
+    "effect": "Holder's Grass-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "roseliberry": {
+    "item_key": "roseliberry",
+    "name": "Roseli Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Fairy-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Fairy-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "sachet": {
+    "item_key": "sachet",
+    "name": "Sachet",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Spritzee into Aromatisse when traded.",
+    "effect": "Evolves Spritzee into Aromatisse when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "sailfossil": {
+    "item_key": "sailfossil",
+    "name": "Sail Fossil",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Amaura.",
+    "effect": "Can be revived into Amaura.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "salamencite": {
+    "item_key": "salamencite",
+    "name": "Salamencite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Salamence, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Salamence, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "sceptilite": {
+    "item_key": "sceptilite",
+    "name": "Sceptilite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Sceptile, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Sceptile, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "scolipite": {
+    "item_key": "scolipite",
+    "name": "Scolipite",
+    "is_nonstandard": "Future",
+    "short_desc": "If held by a Scolipede, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Scolipede, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "scopelens": {
+    "item_key": "scopelens",
+    "name": "Scope Lens",
+    "is_nonstandard": null,
+    "short_desc": "Holder's critical hit ratio is raised by 1 stage.",
+    "effect": "Holder's critical hit ratio is raised by 1 stage.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "scraftinite": {
+    "item_key": "scraftinite",
+    "name": "Scraftinite",
+    "is_nonstandard": "Future",
+    "short_desc": "If held by a Scrafty, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Scrafty, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "seaincense": {
+    "item_key": "seaincense",
+    "name": "Sea Incense",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Water-type attacks have 1.2x power.",
+    "effect": "Holder's Water-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "sharpbeak": {
+    "item_key": "sharpbeak",
+    "name": "Sharp Beak",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Flying-type attacks have 1.2x power.",
+    "effect": "Holder's Flying-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "shellbell": {
+    "item_key": "shellbell",
+    "name": "Shell Bell",
+    "is_nonstandard": null,
+    "short_desc": "After an attack, holder gains 1/8 of the damage in HP dealt to other Pokemon.",
+    "effect": "After an attack, holder gains 1/8 of the damage in HP dealt to other Pokemon.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "shockdrive": {
+    "item_key": "shockdrive",
+    "name": "Shock Drive",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Techno Blast is Electric type.",
+    "effect": "Holder's Techno Blast is Electric type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "shucaberry": {
+    "item_key": "shucaberry",
+    "name": "Shuca Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Ground-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Ground-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "silkscarf": {
+    "item_key": "silkscarf",
+    "name": "Silk Scarf",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Normal-type attacks have 1.2x power.",
+    "effect": "Holder's Normal-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "silverpowder": {
+    "item_key": "silverpowder",
+    "name": "Silver Powder",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Bug-type attacks have 1.2x power.",
+    "effect": "Holder's Bug-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "sitrusberry": {
+    "item_key": "sitrusberry",
+    "name": "Sitrus Berry",
+    "is_nonstandard": null,
+    "short_desc": "Restores 1/4 max HP when at 1/2 max HP or less. Single use.",
+    "effect": "Restores 1/4 max HP when at 1/2 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "skullfossil": {
+    "item_key": "skullfossil",
+    "name": "Skull Fossil",
+    "is_nonstandard": "Past",
+    "short_desc": "Can be revived into Cranidos.",
+    "effect": "Can be revived into Cranidos.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "snorliumz": {
+    "item_key": "snorliumz",
+    "name": "Snorlium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Snorlax with Giga Impact, it can use Pulverizing Pancake.",
+    "effect": "If held by a Snorlax with Giga Impact, it can use Pulverizing Pancake.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "softsand": {
+    "item_key": "softsand",
+    "name": "Soft Sand",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Ground-type attacks have 1.2x power.",
+    "effect": "Holder's Ground-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "solganiumz": {
+    "item_key": "solganiumz",
+    "name": "Solganium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "Solgaleo or Dusk Mane Necrozma with Sunsteel Strike can use a special Z-Move.",
+    "effect": "Solgaleo or Dusk Mane Necrozma with Sunsteel Strike can use a special Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "spelonberry": {
+    "item_key": "spelonberry",
+    "name": "Spelon Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "staraptite": {
+    "item_key": "staraptite",
+    "name": "Staraptite",
+    "is_nonstandard": "Future",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "steelgem": {
+    "item_key": "steelgem",
+    "name": "Steel Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Steel-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Steel-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "steeliumz": {
+    "item_key": "steeliumz",
+    "name": "Steelium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Steel move, this item allows it to use a Steel Z-Move.",
+    "effect": "If holder has a Steel move, this item allows it to use a Steel Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "steelmemory": {
+    "item_key": "steelmemory",
+    "name": "Steel Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Steel type.",
+    "effect": "Holder's Multi-Attack is Steel type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "stick": {
+    "item_key": "stick",
+    "name": "Stick",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Farfetch’d, its critical hit ratio is raised by 2 stages.",
+    "effect": "If held by a Farfetch’d, its critical hit ratio is raised by 2 stages.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "swampertite": {
+    "item_key": "swampertite",
+    "name": "Swampertite",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Swampert, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Swampert, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "tangaberry": {
+    "item_key": "tangaberry",
+    "name": "Tanga Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Bug-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Bug-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tapuniumz": {
+    "item_key": "tapuniumz",
+    "name": "Tapunium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Tapu with Nature's Madness, it can use Guardian of Alola.",
+    "effect": "If held by a Tapu with Nature's Madness, it can use Guardian of Alola.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tatsugirinite": {
+    "item_key": "tatsugirinite",
+    "name": "Tatsugirinite",
+    "is_nonstandard": "Future",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "thickclub": {
+    "item_key": "thickclub",
+    "name": "Thick Club",
+    "is_nonstandard": "Past",
+    "short_desc": "If held by a Cubone or a Marowak, its Attack is doubled.",
+    "effect": "If held by a Cubone or a Marowak, its Attack is doubled.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr00": {
+    "item_key": "tr00",
+    "name": "TR00",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Swords Dance. One use.",
+    "effect": "Teaches certain Pokemon the move Swords Dance. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr01": {
+    "item_key": "tr01",
+    "name": "TR01",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Body Slam. One use.",
+    "effect": "Teaches certain Pokemon the move Body Slam. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr02": {
+    "item_key": "tr02",
+    "name": "TR02",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Flamethrower. One use.",
+    "effect": "Teaches certain Pokemon the move Flamethrower. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr03": {
+    "item_key": "tr03",
+    "name": "TR03",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Hydro Pump. One use.",
+    "effect": "Teaches certain Pokemon the move Hydro Pump. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr04": {
+    "item_key": "tr04",
+    "name": "TR04",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Surf. One use.",
+    "effect": "Teaches certain Pokemon the move Surf. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr05": {
+    "item_key": "tr05",
+    "name": "TR05",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Ice Beam. One use.",
+    "effect": "Teaches certain Pokemon the move Ice Beam. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr06": {
+    "item_key": "tr06",
+    "name": "TR06",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Blizzard. One use.",
+    "effect": "Teaches certain Pokemon the move Blizzard. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr07": {
+    "item_key": "tr07",
+    "name": "TR07",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Low Kick. One use.",
+    "effect": "Teaches certain Pokemon the move Low Kick. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr08": {
+    "item_key": "tr08",
+    "name": "TR08",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Thunderbolt. One use.",
+    "effect": "Teaches certain Pokemon the move Thunderbolt. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr09": {
+    "item_key": "tr09",
+    "name": "TR09",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Thunder. One use.",
+    "effect": "Teaches certain Pokemon the move Thunder. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr10": {
+    "item_key": "tr10",
+    "name": "TR10",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Earthquake. One use.",
+    "effect": "Teaches certain Pokemon the move Earthquake. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr11": {
+    "item_key": "tr11",
+    "name": "TR11",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Psychic. One use.",
+    "effect": "Teaches certain Pokemon the move Psychic. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr12": {
+    "item_key": "tr12",
+    "name": "TR12",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Agility. One use.",
+    "effect": "Teaches certain Pokemon the move Agility. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr13": {
+    "item_key": "tr13",
+    "name": "TR13",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Focus Energy. One use.",
+    "effect": "Teaches certain Pokemon the move Focus Energy. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr14": {
+    "item_key": "tr14",
+    "name": "TR14",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Metronome. One use.",
+    "effect": "Teaches certain Pokemon the move Metronome. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr15": {
+    "item_key": "tr15",
+    "name": "TR15",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Fire Blast. One use.",
+    "effect": "Teaches certain Pokemon the move Fire Blast. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr16": {
+    "item_key": "tr16",
+    "name": "TR16",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Waterfall. One use.",
+    "effect": "Teaches certain Pokemon the move Waterfall. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr17": {
+    "item_key": "tr17",
+    "name": "TR17",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Amnesia. One use.",
+    "effect": "Teaches certain Pokemon the move Amnesia. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr18": {
+    "item_key": "tr18",
+    "name": "TR18",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Leech Life. One use.",
+    "effect": "Teaches certain Pokemon the move Leech Life. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr19": {
+    "item_key": "tr19",
+    "name": "TR19",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Tri Attack. One use.",
+    "effect": "Teaches certain Pokemon the move Tri Attack. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr20": {
+    "item_key": "tr20",
+    "name": "TR20",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Substitute. One use.",
+    "effect": "Teaches certain Pokemon the move Substitute. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr21": {
+    "item_key": "tr21",
+    "name": "TR21",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Reversal. One use.",
+    "effect": "Teaches certain Pokemon the move Reversal. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr22": {
+    "item_key": "tr22",
+    "name": "TR22",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Sludge Bomb. One use.",
+    "effect": "Teaches certain Pokemon the move Sludge Bomb. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr23": {
+    "item_key": "tr23",
+    "name": "TR23",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Spikes. One use.",
+    "effect": "Teaches certain Pokemon the move Spikes. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr24": {
+    "item_key": "tr24",
+    "name": "TR24",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Outrage. One use.",
+    "effect": "Teaches certain Pokemon the move Outrage. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr25": {
+    "item_key": "tr25",
+    "name": "TR25",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Psyshock. One use.",
+    "effect": "Teaches certain Pokemon the move Psyshock. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr26": {
+    "item_key": "tr26",
+    "name": "TR26",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Endure. One use.",
+    "effect": "Teaches certain Pokemon the move Endure. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr27": {
+    "item_key": "tr27",
+    "name": "TR27",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Sleep Talk. One use.",
+    "effect": "Teaches certain Pokemon the move Sleep Talk. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr28": {
+    "item_key": "tr28",
+    "name": "TR28",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Megahorn. One use.",
+    "effect": "Teaches certain Pokemon the move Megahorn. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr29": {
+    "item_key": "tr29",
+    "name": "TR29",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Baton Pass. One use.",
+    "effect": "Teaches certain Pokemon the move Baton Pass. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr30": {
+    "item_key": "tr30",
+    "name": "TR30",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Encore. One use.",
+    "effect": "Teaches certain Pokemon the move Encore. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr31": {
+    "item_key": "tr31",
+    "name": "TR31",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Iron Tail. One use.",
+    "effect": "Teaches certain Pokemon the move Iron Tail. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr32": {
+    "item_key": "tr32",
+    "name": "TR32",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Crunch. One use.",
+    "effect": "Teaches certain Pokemon the move Crunch. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr33": {
+    "item_key": "tr33",
+    "name": "TR33",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Shadow Ball. One use.",
+    "effect": "Teaches certain Pokemon the move Shadow Ball. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr34": {
+    "item_key": "tr34",
+    "name": "TR34",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Future Sight. One use.",
+    "effect": "Teaches certain Pokemon the move Future Sight. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr35": {
+    "item_key": "tr35",
+    "name": "TR35",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Uproar. One use.",
+    "effect": "Teaches certain Pokemon the move Uproar. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr36": {
+    "item_key": "tr36",
+    "name": "TR36",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Heat Wave. One use.",
+    "effect": "Teaches certain Pokemon the move Heat Wave. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr37": {
+    "item_key": "tr37",
+    "name": "TR37",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Taunt. One use.",
+    "effect": "Teaches certain Pokemon the move Taunt. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr38": {
+    "item_key": "tr38",
+    "name": "TR38",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Trick. One use.",
+    "effect": "Teaches certain Pokemon the move Trick. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr39": {
+    "item_key": "tr39",
+    "name": "TR39",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Superpower. One use.",
+    "effect": "Teaches certain Pokemon the move Superpower. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr40": {
+    "item_key": "tr40",
+    "name": "TR40",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Skill Swap. One use.",
+    "effect": "Teaches certain Pokemon the move Skill Swap. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr41": {
+    "item_key": "tr41",
+    "name": "TR41",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Blaze Kick. One use.",
+    "effect": "Teaches certain Pokemon the move Blaze Kick. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr42": {
+    "item_key": "tr42",
+    "name": "TR42",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Hyper Voice. One use.",
+    "effect": "Teaches certain Pokemon the move Hyper Voice. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr43": {
+    "item_key": "tr43",
+    "name": "TR43",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Overheat. One use.",
+    "effect": "Teaches certain Pokemon the move Overheat. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr44": {
+    "item_key": "tr44",
+    "name": "TR44",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Cosmic Power. One use.",
+    "effect": "Teaches certain Pokemon the move Cosmic Power. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr45": {
+    "item_key": "tr45",
+    "name": "TR45",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Muddy Water. One use.",
+    "effect": "Teaches certain Pokemon the move Muddy Water. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr46": {
+    "item_key": "tr46",
+    "name": "TR46",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Iron Defense. One use.",
+    "effect": "Teaches certain Pokemon the move Iron Defense. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr47": {
+    "item_key": "tr47",
+    "name": "TR47",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Dragon Claw. One use.",
+    "effect": "Teaches certain Pokemon the move Dragon Claw. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr48": {
+    "item_key": "tr48",
+    "name": "TR48",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Bulk Up. One use.",
+    "effect": "Teaches certain Pokemon the move Bulk Up. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr49": {
+    "item_key": "tr49",
+    "name": "TR49",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Calm Mind. One use.",
+    "effect": "Teaches certain Pokemon the move Calm Mind. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr50": {
+    "item_key": "tr50",
+    "name": "TR50",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Leaf Blade. One use.",
+    "effect": "Teaches certain Pokemon the move Leaf Blade. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr51": {
+    "item_key": "tr51",
+    "name": "TR51",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Dragon Dance. One use.",
+    "effect": "Teaches certain Pokemon the move Dragon Dance. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr52": {
+    "item_key": "tr52",
+    "name": "TR52",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Gyro Ball. One use.",
+    "effect": "Teaches certain Pokemon the move Gyro Ball. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr53": {
+    "item_key": "tr53",
+    "name": "TR53",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Close Combat. One use.",
+    "effect": "Teaches certain Pokemon the move Close Combat. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr54": {
+    "item_key": "tr54",
+    "name": "TR54",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Toxic Spikes. One use.",
+    "effect": "Teaches certain Pokemon the move Toxic Spikes. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr55": {
+    "item_key": "tr55",
+    "name": "TR55",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Flare Blitz. One use.",
+    "effect": "Teaches certain Pokemon the move Flare Blitz. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr56": {
+    "item_key": "tr56",
+    "name": "TR56",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Aura Sphere. One use.",
+    "effect": "Teaches certain Pokemon the move Aura Sphere. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr57": {
+    "item_key": "tr57",
+    "name": "TR57",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Poison Jab. One use.",
+    "effect": "Teaches certain Pokemon the move Poison Jab. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr58": {
+    "item_key": "tr58",
+    "name": "TR58",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Dark Pulse. One use.",
+    "effect": "Teaches certain Pokemon the move Dark Pulse. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr59": {
+    "item_key": "tr59",
+    "name": "TR59",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Seed Bomb. One use.",
+    "effect": "Teaches certain Pokemon the move Seed Bomb. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr60": {
+    "item_key": "tr60",
+    "name": "TR60",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move X-Scissor. One use.",
+    "effect": "Teaches certain Pokemon the move X-Scissor. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr61": {
+    "item_key": "tr61",
+    "name": "TR61",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Bug Buzz. One use.",
+    "effect": "Teaches certain Pokemon the move Bug Buzz. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr62": {
+    "item_key": "tr62",
+    "name": "TR62",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Dragon Pulse. One use.",
+    "effect": "Teaches certain Pokemon the move Dragon Pulse. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr63": {
+    "item_key": "tr63",
+    "name": "TR63",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Power Gem. One use.",
+    "effect": "Teaches certain Pokemon the move Power Gem. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr64": {
+    "item_key": "tr64",
+    "name": "TR64",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Focus Blast. One use.",
+    "effect": "Teaches certain Pokemon the move Focus Blast. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr65": {
+    "item_key": "tr65",
+    "name": "TR65",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Energy Ball. One use.",
+    "effect": "Teaches certain Pokemon the move Energy Ball. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr66": {
+    "item_key": "tr66",
+    "name": "TR66",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Brave Bird. One use.",
+    "effect": "Teaches certain Pokemon the move Brave Bird. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr67": {
+    "item_key": "tr67",
+    "name": "TR67",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Earth Power. One use.",
+    "effect": "Teaches certain Pokemon the move Earth Power. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr68": {
+    "item_key": "tr68",
+    "name": "TR68",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Nasty Plot. One use.",
+    "effect": "Teaches certain Pokemon the move Nasty Plot. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr69": {
+    "item_key": "tr69",
+    "name": "TR69",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Zen Headbutt. One use.",
+    "effect": "Teaches certain Pokemon the move Zen Headbutt. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr70": {
+    "item_key": "tr70",
+    "name": "TR70",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Flash Cannon. One use.",
+    "effect": "Teaches certain Pokemon the move Flash Cannon. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr71": {
+    "item_key": "tr71",
+    "name": "TR71",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Leaf Storm. One use.",
+    "effect": "Teaches certain Pokemon the move Leaf Storm. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr72": {
+    "item_key": "tr72",
+    "name": "TR72",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Power Whip. One use.",
+    "effect": "Teaches certain Pokemon the move Power Whip. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr73": {
+    "item_key": "tr73",
+    "name": "TR73",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Gunk Shot. One use.",
+    "effect": "Teaches certain Pokemon the move Gunk Shot. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr74": {
+    "item_key": "tr74",
+    "name": "TR74",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Iron Head. One use.",
+    "effect": "Teaches certain Pokemon the move Iron Head. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr75": {
+    "item_key": "tr75",
+    "name": "TR75",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Stone Edge. One use.",
+    "effect": "Teaches certain Pokemon the move Stone Edge. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr76": {
+    "item_key": "tr76",
+    "name": "TR76",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Stealth Rock. One use.",
+    "effect": "Teaches certain Pokemon the move Stealth Rock. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr77": {
+    "item_key": "tr77",
+    "name": "TR77",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Grass Knot. One use.",
+    "effect": "Teaches certain Pokemon the move Grass Knot. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr78": {
+    "item_key": "tr78",
+    "name": "TR78",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Sludge Wave. One use.",
+    "effect": "Teaches certain Pokemon the move Sludge Wave. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr79": {
+    "item_key": "tr79",
+    "name": "TR79",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Heavy Slam. One use.",
+    "effect": "Teaches certain Pokemon the move Heavy Slam. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr80": {
+    "item_key": "tr80",
+    "name": "TR80",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Electro Ball. One use.",
+    "effect": "Teaches certain Pokemon the move Electro Ball. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr81": {
+    "item_key": "tr81",
+    "name": "TR81",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Foul Play. One use.",
+    "effect": "Teaches certain Pokemon the move Foul Play. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr82": {
+    "item_key": "tr82",
+    "name": "TR82",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Stored Power. One use.",
+    "effect": "Teaches certain Pokemon the move Stored Power. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr83": {
+    "item_key": "tr83",
+    "name": "TR83",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Ally Switch. One use.",
+    "effect": "Teaches certain Pokemon the move Ally Switch. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr84": {
+    "item_key": "tr84",
+    "name": "TR84",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Scald. One use.",
+    "effect": "Teaches certain Pokemon the move Scald. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr85": {
+    "item_key": "tr85",
+    "name": "TR85",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Work Up. One use.",
+    "effect": "Teaches certain Pokemon the move Work Up. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr86": {
+    "item_key": "tr86",
+    "name": "TR86",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Wild Charge. One use.",
+    "effect": "Teaches certain Pokemon the move Wild Charge. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr87": {
+    "item_key": "tr87",
+    "name": "TR87",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Drill Run. One use.",
+    "effect": "Teaches certain Pokemon the move Drill Run. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr88": {
+    "item_key": "tr88",
+    "name": "TR88",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Heat Crash. One use.",
+    "effect": "Teaches certain Pokemon the move Heat Crash. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr89": {
+    "item_key": "tr89",
+    "name": "TR89",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Hurricane. One use.",
+    "effect": "Teaches certain Pokemon the move Hurricane. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr90": {
+    "item_key": "tr90",
+    "name": "TR90",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Play Rough. One use.",
+    "effect": "Teaches certain Pokemon the move Play Rough. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr91": {
+    "item_key": "tr91",
+    "name": "TR91",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Venom Drench. One use.",
+    "effect": "Teaches certain Pokemon the move Venom Drench. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr92": {
+    "item_key": "tr92",
+    "name": "TR92",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Dazzling Gleam. One use.",
+    "effect": "Teaches certain Pokemon the move Dazzling Gleam. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr93": {
+    "item_key": "tr93",
+    "name": "TR93",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Darkest Lariat. One use.",
+    "effect": "Teaches certain Pokemon the move Darkest Lariat. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr94": {
+    "item_key": "tr94",
+    "name": "TR94",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move High Horsepower. One use.",
+    "effect": "Teaches certain Pokemon the move High Horsepower. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr95": {
+    "item_key": "tr95",
+    "name": "TR95",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Throat Chop. One use.",
+    "effect": "Teaches certain Pokemon the move Throat Chop. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr96": {
+    "item_key": "tr96",
+    "name": "TR96",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Pollen Puff. One use.",
+    "effect": "Teaches certain Pokemon the move Pollen Puff. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr97": {
+    "item_key": "tr97",
+    "name": "TR97",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Psychic Fangs. One use.",
+    "effect": "Teaches certain Pokemon the move Psychic Fangs. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr98": {
+    "item_key": "tr98",
+    "name": "TR98",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Liquidation. One use.",
+    "effect": "Teaches certain Pokemon the move Liquidation. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "tr99": {
+    "item_key": "tr99",
+    "name": "TR99",
+    "is_nonstandard": "Past",
+    "short_desc": "Teaches certain Pokemon the move Body Press. One use.",
+    "effect": "Teaches certain Pokemon the move Body Press. One use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "twistedspoon": {
+    "item_key": "twistedspoon",
+    "name": "Twisted Spoon",
+    "is_nonstandard": null,
+    "short_desc": "Holder's Psychic-type attacks have 1.2x power.",
+    "effect": "Holder's Psychic-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "ultranecroziumz": {
+    "item_key": "ultranecroziumz",
+    "name": "Ultranecrozium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "Dusk Mane/Dawn Wings Necrozma: Ultra Burst, then Z-Move w/ Photon Geyser.",
+    "effect": "Dusk Mane/Dawn Wings Necrozma: Ultra Burst, then Z-Move w/ Photon Geyser.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "wacanberry": {
+    "item_key": "wacanberry",
+    "name": "Wacan Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Electric-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Electric-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "watergem": {
+    "item_key": "watergem",
+    "name": "Water Gem",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's first successful Water-type attack will have 1.3x power. Single use.",
+    "effect": "Holder's first successful Water-type attack will have 1.3x power. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "wateriumz": {
+    "item_key": "wateriumz",
+    "name": "Waterium Z",
+    "is_nonstandard": "Past",
+    "short_desc": "If holder has a Water move, this item allows it to use a Water Z-Move.",
+    "effect": "If holder has a Water move, this item allows it to use a Water Z-Move.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "watermemory": {
+    "item_key": "watermemory",
+    "name": "Water Memory",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Multi-Attack is Water type.",
+    "effect": "Holder's Multi-Attack is Water type.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "watmelberry": {
+    "item_key": "watmelberry",
+    "name": "Watmel Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "waveincense": {
+    "item_key": "waveincense",
+    "name": "Wave Incense",
+    "is_nonstandard": "Past",
+    "short_desc": "Holder's Water-type attacks have 1.2x power.",
+    "effect": "Holder's Water-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "wepearberry": {
+    "item_key": "wepearberry",
+    "name": "Wepear Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "effect": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "whippeddream": {
+    "item_key": "whippeddream",
+    "name": "Whipped Dream",
+    "is_nonstandard": "Past",
+    "short_desc": "Evolves Swirlix into Slurpuff when traded.",
+    "effect": "Evolves Swirlix into Slurpuff when traded.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "yacheberry": {
+    "item_key": "yacheberry",
+    "name": "Yache Berry",
+    "is_nonstandard": null,
+    "short_desc": "Halves damage taken from a supereffective Ice-type attack. Single use.",
+    "effect": "Halves damage taken from a supereffective Ice-type attack. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "zeraorite": {
+    "item_key": "zeraorite",
+    "name": "Zeraorite",
+    "is_nonstandard": "Future",
+    "short_desc": "",
+    "effect": "",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "zygardite": {
+    "item_key": "zygardite",
+    "name": "Zygardite",
+    "is_nonstandard": "Future",
+    "short_desc": "If held by a Zygarde in Complete Forme, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Zygarde in Complete Forme, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "berry": {
+    "item_key": "berry",
+    "name": "Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Restores 10 HP when at 1/2 max HP or less. Single use.",
+    "effect": "(Gen 2) Restores 10 HP when at 1/2 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "berserkgene": {
+    "item_key": "berserkgene",
+    "name": "Berserk Gene",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) On switch-in, raises holder's Attack by 2 and confuses it. Single use.",
+    "effect": "(Gen 2) On switch-in, raises holder's Attack by 2 and confuses it. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "bitterberry": {
+    "item_key": "bitterberry",
+    "name": "Bitter Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Holder is cured if it is confused. Single use.",
+    "effect": "(Gen 2) Holder is cured if it is confused. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "burntberry": {
+    "item_key": "burntberry",
+    "name": "Burnt Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Holder is cured if it is frozen. Single use.",
+    "effect": "(Gen 2) Holder is cured if it is frozen. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "goldberry": {
+    "item_key": "goldberry",
+    "name": "Gold Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Restores 30 HP when at 1/2 max HP or less. Single use.",
+    "effect": "(Gen 2) Restores 30 HP when at 1/2 max HP or less. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "iceberry": {
+    "item_key": "iceberry",
+    "name": "Ice Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Holder is cured if it is burned. Single use.",
+    "effect": "(Gen 2) Holder is cured if it is burned. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "mintberry": {
+    "item_key": "mintberry",
+    "name": "Mint Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Holder wakes up if it is asleep. Single use.",
+    "effect": "(Gen 2) Holder wakes up if it is asleep. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "miracleberry": {
+    "item_key": "miracleberry",
+    "name": "Miracle Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Holder cures itself if it is confused or has a status condition. Single use.",
+    "effect": "(Gen 2) Holder cures itself if it is confused or has a status condition. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "mysteryberry": {
+    "item_key": "mysteryberry",
+    "name": "Mystery Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Restores 5 PP to the first of the holder's moves to reach 0 PP. Single use.",
+    "effect": "(Gen 2) Restores 5 PP to the first of the holder's moves to reach 0 PP. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "pinkbow": {
+    "item_key": "pinkbow",
+    "name": "Pink Bow",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Holder's Normal-type attacks have 1.1x power.",
+    "effect": "(Gen 2) Holder's Normal-type attacks have 1.1x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "polkadotbow": {
+    "item_key": "polkadotbow",
+    "name": "Polkadot Bow",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Holder's Normal-type attacks have 1.1x power.",
+    "effect": "(Gen 2) Holder's Normal-type attacks have 1.1x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "przcureberry": {
+    "item_key": "przcureberry",
+    "name": "PRZ Cure Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Holder cures itself if it is paralyzed. Single use.",
+    "effect": "(Gen 2) Holder cures itself if it is paralyzed. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "psncureberry": {
+    "item_key": "psncureberry",
+    "name": "PSN Cure Berry",
+    "is_nonstandard": "Past",
+    "short_desc": "(Gen 2) Holder is cured if it is poisoned. Single use.",
+    "effect": "(Gen 2) Holder is cured if it is poisoned. Single use.",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  "crucibellite": {
+    "item_key": "crucibellite",
+    "name": "Crucibellite",
+    "is_nonstandard": "CAP",
+    "short_desc": "If held by a Crucibelle, this item allows it to Mega Evolve in battle.",
+    "effect": "If held by a Crucibelle, this item allows it to Mega Evolve in battle.",
+    "mega_stone": "",
+    "mega_evolves": null
+  },
+  "vilevial": {
+    "item_key": "vilevial",
+    "name": "Vile Vial",
+    "is_nonstandard": "CAP",
+    "short_desc": "If held by a Venomicon, its Poison- and Flying-type attacks have 1.2x power.",
+    "effect": "If held by a Venomicon, its Poison- and Flying-type attacks have 1.2x power.",
+    "mega_stone": null,
+    "mega_evolves": null
+  }
+}
