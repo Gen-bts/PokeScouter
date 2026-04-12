@@ -12,6 +12,7 @@ import json
 import logging
 import re
 import time
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -21,15 +22,18 @@ import numpy as np
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.data.names import get_id_to_name
-from app.dependencies import get_detector, get_game_data, get_pokemon_matcher, get_recognizer, ocr_lock
+from app.dependencies import get_detector, get_game_data, get_pokemon_matcher, get_recognizer, get_settings, ocr_lock
 from app.ocr.region import RegionConfig
 from app.recognition.battle_log_parser import BattleLogParser, match_against_party
+from app.recognition.item_ability_parser import ItemAbilityParser
 from app.recognition.party_register import PartyRegistrationMachine
 from app.recognition.scene_state import SceneStateMachine
+from app.ws.match_logger import BattleMatchLogger
 
 logger = logging.getLogger(__name__)
 _audit_logger = logging.getLogger("recognition_audit")
 _RECOGNITION_CROP_DIR = Path(__file__).parent.parent.parent.parent / "debug" / "recognition_crops"
+_BATTLE_LOG_DIR = Path(__file__).parent.parent.parent.parent / "debug" / "battle_logs"
 
 router = APIRouter()
 
@@ -40,27 +44,37 @@ class BattleSession:
 
     scene: str = "battle"
     auto_detect: bool = True
-    interval_ms: int = 500
-    scene_intervals: dict[str, int] = field(default_factory=dict)
     paused: bool = False
     debug_crops: bool = False
     benchmark: bool = False
-    _state_machine: SceneStateMachine = field(default_factory=SceneStateMachine)
+    _state_machine: SceneStateMachine = field(default_factory=lambda: SceneStateMachine())
     _party_machine: PartyRegistrationMachine | None = field(default=None, repr=False)
     _last_process_time: float = field(default=0.0, repr=False)
     _last_scene_key: str = field(default="none", repr=False)
     _read_once_cache: dict[str, dict] = field(default_factory=dict, repr=False)
     _pokemon_icon_cache: dict[str, dict] = field(default_factory=dict, repr=False)
     _battle_log_parser: BattleLogParser | None = field(default=None, repr=False)
+    _item_ability_parser: ItemAbilityParser | None = field(default=None, repr=False)
     _opponent_party: list[dict] = field(default_factory=list, repr=False)
+    _auto_opponent_party: list[dict] = field(default_factory=list, repr=False)
+    _manual_opponent_overrides: dict[int, dict] = field(default_factory=dict, repr=False)
+    _player_party: list[dict] = field(default_factory=list, repr=False)
+    _match_logger: BattleMatchLogger | None = field(default=None, repr=False)
 
-    def effective_interval_ms(self, scene_key: str, config: RegionConfig) -> int:
-        """現在のシーンに応じた有効インターバル(ms)を返す.
+    def _rebuild_opponent_party(self) -> None:
+        """自動認識パーティに手動オーバーライドを適用して _opponent_party を再構築."""
+        by_pos: dict[int, dict] = {}
+        for p in self._auto_opponent_party:
+            pos = p.get("position")
+            if pos is not None:
+                by_pos[pos] = {"pokemon_key": p["pokemon_key"], "name": p["name"]}
+        for pos, override in self._manual_opponent_overrides.items():
+            by_pos[pos] = {"pokemon_key": override["pokemon_key"], "name": override["name"]}
+        self._opponent_party = list(by_pos.values())
 
-        優先順位: フロントエンド個別設定 > regions.json シーン設定 > default_interval_ms
-        """
-        if scene_key in self.scene_intervals:
-            return self.scene_intervals[scene_key]
+    @staticmethod
+    def effective_interval_ms(scene_key: str, config: RegionConfig) -> int:
+        """現在のシーンに応じた有効インターバル(ms)を返す（regions.json ベース）."""
         return config.get_interval_ms(scene_key)
 
 
@@ -198,6 +212,7 @@ def _run_pokemon_identification(
         }
         if key in cached_results:
             cached = cached_results[key]
+            entry["pokemon_key"] = cached.get("pokemon_key", cached["pokemon_id"])
             entry["pokemon_id"] = cached["pokemon_id"]
             entry["name"] = cached["name"]
             entry["confidence"] = cached["confidence"]
@@ -209,23 +224,27 @@ def _run_pokemon_identification(
                 best = detailed.candidates[0]
                 threshold = detailed.threshold
                 if best.confidence >= threshold:
-                    entry["pokemon_id"] = best.pokemon_id
-                    entry["name"] = id_to_name.get(best.pokemon_id, f"#{best.pokemon_id}")
+                    entry["pokemon_key"] = best.pokemon_key
+                    entry["pokemon_id"] = best.pokemon_key
+                    entry["name"] = id_to_name.get(best.pokemon_key, best.pokemon_key)
                     entry["confidence"] = round(best.confidence, 3)
                 else:
+                    entry["pokemon_key"] = None
                     entry["pokemon_id"] = None
                     entry["name"] = None
                     entry["confidence"] = 0.0
                 # 全候補を含める
                 entry["candidates"] = [
                     {
-                        "pokemon_id": c.pokemon_id,
-                        "name": id_to_name.get(c.pokemon_id, f"#{c.pokemon_id}"),
+                        "pokemon_key": c.pokemon_key,
+                        "pokemon_id": c.pokemon_key,
+                        "name": id_to_name.get(c.pokemon_key, c.pokemon_key),
                         "confidence": round(c.confidence, 3),
                     }
                     for c in detailed.candidates
                 ]
             else:
+                entry["pokemon_key"] = None
                 entry["pokemon_id"] = None
                 entry["name"] = None
                 entry["confidence"] = 0.0
@@ -233,6 +252,7 @@ def _run_pokemon_identification(
             # read_once ならキャッシュに格納
             if pos.get("read_once", False) and pokemon_icon_cache is not None:
                 pokemon_icon_cache[key] = {
+                    "pokemon_key": entry.get("pokemon_key"),
                     "pokemon_id": entry["pokemon_id"],
                     "name": entry["name"],
                     "confidence": entry["confidence"],
@@ -274,6 +294,7 @@ def _run_pokemon_identification(
             "event": "pokemon_identify",
             "position": entry["position"],
             "key": key,
+            "pokemon_key": entry.get("pokemon_key"),
             "pokemon_id": entry["pokemon_id"],
             "name": entry.get("name"),
             "confidence": confidence,
@@ -486,7 +507,16 @@ def _parse_hp_percent(text: str) -> int | None:
 async def websocket_battle(websocket: WebSocket) -> None:
     """バトル WebSocket エンドポイント."""
     await websocket.accept()
-    session = BattleSession()
+    settings = get_settings()
+    session = BattleSession(
+        _state_machine=SceneStateMachine(
+            scene_state_config=settings.recognition.scene_state,
+        ),
+        _match_logger=BattleMatchLogger(
+            log_dir=_BATTLE_LOG_DIR,
+            session_id=uuid.uuid4().hex[:8],
+        ),
+    )
     frame_queue: asyncio.Queue[bytes] = asyncio.Queue(maxsize=2)
 
     await websocket.send_json({"type": "status", "status": "connected", "message": ""})
@@ -519,37 +549,37 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             session.scene = data["scene"]
                         if "auto_detect" in data:
                             session.auto_detect = bool(data["auto_detect"])
-                        if "interval_ms" in data:
-                            session.interval_ms = max(100, int(data["interval_ms"]))
                         if "paused" in data:
                             session.paused = bool(data["paused"])
                         if "debug_crops" in data:
                             session.debug_crops = bool(data["debug_crops"])
                         if "benchmark" in data:
                             session.benchmark = bool(data["benchmark"])
-                        if "scene_intervals" in data:
-                            raw = data["scene_intervals"]
-                            if isinstance(raw, dict):
-                                session.scene_intervals = {
-                                    k: max(100, int(v))
-                                    for k, v in raw.items()
-                                }
                         logger.info(
-                            "設定更新: scene=%s auto_detect=%s interval=%dms "
+                            "設定更新: scene=%s auto_detect=%s "
                             "paused=%s debug_crops=%s benchmark=%s",
                             session.scene,
                             session.auto_detect,
-                            session.interval_ms,
                             session.paused,
                             session.debug_crops,
                             session.benchmark,
                         )
                     elif data.get("type") == "reset":
+                        ml = session._match_logger
+                        if ml is not None and ml.is_active:
+                            ml.end_match(reason="reset")
                         session._state_machine.reset()
                         session._last_scene_key = "none"
                         session._read_once_cache.clear()
                         session._pokemon_icon_cache.clear()
                         session._opponent_party.clear()
+                        session._auto_opponent_party.clear()
+                        session._manual_opponent_overrides.clear()
+                        session._player_party.clear()
+                        if session._battle_log_parser is not None:
+                            session._battle_log_parser.reset()
+                        if session._item_ability_parser is not None:
+                            session._item_ability_parser.reset()
                         logger.info("ステートマシンをリセット")
                         await websocket.send_json({
                             "type": "scene_change",
@@ -574,6 +604,11 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         session._pokemon_icon_cache.clear()
                         if session._battle_log_parser is not None:
                             session._battle_log_parser.reset()
+                        if session._item_ability_parser is not None:
+                            session._item_ability_parser.reset()
+                        ml = session._match_logger
+                        if ml is not None and ml.is_active and new_state.scene_key == "none":
+                            ml.end_match(reason="force_none")
                         logger.info("強制シーン遷移: %s (top=%s, sub=%s)",
                                     new_state.scene_key, top_level, sub_scene)
                         await websocket.send_json({
@@ -592,6 +627,7 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             recognizer=recognizer,
                             config=recognizer._config,
                             pokemon_matcher=matcher,
+                            party_register_config=settings.recognition.party_register,
                         )
                         msgs = session._party_machine.start()
                         for m in msgs:
@@ -604,6 +640,34 @@ async def websocket_battle(websocket: WebSocket) -> None:
                                 await websocket.send_json(m)
                             session._party_machine = None
                         logger.info("パーティ登録キャンセル")
+                    elif data.get("type") == "set_opponent_pokemon":
+                        pokemon_key = data.get("pokemon_key", data.get("species_id"))
+                        name = data.get("name")
+                        position = data.get("position")
+                        if pokemon_key is not None and name and position is not None:
+                            session._manual_opponent_overrides[position] = {
+                                "pokemon_key": pokemon_key,
+                                "name": name,
+                            }
+                            session._rebuild_opponent_party()
+                            logger.info(
+                                "手動相手ポケモン設定: pos=%s pokemon_key=%s name=%s",
+                                position, pokemon_key, name,
+                            )
+                    elif data.get("type") == "set_player_party":
+                        party_list = data.get("party", [])
+                        session._player_party = [
+                            {
+                                "pokemon_key": p.get("pokemon_key", p.get("species_id")),
+                                "name": p["name"],
+                            }
+                            for p in party_list
+                            if p.get("pokemon_key", p.get("species_id")) is not None
+                        ]
+                        logger.info(
+                            "プレイヤーパーティ設定: %d体",
+                            len(session._player_party),
+                        )
                 except (json.JSONDecodeError, KeyError, TypeError):
                     logger.warning("不正な設定メッセージを無視")
 
@@ -660,7 +724,13 @@ async def websocket_battle(websocket: WebSocket) -> None:
                     session._read_once_cache.clear()
                     session._pokemon_icon_cache.clear()
                     if session._battle_log_parser is not None:
-                        session._battle_log_parser.reset()
+                        # サブシーン切り替え (battle内) ではパーサーをリセットしない
+                        # battle ↔ battle_Neutral の頻繁な切り替えで重複排除状態が失われるのを防ぐ
+                        if scene_change.get("top_level") != "battle":
+                            session._battle_log_parser.reset()
+                    if session._item_ability_parser is not None:
+                        if scene_change.get("top_level") != "battle":
+                            session._item_ability_parser.reset()
                     scene_change["interval_ms"] = session.effective_interval_ms(
                         scene_change["scene"], get_recognizer()._config,
                     )
@@ -670,6 +740,12 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         scene_change["scene"],
                         scene_change["confidence"],
                     )
+
+                    # --- 試合ログ: シーン遷移 ---
+                    ml = session._match_logger
+                    if ml is not None:
+                        ml.maybe_start_match(scene_change["scene"])
+                        ml.log_scene_change(scene_change)
 
                     # team_select 遷移時にポケモン画像認識 + 味方チーム OCR を実行
                     if scene_change["scene"] == "team_select":
@@ -684,6 +760,8 @@ async def websocket_battle(websocket: WebSocket) -> None:
                                 len(pokemon_result["pokemon"]),
                                 pokemon_result["elapsed_ms"],
                             )
+                            if ml is not None:
+                                ml.log_pokemon_identified(pokemon_result)
 
                         # match_teams メッセージ送信（味方 + 相手チーム）
                         player_team = await asyncio.to_thread(
@@ -692,18 +770,20 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         opponent_team = (
                             pokemon_result["pokemon"] if pokemon_result else []
                         )
-                        # セッションに相手パーティを保存（パーティ限定マッチング用）
-                        session._opponent_party = [
-                            {"species_id": p["pokemon_id"], "name": p["name"]}
+                        # セッションに自動認識パーティを保存し、手動オーバーライドとマージ
+                        session._auto_opponent_party = [
+                            {"position": p["position"], "pokemon_key": p["pokemon_key"], "name": p["name"]}
                             for p in opponent_team
-                            if p.get("pokemon_id") is not None
+                            if p.get("pokemon_key") is not None
                         ]
+                        session._rebuild_opponent_party()
                         await websocket.send_json({
                             "type": "match_teams",
                             "player_team": player_team,
                             "opponent_team": [
                                 {
                                     "position": p.get("position"),
+                                    "pokemon_key": p.get("pokemon_key"),
                                     "pokemon_id": p.get("pokemon_id"),
                                     "name": p.get("name"),
                                     "confidence": p.get("confidence", 0.0),
@@ -713,6 +793,20 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         })
                         logger.info("match_teams 送信: 味方%d体, 相手%d体",
                                     len(player_team), len(opponent_team))
+                        if ml is not None:
+                            ml.log_match_teams(
+                                player_team,
+                                [
+                                    {
+                                        "position": p.get("position"),
+                                        "pokemon_key": p.get("pokemon_key"),
+                                        "pokemon_id": p.get("pokemon_id"),
+                                        "name": p.get("name"),
+                                        "confidence": p.get("confidence", 0.0),
+                                    }
+                                    for p in opponent_team
+                                ],
+                            )
 
                     # team_confirm 遷移時に選出ポケモンを読み取り
                     elif scene_change["scene"] == "team_confirm":
@@ -724,6 +818,8 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             "selected_positions": selected,
                         })
                         logger.info("team_selection 送信: %s", selected)
+                        if ml is not None:
+                            ml.log_team_selection(selected)
 
                     # battle_end 遷移時に勝敗を読み取り
                     elif scene_change["scene"] == "battle_end":
@@ -735,6 +831,9 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             "result": result_str,
                         })
                         logger.info("battle_result 送信: %s", result_str)
+                        if ml is not None:
+                            ml.log_battle_result(result_str)
+                            ml.end_match(reason="battle_end", battle_result=result_str)
 
             # OCR 実行するシーンを決定
             if session.auto_detect:
@@ -767,6 +866,11 @@ async def websocket_battle(websocket: WebSocket) -> None:
             session._last_process_time = time.monotonic()
             await websocket.send_json(result)
 
+            # --- 試合ログ: OCR 結果 ---
+            ml = session._match_logger
+            if ml is not None and ml.is_active and not session.benchmark:
+                ml.log_ocr_result(result)
+
             # バトルシーンの OCR 結果を処理
             if scene_key == "battle" and not session.benchmark:
                 if session._battle_log_parser is None:
@@ -775,6 +879,8 @@ async def websocket_battle(websocket: WebSocket) -> None:
                 text2 = ""
                 opponent_pokemon_name = ""
                 opponent_hp_text = ""
+                opponent_trait_text1 = ""
+                opponent_trait_text2 = ""
                 for r in result.get("regions", []):
                     if r["name"] == "メインテキスト１":
                         text1 = r["text"]
@@ -784,20 +890,28 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         opponent_pokemon_name = r["text"].strip()
                     elif r["name"] == "相手HP":
                         opponent_hp_text = r["text"].strip()
+                    elif r["name"] == "相手もちもの・特性１":
+                        opponent_trait_text1 = r["text"].strip()
+                    elif r["name"] == "相手もちもの・特性２":
+                        opponent_trait_text2 = r["text"].strip()
 
                 # トレーナー名はバトルログテキストから取得（専用リージョンは廃止）
                 session._battle_log_parser.update_context(
                     opponent_party=session._opponent_party or None,
+                    player_party=session._player_party or None,
                 )
 
                 # メインテキストをパースして構造化イベントを送信
                 battle_events = session._battle_log_parser.parse(text1, text2)
                 for ev in battle_events:
-                    await websocket.send_json(ev.to_ws_message())
+                    ev_msg = ev.to_ws_message()
+                    await websocket.send_json(ev_msg)
                     logger.info(
                         "battle_event: %s side=%s pokemon=%s",
                         ev.event_type, ev.side, ev.pokemon_name,
                     )
+                    if ml is not None:
+                        ml.log_battle_event(ev_msg)
 
                 # 相手ポケモン名をパーティ照合 + HP を送信
                 if opponent_pokemon_name and session._opponent_party:
@@ -806,20 +920,47 @@ async def websocket_battle(websocket: WebSocket) -> None:
                     )
                     if party_match is not None:
                         hp_percent = _parse_hp_percent(opponent_hp_text)
-                        await websocket.send_json({
-                            "type": "opponent_active",
-                            "species_id": party_match["species_id"],
+                        opponent_active_data = {
+                            "pokemon_key": party_match["pokemon_key"],
+                            "species_id": party_match["pokemon_key"],
                             "pokemon_name": party_match["matched_name"],
                             "hp_percent": hp_percent,
                             "confidence": party_match["confidence"],
+                        }
+                        await websocket.send_json({
+                            "type": "opponent_active",
+                            **opponent_active_data,
                         })
                         logger.debug(
-                            "opponent_active: %s (id=%d) HP=%s confidence=%.3f",
+                            "opponent_active: %s (key=%s) HP=%s confidence=%.3f",
                             party_match["matched_name"],
-                            party_match["species_id"],
+                            party_match["pokemon_key"],
                             hp_percent,
                             party_match["confidence"],
                         )
+                        if ml is not None:
+                            ml.log_opponent_active(opponent_active_data)
+
+                # 相手もちもの・特性テキストを解析
+                if opponent_trait_text1 or opponent_trait_text2:
+                    if session._item_ability_parser is None:
+                        session._item_ability_parser = ItemAbilityParser(get_game_data())
+                    detections = session._item_ability_parser.parse(
+                        opponent_trait_text1,
+                        opponent_trait_text2,
+                        session._opponent_party or [],
+                    )
+                    for det in detections:
+                        await websocket.send_json(det)
+                        logger.info(
+                            "opponent_%s: %s → %s (id=%d)",
+                            det["detection_type"],
+                            det["pokemon_name"],
+                            det["trait_name"],
+                            det["trait_id"],
+                        )
+                        if ml is not None:
+                            ml.log_item_ability(det)
 
     receive_task = asyncio.create_task(receive_loop())
     process_task = asyncio.create_task(process_loop())
@@ -837,4 +978,6 @@ async def websocket_battle(websocket: WebSocket) -> None:
     finally:
         receive_task.cancel()
         process_task.cancel()
+        if session._match_logger is not None and session._match_logger.is_active:
+            session._match_logger.end_match(reason="disconnect")
         logger.info("WebSocket セッション終了")

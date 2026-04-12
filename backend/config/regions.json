@@ -270,9 +270,49 @@
         }
       }
     },
+    "pokemon_summary": {
+      "display_name": "ポケモン画面",
+      "description": "バトル中のサブシーン: ポケモン入れ替え・詳細画面",
+      "interval_ms": 500,
+      "detection": {
+        "_comment": "テンプレート画像を templates/pokemon_summary/ に配置してここに定義する",
+        "ステータス表示": {
+          "x": 1111,
+          "y": 114,
+          "w": 145,
+          "h": 38,
+          "method": "ocr",
+          "engine": "paddle",
+          "expected_text": "ステータス"
+        }
+      },
+      "regions": {
+        "自分ポケモン１": {
+          "x": 117,
+          "y": 249,
+          "w": 283,
+          "h": 33,
+          "engine": "paddle"
+        },
+        "自分ポケモン２": {
+          "x": 117,
+          "y": 372,
+          "w": 285,
+          "h": 36,
+          "engine": "paddle"
+        },
+        "自分ポケモン３": {
+          "x": 115,
+          "y": 495,
+          "w": 286,
+          "h": 39,
+          "engine": "paddle"
+        }
+      }
+    },
     "battle_Neutral": {
       "display_name": "ニュートラルバトル画面",
-      "description": "",
+      "description": "バトル中サブシーン: ニュートラル画面（たたかう/ポケモンボタン表示中）",
       "detection": {
         "たたかう表示": {
           "x": 1715,
@@ -325,12 +365,13 @@
           "engine": "paddle",
           "read_once": true
         }
-      }
+      },
+      "interval_ms": 500
     },
     "battle": {
       "display_name": "バトル",
-      "description": "",
-      "interval_ms": 500,
+      "description": "バトル進行中（サブシーン未検出時のデフォルト状態）",
+      "interval_ms": 200,
       "detection": {},
       "regions": {
         "自分ポケモン名": {
@@ -408,46 +449,6 @@
           "y": 517,
           "w": 398,
           "h": 35,
-          "engine": "paddle"
-        }
-      }
-    },
-    "pokemon_summary": {
-      "display_name": "ポケモン画面",
-      "description": "バトル中のサブシーン: ポケモン入れ替え・詳細画面",
-      "interval_ms": 700,
-      "detection": {
-        "_comment": "テンプレート画像を templates/pokemon_summary/ に配置してここに定義する",
-        "ステータス表示": {
-          "x": 1111,
-          "y": 114,
-          "w": 145,
-          "h": 38,
-          "method": "ocr",
-          "engine": "paddle",
-          "expected_text": "ステータス"
-        }
-      },
-      "regions": {
-        "自分ポケモン１": {
-          "x": 117,
-          "y": 249,
-          "w": 283,
-          "h": 33,
-          "engine": "paddle"
-        },
-        "自分ポケモン２": {
-          "x": 117,
-          "y": 372,
-          "w": 285,
-          "h": 36,
-          "engine": "paddle"
-        },
-        "自分ポケモン３": {
-          "x": 115,
-          "y": 495,
-          "w": 286,
-          "h": 39,
           "engine": "paddle"
         }
       }

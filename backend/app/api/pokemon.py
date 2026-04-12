@@ -12,12 +12,10 @@ _WIKI_MARKUP_RE = re.compile(r"\[([^\]]*)\]\{[^}]+\}")
 
 
 def _strip_wiki_markup(text: str) -> str:
-    """Strip [text]{mechanic:xxx} markup, keeping visible text."""
     def _replace(m: re.Match) -> str:  # type: ignore[type-arg]
         visible = m.group(1)
         if visible:
             return visible
-        # []{type:electric} → "electric"
         ref = m.group(0)
         colon_idx = ref.rfind(":")
         brace_idx = ref.rfind("}")
@@ -26,72 +24,11 @@ def _strip_wiki_markup(text: str) -> str:
         return ""
     return _WIKI_MARKUP_RE.sub(_replace, text)
 
-router = APIRouter(prefix="/api/pokemon", tags=["pokemon"])
 
-
-@router.get("/names")
-def get_pokemon_names(lang: str = Query("ja")) -> dict:
-    """指定言語のポケモン名辞書を返す（オートコンプリート用）."""
-    game_data = get_game_data()
-    lang_data = game_data.names.get(lang, {})
-    return {"pokemon": lang_data.get("pokemon", {})}
-
-
-@router.get("/{pokemon_id}/detail")
-def get_pokemon_detail(pokemon_id: int, lang: str = Query("ja")) -> dict:
-    """ポケモンの詳細情報（タイプ・種族値・とくせい・タイプ相性）を返す."""
-    game_data = get_game_data()
-    pdata = game_data.get_pokemon_by_id(pokemon_id)
-    if pdata is None:
-        raise HTTPException(status_code=404, detail="Pokemon not found")
-
-    # とくせい名の逆引き辞書 (ability_id -> 日本語名)
-    lang_data = game_data.names.get(lang, {})
-    ability_id_to_name: dict[int, str] = {
-        v: k for k, v in lang_data.get("abilities", {}).items()
-    }
-
-    # identifier → ability_id_str の逆引き
-    ability_id_by_ident: dict[str, str] = {}
-    for aid, adata in game_data.abilities.items():
-        if aid == "_meta":
-            continue
-        ability_id_by_ident[adata.get("identifier", "")] = aid
-
-    # とくせいを日本語名 + effect に変換
-    raw_abilities = pdata.get("abilities", {})
-
-    def _resolve_ability(identifier: str) -> dict[str, str]:
-        aid_str = ability_id_by_ident.get(identifier)
-        if not aid_str:
-            return {"name": identifier, "effect": ""}
-        ability_data = game_data.abilities[aid_str]
-        name = ability_id_to_name.get(int(aid_str), identifier)
-        # 日本語リクエストなら flavor_text_ja、なければ英語 effect
-        effect = ""
-        if lang == "ja":
-            effect = ability_data.get("flavor_text_ja", "")
-        if not effect:
-            effect = _strip_wiki_markup(ability_data.get("effect", ""))
-        return {"name": name, "effect": effect}
-
-    normal_abilities = [
-        _resolve_ability(a) for a in raw_abilities.get("normal", [])
-    ]
-
-    hidden_raw = raw_abilities.get("hidden")
-    hidden_ability: dict[str, str] | None = None
-    if hidden_raw:
-        hidden_ability = _resolve_ability(hidden_raw)
-
-    # ポケモン名の逆引き
-    pokemon_name_map: dict[int, str] = {
-        v: k for k, v in lang_data.get("pokemon", {}).items()
-    }
-    name = pokemon_name_map.get(pdata.get("species_id", -1), pdata.get("name", ""))
-
-    # タイプ相性計算
-    pokemon_types: list[str] = pdata.get("types", [])
+def _calc_type_effectiveness(
+    game_data, pokemon_types: list[str],
+) -> dict[str, list[dict]]:
+    """Calculate weak/resist/immune lists for the given type combination."""
     efficacy = game_data.types.get("efficacy", {})
     all_atk_types = [t for t in efficacy if t != "stellar"]
 
@@ -111,124 +48,160 @@ def get_pokemon_detail(pokemon_id: int, lang: str = Query("ja")) -> dict:
 
     weak.sort(key=lambda x: -x["multiplier"])
     resist.sort(key=lambda x: x["multiplier"])
+    return {"weak": weak, "resist": resist, "immune": immune}
+
+
+router = APIRouter(prefix="/api/pokemon", tags=["pokemon"])
+
+
+def _localize_entry_name(game_data, category: str, entry_key: str, lang: str) -> str:
+    if category == "pokemon":
+        return game_data.localize_pokemon_name(entry_key, lang) or entry_key
+    return game_data.localize_name(category, entry_key, lang) or entry_key
+
+
+def _resolve_ability(game_data, ability_key: str, lang: str) -> dict[str, str]:
+    ability_data = game_data.get_ability_by_key(ability_key) or {}
+    name = _localize_entry_name(game_data, "abilities", ability_key, lang)
+    effect = _strip_wiki_markup(ability_data.get("effect", ""))
+    return {"name": name, "effect": effect}
+
+
+@router.get("/names")
+def get_pokemon_names(lang: str = Query("ja")) -> dict:
+    game_data = get_game_data()
+    return {"pokemon": game_data.get_pokemon_name_choices(lang)}
+
+
+@router.get("/{pokemon_key}/detail")
+def get_pokemon_detail(pokemon_key: str, lang: str = Query("ja")) -> dict:
+    game_data = get_game_data()
+    pdata = game_data.get_pokemon_by_key(pokemon_key) or game_data.get_pokemon_by_id(pokemon_key)
+    if pdata is None:
+        raise HTTPException(status_code=404, detail="Pokemon not found")
+    resolved_key = pdata.get("pokemon_key") or pdata.get("key") or pokemon_key
+
+    name = _localize_entry_name(game_data, "pokemon", resolved_key, lang) or pdata.get(
+        "name", resolved_key,
+    )
+
+    pokemon_types: list[str] = pdata.get("types", [])
+    type_eff = _calc_type_effectiveness(game_data, pokemon_types)
+
+    raw_abilities = pdata.get("abilities", {})
+    normal_abilities = [
+        _resolve_ability(game_data, ability_key, lang)
+        for ability_key in raw_abilities.get("normal", [])
+    ]
+    hidden_key = raw_abilities.get("hidden")
+    hidden_ability = _resolve_ability(game_data, hidden_key, lang) if hidden_key else None
+
+    raw_mega_forms = game_data.get_mega_forms_for_pokemon(resolved_key)
+    mega_forms_response: list[dict] = []
+    base_stats = pdata.get("base_stats", {})
+    for mega in raw_mega_forms:
+        mega_key = mega.get("mega_pokemon_key")
+        mega_pdata = game_data.get_pokemon_by_key(mega_key) if mega_key else None
+        if mega_pdata is None:
+            continue
+        mega_name = _localize_entry_name(game_data, "pokemon", mega_key, lang) or (
+            mega_pdata.get("name", mega_key)
+        )
+        ability_keys = mega_pdata.get("abilities", {}).get("normal", [])
+        ability_info = (
+            _resolve_ability(game_data, ability_keys[0], lang)
+            if ability_keys else {"name": "", "effect": ""}
+        )
+
+        mega_stats = mega_pdata.get("base_stats", {})
+        stat_deltas: dict[str, int] = {}
+        for key in ("hp", "atk", "def", "spa", "spd", "spe"):
+            stat_deltas[key] = mega_stats.get(key, 0) - base_stats.get(key, 0)
+
+        mega_types = mega_pdata.get("types", [])
+        mega_forms_response.append({
+            "item_key": mega.get("item_key"),
+            "pokemon_key": mega_key,
+            "mega_name": mega_name,
+            "types": mega_types,
+            "ability": ability_info,
+            "base_stats": mega_stats,
+            "stat_deltas": stat_deltas,
+            "type_effectiveness": _calc_type_effectiveness(game_data, mega_types),
+        })
 
     return {
-        "pokemon_id": pokemon_id,
+        "pokemon_key": resolved_key,
+        "base_species_key": pdata.get("base_species_key", resolved_key),
         "name": name,
         "types": pokemon_types,
         "base_stats": pdata.get("base_stats", {}),
         "abilities": {"normal": normal_abilities, "hidden": hidden_ability},
-        "type_effectiveness": {
-            "weak": weak,
-            "resist": resist,
-            "immune": immune,
-        },
+        "type_effectiveness": type_eff,
+        "mega_forms": mega_forms_response,
     }
 
 
 @router.get("/mega-form")
 def get_mega_form(
-    item_id: int = Query(..., description="メガストーンの item_id"),
-    pokemon_id: int | None = Query(None, description="ベースポケモンの pokemon_id（差分計算用）"),
+    item_key: str | None = Query(None, description="メガストーンの item_key"),
+    item_id: str | None = Query(None, description="legacy alias for item_key"),
+    pokemon_key: str | None = Query(None, description="ベースポケモンの pokemon_key（差分計算用）"),
+    pokemon_id: str | None = Query(None, description="legacy alias for pokemon_key"),
     lang: str = Query("ja"),
 ) -> dict:
-    """メガストーンに対応するメガフォーム情報を返す."""
     game_data = get_game_data()
-    mega = game_data.get_mega_form_for_item(item_id)
+    item_key = item_key or item_id
+    pokemon_key = pokemon_key or pokemon_id
+    if item_key is None:
+        raise HTTPException(status_code=422, detail="item_key is required")
+    mega = game_data.get_mega_form_for_item(item_key)
     if mega is None:
         raise HTTPException(status_code=404, detail="Not a mega stone or no mega form found")
 
-    lang_data = game_data.names.get(lang, {})
+    mega_key = mega.get("mega_pokemon_key")
+    mega_pdata = game_data.get_pokemon_by_key(mega_key) if mega_key else None
+    if mega_pdata is None:
+        raise HTTPException(status_code=404, detail="Mega form not found")
 
-    # --- メガ名の構築 ---
-    mega_name = mega["mega_form_name"]  # English fallback
-    # ベースポケモン名から言語名を組み立て
-    if mega.get("base_pokemon_id") is not None:
-        base_pdata = game_data.get_pokemon_by_id(mega["base_pokemon_id"])
-        if base_pdata:
-            pokemon_name_map: dict[int, str] = {
-                v: k for k, v in lang_data.get("pokemon", {}).items()
-            }
-            local_name = pokemon_name_map.get(base_pdata.get("species_id", -1))
-            if local_name:
-                suffix = ""
-                if mega_name.endswith(" X"):
-                    suffix = " X"
-                elif mega_name.endswith(" Y"):
-                    suffix = " Y"
-                elif mega_name.endswith(" Z"):
-                    suffix = " Z"
-                mega_name = f"メガ{local_name}{suffix}" if lang == "ja" else f"Mega {local_name}{suffix}"
+    ability_keys = mega_pdata.get("abilities", {}).get("normal", [])
+    ability_info = (
+        _resolve_ability(game_data, ability_keys[0], lang)
+        if ability_keys else {"name": "", "effect": ""}
+    )
 
-    # --- とくせい解決 ---
-    ability_id_to_name: dict[int, str] = {
-        v: k for k, v in lang_data.get("abilities", {}).items()
-    }
-    ability_id_by_ident: dict[str, str] = {}
-    for aid, adata in game_data.abilities.items():
-        if aid == "_meta":
-            continue
-        ability_id_by_ident[adata.get("identifier", "")] = aid
-
-    mega_abilities = mega.get("abilities", {})
-    normal_list: list[str] = mega_abilities.get("normal", [])
-    ability_info: dict[str, str] = {"name": "", "effect": ""}
-    if normal_list:
-        identifier = normal_list[0]
-        aid_str = ability_id_by_ident.get(identifier)
-        if aid_str:
-            ability_data = game_data.abilities[aid_str]
-            name = ability_id_to_name.get(int(aid_str), identifier)
-            effect = ""
-            if lang == "ja":
-                effect = ability_data.get("flavor_text_ja", "")
-            if not effect:
-                effect = _strip_wiki_markup(ability_data.get("effect", ""))
-            ability_info = {"name": name, "effect": effect}
-        else:
-            # Champions mega: ability stored as English name, not identifier
-            # Try to find by name or identifier-ized name
-            ident_form = identifier.lower().replace(" ", "-")
-            aid_str = ability_id_by_ident.get(ident_form)
-            if aid_str:
-                ability_data = game_data.abilities[aid_str]
-                name = ability_id_to_name.get(int(aid_str), identifier)
-                effect = ""
-                if lang == "ja":
-                    effect = ability_data.get("flavor_text_ja", "")
-                if not effect:
-                    effect = _strip_wiki_markup(ability_data.get("effect", ""))
-                ability_info = {"name": name, "effect": effect}
-            else:
-                ability_info = {"name": identifier, "effect": ""}
-
-    # --- 種族値差分 ---
-    mega_stats = mega.get("base_stats", {})
     stat_deltas: dict[str, int] | None = None
-    if pokemon_id is not None:
-        base_pdata = game_data.get_pokemon_by_id(pokemon_id)
-        if base_pdata:
-            base_stats = base_pdata.get("base_stats", {})
+    if pokemon_key is not None:
+        base_pdata = game_data.get_pokemon_by_key(pokemon_key)
+        if base_pdata is not None:
             stat_deltas = {}
+            base_stats = base_pdata.get("base_stats", {})
+            mega_stats = mega_pdata.get("base_stats", {})
             for key in ("hp", "atk", "def", "spa", "spd", "spe"):
                 stat_deltas[key] = mega_stats.get(key, 0) - base_stats.get(key, 0)
 
+    mega_types = mega_pdata.get("types", [])
     return {
-        "item_id": item_id,
-        "mega_name": mega_name,
-        "types": mega.get("types", []),
+        "item_key": item_key,
+        "pokemon_key": mega_key,
+        "mega_name": _localize_entry_name(game_data, "pokemon", mega_key, lang) or (
+            mega_pdata.get("name", mega_key)
+        ),
+        "types": mega_types,
         "ability": ability_info,
-        "base_stats": mega_stats,
+        "base_stats": mega_pdata.get("base_stats", {}),
         "stat_deltas": stat_deltas,
+        "type_effectiveness": _calc_type_effectiveness(game_data, mega_types),
     }
 
 
 @router.get("/type-consistency")
 def get_type_consistency(
-    pokemon_ids: str = Query(..., description="カンマ区切りのポケモンID"),
+    pokemon_keys: str | None = Query(None, description="カンマ区切りのポケモンkey"),
+    pokemon_ids: str | None = Query(None, description="legacy alias for pokemon_keys"),
 ) -> dict:
-    """相手チームに対するタイプ一貫性を算出する."""
     game_data = get_game_data()
-    ids = [int(x) for x in pokemon_ids.split(",") if x.strip()]
-    results = game_data.calc_type_consistency(ids)
-    return {"results": results, "pokemon_count": len(ids)}
+    pokemon_keys = pokemon_keys or pokemon_ids or ""
+    keys = [x for x in pokemon_keys.split(",") if x.strip()]
+    results = game_data.calc_type_consistency(keys)
+    return {"results": results, "pokemon_count": len(keys)}

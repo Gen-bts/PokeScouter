@@ -17,13 +17,18 @@ _TIMEOUT = 5.0  # seconds
 class CalcServiceClient:
     """calc-service との通信を管理する非同期 HTTP クライアント."""
 
-    def __init__(self, base_url: str | None = None) -> None:
+    def __init__(
+        self,
+        base_url: str | None = None,
+        timeout: float | None = None,
+    ) -> None:
         self._base_url = base_url or os.environ.get(
             "CALC_SERVICE_URL", _DEFAULT_BASE_URL,
         )
+        self._timeout = timeout if timeout is not None else _TIMEOUT
         self._client = httpx.AsyncClient(
             base_url=self._base_url,
-            timeout=_TIMEOUT,
+            timeout=self._timeout,
         )
 
     async def health_check(self) -> bool:
@@ -42,6 +47,16 @@ class CalcServiceClient:
             ValueError: calc-service が 4xx/5xx を返した場合
         """
         resp = await self._client.post("/calc/damage", json=request)
+        if resp.status_code != 200:
+            detail = resp.text[:200]
+            raise ValueError(
+                f"calc-service returned {resp.status_code}: {detail}",
+            )
+        return resp.json()
+
+    async def validate_team(self, request: dict[str, Any]) -> dict[str, Any]:
+        """チーム検証リクエストを calc-service に送信する."""
+        resp = await self._client.post("/calc/validate", json=request)
         if resp.status_code != 200:
             detail = resp.text[:200]
             raise ValueError(

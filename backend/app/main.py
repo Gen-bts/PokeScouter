@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import logging
+import json
 from contextlib import asynccontextmanager
+from functools import lru_cache
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import AsyncIterator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -17,12 +20,15 @@ from app.api.health import router as health_router
 from app.api.devtools import router as devtools_router
 from app.api.parties import router as parties_router
 from app.api.pokemon import router as pokemon_router
+from app.api.settings import router as settings_router
+from app.config import Settings, load_settings
 from app.dependencies import (
     init_calc_client,
     init_detector,
     init_game_data,
     init_pokemon_matcher,
     init_recognizer,
+    init_settings,
     shutdown_calc_client,
     shutdown_detector,
     shutdown_pokemon_matcher,
@@ -30,12 +36,20 @@ from app.dependencies import (
 )
 from app.ws.battle import router as battle_router
 
-_LOG_DIR = Path(__file__).parent.parent.parent / "debug"
+
+def _resolve_log_dir(settings: Settings) -> Path:
+    """ログディレクトリの絶対パスを返す."""
+    log_dir = Path(settings.server.logging.log_dir)
+    if not log_dir.is_absolute():
+        log_dir = Path(__file__).parent.parent.parent / log_dir
+    return log_dir
 
 
-def setup_logging() -> None:
+def setup_logging(settings: Settings) -> None:
     """ロギングを設定する（コンソール + ファイル + 認識監査 JSONL）."""
-    _LOG_DIR.mkdir(parents=True, exist_ok=True)
+    log_cfg = settings.server.logging
+    log_dir = _resolve_log_dir(settings)
+    log_dir.mkdir(parents=True, exist_ok=True)
 
     root = logging.getLogger()
     # --reload 時の重複ハンドラを防止
@@ -51,11 +65,11 @@ def setup_logging() -> None:
     ))
     root.addHandler(console)
 
-    # ファイル: DEBUG, ローテーション 5MB x 3世代
+    # ファイル: DEBUG, ローテーション
     file_handler = RotatingFileHandler(
-        _LOG_DIR / "pokescouter.log",
-        maxBytes=5 * 1024 * 1024,
-        backupCount=3,
+        log_dir / "pokescouter.log",
+        maxBytes=log_cfg.max_bytes,
+        backupCount=log_cfg.backup_count,
         encoding="utf-8",
     )
     file_handler.setLevel(logging.DEBUG)
@@ -69,9 +83,9 @@ def setup_logging() -> None:
     audit.handlers.clear()
     audit.propagate = False
     audit_handler = RotatingFileHandler(
-        _LOG_DIR / "recognition.jsonl",
-        maxBytes=2 * 1024 * 1024,
-        backupCount=5,
+        log_dir / "recognition.jsonl",
+        maxBytes=log_cfg.audit_max_bytes,
+        backupCount=log_cfg.audit_backup_count,
         encoding="utf-8",
     )
     audit_handler.setFormatter(logging.Formatter("%(message)s"))
@@ -79,17 +93,125 @@ def setup_logging() -> None:
     audit.setLevel(logging.INFO)
 
 
-setup_logging()
+_boot_settings = load_settings()
+setup_logging(_boot_settings)
 
 logger = logging.getLogger(__name__)
 
 FRONTEND_DIR = Path(__file__).parent.parent.parent / "frontend" / "dist"
 TEMPLATES_DIR = Path(__file__).parent.parent.parent / "templates"
+POKEMON_SPRITES_DIR = TEMPLATES_DIR / "pokemon"
+POKEMON_SPRITE_MANIFEST = POKEMON_SPRITES_DIR / "manifest.json"
+ITEM_SPRITES_DIR = TEMPLATES_DIR / "items"
+POKEMON_SNAPSHOT_PATH = (
+    Path(__file__).parent.parent.parent / "data" / "showdown" / "champions-bss-reg-ma" / "pokemon.json"
+)
+
+
+def _normalize_asset_key(value: str) -> str:
+    return "".join(ch for ch in value.lower() if ch.isalnum())
+
+
+@lru_cache(maxsize=1)
+def _load_pokemon_sprite_manifest() -> dict[str, str]:
+    if not POKEMON_SPRITE_MANIFEST.exists():
+        return {}
+    payload = json.loads(POKEMON_SPRITE_MANIFEST.read_text(encoding="utf-8"))
+    if isinstance(payload, dict) and isinstance(payload.get("sprites"), dict):
+        return payload["sprites"]
+    return payload if isinstance(payload, dict) else {}
+
+
+@lru_cache(maxsize=1)
+def _load_pokemon_sprite_fallbacks() -> dict[str, str]:
+    if not POKEMON_SNAPSHOT_PATH.exists():
+        return {}
+
+    payload = json.loads(POKEMON_SNAPSHOT_PATH.read_text(encoding="utf-8"))
+    manifest = _load_pokemon_sprite_manifest()
+    fallbacks: dict[str, str] = {}
+
+    for pokemon_key, pdata in payload.items():
+        if not isinstance(pdata, dict):
+            continue
+
+        candidates: list[str] = []
+        num = pdata.get("num")
+        if isinstance(num, int):
+            candidates.append(f"{num}.png")
+
+        sprite_id = pdata.get("sprite_id")
+        if isinstance(sprite_id, str) and sprite_id:
+            candidates.append(f"{sprite_id}.png")
+
+        base_species_key = pdata.get("base_species_key")
+        if isinstance(base_species_key, str):
+            mapped = manifest.get(base_species_key)
+            if mapped:
+                candidates.append(mapped)
+
+        for candidate in candidates:
+            candidate_path = POKEMON_SPRITES_DIR / candidate
+            if candidate_path.exists():
+                fallbacks[pokemon_key] = candidate
+                break
+
+    return fallbacks
+
+
+def _resolve_pokemon_sprite_path(pokemon_key: str) -> Path | None:
+    direct = POKEMON_SPRITES_DIR / f"{pokemon_key}.png"
+    if direct.exists():
+        return direct
+
+    mapped_name = _load_pokemon_sprite_manifest().get(pokemon_key)
+    if not mapped_name:
+        mapped_name = _load_pokemon_sprite_fallbacks().get(pokemon_key)
+    if mapped_name:
+        mapped_path = POKEMON_SPRITES_DIR / mapped_name
+        if mapped_path.exists():
+            return mapped_path
+
+    if pokemon_key.isdigit():
+        numeric_path = POKEMON_SPRITES_DIR / f"{pokemon_key}.png"
+        if numeric_path.exists():
+            return numeric_path
+    return None
+
+
+@lru_cache(maxsize=1)
+def _load_item_sprite_index() -> dict[str, str]:
+    if not ITEM_SPRITES_DIR.is_dir():
+        return {}
+
+    index: dict[str, str] = {}
+    for path in ITEM_SPRITES_DIR.glob("*.png"):
+        index[_normalize_asset_key(path.stem)] = path.name
+    return index
+
+
+def _resolve_item_sprite_path(item_ref: str) -> Path | None:
+    direct = ITEM_SPRITES_DIR / f"{item_ref}.png"
+    if direct.exists():
+        return direct
+
+    normalized = _normalize_asset_key(item_ref)
+    mapped_name = _load_item_sprite_index().get(normalized)
+    if not mapped_name:
+        return None
+
+    mapped_path = ITEM_SPRITES_DIR / mapped_name
+    if mapped_path.exists():
+        return mapped_path
+    return None
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     """起動時に RegionRecognizer を初期化、終了時に解放する."""
+    logger.info("Settings を読み込み中...")
+    init_settings()
+    logger.info("Settings 読み込み完了")
     logger.info("GameData を読み込み中...")
     init_game_data()
     logger.info("GameData 読み込み完了")
@@ -119,10 +241,10 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="PokeScouter", version="0.1.0", lifespan=lifespan)
 
-# CORS（ローカル開発用）
+# CORS（設定ファイルから読み込み）
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_boot_settings.server.cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -133,13 +255,23 @@ app.include_router(damage_router)
 app.include_router(devtools_router)
 app.include_router(parties_router)
 app.include_router(pokemon_router)
+app.include_router(settings_router)
 app.include_router(battle_router)
 
 # スプライト画像配信
-if (TEMPLATES_DIR / "pokemon").is_dir():
-    app.mount("/sprites", StaticFiles(directory=str(TEMPLATES_DIR / "pokemon")), name="sprites")
-if (TEMPLATES_DIR / "items").is_dir():
-    app.mount("/item-sprites", StaticFiles(directory=str(TEMPLATES_DIR / "items")), name="item-sprites")
+@app.get("/sprites/{pokemon_key}.png")
+async def get_pokemon_sprite(pokemon_key: str) -> FileResponse:
+    sprite_path = _resolve_pokemon_sprite_path(pokemon_key)
+    if sprite_path is None:
+        raise HTTPException(status_code=404, detail="Pokemon sprite not found")
+    return FileResponse(sprite_path, media_type="image/png")
+
+@app.get("/item-sprites/{item_ref}.png")
+async def get_item_sprite(item_ref: str) -> FileResponse:
+    sprite_path = _resolve_item_sprite_path(item_ref)
+    if sprite_path is None:
+        raise HTTPException(status_code=404, detail="Item sprite not found")
+    return FileResponse(sprite_path, media_type="image/png")
 
 # フロントエンド静的ファイル配信（最後にマウント）
 if FRONTEND_DIR.is_dir():
@@ -149,4 +281,9 @@ if FRONTEND_DIR.is_dir():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(
+        "app.main:app",
+        host=_boot_settings.server.host,
+        port=_boot_settings.server.port,
+        reload=True,
+    )

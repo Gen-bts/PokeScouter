@@ -1,8 +1,4 @@
-"""ダメージ計算 API.
-
-フロントエンドから攻撃側データ + 防御側 species_id を受け取り、
-GameData で補完した上で calc-service に転送する。
-"""
+"""ダメージ計算 API."""
 
 from __future__ import annotations
 
@@ -27,11 +23,11 @@ router = APIRouter(prefix="/api", tags=["damage"])
 class AttackerData(BaseModel):
     """フロントエンドから送られる攻撃側データ."""
 
-    pokemon_id: int
+    pokemon_key: str
     stats: dict[str, int]  # 実数値（OCR 取得済み）
-    move_ids: list[int]  # 技 ID（最大 4）
-    ability_id: int | None = None
-    item_id: int | None = None
+    move_keys: list[str]  # 技 key（最大 4）
+    ability_key: str | None = None
+    item_key: str | None = None
     boosts: dict[str, int] | None = None
 
 
@@ -46,8 +42,11 @@ class DamageCalcRequest(BaseModel):
     """ダメージ計算リクエスト."""
 
     attacker: AttackerData
-    defender_species_ids: list[int]
+    defender_pokemon_keys: list[str]
     field: FieldData | None = None
+    defender_boosts: dict[str, dict[str, int]] | None = None
+    defender_items: dict[str, str] | None = None
+    defender_abilities: dict[str, str] | None = None
 
 
 # --- エンドポイント ---
@@ -64,86 +63,59 @@ async def calculate_damage(req: DamageCalcRequest) -> dict[str, Any]:
     calc_client: CalcServiceClient = get_calc_client()
 
     # --- 攻撃側データの補完 ---
-    attacker_pokemon = game_data.get_pokemon_by_id(req.attacker.pokemon_id)
+    attacker_pokemon = game_data.get_pokemon_by_key(req.attacker.pokemon_key)
     if not attacker_pokemon:
         raise HTTPException(
             status_code=404,
-            detail=f"攻撃側ポケモンが見つかりません: {req.attacker.pokemon_id}",
+            detail=f"攻撃側ポケモンが見つかりません: {req.attacker.pokemon_key}",
         )
 
-    attacker_types = attacker_pokemon.get("types", [])
-    attacker_name = attacker_pokemon.get("name", "Unknown")
-
-    # 特性名の解決
-    attacker_ability: str | None = None
-    if req.attacker.ability_id is not None:
-        ability_data = game_data.abilities.get(str(req.attacker.ability_id))
-        if ability_data:
-            attacker_ability = ability_data.get("name", ability_data.get("identifier"))
-
-    # アイテム名の解決 + メガストーン判定
-    attacker_item: str | None = None
-    if req.attacker.item_id is not None:
-        item_data = game_data.items.get(str(req.attacker.item_id))
-        if item_data:
-            attacker_item = item_data.get("name", item_data.get("identifier"))
-
-        # メガストーン → メガフォームのステータス・タイプ・特性に差し替え
-        mega_form = game_data.get_mega_form_for_item(req.attacker.item_id)
-        if mega_form:
-            attacker_name = mega_form.get("mega_name", attacker_name)
-            attacker_types = mega_form.get("types", attacker_types)
-            mega_ability = mega_form.get("ability", {})
-            if mega_ability:
-                attacker_ability = mega_ability.get("name", attacker_ability)
-
     # 技データの補完
-    moves: list[dict[str, Any]] = []
-    for move_id in req.attacker.move_ids:
-        move_data = game_data.get_move_by_id(move_id)
+    move_keys: list[str] = []
+    for move_key in req.attacker.move_keys:
+        move_data = game_data.get_move_by_key(move_key)
         if move_data:
-            moves.append({
-                "move_id": move_id,
-                "name": move_data.get("name", move_data.get("identifier", "Unknown")),
-                "type": move_data.get("type", "normal"),
-                "power": move_data.get("power"),
-                "damage_class": move_data.get("damage_class", "physical"),
-                "makes_contact": move_data.get("meta", {}).get("makes_contact", False)
-                    if move_data.get("meta") else False,
-            })
+            move_keys.append(move_key)
 
-    if not moves:
+    if not move_keys:
         return {"results": []}
 
     # --- 防御側データの補完 ---
     defenders: list[dict[str, Any]] = []
-    for species_id in req.defender_species_ids:
-        pokemon_data = game_data.get_pokemon_by_id(species_id)
+    for pokemon_key in req.defender_pokemon_keys:
+        pokemon_data = game_data.get_pokemon_by_key(pokemon_key)
         if not pokemon_data:
-            logger.warning("防御側ポケモンが見つかりません: %d", species_id)
+            logger.warning("防御側ポケモンが見つかりません: %s", pokemon_key)
             continue
-        defenders.append(build_defender_data(pokemon_data))
+        defender = build_defender_data(pokemon_data, pokemon_key)
+        if req.defender_boosts and pokemon_key in req.defender_boosts:
+            defender["boosts"] = req.defender_boosts[pokemon_key]
+        # 検出された相手アイテムで上書き
+        if req.defender_items and pokemon_key in req.defender_items:
+            defender["item_key"] = req.defender_items[pokemon_key]
+        # 検出された相手特性で上書き
+        if req.defender_abilities and pokemon_key in req.defender_abilities:
+            defender["ability_key"] = req.defender_abilities[pokemon_key]
+        defenders.append(defender)
 
     if not defenders:
         return {"results": []}
 
-    # --- わざ名逆引きマップ（move_id → 日本語名）---
+    # --- わざ名逆引きマップ（move_key → 日本語名）---
     ja_moves = game_data.names.get("ja", {}).get("moves", {})
-    move_id_to_ja: dict[int, str] = {v: k for k, v in ja_moves.items()}
+    move_key_to_ja: dict[str, str] = {str(v): k for k, v in ja_moves.items()}
 
     # --- calc-service リクエスト構築 ---
     calc_request = {
         "attacker": {
-            "species_id": req.attacker.pokemon_id,
-            "name": attacker_name,
-            "types": attacker_types,
+            "pokemon_key": req.attacker.pokemon_key,
             "stats": req.attacker.stats,
-            "ability": attacker_ability,
-            "item": attacker_item,
+            "ability_key": req.attacker.ability_key,
+            "item_key": req.attacker.item_key,
             "boosts": req.attacker.boosts,
         },
         "defenders": defenders,
-        "moves": moves,
+        "moves": [{"move_key": move_key} for move_key in move_keys],
         "field": {
             "weather": req.field.weather if req.field else None,
             "terrain": req.field.terrain if req.field else None,
@@ -163,8 +135,8 @@ async def calculate_damage(req: DamageCalcRequest) -> dict[str, Any]:
     # --- わざ名を日本語に差し替え ---
     for defender_result in result.get("results", []):
         for move_result in defender_result.get("moves", []):
-            mid = move_result.get("move_id")
-            if mid and mid in move_id_to_ja:
-                move_result["move_name"] = move_id_to_ja[mid]
+            move_key = move_result.get("move_key")
+            if move_key and move_key in move_key_to_ja:
+                move_result["move_name"] = move_key_to_ja[move_key]
 
     return result

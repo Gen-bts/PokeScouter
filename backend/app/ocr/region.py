@@ -317,8 +317,13 @@ class RegionRecognizer:
             print(f"{r.region.name}: {r.text}")
     """
 
-    def __init__(self, config: RegionConfig | None = None) -> None:
+    def __init__(
+        self,
+        config: RegionConfig | None = None,
+        ocr_config: Any | None = None,
+    ) -> None:
         self._config = config or RegionConfig()
+        self._ocr_config = ocr_config
         self._engines: dict[str, OCREngine] = {}
         self._pipelines: dict[str, OCRPipeline] = {}
 
@@ -336,14 +341,29 @@ class RegionRecognizer:
             from app.ocr.manga_ocr import MangaOCREngine
             from app.ocr.paddle_ocr import PaddleOCREngine
 
-            factories: dict[str, type[OCREngine]] = {
-                "paddle": PaddleOCREngine,
-                "manga": MangaOCREngine,
-                "glm": GLMOCREngine,
-            }
-            if name not in factories:
-                raise ValueError(f"不明なエンジン: '{name}'")
-            engine = factories[name]()
+            cfg = self._ocr_config
+            if name == "paddle" and cfg is not None:
+                engine: OCREngine = PaddleOCREngine(
+                    det_model=cfg.paddle.det_model,
+                    rec_model=cfg.paddle.rec_model,
+                    device=cfg.paddle.device,
+                )
+            elif name == "glm" and cfg is not None:
+                engine = GLMOCREngine(
+                    model_id=cfg.glm.model_id,
+                    max_new_tokens=cfg.glm.max_new_tokens,
+                )
+            elif name == "manga":
+                engine = MangaOCREngine()
+            else:
+                factories: dict[str, type[OCREngine]] = {
+                    "paddle": PaddleOCREngine,
+                    "manga": MangaOCREngine,
+                    "glm": GLMOCREngine,
+                }
+                if name not in factories:
+                    raise ValueError(f"不明なエンジン: '{name}'")
+                engine = factories[name]()
             engine.load()
             self._engines[name] = engine
         return self._engines[name]

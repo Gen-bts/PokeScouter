@@ -22,6 +22,8 @@ import numpy as np
 from fastapi import APIRouter, Header, HTTPException, Query, Request
 from fastapi.responses import FileResponse, Response, StreamingResponse
 
+from app.dependencies import metadata_file_lock, regions_file_lock
+
 from .devtools_models import (
     BenchmarkRequest,
     CropTestRequest,
@@ -88,7 +90,8 @@ async def create_session(body: SessionCreate) -> SessionMetadata:
         "status": "recording",
         "description": body.description,
     }
-    _write_metadata(DATA_DIR / session_id, meta)
+    async with metadata_file_lock:
+        _write_metadata(DATA_DIR / session_id, meta)
     return SessionMetadata(**meta)
 
 
@@ -133,23 +136,23 @@ async def upload_frame(
 ) -> FrameInfo:
     """フレームを追加する (JPEG binary body)."""
     session_dir = DATA_DIR / session_id
-    meta = _read_metadata(session_dir)
-
-    if meta["status"] != "recording":
-        raise HTTPException(status_code=400, detail="Session is not recording")
 
     body = await request.body()
     if not body:
         raise HTTPException(status_code=400, detail="Empty body")
 
-    frame_index = meta["frame_count"] + 1
-    filename = f"{frame_index:06d}_{x_timestamp_ms:07d}.jpg"
-    frame_path = session_dir / "frames" / filename
-    frame_path.write_bytes(body)
+    async with metadata_file_lock:
+        meta = _read_metadata(session_dir)
+        if meta["status"] != "recording":
+            raise HTTPException(status_code=400, detail="Session is not recording")
+        frame_index = meta["frame_count"] + 1
+        filename = f"{frame_index:06d}_{x_timestamp_ms:07d}.jpg"
+        frame_path = session_dir / "frames" / filename
+        frame_path.write_bytes(body)
 
-    meta["frame_count"] = frame_index
-    meta["duration_ms"] = max(meta["duration_ms"], x_timestamp_ms)
-    _write_metadata(session_dir, meta)
+        meta["frame_count"] = frame_index
+        meta["duration_ms"] = max(meta["duration_ms"], x_timestamp_ms)
+        _write_metadata(session_dir, meta)
 
     return FrameInfo(index=frame_index, filename=filename, timestamp_ms=x_timestamp_ms)
 
@@ -158,16 +161,17 @@ async def upload_frame(
 async def complete_session(session_id: str) -> SessionMetadata:
     """録画を完了する."""
     session_dir = DATA_DIR / session_id
-    meta = _read_metadata(session_dir)
-    meta["status"] = "completed"
+    async with metadata_file_lock:
+        meta = _read_metadata(session_dir)
+        meta["status"] = "completed"
 
-    # フレーム数を実際のファイル数で確定
-    frames_dir = session_dir / "frames"
-    if frames_dir.exists():
-        actual_count = len(list(frames_dir.glob("*.jpg")))
-        meta["frame_count"] = actual_count
+        # フレーム数を実際のファイル数で確定
+        frames_dir = session_dir / "frames"
+        if frames_dir.exists():
+            actual_count = len(list(frames_dir.glob("*.jpg")))
+            meta["frame_count"] = actual_count
 
-    _write_metadata(session_dir, meta)
+        _write_metadata(session_dir, meta)
     return SessionMetadata(**meta)
 
 
@@ -269,70 +273,74 @@ async def get_scenes() -> dict[str, dict[str, Any]]:
 @router.post("/scenes")
 async def create_scene(body: SceneCreate) -> dict[str, Any]:
     """新しいシーンを作成する."""
-    data = _ensure_scenes(_read_regions())
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
 
-    if body.key in data["scenes"]:
-        raise HTTPException(status_code=409, detail=f"シーン '{body.key}' は既に存在します")
+        if body.key in data["scenes"]:
+            raise HTTPException(status_code=409, detail=f"シーン '{body.key}' は既に存在します")
 
-    data["scenes"][body.key] = {
-        "display_name": body.display_name or body.key,
-        "description": body.description,
-        "detection": {},
-        "regions": {},
-    }
-    _write_regions(data)
+        data["scenes"][body.key] = {
+            "display_name": body.display_name or body.key,
+            "description": body.description,
+            "detection": {},
+            "regions": {},
+        }
+        _write_regions(data)
     return data
 
 
 @router.post("/scenes/reorder")
 async def reorder_scenes(body: SceneReorder) -> dict[str, Any]:
     """シーンの順序を並び替える."""
-    data = _ensure_scenes(_read_regions())
-    old_scenes = data["scenes"]
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
+        old_scenes = data["scenes"]
 
-    # 指定されたキーの順序で新しい dict を構築
-    new_scenes: dict[str, Any] = {}
-    for key in body.keys:
-        if key in old_scenes:
-            new_scenes[key] = old_scenes[key]
-    # 指定されなかったキーがあれば末尾に追加
-    for key in old_scenes:
-        if key not in new_scenes:
-            new_scenes[key] = old_scenes[key]
+        # 指定されたキーの順序で新しい dict を構築
+        new_scenes: dict[str, Any] = {}
+        for key in body.keys:
+            if key in old_scenes:
+                new_scenes[key] = old_scenes[key]
+        # 指定されなかったキーがあれば末尾に追加
+        for key in old_scenes:
+            if key not in new_scenes:
+                new_scenes[key] = old_scenes[key]
 
-    data["scenes"] = new_scenes
-    _write_regions(data)
+        data["scenes"] = new_scenes
+        _write_regions(data)
     return data
 
 
 @router.put("/scenes/{scene}")
 async def update_scene(scene: str, body: SceneUpdate) -> dict[str, Any]:
     """シーンのメタデータを更新する."""
-    data = _ensure_scenes(_read_regions())
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
 
-    if scene not in data["scenes"]:
-        raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
+        if scene not in data["scenes"]:
+            raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
 
-    if body.display_name is not None:
-        data["scenes"][scene]["display_name"] = body.display_name
-    if body.description is not None:
-        data["scenes"][scene]["description"] = body.description
-    if body.interval_ms is not None:
-        data["scenes"][scene]["interval_ms"] = max(100, body.interval_ms)
-    _write_regions(data)
+        if body.display_name is not None:
+            data["scenes"][scene]["display_name"] = body.display_name
+        if body.description is not None:
+            data["scenes"][scene]["description"] = body.description
+        if body.interval_ms is not None:
+            data["scenes"][scene]["interval_ms"] = max(100, body.interval_ms)
+        _write_regions(data)
     return data
 
 
 @router.delete("/scenes/{scene}")
 async def delete_scene(scene: str) -> dict[str, Any]:
     """シーンを削除する."""
-    data = _ensure_scenes(_read_regions())
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
 
-    if scene not in data["scenes"]:
-        raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
+        if scene not in data["scenes"]:
+            raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
 
-    del data["scenes"][scene]
-    _write_regions(data)
+        del data["scenes"][scene]
+        _write_regions(data)
     return data
 
 
@@ -350,22 +358,23 @@ async def get_regions() -> dict[str, Any]:
 @router.post("/regions/{scene}")
 async def upsert_region(scene: str, body: RegionUpdate) -> dict[str, Any]:
     """リージョンを追加/更新する."""
-    data = _ensure_scenes(_read_regions())
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
 
-    if scene not in data["scenes"]:
-        raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
+        if scene not in data["scenes"]:
+            raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
 
-    region_data: dict[str, Any] = {
-        "x": body.x,
-        "y": body.y,
-        "w": body.w,
-        "h": body.h,
-        "engine": body.engine,
-    }
-    if body.read_once:
-        region_data["read_once"] = True
-    data["scenes"][scene]["regions"][body.name] = region_data
-    _write_regions(data)
+        region_data: dict[str, Any] = {
+            "x": body.x,
+            "y": body.y,
+            "w": body.w,
+            "h": body.h,
+            "engine": body.engine,
+        }
+        if body.read_once:
+            region_data["read_once"] = True
+        data["scenes"][scene]["regions"][body.name] = region_data
+        _write_regions(data)
 
     # メモリ上の RegionConfig を再読み込みして即座に反映
     from app.dependencies import get_recognizer
@@ -381,11 +390,12 @@ async def upsert_region(scene: str, body: RegionUpdate) -> dict[str, Any]:
 @router.delete("/regions/{scene}")
 async def delete_region(scene: str, name: str = Query(...)) -> dict[str, Any]:
     """リージョンを削除する."""
-    data = _ensure_scenes(_read_regions())
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
 
-    if scene in data["scenes"] and name in data["scenes"][scene].get("regions", {}):
-        del data["scenes"][scene]["regions"][name]
-        _write_regions(data)
+        if scene in data["scenes"] and name in data["scenes"][scene].get("regions", {}):
+            del data["scenes"][scene]["regions"][name]
+            _write_regions(data)
     return data
 
 
@@ -397,32 +407,34 @@ async def delete_region(scene: str, name: str = Query(...)) -> dict[str, Any]:
 @router.post("/detection/{scene}")
 async def upsert_detection_region(scene: str, body: DetectionRegionUpdate) -> dict[str, Any]:
     """検出リージョンを追加/更新する."""
-    data = _ensure_scenes(_read_regions())
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
 
-    if scene not in data["scenes"]:
-        raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
+        if scene not in data["scenes"]:
+            raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
 
-    region_def: dict[str, Any] = {
-        "x": body.x,
-        "y": body.y,
-        "w": body.w,
-        "h": body.h,
-        "method": body.method,
-    }
-    region_def.update(body.params)
-    data["scenes"][scene]["detection"][body.name] = region_def
-    _write_regions(data)
+        region_def: dict[str, Any] = {
+            "x": body.x,
+            "y": body.y,
+            "w": body.w,
+            "h": body.h,
+            "method": body.method,
+        }
+        region_def.update(body.params)
+        data["scenes"][scene]["detection"][body.name] = region_def
+        _write_regions(data)
     return data
 
 
 @router.delete("/detection/{scene}")
 async def delete_detection_region(scene: str, name: str = Query(...)) -> dict[str, Any]:
     """検出リージョンを削除する."""
-    data = _ensure_scenes(_read_regions())
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
 
-    if scene in data["scenes"] and name in data["scenes"][scene].get("detection", {}):
-        del data["scenes"][scene]["detection"][name]
-        _write_regions(data)
+        if scene in data["scenes"] and name in data["scenes"][scene].get("detection", {}):
+            del data["scenes"][scene]["detection"][name]
+            _write_regions(data)
     return data
 
 
@@ -434,35 +446,37 @@ async def delete_detection_region(scene: str, name: str = Query(...)) -> dict[st
 @router.post("/pokemon-icons/{scene}")
 async def upsert_pokemon_icon(scene: str, body: PokemonIconUpdate) -> dict[str, Any]:
     """ポケモンアイコンを追加/更新する."""
-    data = _ensure_scenes(_read_regions())
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
 
-    if scene not in data["scenes"]:
-        raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
+        if scene not in data["scenes"]:
+            raise HTTPException(status_code=404, detail=f"シーン '{scene}' が見つかりません")
 
-    if "pokemon_icons" not in data["scenes"][scene]:
-        data["scenes"][scene]["pokemon_icons"] = {}
+        if "pokemon_icons" not in data["scenes"][scene]:
+            data["scenes"][scene]["pokemon_icons"] = {}
 
-    icon_data: dict[str, Any] = {
-        "x": body.x,
-        "y": body.y,
-        "w": body.w,
-        "h": body.h,
-    }
-    if body.read_once:
-        icon_data["read_once"] = True
-    data["scenes"][scene]["pokemon_icons"][body.name] = icon_data
-    _write_regions(data)
+        icon_data: dict[str, Any] = {
+            "x": body.x,
+            "y": body.y,
+            "w": body.w,
+            "h": body.h,
+        }
+        if body.read_once:
+            icon_data["read_once"] = True
+        data["scenes"][scene]["pokemon_icons"][body.name] = icon_data
+        _write_regions(data)
     return data
 
 
 @router.delete("/pokemon-icons/{scene}")
 async def delete_pokemon_icon(scene: str, name: str = Query(...)) -> dict[str, Any]:
     """ポケモンアイコンを削除する."""
-    data = _ensure_scenes(_read_regions())
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
 
-    if scene in data["scenes"] and name in data["scenes"][scene].get("pokemon_icons", {}):
-        del data["scenes"][scene]["pokemon_icons"][name]
-        _write_regions(data)
+        if scene in data["scenes"] and name in data["scenes"][scene].get("pokemon_icons", {}):
+            del data["scenes"][scene]["pokemon_icons"][name]
+            _write_regions(data)
     return data
 
 
@@ -501,24 +515,25 @@ def _get_group_or_404(
 @router.post("/region-groups/{scene}")
 async def create_region_group(scene: str, body: RegionGroupCreate) -> dict[str, Any]:
     """リージョングループを作成する."""
-    data = _ensure_scenes(_read_regions())
-    scene_data = _get_scene_or_404(data, scene)
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
+        scene_data = _get_scene_or_404(data, scene)
 
-    if "region_groups" not in scene_data:
-        scene_data["region_groups"] = {}
+        if "region_groups" not in scene_data:
+            scene_data["region_groups"] = {}
 
-    if body.group_name in scene_data["region_groups"]:
-        raise HTTPException(
-            status_code=409, detail=f"グループ '{body.group_name}' は既に存在します",
-        )
+        if body.group_name in scene_data["region_groups"]:
+            raise HTTPException(
+                status_code=409, detail=f"グループ '{body.group_name}' は既に存在します",
+            )
 
-    scene_data["region_groups"][body.group_name] = {
-        "template": {
-            name: entry.model_dump() for name, entry in body.template.items()
-        },
-        "slots": [s.model_dump() for s in body.slots],
-    }
-    _write_regions(data)
+        scene_data["region_groups"][body.group_name] = {
+            "template": {
+                name: entry.model_dump() for name, entry in body.template.items()
+            },
+            "slots": [s.model_dump() for s in body.slots],
+        }
+        _write_regions(data)
     _reload_config()
     return data
 
@@ -528,14 +543,15 @@ async def delete_region_group(
     scene: str, group_name: str = Query(...),
 ) -> dict[str, Any]:
     """リージョングループを削除する."""
-    data = _ensure_scenes(_read_regions())
-    scene_data = _get_scene_or_404(data, scene)
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
+        scene_data = _get_scene_or_404(data, scene)
 
-    groups = scene_data.get("region_groups", {})
-    if group_name in groups:
-        del groups[group_name]
-        _write_regions(data)
-        _reload_config()
+        groups = scene_data.get("region_groups", {})
+        if group_name in groups:
+            del groups[group_name]
+            _write_regions(data)
+    _reload_config()
     return data
 
 
@@ -544,24 +560,25 @@ async def upsert_group_template(
     scene: str, group_name: str, body: RegionGroupTemplateUpdate,
 ) -> dict[str, Any]:
     """テンプレートサブリージョンを追加/更新する."""
-    data = _ensure_scenes(_read_regions())
-    scene_data = _get_scene_or_404(data, scene)
-    group = _get_group_or_404(scene_data, group_name)
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
+        scene_data = _get_scene_or_404(data, scene)
+        group = _get_group_or_404(scene_data, group_name)
 
-    entry: dict[str, Any] = {
-        "dx": body.dx,
-        "dy": body.dy,
-        "w": body.w,
-        "h": body.h,
-        "type": body.type,
-    }
-    if body.type == "region":
-        entry["engine"] = body.engine
-    if body.read_once:
-        entry["read_once"] = True
+        entry: dict[str, Any] = {
+            "dx": body.dx,
+            "dy": body.dy,
+            "w": body.w,
+            "h": body.h,
+            "type": body.type,
+        }
+        if body.type == "region":
+            entry["engine"] = body.engine
+        if body.read_once:
+            entry["read_once"] = True
 
-    group["template"][body.sub_name] = entry
-    _write_regions(data)
+        group["template"][body.sub_name] = entry
+        _write_regions(data)
     _reload_config()
     return data
 
@@ -571,14 +588,15 @@ async def delete_group_template(
     scene: str, group_name: str, sub_name: str = Query(...),
 ) -> dict[str, Any]:
     """テンプレートサブリージョンを削除する."""
-    data = _ensure_scenes(_read_regions())
-    scene_data = _get_scene_or_404(data, scene)
-    group = _get_group_or_404(scene_data, group_name)
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
+        scene_data = _get_scene_or_404(data, scene)
+        group = _get_group_or_404(scene_data, group_name)
 
-    if sub_name in group["template"]:
-        del group["template"][sub_name]
-        _write_regions(data)
-        _reload_config()
+        if sub_name in group["template"]:
+            del group["template"][sub_name]
+            _write_regions(data)
+    _reload_config()
     return data
 
 
@@ -587,20 +605,21 @@ async def upsert_group_slot(
     scene: str, group_name: str, body: RegionGroupSlotUpdate,
 ) -> dict[str, Any]:
     """スロットを追加/更新する."""
-    data = _ensure_scenes(_read_regions())
-    scene_data = _get_scene_or_404(data, scene)
-    group = _get_group_or_404(scene_data, group_name)
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
+        scene_data = _get_scene_or_404(data, scene)
+        group = _get_group_or_404(scene_data, group_name)
 
-    # 既存スロットを名前で検索し更新、なければ追加
-    for slot in group["slots"]:
-        if slot["name"] == body.name:
-            slot["x"] = body.x
-            slot["y"] = body.y
-            break
-    else:
-        group["slots"].append(body.model_dump())
+        # 既存スロットを名前で検索し更新、なければ追加
+        for slot in group["slots"]:
+            if slot["name"] == body.name:
+                slot["x"] = body.x
+                slot["y"] = body.y
+                break
+        else:
+            group["slots"].append(body.model_dump())
 
-    _write_regions(data)
+        _write_regions(data)
     _reload_config()
     return data
 
@@ -610,12 +629,13 @@ async def delete_group_slot(
     scene: str, group_name: str, name: str = Query(...),
 ) -> dict[str, Any]:
     """スロットを削除する."""
-    data = _ensure_scenes(_read_regions())
-    scene_data = _get_scene_or_404(data, scene)
-    group = _get_group_or_404(scene_data, group_name)
+    async with regions_file_lock:
+        data = _ensure_scenes(_read_regions())
+        scene_data = _get_scene_or_404(data, scene)
+        group = _get_group_or_404(scene_data, group_name)
 
-    group["slots"] = [s for s in group["slots"] if s["name"] != name]
-    _write_regions(data)
+        group["slots"] = [s for s in group["slots"] if s["name"] != name]
+        _write_regions(data)
     _reload_config()
     return data
 
@@ -703,8 +723,12 @@ class _OfflineReplaySession:
 
     def __post_init__(self) -> None:
         if self._state_machine is None:
+            from app.dependencies import get_settings
             from app.recognition.scene_state import SceneStateMachine
-            self._state_machine = SceneStateMachine()
+            settings = get_settings()
+            self._state_machine = SceneStateMachine(
+                scene_state_config=settings.recognition.scene_state,
+            )
 
 
 def _run_full_match_frame(
@@ -953,8 +977,8 @@ def _run_pokemon_test(image: np.ndarray, crop: CropTestRequest) -> dict[str, Any
     # ベストマッチのテンプレート画像を base64 エンコード
     template_b64: str | None = None
     if detailed.candidates:
-        best_id = detailed.candidates[0].pokemon_id
-        template_path = matcher.template_dir / f"{best_id}.png"
+        best_key = detailed.candidates[0].pokemon_key
+        template_path = matcher.resolve_template_path(best_key)
         if template_path.exists():
             template_img = cv2.imread(str(template_path))
             if template_img is not None:
@@ -965,14 +989,19 @@ def _run_pokemon_test(image: np.ndarray, crop: CropTestRequest) -> dict[str, Any
     top_result = None
     if detailed.candidates and detailed.candidates[0].confidence >= detailed.threshold:
         c = detailed.candidates[0]
-        top_result = {"pokemon_id": c.pokemon_id, "confidence": round(c.confidence, 4)}
+        top_result = {
+            "pokemon_key": c.pokemon_key,
+            "pokemon_id": c.pokemon_key,
+            "confidence": round(c.confidence, 4),
+        }
 
     return {
         "crop": {"x": crop.x, "y": crop.y, "w": crop.w, "h": crop.h},
         "candidates": [
             {
-                "pokemon_id": c.pokemon_id,
-                "name": id_to_name.get(c.pokemon_id, f"#{c.pokemon_id}"),
+                "pokemon_key": c.pokemon_key,
+                "pokemon_id": c.pokemon_key,
+                "name": id_to_name.get(c.pokemon_key, c.pokemon_key),
                 "confidence": round(c.confidence, 4),
             }
             for c in detailed.candidates

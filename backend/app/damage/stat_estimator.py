@@ -127,30 +127,25 @@ def estimate_opponent_stats(
 
 def build_defender_data(
     pokemon_data: dict[str, Any],
+    pokemon_key: str,
 ) -> dict[str, Any]:
     """GameData のポケモンデータから calc-service 用の defender データを構築する.
 
     Args:
-        pokemon_data: GameData.get_pokemon_by_id() の返り値
+        pokemon_data: GameData.get_pokemon_by_key() の返り値
 
     Returns:
         calc-service の DefenderInput 形式の辞書
     """
     base_stats = pokemon_data.get("base_stats", {})
     stats = estimate_opponent_stats(base_stats)
-
-    types = pokemon_data.get("types", [])
-
-    # 特性: 通常特性の最初のものをデフォルトとして使用
     abilities = pokemon_data.get("abilities", {})
     normal_abilities = abilities.get("normal", [])
-    ability = normal_abilities[0] if normal_abilities else None
+    ability_key = normal_abilities[0] if normal_abilities else None
 
     return {
-        "species_id": pokemon_data.get("species_id", pokemon_data.get("pokemon_id", 0)),
-        "name": pokemon_data.get("name", "Unknown"),
-        "types": types,
+        "pokemon_key": pokemon_key,
         "stats": stats,
-        "ability": ability,
-        "item": None,
+        "ability_key": ability_key,
+        "item_key": None,
     }

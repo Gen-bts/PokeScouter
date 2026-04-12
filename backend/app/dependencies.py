@@ -3,16 +3,27 @@
 from __future__ import annotations
 
 import asyncio
+from typing import TYPE_CHECKING
 
-from app.damage.client import CalcServiceClient
-from app.data.game_data import GameData
-from app.ocr.region import RegionRecognizer
-from app.recognition.pokemon_matcher import PokemonMatcher
-from app.recognition.scene_detector import SceneDetector
+from app.config import Settings, load_settings
+
+if TYPE_CHECKING:
+    from app.damage.client import CalcServiceClient
+    from app.data.game_data import GameData
+    from app.ocr.region import RegionRecognizer
+    from app.recognition.pokemon_matcher import PokemonMatcher
+    from app.recognition.scene_detector import SceneDetector
 
 # OCR の同時実行を防ぐグローバルロック（GPU 直列化）
 ocr_lock = asyncio.Lock()
 
+# ファイル I/O の同時書き込みを防ぐロック
+parties_file_lock = asyncio.Lock()
+regions_file_lock = asyncio.Lock()
+metadata_file_lock = asyncio.Lock()
+settings_file_lock = asyncio.Lock()
+
+_settings: Settings | None = None
 _game_data: GameData | None = None
 _recognizer: RegionRecognizer | None = None
 _detector: SceneDetector | None = None
@@ -20,10 +31,27 @@ _pokemon_matcher: PokemonMatcher | None = None
 _calc_client: CalcServiceClient | None = None
 
 
+def init_settings() -> Settings:
+    """設定を読み込んでシングルトンとして保持する."""
+    global _settings  # noqa: PLW0603
+    _settings = load_settings()
+    return _settings
+
+
+def get_settings() -> Settings:
+    """現在の Settings を取得する."""
+    if _settings is None:
+        raise RuntimeError("Settings が初期化されていません")
+    return _settings
+
+
 def init_recognizer() -> RegionRecognizer:
     """RegionRecognizer を初期化してシングルトンとして保持する."""
     global _recognizer  # noqa: PLW0603
-    _recognizer = RegionRecognizer()
+    from app.ocr.region import RegionRecognizer
+
+    settings = get_settings()
+    _recognizer = RegionRecognizer(ocr_config=settings.ocr)
     return _recognizer
 
 
@@ -34,8 +62,17 @@ def init_detector() -> SceneDetector:
     init_recognizer() の後に呼ぶこと。
     """
     global _detector  # noqa: PLW0603
+    from app.recognition.scene_detector import SceneDetector
+
+    settings = get_settings()
     recognizer = get_recognizer()
-    _detector = SceneDetector(recognizer._config, recognizer=recognizer)
+    cfg = settings.recognition.scene_detector
+    _detector = SceneDetector(
+        recognizer._config,
+        recognizer=recognizer,
+        default_threshold=cfg.template_threshold,
+        default_ocr_threshold=cfg.ocr_threshold,
+    )
     return _detector
 
 
@@ -50,7 +87,20 @@ def shutdown_recognizer() -> None:
 def init_pokemon_matcher() -> PokemonMatcher:
     """PokemonMatcher を初期化してシングルトンとして保持する."""
     global _pokemon_matcher  # noqa: PLW0603
-    _pokemon_matcher = PokemonMatcher()
+    from app.recognition.pokemon_matcher import PokemonMatcher
+
+    settings = get_settings()
+    cfg = settings.recognition.pokemon_matcher
+    _pokemon_matcher = PokemonMatcher(
+        threshold=cfg.threshold,
+        model_name=cfg.model,
+    )
+    # シーズン合法ポケモンで FAISS 検索空間を絞り込む
+    # legal_pokemon は species_id リストなので、フォーム違いの pokemon_id も含めて展開する
+    game_data = get_game_data()
+    legal_pokemon = game_data.format.get("legal_pokemon_keys", [])
+    if legal_pokemon:
+        _pokemon_matcher.set_legal_pokemon(legal_pokemon)
     return _pokemon_matcher
 
 
@@ -97,6 +147,8 @@ def get_pokemon_matcher() -> PokemonMatcher:
 def init_game_data() -> GameData:
     """GameData を初期化してシングルトンとして保持する."""
     global _game_data  # noqa: PLW0603
+    from app.data.game_data import GameData
+
     _game_data = GameData()
     _game_data.load()
     return _game_data
@@ -115,7 +167,11 @@ def get_game_data() -> GameData:
 def init_calc_client() -> CalcServiceClient:
     """CalcServiceClient を初期化してシングルトンとして保持する."""
     global _calc_client  # noqa: PLW0603
-    _calc_client = CalcServiceClient()
+    from app.damage.client import CalcServiceClient
+
+    settings = get_settings()
+    cfg = settings.calc_service
+    _calc_client = CalcServiceClient(base_url=cfg.base_url, timeout=cfg.timeout)
     return _calc_client
 
 
