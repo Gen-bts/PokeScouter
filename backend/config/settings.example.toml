@@ -1,0 +1,56 @@
+# PokeScouter 設定ファイル
+# このファイルを settings.toml にコピーしてカスタマイズしてください。
+# 未指定の項目はデフォルト値が使われます。
+
+# --- サーバー設定（変更には再起動が必要） ---
+
+[server]
+host = "0.0.0.0"
+port = 8000
+cors_origins = ["*"]
+
+[server.logging]
+log_dir = "debug"
+max_bytes = 5242880          # 5 MB
+backup_count = 3
+audit_max_bytes = 2097152    # 2 MB
+audit_backup_count = 5
+
+# --- calc-service 接続 ---
+
+[calc_service]
+base_url = "http://localhost:3100"
+timeout = 5.0                # 秒
+
+# --- OCR エンジン設定（変更には再起動が必要） ---
+
+[ocr.glm]
+model_id = "zai-org/GLM-OCR"
+max_new_tokens = 512
+
+[ocr.paddle]
+det_model = "PP-OCRv5_mobile_det"
+rec_model = "PP-OCRv5_mobile_rec"
+device = "gpu:0"
+
+# --- 認識設定 ---
+
+[recognition.scene_detector]
+template_threshold = 0.80    # テンプレートマッチングの閾値
+ocr_threshold = 0.5          # OCR ベース検出の閾値
+
+[recognition.pokemon_matcher]
+threshold = 0.60             # ポケモン識別の類似度閾値
+model = "dinov2_vits14"      # DINOv2 モデル名（再起動必要）
+
+[recognition.party_register]
+detection_debounce = 3       # 画面検出に必要な連続フレーム数
+detection_debounce_high_conf = 2
+high_confidence_threshold = 0.95
+detection_timeout_s = 60.0   # 画面検出タイムアウト（秒）
+
+[recognition.scene_state]
+top_debounce = 3             # トップレベル遷移のデバウンス
+sub_debounce = 2             # サブシーンのデバウンス
+sub_revert_count = 3         # サブシーン未検出→リバートの回数
+force_cooldown_seconds = 2.0 # 強制遷移後のクールダウン（秒）

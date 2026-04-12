@@ -20,6 +20,8 @@ dependencies = [
     "imagehash",
     "faiss-cpu",
     "httpx",
+    "tomli; python_version < '3.11'",
+    "tomli_w",
 ]
 
 [project.optional-dependencies]
