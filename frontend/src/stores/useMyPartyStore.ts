@@ -11,10 +11,11 @@ import type {
 
 export interface MyPartySlot {
   position: number;
-  pokemonId: number | null;
+  pokemonId: string | null;
   name: string | null;
   fields: Record<string, ValidatedField>;
   megaForm: MegaFormDetail | null;
+  isActive: boolean;
 }
 
 function emptySlots(): MyPartySlot[] {
@@ -24,6 +25,7 @@ function emptySlots(): MyPartySlot[] {
     name: null,
     fields: {},
     megaForm: null,
+    isActive: false,
   }));
 }
 
@@ -38,6 +40,8 @@ interface MyPartyState {
   setRegistrationState: (state: PartyRegistrationPhase) => void;
   updateFromScreen: (msg: PartyRegisterScreenMessage) => void;
   updateFromComplete: (party: PartySlotData[], partyName: string | null) => void;
+  markActive: (speciesId: string) => void;
+  markFainted: (speciesId: string) => void;
   setSlotMegaForm: (position: number, megaForm: MegaFormDetail | null) => void;
   setPartyName: (name: string) => void;
   setError: (message: string) => void;
@@ -78,10 +82,11 @@ export const useMyPartyStore = create<MyPartyState>()(
             }
             next[idx] = {
               position: p.position,
-              pokemonId: p.pokemon_id,
+              pokemonId: p.pokemon_key ?? p.pokemon_id,
               name: p.name,
               fields: { ...(next[idx]?.fields), ...newFields },
               megaForm: next[idx]?.megaForm ?? null,
+              isActive: next[idx]?.isActive ?? false,
             };
           }
           return { slots: next };
@@ -95,10 +100,11 @@ export const useMyPartyStore = create<MyPartyState>()(
             if (idx < 0 || idx >= 6) continue;
             next[idx] = {
               position: p.position,
-              pokemonId: p.pokemon_id,
+              pokemonId: p.pokemon_key ?? p.pokemon_id,
               name: p.name,
               fields: p.fields,
               megaForm: null,
+              isActive: false,
             };
           }
           return {
@@ -109,12 +115,33 @@ export const useMyPartyStore = create<MyPartyState>()(
           };
         }),
 
+      markActive: (speciesId) =>
+        set((prev) => ({
+          slots: prev.slots.map((slot) => ({
+            ...slot,
+            isActive: slot.pokemonId === speciesId,
+          })),
+        })),
+
+      markFainted: (speciesId) =>
+        set((prev) => {
+          const idx = prev.slots.findIndex((s) => s.pokemonId === speciesId);
+          if (idx === -1) return prev;
+          const next = [...prev.slots];
+          const existing = next[idx];
+          if (!existing) return prev;
+          next[idx] = { ...existing, isActive: false };
+          return { slots: next };
+        }),
+
       setSlotMegaForm: (position, megaForm) =>
         set((prev) => {
           const idx = position - 1;
           if (idx < 0 || idx >= 6) return prev;
+          const existing = prev.slots[idx];
+          if (!existing) return prev;
           const next = [...prev.slots];
-          next[idx] = { ...next[idx], megaForm };
+          next[idx] = { ...existing, megaForm };
           return { slots: next };
         }),
 
@@ -168,7 +195,10 @@ export const useMyPartyStore = create<MyPartyState>()(
         const saved = savedParties.find((p) => p.id === id);
         if (!saved) return;
         set({
-          slots: structuredClone(saved.slots),
+          slots: structuredClone(saved.slots).map((slot) => ({
+            ...slot,
+            isActive: false,
+          })),
           partyName: saved.name,
           activePartyId: saved.id,
           registrationState: "done",

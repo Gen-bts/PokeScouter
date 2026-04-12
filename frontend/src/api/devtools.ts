@@ -428,7 +428,7 @@ export interface PokemonIdentifiedEvent {
   type: "pokemon_identified";
   frame_index: number;
   timestamp_ms: number;
-  pokemon: { position: number; pokemon_id: number | null; confidence: number }[];
+  pokemon: { position: number; pokemon_key: string | null; pokemon_id: string | null; confidence: number }[];
   elapsed_ms: number;
 }
 
@@ -608,7 +608,8 @@ export interface OcrTestResult {
 }
 
 export interface PokemonCandidate {
-  pokemon_id: number;
+  pokemon_key: string;
+  pokemon_id: string;
   name: string;
   confidence: number;
 }
@@ -617,7 +618,7 @@ export interface PokemonTestResult {
   crop: CropRect;
   candidates: PokemonCandidate[];
   threshold: number;
-  result: { pokemon_id: number; confidence: number } | null;
+  result: { pokemon_key: string; pokemon_id: string; confidence: number } | null;
   crop_b64: string;
   template_b64: string | null;
   elapsed_ms: number;

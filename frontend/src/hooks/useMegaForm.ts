@@ -6,8 +6,8 @@ const cache = new Map<string, MegaFormDetail>();
 const pending = new Map<string, Promise<MegaFormDetail | null>>();
 
 export function useMegaForm(
-  itemId: number | null,
-  pokemonId: number | null,
+  itemKey: string | null,
+  pokemonKey: string | null,
   slotPosition: number,
 ): { megaForm: MegaFormDetail | null } {
   const persistedMegaForm = useMyPartyStore(
@@ -15,10 +15,10 @@ export function useMegaForm(
   );
   const setSlotMegaForm = useMyPartyStore((s) => s.setSlotMegaForm);
 
-  const cacheKey = itemId !== null ? `${itemId}-${pokemonId ?? ""}` : null;
+  const cacheKey = itemKey !== null ? `${itemKey}-${pokemonKey ?? ""}` : null;
 
   useEffect(() => {
-    if (itemId === null || cacheKey === null) return;
+    if (itemKey === null || cacheKey === null) return;
 
     const cached = cache.get(cacheKey);
     if (cached) {
@@ -30,8 +30,8 @@ export function useMegaForm(
 
     let promise = pending.get(cacheKey);
     if (!promise) {
-      const params = new URLSearchParams({ item_id: String(itemId), lang: "ja" });
-      if (pokemonId !== null) params.set("pokemon_id", String(pokemonId));
+      const params = new URLSearchParams({ item_key: itemKey, lang: "ja" });
+      if (pokemonKey !== null) params.set("pokemon_key", pokemonKey);
 
       promise = fetch(`/api/pokemon/mega-form?${params}`)
         .then((res) => (res.ok ? (res.json() as Promise<MegaFormDetail>) : null))
@@ -56,7 +56,7 @@ export function useMegaForm(
     return () => {
       cancelled = true;
     };
-  }, [itemId, pokemonId, cacheKey, slotPosition, persistedMegaForm, setSlotMegaForm]);
+  }, [itemKey, pokemonKey, cacheKey, slotPosition, persistedMegaForm, setSlotMegaForm]);
 
   // インメモリキャッシュ → ストア永続化値 の順でフォールバック
   if (cacheKey !== null) {

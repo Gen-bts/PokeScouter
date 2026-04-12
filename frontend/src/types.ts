@@ -1,3 +1,8 @@
+export type PokemonKey = string;
+export type MoveKey = string;
+export type ItemKey = string;
+export type AbilityKey = string;
+
 export type ConnectionState =
   | "connected"
   | "disconnected"
@@ -50,7 +55,6 @@ export interface StatusMessage {
 }
 
 export interface WsConfig {
-  scene_intervals?: Record<string, number>;
   paused?: boolean;
   debug_crops?: boolean;
   benchmark?: boolean;
@@ -82,15 +86,17 @@ export interface BenchmarkResult {
 }
 
 export interface PokemonCandidate {
-  pokemon_id: number;
+  pokemon_key: PokemonKey;
+  pokemon_id: PokemonKey;
   name: string;
   confidence: number;
 }
 
 export interface PokemonIdentified {
   position: number;
-  pokemon_id: number | null;
-  name?: string;
+  pokemon_key: PokemonKey | null;
+  pokemon_id: PokemonKey | null;
+  name?: string | null;
   confidence: number;
   candidates?: PokemonCandidate[];
   x?: number;
@@ -119,7 +125,8 @@ export interface MatchTeamsMessage {
   player_team: Array<{ position: number; name: string }>;
   opponent_team: Array<{
     position: number;
-    pokemon_id: number | null;
+    pokemon_key: PokemonKey | null;
+    pokemon_id: PokemonKey | null;
     name: string | null;
     confidence: number;
   }>;
@@ -135,31 +142,42 @@ export interface BattleResultMessage {
   result: "win" | "lose" | "unknown";
 }
 
-// --- バトルイベント ---
-
 export interface BattleEventMessage {
   type: "battle_event";
   event_type: string;
   side: "player" | "opponent";
   raw_text: string;
   pokemon_name: string | null;
-  species_id: number | null;
+  pokemon_key: PokemonKey | null;
+  species_id: PokemonKey | null;
   move_name: string | null;
-  move_id: number | null;
+  move_key: MoveKey | null;
+  move_id: MoveKey | null;
   details: Record<string, unknown>;
 }
 
-// --- 相手アクティブポケモン ---
-
 export interface OpponentActiveMessage {
   type: "opponent_active";
-  species_id: number;
+  pokemon_key: PokemonKey;
+  species_id: PokemonKey;
   pokemon_name: string;
   hp_percent: number | null;
   confidence: number;
 }
 
-// --- パーティ登録 ---
+export interface OpponentItemAbilityMessage {
+  type: "opponent_item_ability";
+  detection_type: "ability" | "item";
+  pokemon_name: string;
+  pokemon_key: PokemonKey | null;
+  species_id: PokemonKey | null;
+  trait_name: string;
+  trait_key: string;
+  trait_id: string;
+  confidence: number;
+  raw_text: string;
+  item_identifier: string | null;
+}
 
 export type PartyRegistrationPhase =
   | "idle"
@@ -180,7 +198,8 @@ export interface PartyRegisterScreenMessage {
   slots: Record<number, Record<string, string>>;
   pokemon: Array<{
     position: number;
-    pokemon_id: number | null;
+    pokemon_key: PokemonKey | null;
+    pokemon_id: PokemonKey | null;
     name: string | null;
     confidence: number;
     name_key?: string;
@@ -199,24 +218,39 @@ export interface ValidatedField {
   raw: string;
   validated: string | null;
   confidence: number;
-  matched_id?: number | null;
+  matched_id?: string | null;
+  matched_key?: string | null;
   matched_identifier?: string | null;
   move_meta?: MoveMeta | null;
   is_mega_stone?: boolean;
 }
 
+export interface TypeEffectivenessEntry {
+  type: string;
+  multiplier: number;
+}
+
+export interface TypeEffectivenessData {
+  weak: TypeEffectivenessEntry[];
+  resist: TypeEffectivenessEntry[];
+  immune: TypeEffectivenessEntry[];
+}
+
 export interface MegaFormDetail {
-  item_id: number;
+  item_key: ItemKey;
+  pokemon_key: PokemonKey;
   mega_name: string;
   types: string[];
   ability: { name: string; effect: string };
   base_stats: Record<string, number>;
   stat_deltas: Record<string, number> | null;
+  type_effectiveness?: TypeEffectivenessData;
 }
 
 export interface PartySlotData {
   position: number;
-  pokemon_id: number | null;
+  pokemon_key: PokemonKey | null;
+  pokemon_id: PokemonKey | null;
   name: string | null;
   fields: Record<string, ValidatedField>;
 }
@@ -232,7 +266,7 @@ export interface SavedParty {
   name: string;
   slots: Array<{
     position: number;
-    pokemonId: number | null;
+    pokemonId: PokemonKey | null;
     name: string | null;
     fields: Record<string, ValidatedField>;
     megaForm: MegaFormDetail | null;
@@ -245,15 +279,14 @@ export interface PartyRegisterErrorMessage {
   message: string;
 }
 
-// --- タイプ一貫性 ---
-
 export interface TypeConsistencyEntry {
   type: string;
   name: string;
   consistent: boolean;
   min_effectiveness: number;
   per_pokemon: Array<{
-    pokemon_id: number;
+    pokemon_key: PokemonKey;
+    pokemon_id: PokemonKey;
     effectiveness: number;
   }>;
 }
@@ -263,15 +296,14 @@ export interface TypeConsistencyResult {
   pokemon_count: number;
 }
 
-// --- ダメージ計算 ---
-
 export interface DamageRange {
   min: number;
   max: number;
 }
 
 export interface MoveDamageResult {
-  move_id: number;
+  move_key: MoveKey;
+  move_id: MoveKey;
   move_name: string;
   damage: DamageRange;
   min_percent: number;
@@ -283,7 +315,8 @@ export interface MoveDamageResult {
 }
 
 export interface DefenderDamageResult {
-  defender_species_id: number;
+  defender_pokemon_key: PokemonKey;
+  defender_species_id: PokemonKey;
   defender_hp: number;
   moves: MoveDamageResult[];
 }

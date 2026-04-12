@@ -18,6 +18,7 @@ interface DamageCalcState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   incrementGeneration: () => number;
+  clearResults: () => void;
   clear: () => void;
 }
 
@@ -50,6 +51,8 @@ export const useDamageCalcStore = create<DamageCalcState>()((set, get) => ({
     set({ requestGeneration: next });
     return next;
   },
+
+  clearResults: () => set({ results: [], loading: false, error: null }),
 
   clear: () =>
     set({

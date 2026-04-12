@@ -10,18 +10,18 @@ export function useTypeConsistency(): {
   const [result, setResult] = useState<TypeConsistencyResult | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const pokemonIds = slots
+  const pokemonKeys = slots
     .map((s) => s.pokemonId)
-    .filter((id): id is number => id !== null);
-  const key = pokemonIds.join(",");
+    .filter((id): id is string => id !== null);
+  const key = pokemonKeys.join(",");
 
   useEffect(() => {
-    if (pokemonIds.length === 0) {
+    if (pokemonKeys.length === 0) {
       setResult(null);
       return;
     }
     setLoading(true);
-    fetch(`/api/pokemon/type-consistency?pokemon_ids=${key}`)
+    fetch(`/api/pokemon/type-consistency?pokemon_keys=${encodeURIComponent(key)}`)
       .then((res) => res.json())
       .then((data: TypeConsistencyResult) => {
         setResult(data);
@@ -29,7 +29,7 @@ export function useTypeConsistency(): {
       })
       .catch(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
+  }, [key, pokemonKeys.length]);
 
   return { result, loading };
 }

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
 interface PokemonNamesResult {
-  names: Record<string, number>;
+  names: Record<string, string>;
   loading: boolean;
 }
 
-let cachedNames: Record<string, number> | null = null;
+let cachedNames: Record<string, string> | null = null;
 
 export function usePokemonNames(): PokemonNamesResult {
-  const [names, setNames] = useState<Record<string, number>>(cachedNames ?? {});
+  const [names, setNames] = useState<Record<string, string>>(cachedNames ?? {});
   const [loading, setLoading] = useState(cachedNames === null);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export function usePokemonNames(): PokemonNamesResult {
 
     fetch("/api/pokemon/names?lang=ja")
       .then((res) => res.json())
-      .then((data: { pokemon: Record<string, number> }) => {
+      .then((data: { pokemon: Record<string, string> }) => {
         cachedNames = data.pokemon;
         setNames(data.pokemon);
         setLoading(false);

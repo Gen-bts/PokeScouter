@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-
-interface TypeEffectivenessEntry {
-  type: string;
-  multiplier: number;
-}
+import type { MegaFormDetail, TypeEffectivenessData } from "../types";
 
 export interface PokemonDetail {
-  pokemon_id: number;
+  pokemon_key: string;
+  base_species_key: string;
   name: string;
   types: string[];
   base_stats: {
@@ -21,30 +18,27 @@ export interface PokemonDetail {
     normal: Array<{ name: string; effect: string }>;
     hidden: { name: string; effect: string } | null;
   };
-  type_effectiveness: {
-    weak: TypeEffectivenessEntry[];
-    resist: TypeEffectivenessEntry[];
-    immune: TypeEffectivenessEntry[];
-  };
+  type_effectiveness: TypeEffectivenessData;
+  mega_forms: MegaFormDetail[];
 }
 
-const cache = new Map<number, PokemonDetail>();
-const pending = new Map<number, Promise<PokemonDetail | null>>();
+const cache = new Map<string, PokemonDetail>();
+const pending = new Map<string, Promise<PokemonDetail | null>>();
 
-export function usePokemonDetail(pokemonId: number | null): {
+export function usePokemonDetail(pokemonKey: string | null): {
   detail: PokemonDetail | null;
 } {
   const [detail, setDetail] = useState<PokemonDetail | null>(
-    pokemonId !== null ? (cache.get(pokemonId) ?? null) : null,
+    pokemonKey !== null ? (cache.get(pokemonKey) ?? null) : null,
   );
 
   useEffect(() => {
-    if (pokemonId === null) {
+    if (pokemonKey === null) {
       setDetail(null);
       return;
     }
 
-    const cached = cache.get(pokemonId);
+    const cached = cache.get(pokemonKey);
     if (cached) {
       setDetail(cached);
       return;
@@ -52,20 +46,20 @@ export function usePokemonDetail(pokemonId: number | null): {
 
     let cancelled = false;
 
-    let promise = pending.get(pokemonId);
+    let promise = pending.get(pokemonKey);
     if (!promise) {
-      promise = fetch(`/api/pokemon/${pokemonId}/detail?lang=ja`)
+      promise = fetch(`/api/pokemon/${pokemonKey}/detail?lang=ja`)
         .then((res) => (res.ok ? (res.json() as Promise<PokemonDetail>) : null))
         .then((data) => {
-          if (data) cache.set(pokemonId, data);
-          pending.delete(pokemonId);
+          if (data) cache.set(pokemonKey, data);
+          pending.delete(pokemonKey);
           return data;
         })
         .catch(() => {
-          pending.delete(pokemonId);
+          pending.delete(pokemonKey);
           return null;
         });
-      pending.set(pokemonId, promise);
+      pending.set(pokemonKey, promise);
     }
 
     promise.then((data) => {
@@ -75,7 +69,7 @@ export function usePokemonDetail(pokemonId: number | null): {
     return () => {
       cancelled = true;
     };
-  }, [pokemonId]);
+  }, [pokemonKey]);
 
   return { detail };
 }

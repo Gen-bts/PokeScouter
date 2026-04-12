@@ -15,14 +15,14 @@ function fieldToInt(field: ValidatedField | undefined): number | null {
   return isNaN(n) ? null : n;
 }
 
-/** ValidatedField から matched_id を取得する. */
-function fieldToId(field: ValidatedField | undefined): number | null {
-  return field?.matched_id ?? null;
+/** ValidatedField から string key を取得する. */
+function fieldToKey(field: ValidatedField | undefined): string | null {
+  return field?.matched_key ?? field?.matched_id ?? null;
 }
 
 /** パーティスロットの fields から攻撃側データを構築する. */
 function buildAttackerData(
-  pokemonId: number,
+  pokemonId: string,
   fields: Record<string, ValidatedField>,
 ) {
   const hp = fieldToInt(fields["HP実数値"]);
@@ -37,20 +37,20 @@ function buildAttackerData(
     return null;
   }
 
-  const moveIds: number[] = [];
+  const moveIds: string[] = [];
   for (const key of ["わざ１", "わざ２", "わざ３", "わざ４"]) {
-    const id = fieldToId(fields[key]);
+    const id = fieldToKey(fields[key]);
     if (id != null) moveIds.push(id);
   }
 
   if (moveIds.length === 0) return null;
 
   return {
-    pokemon_id: pokemonId,
+    pokemon_key: pokemonId,
     stats: { hp, atk, def: def_, spa, spd, spe },
-    move_ids: moveIds,
-    ability_id: fieldToId(fields["特性"]),
-    item_id: fieldToId(fields["もちもの"]),
+    move_keys: moveIds,
+    ability_key: fieldToKey(fields["特性"]),
+    item_key: fieldToKey(fields["もちもの"]),
   };
 }
 
@@ -66,23 +66,48 @@ export function useDamageCalc(): void {
   const setLoading = useDamageCalcStore((s) => s.setLoading);
   const setError = useDamageCalcStore((s) => s.setError);
   const incrementGeneration = useDamageCalcStore((s) => s.incrementGeneration);
+  const clearResults = useDamageCalcStore((s) => s.clearResults);
 
   const partySlots = useMyPartyStore((s) => s.slots);
   const opponentSlots = useOpponentTeamStore((s) => s.slots);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 防御側 species_ids を導出
+  // 防御側 pokemon keys を導出
   const defenderIds = opponentSlots
     .map((s) => s.pokemonId)
-    .filter((id): id is number => id !== null);
+    .filter((id): id is string => id !== null);
   const defenderKey = defenderIds.join(",");
 
-  // 攻撃側のバリデーション
+  // 防御側ブースト（ステータス変化）を導出
+  const defenderBoosts: Record<string, Record<string, number>> = {};
+  for (const slot of opponentSlots) {
+    if (slot.pokemonId != null && Object.keys(slot.boosts).length > 0) {
+      defenderBoosts[slot.pokemonId] = slot.boosts;
+    }
+  }
+  const boostsKey = JSON.stringify(defenderBoosts);
+
+  // 防御側アイテム・特性（検出済みのもの）を導出
+  const defenderItems: Record<string, string> = {};
+  const defenderAbilities: Record<string, string> = {};
+  for (const slot of opponentSlots) {
+    if (slot.pokemonId != null) {
+      if (slot.itemId != null) defenderItems[slot.pokemonId] = slot.itemId;
+      if (slot.abilityId != null) defenderAbilities[slot.pokemonId] = slot.abilityId;
+    }
+  }
+  const itemsKey = JSON.stringify(defenderItems);
+  const abilitiesKey = JSON.stringify(defenderAbilities);
+
+  // 攻撃側のバリデーション & データ構築（effect 外で計算し依存キーに含める）
   const attackerSlot =
     attackerPos !== null ? partySlots[attackerPos - 1] : null;
-  const attackerValid =
-    attackerSlot?.pokemonId != null && attackerSlot?.pokemonId !== undefined;
+  const attackerData =
+    attackerSlot?.pokemonId != null
+      ? buildAttackerData(attackerSlot.pokemonId, attackerSlot.fields)
+      : null;
+  const attackerKey = attackerData ? JSON.stringify(attackerData) : "";
 
   useEffect(() => {
     if (timerRef.current) {
@@ -90,20 +115,20 @@ export function useDamageCalc(): void {
       timerRef.current = null;
     }
 
-    if (!attackerPos || !attackerValid || defenderIds.length === 0) {
-      return;
-    }
-
-    const attackerData = buildAttackerData(
-      attackerSlot!.pokemonId!,
-      attackerSlot!.fields,
-    );
-    if (!attackerData) {
+    if (!attackerPos || !attackerData || defenderIds.length === 0) {
+      clearResults();
       return;
     }
 
     const generation = incrementGeneration();
     setLoading(true);
+
+    // attackerData / defenderIds のスナップショットをクロージャにキャプチャ
+    const reqAttacker = attackerData;
+    const reqDefenders = defenderIds;
+    const reqBoosts = { ...defenderBoosts };
+    const reqItems = { ...defenderItems };
+    const reqAbilities = { ...defenderAbilities };
 
     timerRef.current = setTimeout(async () => {
       try {
@@ -111,8 +136,11 @@ export function useDamageCalc(): void {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            attacker: attackerData,
-            defender_species_ids: defenderIds,
+            attacker: reqAttacker,
+            defender_pokemon_keys: reqDefenders,
+            defender_boosts: Object.keys(reqBoosts).length > 0 ? reqBoosts : undefined,
+            defender_items: Object.keys(reqItems).length > 0 ? reqItems : undefined,
+            defender_abilities: Object.keys(reqAbilities).length > 0 ? reqAbilities : undefined,
           }),
         });
         if (!res.ok) {
@@ -134,5 +162,5 @@ export function useDamageCalc(): void {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [attackerPos, defenderKey, attackerValid]);
+  }, [attackerPos, defenderKey, attackerKey, boostsKey, itemsKey, abilitiesKey]);
 }

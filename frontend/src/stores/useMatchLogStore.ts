@@ -4,6 +4,7 @@ import type {
   BattleResultMessage,
   MatchTeamsMessage,
   OcrResult,
+  OpponentItemAbilityMessage,
   SceneChangeMessage,
   TeamSelectionMessage,
 } from "../types";
@@ -26,7 +27,7 @@ export interface MatchTeamsLogEntry extends BaseLogEntry {
   opponentTeam: Array<{
     position: number;
     name: string | null;
-    pokemonId: number | null;
+    pokemonId: string | null;
   }>;
 }
 
@@ -52,10 +53,25 @@ export interface BattleEventLogEntry extends BaseLogEntry {
   side: "player" | "opponent";
   rawText: string;
   pokemonName: string | null;
-  speciesId: number | null;
+  speciesId: string | null;
   moveName: string | null;
-  moveId: number | null;
+  moveId: string | null;
   details: Record<string, unknown>;
+}
+
+export interface HpChangeLogEntry extends BaseLogEntry {
+  kind: "hp_change";
+  pokemonName: string;
+  fromHp: number;
+  toHp: number;
+}
+
+export interface ItemAbilityLogEntry extends BaseLogEntry {
+  kind: "item_ability";
+  detectionType: "item" | "ability";
+  pokemonName: string;
+  traitName: string;
+  rawText?: string;
 }
 
 export type MatchLogEntry =
@@ -64,7 +80,9 @@ export type MatchLogEntry =
   | TeamSelectionLogEntry
   | BattleResultLogEntry
   | OcrResultLogEntry
-  | BattleEventLogEntry;
+  | BattleEventLogEntry
+  | HpChangeLogEntry
+  | ItemAbilityLogEntry;
 
 interface MatchLogState {
   entries: MatchLogEntry[];
@@ -74,12 +92,23 @@ interface MatchLogState {
   addBattleResult: (msg: BattleResultMessage) => void;
   addOcrResult: (msg: OcrResult) => void;
   addBattleEvent: (msg: BattleEventMessage) => void;
+  addHpChange: (pokemonName: string, fromHp: number, toHp: number) => void;
+  addItemAbility: (msg: OpponentItemAbilityMessage) => void;
   clear: () => void;
 }
 
 const MAX_ENTRIES = 100;
 
+function isSameEntry(a: MatchLogEntry, b: MatchLogEntry): boolean {
+  if (a.kind !== b.kind) return false;
+  const { timestamp: _a, ...restA } = a;
+  const { timestamp: _b, ...restB } = b;
+  return JSON.stringify(restA) === JSON.stringify(restB);
+}
+
 function append(entries: MatchLogEntry[], entry: MatchLogEntry) {
+  const last = entries[entries.length - 1];
+  if (last && isSameEntry(last, entry)) return { entries };
   const next = [...entries, entry];
   return { entries: next.length > MAX_ENTRIES ? next.slice(-MAX_ENTRIES) : next };
 }
@@ -87,16 +116,17 @@ function append(entries: MatchLogEntry[], entry: MatchLogEntry) {
 export const useMatchLogStore = create<MatchLogState>((set) => ({
   entries: [],
   addSceneChange: (msg) =>
-    set((state) =>
-      append(state.entries, {
+    set((state) => {
+      if (msg.scene === "move_select" || msg.scene === "team_confirm") return state;
+      return append(state.entries, {
         kind: "scene_change",
         timestamp: Date.now(),
         scene: msg.scene,
         topLevel: msg.top_level,
         subScene: msg.sub_scene,
         confidence: msg.confidence,
-      }),
-    ),
+      });
+    }),
   addMatchTeams: (msg) =>
     set((state) =>
       append(state.entries, {
@@ -106,7 +136,7 @@ export const useMatchLogStore = create<MatchLogState>((set) => ({
         opponentTeam: msg.opponent_team.map((p) => ({
           position: p.position,
           name: p.name,
-          pokemonId: p.pokemon_id,
+          pokemonId: p.pokemon_key ?? p.pokemon_id,
         })),
       }),
     ),
@@ -144,10 +174,31 @@ export const useMatchLogStore = create<MatchLogState>((set) => ({
         side: msg.side,
         rawText: msg.raw_text,
         pokemonName: msg.pokemon_name,
-        speciesId: msg.species_id,
+        speciesId: msg.pokemon_key ?? msg.species_id,
         moveName: msg.move_name,
-        moveId: msg.move_id,
+        moveId: msg.move_key ?? msg.move_id,
         details: msg.details,
+      }),
+    ),
+  addHpChange: (pokemonName, fromHp, toHp) =>
+    set((state) =>
+      append(state.entries, {
+        kind: "hp_change",
+        timestamp: Date.now(),
+        pokemonName,
+        fromHp,
+        toHp,
+      }),
+    ),
+  addItemAbility: (msg) =>
+    set((state) =>
+      append(state.entries, {
+        kind: "item_ability",
+        timestamp: Date.now(),
+        detectionType: msg.detection_type,
+        pokemonName: msg.pokemon_name,
+        traitName: msg.trait_name,
+        rawText: msg.raw_text,
       }),
     ),
   clear: () => set({ entries: [] }),
