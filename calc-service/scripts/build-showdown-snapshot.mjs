@@ -101,14 +101,25 @@ function buildMoveEntry(move) {
 }
 
 function buildItemEntry(item) {
+  let megaStoneKey = null;
+  let megaEvolvesKey = null;
+  if (item.megaStone && typeof item.megaStone === "object") {
+    const baseSpecies = Object.keys(item.megaStone)[0];
+    const megaSpecies = Object.values(item.megaStone)[0];
+    megaStoneKey = megaSpecies ? toID(megaSpecies) : null;
+    megaEvolvesKey = baseSpecies ? toID(baseSpecies) : null;
+  } else if (typeof item.megaStone === "string" && item.megaStone) {
+    megaStoneKey = toID(item.megaStone);
+    megaEvolvesKey = item.megaEvolves ? toID(item.megaEvolves) : null;
+  }
   return {
     item_key: item.id,
     name: item.name,
     is_nonstandard: item.isNonstandard ?? null,
     short_desc: item.shortDesc ?? "",
     effect: item.desc ?? "",
-    mega_stone: item.megaStone ? toID(item.megaStone) : null,
-    mega_evolves: item.megaEvolves ? toID(item.megaEvolves) : null,
+    mega_stone: megaStoneKey,
+    mega_evolves: megaEvolvesKey,
   };
 }
 

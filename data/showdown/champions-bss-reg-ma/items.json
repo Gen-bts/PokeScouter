@@ -18,8 +18,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Abomasnow, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Abomasnow, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "abomasnowmega",
+    "mega_evolves": "abomasnow"
   },
   "absolite": {
     "item_key": "absolite",
@@ -27,8 +27,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Absol, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Absol, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "absolmega",
+    "mega_evolves": "absol"
   },
   "absorbbulb": {
     "item_key": "absorbbulb",
@@ -72,8 +72,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Aerodactyl, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Aerodactyl, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "aerodactylmega",
+    "mega_evolves": "aerodactyl"
   },
   "aggronite": {
     "item_key": "aggronite",
@@ -81,8 +81,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Aggron, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Aggron, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "aggronmega",
+    "mega_evolves": "aggron"
   },
   "aguavberry": {
     "item_key": "aguavberry",
@@ -108,8 +108,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Alakazam, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Alakazam, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "alakazammega",
+    "mega_evolves": "alakazam"
   },
   "altarianite": {
     "item_key": "altarianite",
@@ -117,8 +117,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Altaria, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Altaria, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "altariamega",
+    "mega_evolves": "altaria"
   },
   "ampharosite": {
     "item_key": "ampharosite",
@@ -126,8 +126,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Ampharos, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Ampharos, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "ampharosmega",
+    "mega_evolves": "ampharos"
   },
   "apicotberry": {
     "item_key": "apicotberry",
@@ -153,8 +153,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Audino, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Audino, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "audinomega",
+    "mega_evolves": "audino"
   },
   "auspiciousarmor": {
     "item_key": "auspiciousarmor",
@@ -171,8 +171,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Banette, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Banette, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "banettemega",
+    "mega_evolves": "banette"
   },
   "beastball": {
     "item_key": "beastball",
@@ -189,8 +189,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Beedrill, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Beedrill, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "beedrillmega",
+    "mega_evolves": "beedrill"
   },
   "berrysweet": {
     "item_key": "berrysweet",
@@ -243,8 +243,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Blastoise, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Blastoise, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "blastoisemega",
+    "mega_evolves": "blastoise"
   },
   "blunderpolicy": {
     "item_key": "blunderpolicy",
@@ -279,8 +279,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Camerupt, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Camerupt, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "cameruptmega",
+    "mega_evolves": "camerupt"
   },
   "cellbattery": {
     "item_key": "cellbattery",
@@ -297,8 +297,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Chandelure, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Chandelure, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "chandeluremega",
+    "mega_evolves": "chandelure"
   },
   "charizarditex": {
     "item_key": "charizarditex",
@@ -306,8 +306,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Charizard, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Charizard, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "charizardmegax",
+    "mega_evolves": "charizard"
   },
   "charizarditey": {
     "item_key": "charizarditey",
@@ -315,8 +315,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Charizard, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Charizard, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "charizardmegay",
+    "mega_evolves": "charizard"
   },
   "chesnaughtite": {
     "item_key": "chesnaughtite",
@@ -324,8 +324,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Chesnaught, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Chesnaught, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "chesnaughtmega",
+    "mega_evolves": "chesnaught"
   },
   "chimechite": {
     "item_key": "chimechite",
@@ -333,8 +333,8 @@
     "is_nonstandard": null,
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "chimechomega",
+    "mega_evolves": "chimecho"
   },
   "chippedpot": {
     "item_key": "chippedpot",
@@ -378,8 +378,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Clefable, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Clefable, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "clefablemega",
+    "mega_evolves": "clefable"
   },
   "cloversweet": {
     "item_key": "cloversweet",
@@ -414,8 +414,8 @@
     "is_nonstandard": null,
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "crabominablemega",
+    "mega_evolves": "crabominable"
   },
   "crackedpot": {
     "item_key": "crackedpot",
@@ -450,8 +450,8 @@
     "is_nonstandard": "Past",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "darkraimega",
+    "mega_evolves": "darkrai"
   },
   "dawnstone": {
     "item_key": "dawnstone",
@@ -468,8 +468,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Delphox, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Delphox, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "delphoxmega",
+    "mega_evolves": "delphox"
   },
   "destinyknot": {
     "item_key": "destinyknot",
@@ -504,8 +504,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Dragalge, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Dragalge, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "dragalgemega",
+    "mega_evolves": "dragalge"
   },
   "dragoninite": {
     "item_key": "dragoninite",
@@ -513,8 +513,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Dragonite, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Dragonite, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "dragonitemega",
+    "mega_evolves": "dragonite"
   },
   "dragonscale": {
     "item_key": "dragonscale",
@@ -531,8 +531,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Drampa, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Drampa, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "drampamega",
+    "mega_evolves": "drampa"
   },
   "dreadplate": {
     "item_key": "dreadplate",
@@ -594,8 +594,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by an Eelektross, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Eelektross, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "eelektrossmega",
+    "mega_evolves": "eelektross"
   },
   "ejectbutton": {
     "item_key": "ejectbutton",
@@ -639,8 +639,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Emboar, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Emboar, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "emboarmega",
+    "mega_evolves": "emboar"
   },
   "enigmaberry": {
     "item_key": "enigmaberry",
@@ -666,8 +666,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Excadrill, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Excadrill, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "excadrillmega",
+    "mega_evolves": "excadrill"
   },
   "expertbelt": {
     "item_key": "expertbelt",
@@ -684,8 +684,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Falinks, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Falinks, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "falinksmega",
+    "mega_evolves": "falinks"
   },
   "fastball": {
     "item_key": "fastball",
@@ -702,8 +702,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Feraligatr, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Feraligatr, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "feraligatrmega",
+    "mega_evolves": "feraligatr"
   },
   "figyberry": {
     "item_key": "figyberry",
@@ -765,8 +765,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by an Eternal Flower Floette, this item allows it to Mega Evolve in battle.",
     "effect": "If held by an Eternal Flower Floette, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "floettemega",
+    "mega_evolves": "floetteeternal"
   },
   "flowersweet": {
     "item_key": "flowersweet",
@@ -792,8 +792,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Froslass, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Froslass, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "froslassmega",
+    "mega_evolves": "froslass"
   },
   "galaricacuff": {
     "item_key": "galaricacuff",
@@ -819,8 +819,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Gallade, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Gallade, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "gallademega",
+    "mega_evolves": "gallade"
   },
   "ganlonberry": {
     "item_key": "ganlonberry",
@@ -837,8 +837,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Garchomp, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Garchomp, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "garchompmega",
+    "mega_evolves": "garchomp"
   },
   "gardevoirite": {
     "item_key": "gardevoirite",
@@ -846,8 +846,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Gardevoir, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Gardevoir, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "gardevoirmega",
+    "mega_evolves": "gardevoir"
   },
   "gengarite": {
     "item_key": "gengarite",
@@ -855,8 +855,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Gengar, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Gengar, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "gengarmega",
+    "mega_evolves": "gengar"
   },
   "glalitite": {
     "item_key": "glalitite",
@@ -864,8 +864,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Glalie, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Glalie, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "glaliemega",
+    "mega_evolves": "glalie"
   },
   "glimmoranite": {
     "item_key": "glimmoranite",
@@ -873,8 +873,8 @@
     "is_nonstandard": null,
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "glimmoramega",
+    "mega_evolves": "glimmora"
   },
   "goldbottlecap": {
     "item_key": "goldbottlecap",
@@ -891,8 +891,8 @@
     "is_nonstandard": "Past",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "golisopodmega",
+    "mega_evolves": "golisopod"
   },
   "golurkite": {
     "item_key": "golurkite",
@@ -900,8 +900,8 @@
     "is_nonstandard": null,
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "golurkmega",
+    "mega_evolves": "golurk"
   },
   "grassyseed": {
     "item_key": "grassyseed",
@@ -927,8 +927,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Greninja, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Greninja, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "greninjamega",
+    "mega_evolves": "greninja"
   },
   "grepaberry": {
     "item_key": "grepaberry",
@@ -972,8 +972,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Gyarados, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Gyarados, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "gyaradosmega",
+    "mega_evolves": "gyarados"
   },
   "hawluchanite": {
     "item_key": "hawluchanite",
@@ -981,8 +981,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Hawlucha, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Hawlucha, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "hawluchamega",
+    "mega_evolves": "hawlucha"
   },
   "healball": {
     "item_key": "healball",
@@ -1008,8 +1008,8 @@
     "is_nonstandard": "Past",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "heatranmega",
+    "mega_evolves": "heatran"
   },
   "heatrock": {
     "item_key": "heatrock",
@@ -1044,8 +1044,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Heracross, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Heracross, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "heracrossmega",
+    "mega_evolves": "heracross"
   },
   "hondewberry": {
     "item_key": "hondewberry",
@@ -1062,8 +1062,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Houndoom, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Houndoom, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "houndoommega",
+    "mega_evolves": "houndoom"
   },
   "iapapaberry": {
     "item_key": "iapapaberry",
@@ -1143,8 +1143,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Kangaskhan, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Kangaskhan, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "kangaskhanmega",
+    "mega_evolves": "kangaskhan"
   },
   "keeberry": {
     "item_key": "keeberry",
@@ -1242,8 +1242,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Lopunny, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Lopunny, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "lopunnymega",
+    "mega_evolves": "lopunny"
   },
   "loveball": {
     "item_key": "loveball",
@@ -1269,8 +1269,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Lucario, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Lucario, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "lucariomega",
+    "mega_evolves": "lucario"
   },
   "luminousmoss": {
     "item_key": "luminousmoss",
@@ -1350,8 +1350,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Manectric, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Manectric, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "manectricmega",
+    "mega_evolves": "manectric"
   },
   "marangaberry": {
     "item_key": "marangaberry",
@@ -1395,8 +1395,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Medicham, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Medicham, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "medichammega",
+    "mega_evolves": "medicham"
   },
   "meganiumite": {
     "item_key": "meganiumite",
@@ -1404,8 +1404,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Meganium, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Meganium, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "meganiummega",
+    "mega_evolves": "meganium"
   },
   "meowsticite": {
     "item_key": "meowsticite",
@@ -1413,8 +1413,8 @@
     "is_nonstandard": null,
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "meowsticmmega",
+    "mega_evolves": "meowstic"
   },
   "metalalloy": {
     "item_key": "metalalloy",
@@ -1557,8 +1557,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Pidgeot, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Pidgeot, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "pidgeotmega",
+    "mega_evolves": "pidgeot"
   },
   "pinsirite": {
     "item_key": "pinsirite",
@@ -1566,8 +1566,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Pinsir, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Pinsir, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "pinsirmega",
+    "mega_evolves": "pinsir"
   },
   "pixieplate": {
     "item_key": "pixieplate",
@@ -1863,8 +1863,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Sableye, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Sableye, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "sableyemega",
+    "mega_evolves": "sableye"
   },
   "safariball": {
     "item_key": "safariball",
@@ -1899,8 +1899,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Scizor, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Scizor, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "scizormega",
+    "mega_evolves": "scizor"
   },
   "scovillainite": {
     "item_key": "scovillainite",
@@ -1908,8 +1908,8 @@
     "is_nonstandard": null,
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "scovillainmega",
+    "mega_evolves": "scovillain"
   },
   "sharpedonite": {
     "item_key": "sharpedonite",
@@ -1917,8 +1917,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Sharpedo, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Sharpedo, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "sharpedomega",
+    "mega_evolves": "sharpedo"
   },
   "shedshell": {
     "item_key": "shedshell",
@@ -1944,8 +1944,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Skarmory, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Skarmory, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "skarmorymega",
+    "mega_evolves": "skarmory"
   },
   "skyplate": {
     "item_key": "skyplate",
@@ -1962,8 +1962,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Slowbro, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Slowbro, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "slowbromega",
+    "mega_evolves": "slowbro"
   },
   "smoothrock": {
     "item_key": "smoothrock",
@@ -2043,8 +2043,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Starmie, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Starmie, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "starmiemega",
+    "mega_evolves": "starmie"
   },
   "starsweet": {
     "item_key": "starsweet",
@@ -2061,8 +2061,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Steelix, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Steelix, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "steelixmega",
+    "mega_evolves": "steelix"
   },
   "stickybarb": {
     "item_key": "stickybarb",
@@ -2205,8 +2205,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Tyranitar, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Tyranitar, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "tyranitarmega",
+    "mega_evolves": "tyranitar"
   },
   "ultraball": {
     "item_key": "ultraball",
@@ -2250,8 +2250,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Venusaur, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Venusaur, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "venusaurmega",
+    "mega_evolves": "venusaur"
   },
   "victreebelite": {
     "item_key": "victreebelite",
@@ -2259,8 +2259,8 @@
     "is_nonstandard": null,
     "short_desc": "If held by a Victreebel, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Victreebel, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "victreebelmega",
+    "mega_evolves": "victreebel"
   },
   "waterstone": {
     "item_key": "waterstone",
@@ -2349,8 +2349,8 @@
     "is_nonstandard": "Future",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "absolmegaz",
+    "mega_evolves": "absol"
   },
   "aloraichiumz": {
     "item_key": "aloraichiumz",
@@ -2394,8 +2394,8 @@
     "is_nonstandard": "Future",
     "short_desc": "If held by a Barbaracle, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Barbaracle, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "barbaraclemega",
+    "mega_evolves": "barbaracle"
   },
   "baxcalibrite": {
     "item_key": "baxcalibrite",
@@ -2403,8 +2403,8 @@
     "is_nonstandard": "Future",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "baxcaliburmega",
+    "mega_evolves": "baxcalibur"
   },
   "belueberry": {
     "item_key": "belueberry",
@@ -2448,8 +2448,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Blaziken, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Blaziken, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "blazikenmega",
+    "mega_evolves": "blaziken"
   },
   "blueorb": {
     "item_key": "blueorb",
@@ -2700,8 +2700,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Diancie, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Diancie, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "dianciemega",
+    "mega_evolves": "diancie"
   },
   "domefossil": {
     "item_key": "domefossil",
@@ -2988,8 +2988,8 @@
     "is_nonstandard": "Future",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "garchompmegaz",
+    "mega_evolves": "garchomp"
   },
   "ghostgem": {
     "item_key": "ghostgem",
@@ -3186,8 +3186,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Latias, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Latias, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "latiasmega",
+    "mega_evolves": "latias"
   },
   "latiosite": {
     "item_key": "latiosite",
@@ -3195,8 +3195,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Latios, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Latios, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "latiosmega",
+    "mega_evolves": "latios"
   },
   "laxincense": {
     "item_key": "laxincense",
@@ -3249,8 +3249,8 @@
     "is_nonstandard": "Future",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "lucariomegaz",
+    "mega_evolves": "lucario"
   },
   "luckypunch": {
     "item_key": "luckypunch",
@@ -3303,8 +3303,8 @@
     "is_nonstandard": "Future",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "magearnamega",
+    "mega_evolves": "magearna"
   },
   "magnet": {
     "item_key": "magnet",
@@ -3339,8 +3339,8 @@
     "is_nonstandard": "Future",
     "short_desc": "If held by a Malamar, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Malamar, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "malamarmega",
+    "mega_evolves": "malamar"
   },
   "marshadiumz": {
     "item_key": "marshadiumz",
@@ -3357,8 +3357,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Mawile, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Mawile, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "mawilemega",
+    "mega_evolves": "mawile"
   },
   "mentalherb": {
     "item_key": "mentalherb",
@@ -3375,8 +3375,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Metagross, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Metagross, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "metagrossmega",
+    "mega_evolves": "metagross"
   },
   "metalcoat": {
     "item_key": "metalcoat",
@@ -3411,8 +3411,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Mewtwo, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Mewtwo, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "mewtwomegax",
+    "mega_evolves": "mewtwo"
   },
   "mewtwonitey": {
     "item_key": "mewtwonitey",
@@ -3420,8 +3420,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Mewtwo, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Mewtwo, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "mewtwomegay",
+    "mega_evolves": "mewtwo"
   },
   "mimikiumz": {
     "item_key": "mimikiumz",
@@ -3681,8 +3681,8 @@
     "is_nonstandard": "Future",
     "short_desc": "If held by a Pyroar, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Pyroar, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "pyroarmega",
+    "mega_evolves": "pyroar"
   },
   "quickclaw": {
     "item_key": "quickclaw",
@@ -3717,8 +3717,8 @@
     "is_nonstandard": "Future",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "raichumegax",
+    "mega_evolves": "raichu"
   },
   "raichunitey": {
     "item_key": "raichunitey",
@@ -3726,8 +3726,8 @@
     "is_nonstandard": "Future",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "raichumegay",
+    "mega_evolves": "raichu"
   },
   "rawstberry": {
     "item_key": "rawstberry",
@@ -3852,8 +3852,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Salamence, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Salamence, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "salamencemega",
+    "mega_evolves": "salamence"
   },
   "sceptilite": {
     "item_key": "sceptilite",
@@ -3861,8 +3861,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Sceptile, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Sceptile, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "sceptilemega",
+    "mega_evolves": "sceptile"
   },
   "scolipite": {
     "item_key": "scolipite",
@@ -3870,8 +3870,8 @@
     "is_nonstandard": "Future",
     "short_desc": "If held by a Scolipede, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Scolipede, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "scolipedemega",
+    "mega_evolves": "scolipede"
   },
   "scopelens": {
     "item_key": "scopelens",
@@ -3888,8 +3888,8 @@
     "is_nonstandard": "Future",
     "short_desc": "If held by a Scrafty, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Scrafty, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "scraftymega",
+    "mega_evolves": "scrafty"
   },
   "seaincense": {
     "item_key": "seaincense",
@@ -4014,8 +4014,8 @@
     "is_nonstandard": "Future",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "staraptormega",
+    "mega_evolves": "staraptor"
   },
   "steelgem": {
     "item_key": "steelgem",
@@ -4059,8 +4059,8 @@
     "is_nonstandard": "Past",
     "short_desc": "If held by a Swampert, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Swampert, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "swampertmega",
+    "mega_evolves": "swampert"
   },
   "tangaberry": {
     "item_key": "tangaberry",
@@ -4086,8 +4086,8 @@
     "is_nonstandard": "Future",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "tatsugiricurlymega",
+    "mega_evolves": "tatsugiri"
   },
   "thickclub": {
     "item_key": "thickclub",
@@ -5103,8 +5103,8 @@
     "is_nonstandard": "Future",
     "short_desc": "",
     "effect": "",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "zeraoramega",
+    "mega_evolves": "zeraora"
   },
   "zygardite": {
     "item_key": "zygardite",
@@ -5112,8 +5112,8 @@
     "is_nonstandard": "Future",
     "short_desc": "If held by a Zygarde in Complete Forme, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Zygarde in Complete Forme, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "zygardemega",
+    "mega_evolves": "zygardecomplete"
   },
   "berry": {
     "item_key": "berry",
@@ -5238,8 +5238,8 @@
     "is_nonstandard": "CAP",
     "short_desc": "If held by a Crucibelle, this item allows it to Mega Evolve in battle.",
     "effect": "If held by a Crucibelle, this item allows it to Mega Evolve in battle.",
-    "mega_stone": "",
-    "mega_evolves": null
+    "mega_stone": "crucibellemega",
+    "mega_evolves": "crucibelle"
   },
   "vilevial": {
     "item_key": "vilevial",

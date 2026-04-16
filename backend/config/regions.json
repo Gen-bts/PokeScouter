@@ -33,11 +33,20 @@
         "シングルバトル": {
           "x": 967,
           "y": 23,
-          "w": 211,
-          "h": 41,
+          "w": 252,
+          "h": 40,
           "method": "ocr",
           "engine": "paddle",
           "expected_text": "シングルバトル"
+        },
+        "自分の名前": {
+          "x": 207,
+          "y": 99,
+          "w": 272,
+          "h": 42,
+          "method": "ocr",
+          "engine": "paddle",
+          "expected_text": "Gen"
         }
       },
       "regions": {
@@ -100,10 +109,52 @@
         "バトル形式": {
           "x": 966,
           "y": 22,
-          "w": 212,
-          "h": 42,
+          "w": 245,
+          "h": 40,
           "engine": "paddle",
           "read_once": true
+        },
+        "ポケモン選出１": {
+          "x": 87,
+          "y": 185,
+          "w": 50,
+          "h": 52,
+          "engine": "paddle"
+        },
+        "ポケモン選出２": {
+          "x": 88,
+          "y": 316,
+          "w": 48,
+          "h": 49,
+          "engine": "paddle"
+        },
+        "ポケモン選出３": {
+          "x": 88,
+          "y": 439,
+          "w": 47,
+          "h": 52,
+          "engine": "paddle"
+        },
+        "ポケモン選出４": {
+          "x": 90,
+          "y": 568,
+          "w": 45,
+          "h": 48,
+          "engine": "paddle"
+        },
+        "ポケモン選出５": {
+          "x": 90,
+          "y": 693,
+          "w": 43,
+          "h": 51,
+          "engine": "paddle"
+        },
+        "ポケモン選出６": {
+          "x": 88,
+          "y": 818,
+          "w": 49,
+          "h": 52,
+          "engine": "paddle"
         }
       },
       "pokemon_icons": {
@@ -367,6 +418,22 @@
         }
       },
       "interval_ms": 500
+    },
+    "battle_pending": {
+      "display_name": "通信処理中",
+      "description": "バトル中のサブシーン",
+      "detection": {
+        "通信待機中表示": {
+          "x": 871,
+          "y": 296,
+          "w": 179,
+          "h": 48,
+          "method": "ocr",
+          "engine": "paddle",
+          "expected_text": "通信待機中"
+        }
+      },
+      "regions": {}
     },
     "battle": {
       "display_name": "バトル",
