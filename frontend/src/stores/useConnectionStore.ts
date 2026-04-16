@@ -1,27 +1,41 @@
 import { create } from "zustand";
 import type {
   BattleEventMessage,
+  BattleTurnCloseReason,
   BattleResultMessage,
   BenchmarkResult,
   ConnectionState,
+  FieldStateMessage,
   MatchTeamsMessage,
   OcrResult,
   OpponentActiveMessage,
   OpponentItemAbilityMessage,
+  PlayerActiveMessage,
   PartyRegisterCompleteMessage,
   PartyRegisterErrorMessage,
   PartyRegisterProgressMessage,
   PartyRegisterScreenMessage,
   PartyRegistrationPhase,
   PokemonIdentifiedResult,
+  ResolvedTurnSummary,
   SceneChangeMessage,
+  SceneDebugResult,
   TeamSelectionMessage,
+  TeamSelectionOrderMessage,
   WsConfig,
 } from "../types";
+import { useFieldStateStore } from "./useFieldStateStore";
 import { useMatchLogStore } from "./useMatchLogStore";
 import { useDamageCalcStore } from "./useDamageCalcStore";
+import { useBattleTurnStore } from "./useBattleTurnStore";
 import { useMyPartyStore } from "./useMyPartyStore";
 import { useOpponentTeamStore } from "./useOpponentTeamStore";
+import { useSpeedInferenceStore } from "./useSpeedInferenceStore";
+import {
+  getEffectivePlayerMaxHp,
+  resolveHpPercent,
+  clamp,
+} from "../utils/playerPartyHp";
 
 interface ConnectionStore {
   connectionState: ConnectionState;
@@ -39,6 +53,8 @@ interface ConnectionStore {
   sendPartyRegisterStart: () => void;
   sendPartyRegisterCancel: () => void;
   sendSetOpponentPokemon: (position: number, speciesId: string, name: string) => void;
+  sendErrorFlag: (targetSeq: number | null, entryKind: string, entryTimestamp: number, flagged: boolean) => void;
+  sendSceneDebug: () => void;
 }
 
 // モジュールレベル変数（WebSocket インスタンスは1つだけ）
@@ -46,6 +62,34 @@ let ws: WebSocket | null = null;
 let intentionalClose = false;
 let reconnectDelay = 1000;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+
+function finalizeResolvedTurn(summary: ResolvedTurnSummary | null) {
+  if (!summary) return;
+  const inferenceResult = useSpeedInferenceStore.getState().consumeResolvedTurn(summary);
+  const finalizedSummary: ResolvedTurnSummary = {
+    ...summary,
+    inferenceApplied: inferenceResult.applied,
+    inferenceNote: inferenceResult.note,
+  };
+  useBattleTurnStore.getState().commitResolvedTurn(finalizedSummary);
+  useMatchLogStore.getState().addTurnSummary(finalizedSummary);
+}
+
+function abortTurn(reason: BattleTurnCloseReason) {
+  finalizeResolvedTurn(useBattleTurnStore.getState().abortCurrentTurn(reason));
+}
+
+/** マッチログの味方チーム表示用。バックエンドは set_player_party の並びを match_teams に使う。 */
+function sendPlayerPartyIfReady(socket: WebSocket) {
+  if (socket.readyState !== WebSocket.OPEN) return;
+  const party = useMyPartyStore
+    .getState()
+    .slots.filter((s) => s.pokemonId !== null)
+    .map((s) => ({ pokemon_key: s.pokemonId!, name: s.name ?? "" }));
+  if (party.length > 0) {
+    socket.send(JSON.stringify({ type: "set_player_party", party }));
+  }
+}
 
 function doConnect() {
   if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
@@ -63,6 +107,7 @@ function doConnect() {
   newWs.onopen = () => {
     reconnectDelay = 1000;
     setState({ connectionState: "connected", isConnected: true });
+    sendPlayerPartyIfReady(newWs);
   };
 
   newWs.onmessage = (event: MessageEvent) => {
@@ -99,33 +144,50 @@ function doConnect() {
           useOpponentTeamStore.getState().updateFromPokemonIdentified(pokemonMsg.pokemon);
         } else if (msg.type === "scene_change") {
           const sceneMsg = msg as unknown as SceneChangeMessage;
+          const previousScene = useConnectionStore.getState().currentScene;
           setState({
             currentScene: sceneMsg.scene,
             ...(sceneMsg.scene === "none" ? { lastResult: null } : {}),
           });
           useMatchLogStore.getState().addSceneChange(sceneMsg);
+          finalizeResolvedTurn(
+            useBattleTurnStore
+              .getState()
+              .handleSceneChange(sceneMsg.scene, previousScene),
+          );
           console.log("[MatchLog] scene_change", sceneMsg.scene, `(${sceneMsg.top_level}${sceneMsg.sub_scene ? "/" + sceneMsg.sub_scene : ""})`, `conf=${sceneMsg.confidence}`);
-          // バトルシーン遷移時にプレイヤーパーティをバックエンドに送信
-          if (sceneMsg.top_level === "battle" && ws && ws.readyState === WebSocket.OPEN) {
-            const partySlots = useMyPartyStore.getState().slots;
-            const party = partySlots
-              .filter((s) => s.pokemonId !== null)
-              .map((s) => ({ pokemon_key: s.pokemonId, name: s.name }));
-            if (party.length > 0) {
-              ws.send(JSON.stringify({ type: "set_player_party", party }));
+          // 選出画面遷移時に相手パーティをクリア（match_teams より先に届くため）
+          if (sceneMsg.scene === "team_select") {
+            useOpponentTeamStore.getState().clear();
+          }
+          // 試合前にパーティを同期（match_teams の味方行はこの並びを優先）
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            if (sceneMsg.top_level === "pre_match") {
+              sendPlayerPartyIfReady(ws);
+            } else if (sceneMsg.top_level === "battle") {
+              sendPlayerPartyIfReady(ws);
             }
           }
         } else if (msg.type === "match_teams") {
           const teamsMsg = msg as unknown as MatchTeamsMessage;
+          abortTurn("match_teams");
+          useBattleTurnStore.getState().reset();
           useMatchLogStore.getState().addMatchTeams(teamsMsg);
           console.log("[MatchLog] match_teams", "player:", teamsMsg.player_team.map((p) => p.name).join(", "), "| opponent:", teamsMsg.opponent_team.map((p) => p.name ?? "?").join(", "));
           useOpponentTeamStore.getState().resetDisplaySelection();
           useOpponentTeamStore.getState().updateFromMatchTeams(teamsMsg.opponent_team);
+          useFieldStateStore.getState().clear();
+          useMyPartyStore.getState().clearBattleState();
+          useSpeedInferenceStore.getState().reset();
         } else if (msg.type === "team_selection") {
           useMatchLogStore.getState().addTeamSelection(msg as unknown as TeamSelectionMessage);
           console.log("[MatchLog] team_selection", (msg as unknown as TeamSelectionMessage).selected_positions);
+        } else if (msg.type === "team_selection_order") {
+          useMatchLogStore.getState().addTeamSelectionOrder(msg as unknown as TeamSelectionOrderMessage);
+          console.log("[MatchLog] team_selection_order", (msg as unknown as TeamSelectionOrderMessage).selection_order);
         } else if (msg.type === "battle_result") {
           useMatchLogStore.getState().addBattleResult(msg as unknown as BattleResultMessage);
+          abortTurn("battle_result");
           console.log("[MatchLog] battle_result", (msg as unknown as BattleResultMessage).result);
         } else if (msg.type === "battle_event") {
           const battleMsg = msg as unknown as BattleEventMessage;
@@ -146,6 +208,12 @@ function doConnect() {
             useOpponentTeamStore.getState().markFainted(battlePokemonKey);
           } else if (battleMsg.event_type === "pokemon_fainted" && battleMsg.side === "player" && battlePokemonKey != null) {
             useMyPartyStore.getState().markFainted(battlePokemonKey);
+          } else if (battleMsg.event_type === "stat_change" && battleMsg.side === "player" && battlePokemonKey != null) {
+            const stat = battleMsg.details?.stat as string;
+            const stages = battleMsg.details?.stages as number;
+            if (stat && typeof stages === "number") {
+              useMyPartyStore.getState().applyStatChange(battlePokemonKey, stat, stages);
+            }
           } else if (battleMsg.event_type === "stat_change" && battleMsg.side === "opponent" && battlePokemonKey != null) {
             const stat = battleMsg.details?.stat as string;
             const stages = battleMsg.details?.stages as number;
@@ -154,7 +222,25 @@ function doConnect() {
             }
           } else if (battleMsg.event_type === "move_used" && battleMsg.side === "opponent" && battlePokemonKey != null && battleMsg.move_name != null && battleMoveKey != null) {
             useOpponentTeamStore.getState().addKnownMove(battlePokemonKey, battleMsg.move_name, battleMoveKey);
+          } else if (battleMsg.event_type === "mega_evolution" && battlePokemonKey != null) {
+            const megaPokemonKey = battleMsg.details?.mega_pokemon_key as string | undefined;
+            if (megaPokemonKey) {
+              if (battleMsg.side === "opponent") {
+                useOpponentTeamStore.getState().applyMegaEvolution(battlePokemonKey, megaPokemonKey);
+              } else if (battleMsg.side === "player") {
+                useMyPartyStore.getState().applyMegaEvolution(battlePokemonKey, megaPokemonKey);
+              }
+            }
           }
+          // 素早さ推定ストアへ全 battle_event をディスパッチ
+          useBattleTurnStore.getState().recordBattleEvent(
+            battleMsg,
+            useConnectionStore.getState().currentScene,
+          );
+        } else if (msg.type === "field_state") {
+          const fieldMsg = msg as unknown as FieldStateMessage;
+          useFieldStateStore.getState().updateFromMessage(fieldMsg);
+          console.log("[FieldState] updated", fieldMsg.weather, fieldMsg.terrain, fieldMsg.trick_room);
         } else if (msg.type === "opponent_active") {
           const activeMsg = msg as unknown as OpponentActiveMessage;
           const activePokemonKey = activeMsg.pokemon_key ?? activeMsg.species_id;
@@ -179,6 +265,65 @@ function doConnect() {
               );
             }
           }
+        } else if (msg.type === "player_active") {
+          const playerMsg = msg as unknown as PlayerActiveMessage;
+          const playerPokemonKey = playerMsg.pokemon_key ?? playerMsg.species_id;
+          if (playerPokemonKey != null) {
+            const oldSlot = useMyPartyStore.getState().slots.find(
+              (s) => s.pokemonId === playerPokemonKey,
+            );
+
+            // パーティ登録の最大 HP を優先（メガ時は再計算）
+            const partyMaxHp = oldSlot ? getEffectivePlayerMaxHp(oldSlot) : null;
+            const resolvedMax = partyMaxHp ?? playerMsg.max_hp;
+
+            // 現在 HP をクランプ（最大 HP を超えないように）
+            let resolvedCurrent = playerMsg.current_hp;
+            if (resolvedCurrent != null && resolvedMax != null && resolvedMax > 0) {
+              resolvedCurrent = clamp(resolvedCurrent, 0, resolvedMax);
+            }
+
+            // パーセンテージを再計算（パーティ基準の最大 HP で）
+            const resolvedPercent = resolveHpPercent(resolvedCurrent, playerMsg.max_hp, partyMaxHp)
+              ?? playerMsg.hp_percent;
+
+            // 前回のパーセンテージもパーティ基準で再計算
+            const oldHpPercent = oldSlot
+              ? resolveHpPercent(oldSlot.currentHp, oldSlot.maxHp, partyMaxHp) ?? oldSlot.hpPercent
+              : null;
+
+            useMyPartyStore.getState().updatePlayerActive(
+              playerPokemonKey,
+              resolvedCurrent,
+              resolvedMax,
+              resolvedPercent,
+            );
+
+            if (
+              resolvedPercent != null &&
+              oldHpPercent != null &&
+              oldHpPercent !== resolvedPercent
+            ) {
+              // actualHp は両方とも resolvedMax（パーティ基準）を使用
+              const actualHp =
+                oldSlot?.currentHp != null &&
+                resolvedMax != null &&
+                resolvedCurrent != null
+                  ? {
+                      fromCurrent: oldSlot.currentHp,
+                      fromMax: resolvedMax,
+                      toCurrent: resolvedCurrent,
+                      toMax: resolvedMax,
+                    }
+                  : undefined;
+              useMatchLogStore.getState().addHpChange(
+                playerMsg.pokemon_name,
+                oldHpPercent,
+                resolvedPercent,
+                actualHp,
+              );
+            }
+          }
         } else if (msg.type === "opponent_item_ability") {
           const iaMsg = msg as unknown as OpponentItemAbilityMessage;
           useMatchLogStore.getState().addItemAbility(iaMsg);
@@ -196,6 +341,7 @@ function doConnect() {
               traitKey,
               iaMsg.item_identifier,
             );
+            useSpeedInferenceStore.getState().refreshInferences();
           }
         } else if (msg.type === "party_register_progress") {
           const progressMsg = msg as unknown as PartyRegisterProgressMessage;
@@ -220,6 +366,47 @@ function doConnect() {
           } else if (statusMsg.status === "connected") {
             setState({ connectionState: "connected", isConnected: true });
           }
+        } else if (msg.type === "scene_debug_result") {
+          const d = msg as unknown as SceneDebugResult;
+          if (d.error) {
+            console.warn("[SceneDebug]", d.error);
+            return;
+          }
+          const sm = d.state_machine;
+          console.group(
+            "%c[SceneDebug] シーン検出デバッグダンプ",
+            "color: #ff9800; font-weight: bold; font-size: 14px",
+          );
+          console.log(
+            "%cState Machine:",
+            "color: #2196f3; font-weight: bold",
+            `${sm.top_level}` + (sm.sub_scene ? `/${sm.sub_scene}` : "") +
+            ` (conf=${sm.confidence})`,
+          );
+          console.log("  Candidates:", sm.candidates.join(", ") || "(none)");
+          console.log(
+            "  Pending top:", sm.pending_top ?? "none",
+            `(${sm.pending_top_count} frames)`,
+          );
+          console.log(
+            "  Pending sub:", sm.pending_sub ?? "none",
+            `(${sm.pending_sub_count} frames)`,
+          );
+          console.log("  No-sub count:", sm.no_sub_count);
+          if (sm.force_cooldown_active) {
+            console.warn("  Force cooldown ACTIVE");
+          }
+          console.log("  Scenes tested:", d.scenes_tested.join(", "));
+          console.table(
+            d.detections.map((r) => ({
+              scene: r.scene,
+              region: r.region_name,
+              matched: r.matched ? "YES" : "---",
+              confidence: r.confidence.toFixed(3),
+              elapsed_ms: r.elapsed_ms.toFixed(1),
+            })),
+          );
+          console.groupEnd();
         }
       } catch {
         // 不正な JSON は無視
@@ -228,6 +415,11 @@ function doConnect() {
   };
 
   newWs.onclose = () => {
+    abortTurn("disconnect");
+    useBattleTurnStore.getState().reset();
+    useFieldStateStore.getState().clear();
+    useMyPartyStore.getState().clearBattleState();
+    useSpeedInferenceStore.getState().reset();
     if (!intentionalClose) {
       setState({ connectionState: "reconnecting", isConnected: false });
       reconnectTimer = setTimeout(() => {
@@ -259,6 +451,11 @@ export const useConnectionStore = create<ConnectionStore>()((set) => ({
 
   disconnect: () => {
     intentionalClose = true;
+    abortTurn("disconnect");
+    useBattleTurnStore.getState().reset();
+    useFieldStateStore.getState().clear();
+    useMyPartyStore.getState().clearBattleState();
+    useSpeedInferenceStore.getState().reset();
     if (reconnectTimer) {
       clearTimeout(reconnectTimer);
       reconnectTimer = null;
@@ -284,6 +481,11 @@ export const useConnectionStore = create<ConnectionStore>()((set) => ({
   sendReset: () => {
     if (!ws || ws.readyState !== WebSocket.OPEN) return;
     ws.send(JSON.stringify({ type: "reset" }));
+    abortTurn("reset");
+    useBattleTurnStore.getState().reset();
+    useFieldStateStore.getState().clear();
+    useMyPartyStore.getState().clearBattleState();
+    useSpeedInferenceStore.getState().reset();
   },
 
   sendForceScene: (scene: string) => {
@@ -309,5 +511,21 @@ export const useConnectionStore = create<ConnectionStore>()((set) => ({
       pokemon_key: speciesId,
       name,
     }));
+  },
+
+  sendErrorFlag: (targetSeq: number | null, entryKind: string, entryTimestamp: number, flagged: boolean) => {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    ws.send(JSON.stringify({
+      type: "error_flag",
+      target_seq: targetSeq,
+      entry_kind: entryKind,
+      entry_timestamp: entryTimestamp,
+      flagged,
+    }));
+  },
+
+  sendSceneDebug: () => {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    ws.send(JSON.stringify({ type: "scene_debug" }));
   },
 }));

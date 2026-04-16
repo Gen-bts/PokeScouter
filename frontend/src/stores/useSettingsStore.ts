@@ -23,6 +23,10 @@ interface SettingsState {
   toggleDebugOverlay: () => void;
   debugCrops: boolean;
   toggleDebugCrops: () => void;
+  showBattleInfo: boolean;
+  toggleBattleInfo: () => void;
+  battleInfoPosition: { x: number; y: number };
+  setBattleInfoPosition: (pos: { x: number; y: number }) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -45,10 +49,14 @@ export const useSettingsStore = create<SettingsState>()(
       toggleDebugOverlay: () => set((s) => ({ debugOverlay: !s.debugOverlay })),
       debugCrops: false,
       toggleDebugCrops: () => set((s) => ({ debugCrops: !s.debugCrops })),
+      showBattleInfo: true,
+      toggleBattleInfo: () => set((s) => ({ showBattleInfo: !s.showBattleInfo })),
+      battleInfoPosition: { x: 10, y: 8 },
+      setBattleInfoPosition: (pos) => set({ battleInfoPosition: pos }),
     }),
     {
       name: "pokescouter:settings",
-      version: 1,
+      version: 3,
       partialize: (state) => ({
         selectedDeviceId: state.selectedDeviceId,
         selectedAudioDeviceId: state.selectedAudioDeviceId,
@@ -58,8 +66,43 @@ export const useSettingsStore = create<SettingsState>()(
         autoPauseMinutes: state.autoPauseMinutes,
         debugOverlay: state.debugOverlay,
         debugCrops: state.debugCrops,
+        showBattleInfo: state.showBattleInfo,
+        battleInfoPosition: state.battleInfoPosition,
       }),
       migrate: (persisted: unknown, version: number) => {
+        if (version === 2) {
+          const old = persisted as Record<string, unknown>;
+          const showOverlay = old.showBattleInfoOverlay;
+          const posOverlay = old.battleInfoOverlayPosition;
+          const show =
+            typeof showOverlay === "boolean" ? showOverlay : true;
+          const pos =
+            posOverlay &&
+            typeof posOverlay === "object" &&
+            posOverlay !== null &&
+            "x" in posOverlay &&
+            "y" in posOverlay
+              ? (posOverlay as { x: number; y: number })
+              : { x: 10, y: 8 };
+          const {
+            showBattleInfoOverlay: _a,
+            battleInfoOverlayPosition: _b,
+            ...rest
+          } = old;
+          return {
+            ...rest,
+            showBattleInfo: show,
+            battleInfoPosition: pos,
+          };
+        }
+        if (version === 1) {
+          const old = persisted as Record<string, unknown>;
+          return {
+            ...old,
+            showBattleInfo: true,
+            battleInfoPosition: { x: 10, y: 8 },
+          };
+        }
         if (version === 0 || version === undefined) {
           const old = persisted as Record<string, unknown>;
           return {
@@ -83,6 +126,8 @@ export const useSettingsStore = create<SettingsState>()(
               typeof old.debugOverlay === "boolean" ? old.debugOverlay : false,
             debugCrops:
               typeof old.debugCrops === "boolean" ? old.debugCrops : false,
+            showBattleInfo: true,
+            battleInfoPosition: { x: 10, y: 8 },
           };
         }
         return persisted as Record<string, unknown>;
