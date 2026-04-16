@@ -76,6 +76,18 @@ cd backend
 pytest                      # 全テスト
 pytest -m "not gpu"         # GPU なし
 pytest -m "not slow"        # 高速テストのみ
+
+# 使用率データ取得（リポジトリルート）
+# ソース切り替え: backend/config/settings.toml の [data] usage_source
+# 詳細: docs/usage-data-sources.md
+
+# Pikalytics (既定データソース)
+python scripts/fetch_pikalytics_usage.py
+
+# pokemon-champions-stats (性格・努力値を含む)
+# 依存: pip install beautifulsoup4
+python scripts/fetch_champions_stats.py          # 全件取得
+python scripts/fetch_champions_stats.py --probe  # HTML構造確認 (2体のみ)
 ```
 
 ### 詳細ドキュメント
@@ -88,6 +100,7 @@ pytest -m "not slow"        # 高速テストのみ
 - 実装仕様 → `docs/implementation/`
   - フロントエンド実装仕様 → `docs/implementation/frontend.md`
   - バックエンド実装仕様 → `docs/implementation/backend.md`
+- 使用率データソース運用 → `docs/usage-data-sources.md`
 
 ## 設計原則
 
