@@ -21,6 +21,10 @@ from typing import Any
 import numpy as np
 
 from app.ocr.region import RegionConfig, RegionRecognizer
+from app.recognition.move_name_matching import (
+    match_move_in_learnset as _match_move_in_learnset,
+    pick_best_forms_for_global_fuzzy,
+)
 from app.recognition.scene_detector import SceneDetector
 
 logger = logging.getLogger(__name__)
@@ -90,21 +94,102 @@ def _coerce_legacy_value(value: Any) -> Any:
         return value
 
 
+def _match_ability_for_pokemon(
+    ocr_text: str,
+    pokemon_key: str,
+    game_data: Any,
+    threshold: float = 0.6,
+) -> dict[str, Any] | None:
+    """OCR テキストをポケモンが取りうる特性に照合する.
+
+    Returns:
+        fuzzy_match_ability_name 互換の dict、または None。
+    """
+    from difflib import SequenceMatcher
+
+    from app.data.game_data import GameData
+
+    norm = GameData._ocr_normalize
+    norm_text = norm(ocr_text.strip())
+    if not norm_text:
+        return None
+
+    pdata = game_data.get_pokemon_by_key(pokemon_key)
+    if pdata is None:
+        return None
+
+    abilities_data = pdata.get("abilities", {})
+    ability_keys: list[str] = list(abilities_data.get("normal", []))
+    hidden = abilities_data.get("hidden")
+    if hidden:
+        ability_keys.append(hidden)
+
+    if not ability_keys:
+        return None
+
+    abilities_dict = game_data.names.get("ja", {}).get("abilities", {})
+    key_to_name: dict[str, str] = {
+        str(ability_key): name
+        for name, ability_key in abilities_dict.items()
+    }
+
+    best_name = ""
+    best_key = ""
+    best_ratio = 0.0
+
+    for ability_key in ability_keys:
+        name = key_to_name.get(ability_key)
+        if name is None:
+            continue
+        norm_name = norm(name)
+        if norm_text == norm_name:
+            return {
+                "matched_name": name,
+                "ability_key": ability_key,
+                "matched_key": ability_key,
+                "ability_id": GameData.legacy_value(ability_key),
+                "confidence": 1.0,
+            }
+        ratio = SequenceMatcher(None, norm_text, norm_name).ratio()
+        if ratio > best_ratio:
+            best_ratio = ratio
+            best_name = name
+            best_key = ability_key
+
+    if best_ratio < threshold:
+        return None
+
+    return {
+        "matched_name": best_name,
+        "ability_key": best_key,
+        "matched_key": best_key,
+        "ability_id": GameData.legacy_value(best_key),
+        "confidence": round(best_ratio, 4),
+    }
+
+
 def _validate_fields(
     fields: dict[str, str],
+    pokemon_key: str | None = None,
+    game_data: Any | None = None,
 ) -> dict[str, dict[str, Any]]:
     """スロット内の各フィールドを辞書照合で検証する.
+
+    Args:
+        game_data: 呼び出し元で取得済みの GameData（ThreadPool 内では必須に近い）。
+            None の場合のみ get_game_data() を呼ぶ（単体テスト用）。
 
     Returns:
         {"名前": {"raw": "リザードソ", "validated": "リザードン",
                   "confidence": 0.95, "matched_id": 6}, ...}
     """
-    try:
-        from app.dependencies import get_game_data
-        game_data = get_game_data()
-    except Exception:
-        # GameData 未初期化の場合は検証スキップ
-        return {k: _no_match(v) for k, v in fields.items()}
+    if game_data is None:
+        try:
+            from app.dependencies import get_game_data
+            game_data = get_game_data()
+        except Exception:
+            # GameData 未初期化の場合は検証スキップ
+            return {k: _no_match(v) for k, v in fields.items()}
 
     result: dict[str, dict[str, Any]] = {}
     for name, raw_text in fields.items():
@@ -123,7 +208,16 @@ def _validate_fields(
             else:
                 result[name] = _no_match(raw_text)
         elif _MOVE_FIELD_RE.match(name):
-            match = game_data.fuzzy_match_move_name(raw_text)
+            match = None
+            if pokemon_key is not None:
+                match = _match_move_in_learnset(raw_text, pokemon_key, game_data)
+            if match is None:
+                for cand in pick_best_forms_for_global_fuzzy(raw_text):
+                    match = game_data.fuzzy_match_move_name(cand)
+                    if match is not None:
+                        break
+            if match is None:
+                match = game_data.fuzzy_match_move_name(raw_text)
             if match:
                 matched_key = match.get("move_key")
                 matched_id = match.get("move_id", _coerce_legacy_value(matched_key))
@@ -144,7 +238,11 @@ def _validate_fields(
             else:
                 result[name] = _no_match(raw_text)
         elif name == "特性":
-            match = game_data.fuzzy_match_ability_name(raw_text)
+            match = None
+            if pokemon_key is not None:
+                match = _match_ability_for_pokemon(raw_text, pokemon_key, game_data)
+            if match is None:
+                match = game_data.fuzzy_match_ability_name(raw_text)
             if match:
                 matched_key = match.get("ability_key")
                 matched_id = match.get("ability_id", _coerce_legacy_value(matched_key))
@@ -170,7 +268,7 @@ def _validate_fields(
                     "matched_id": matched_id,
                     "matched_key": matched_key or str(matched_id),
                     "matched_identifier": item_data.get("identifier") or matched_key or str(matched_id),
-                    "is_mega_stone": bool(item_data.get("mega_stone")),
+                    "is_mega_stone": item_data.get("mega_stone") is not None,
                 }
             else:
                 result[name] = _no_match(raw_text)
@@ -493,7 +591,8 @@ class PartyRegistrationMachine:
                     if i < len(icon_results) and icon_results[i].candidates:
                         best = icon_results[i].candidates[0]
                         threshold = icon_results[i].threshold
-                        if best.confidence >= threshold:
+                        detailed = icon_results[i]
+                        if best.confidence >= threshold and not detailed.is_uncertain:
                             entry["pokemon_key"] = best.pokemon_key
                             entry["pokemon_id"] = best.pokemon_key
                             entry["name"] = id_to_name.get(
@@ -505,6 +604,15 @@ class PartyRegistrationMachine:
                             entry["pokemon_id"] = None
                             entry["name"] = None
                             entry["confidence"] = 0.0
+                            if detailed.is_uncertain:
+                                logger.info(
+                                    "_read_screen(%d): pos %d UNCERTAIN "
+                                    "margin=%.4f < %.4f, candidates=%s",
+                                    screen_num, i + 1,
+                                    detailed.margin, detailed.margin_threshold,
+                                    [(c.pokemon_key, round(c.confidence, 3))
+                                     for c in detailed.candidates[:3]],
+                                )
                     else:
                         entry["pokemon_key"] = None
                         entry["pokemon_id"] = None
@@ -601,14 +709,48 @@ class PartyRegistrationMachine:
         party: list[dict[str, Any]] = []
         sorted_positions = sorted(merged_fields.keys())
 
+        # ThreadPool ワーカー内で get_game_data() が失敗する環境があるため、
+        # 呼び出しスレッドで一度だけ取得して各スロットに渡す。
+        shared_gd: Any | None = None
+        try:
+            from app.dependencies import get_game_data
+            shared_gd = get_game_data()
+        except Exception:
+            shared_gd = None
+
         def _validate_slot(pos: int) -> tuple[int, dict[str, Any], float]:
             raw_fields = merged_fields[pos]
+            # pokemon_key を事前解決（文脈バリデーション用）
+            slot_pokemon_key: str | None = None
+            icon = icon_by_pos.get(pos, {})
+            slot_pokemon_key = icon.get("pokemon_key") or icon.get("pokemon_id")
+            if slot_pokemon_key is not None:
+                slot_pokemon_key = str(slot_pokemon_key)
+            if (
+                slot_pokemon_key is None
+                and "名前" in raw_fields
+                and shared_gd is not None
+            ):
+                try:
+                    name_match = shared_gd.fuzzy_match_pokemon_name(raw_fields["名前"])
+                    if name_match:
+                        pk = name_match.get("pokemon_key")
+                        slot_pokemon_key = str(pk) if pk is not None else None
+                except Exception:
+                    pass
             t_val = time.perf_counter()
-            validated = _validate_fields(raw_fields)
+            if shared_gd is None:
+                validated = {k: _no_match(v) for k, v in raw_fields.items()}
+            else:
+                validated = _validate_fields(
+                    raw_fields,
+                    pokemon_key=slot_pokemon_key,
+                    game_data=shared_gd,
+                )
             val_ms = (time.perf_counter() - t_val) * 1000
             logger.debug(
-                "_validate_fields slot %d: %d fields, %.1fms",
-                pos, len(raw_fields), val_ms,
+                "_validate_fields slot %d: %d fields, pokemon_key=%s, %.1fms",
+                pos, len(raw_fields), slot_pokemon_key, val_ms,
             )
             return pos, validated, val_ms
 

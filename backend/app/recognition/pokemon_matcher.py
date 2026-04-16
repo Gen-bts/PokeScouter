@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 _DEFAULT_TEMPLATE_DIR = Path(__file__).parent.parent.parent.parent / "templates" / "pokemon"
 _DEFAULT_THRESHOLD = 0.60
+_DEFAULT_MARGIN_THRESHOLD = 0.03
 _DEFAULT_MODEL = "dinov2_vits14"
 _POKEMON_SNAPSHOT_PATH = (
     Path(__file__).parent.parent.parent.parent
@@ -38,6 +39,22 @@ class MatchResult:
 class DetailedMatchResult:
     candidates: list[MatchResult]
     threshold: float
+    margin_threshold: float = _DEFAULT_MARGIN_THRESHOLD
+
+    @property
+    def margin(self) -> float | None:
+        """top-1 と top-2 のスコア差。候補が2件未満なら None。"""
+        if len(self.candidates) < 2:
+            return None
+        return self.candidates[0].confidence - self.candidates[1].confidence
+
+    @property
+    def is_uncertain(self) -> bool:
+        """margin が閾値未満で判別が不確定かどうか。"""
+        m = self.margin
+        if m is None:
+            return False
+        return m < self.margin_threshold
 
 
 class PokemonMatcher:
@@ -45,11 +62,13 @@ class PokemonMatcher:
         self,
         template_dir: str | Path = _DEFAULT_TEMPLATE_DIR,
         threshold: float = _DEFAULT_THRESHOLD,
+        margin_threshold: float = _DEFAULT_MARGIN_THRESHOLD,
         model_name: str = _DEFAULT_MODEL,
         device: str | None = None,
     ) -> None:
         self._template_dir = Path(template_dir)
         self._threshold = threshold
+        self._margin_threshold = margin_threshold
         self._model_name = model_name
         self._device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._model: torch.nn.Module | None = None
@@ -83,12 +102,19 @@ class PokemonMatcher:
         return self._template_dir / filename
 
     def identify(self, icon_image: np.ndarray) -> MatchResult | None:
-        detailed = self.identify_detailed(icon_image, k=1)
+        detailed = self.identify_detailed(icon_image, k=2)
         if not detailed.candidates:
             return None
         best = detailed.candidates[0]
         if best.confidence < self._threshold:
             return None
+        if detailed.is_uncertain:
+            logger.info(
+                "margin too small but accepting top-1: %s(%.3f) vs %s(%.3f), margin=%.4f < %.4f",
+                best.pokemon_key, best.confidence,
+                detailed.candidates[1].pokemon_key, detailed.candidates[1].confidence,
+                detailed.margin, self._margin_threshold,
+            )
         return best
 
     def identify_detailed(
@@ -115,7 +141,11 @@ class PokemonMatcher:
                     confidence=float(distances[0, j]),
                 ),
             )
-        return DetailedMatchResult(candidates=candidates, threshold=self._threshold)
+        return DetailedMatchResult(
+            candidates=candidates,
+            threshold=self._threshold,
+            margin_threshold=self._margin_threshold,
+        )
 
     def identify_team(
         self,
@@ -124,7 +154,6 @@ class PokemonMatcher:
         k: int = 5,
     ) -> list[DetailedMatchResult]:
         self._ensure_loaded()
-        empty = DetailedMatchResult(candidates=[], threshold=self._threshold)
 
         if self._index is None or self._pokemon_keys is None or self._index.ntotal == 0:
             return [empty] * len(positions)
@@ -140,6 +169,11 @@ class PokemonMatcher:
             crops.append(cropped)
             valid_indices.append(i)
 
+        empty = DetailedMatchResult(
+            candidates=[],
+            threshold=self._threshold,
+            margin_threshold=self._margin_threshold,
+        )
         results: list[DetailedMatchResult] = [empty] * len(positions)
         if not crops:
             return results
@@ -168,6 +202,7 @@ class PokemonMatcher:
             results[orig_idx] = DetailedMatchResult(
                 candidates=candidates,
                 threshold=self._threshold,
+                margin_threshold=self._margin_threshold,
             )
         return results
 
@@ -183,6 +218,7 @@ class PokemonMatcher:
         if new_set == self._legal_pokemon_keys:
             return
         self._legal_pokemon_keys = new_set
+        logger.info("set_legal_pokemon: %d keys provided", len(new_set) if new_set else 0)
         if self._loaded and self._full_index is not None:
             self._rebuild_filtered_index()
 
@@ -193,6 +229,7 @@ class PokemonMatcher:
         if self._legal_pokemon_keys is None or len(self._legal_pokemon_keys) == 0:
             self._index = self._full_index
             self._pokemon_keys = list(self._full_pokemon_keys)
+            logger.info("FAISS legal filter: disabled (using full index, %d vectors)", self._full_index.ntotal)
             return
 
         mask = np.array(
@@ -219,6 +256,11 @@ class PokemonMatcher:
         sub_index.add(filtered_vectors)
         self._index = sub_index
         self._pokemon_keys = filtered_keys
+        removed = n_total - len(filtered_keys)
+        logger.info(
+            "FAISS legal filter: %d → %d vectors (%d removed)",
+            n_total, len(filtered_keys), removed,
+        )
 
     def _unload(self) -> None:
         if self._model is not None:

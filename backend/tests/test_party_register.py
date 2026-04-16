@@ -10,6 +10,10 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
+from app.recognition.move_name_matching import (
+    iter_normalized_move_ocr_forms,
+    match_move_in_learnset as _match_move_in_learnset,
+)
 from app.recognition.party_register import (
     DETECTION_DEBOUNCE,
     DETECTION_DEBOUNCE_HIGH_CONF,
@@ -18,6 +22,7 @@ from app.recognition.party_register import (
     PartyRegistrationMachine,
     ScreenResult,
     _group_regions_by_slot,
+    _match_ability_for_pokemon,
     _validate_fields,
 )
 
@@ -567,3 +572,230 @@ class TestBuildPartyResult:
         # 画面2のフィールド
         assert fields["HP実数値"]["raw"] == "153"
         assert fields["こうげき実数値"]["raw"] == "120"
+
+
+class TestContextAwareValidation:
+    """文脈バリデーション（learnset / 特性絞り込み）のテスト."""
+
+    @patch("app.dependencies.get_game_data")
+    def test_move_validated_against_learnset(self, mock_get_gd: MagicMock) -> None:
+        """pokemon_key 指定時、learnset 内のわざが優先マッチされる."""
+        mock_gd = MagicMock()
+        mock_gd.get_learnset.return_value = ["flamethrower", "fireblast"]
+        mock_gd.names = {
+            "ja": {"moves": {"かえんほうしゃ": "flamethrower", "だいもんじ": "fireblast"}},
+        }
+        mock_gd.moves = {
+            "flamethrower": {
+                "type": "fire", "power": 90, "accuracy": 100,
+                "damage_class": "special",
+            },
+        }
+        mock_gd.fuzzy_match_pokemon_name.return_value = None
+        mock_get_gd.return_value = mock_gd
+
+        result = _validate_fields({"わざ１": "かえんほうしゃ"}, pokemon_key="charizard")
+        assert result["わざ１"]["validated"] == "かえんほうしゃ"
+        assert result["わざ１"]["matched_key"] == "flamethrower"
+        # learnset 内でマッチしたのでグローバルは呼ばれない
+        mock_gd.fuzzy_match_move_name.assert_not_called()
+
+    @patch("app.dependencies.get_game_data")
+    def test_move_falls_back_when_learnset_empty(self, mock_get_gd: MagicMock) -> None:
+        """learnset が空の場合、グローバルマッチにフォールバック."""
+        mock_gd = MagicMock()
+        mock_gd.get_learnset.return_value = []
+        mock_gd.names = {"ja": {"moves": {}}}
+        mock_gd.fuzzy_match_move_name.return_value = {
+            "matched_name": "かえんほうしゃ",
+            "move_key": "flamethrower", "matched_key": "flamethrower",
+            "move_id": 53, "confidence": 0.95,
+        }
+        mock_gd.moves = {
+            "flamethrower": {
+                "type": "fire", "power": 90, "accuracy": 100,
+                "damage_class": "special",
+            },
+        }
+        mock_gd.fuzzy_match_pokemon_name.return_value = None
+        mock_get_gd.return_value = mock_gd
+
+        result = _validate_fields({"わざ１": "かえんほうしゃ"}, pokemon_key="charizard")
+        assert result["わざ１"]["validated"] == "かえんほうしゃ"
+        mock_gd.fuzzy_match_move_name.assert_called_once()
+
+    @patch("app.dependencies.get_game_data")
+    def test_move_falls_back_when_no_pokemon_key(self, mock_get_gd: MagicMock) -> None:
+        """pokemon_key が None の場合、グローバルマッチを使用."""
+        mock_gd = MagicMock()
+        mock_gd.fuzzy_match_move_name.return_value = {
+            "matched_name": "かえんほうしゃ",
+            "move_key": "flamethrower", "matched_key": "flamethrower",
+            "move_id": 53, "confidence": 0.95,
+        }
+        mock_gd.moves = {
+            "flamethrower": {
+                "type": "fire", "power": 90, "accuracy": 100,
+                "damage_class": "special",
+            },
+        }
+        mock_gd.fuzzy_match_pokemon_name.return_value = None
+        mock_get_gd.return_value = mock_gd
+
+        result = _validate_fields({"わざ１": "かえんほうしゃ"}, pokemon_key=None)
+        mock_gd.fuzzy_match_move_name.assert_called_once()
+
+    @patch("app.dependencies.get_game_data")
+    def test_move_falls_back_when_learnset_match_below_threshold(
+        self, mock_get_gd: MagicMock,
+    ) -> None:
+        """learnset 内でマッチ失敗時、グローバルマッチにフォールバック."""
+        mock_gd = MagicMock()
+        mock_gd.get_learnset.return_value = ["flamethrower"]
+        mock_gd.names = {"ja": {"moves": {"かえんほうしゃ": "flamethrower"}}}
+        mock_gd.fuzzy_match_move_name.return_value = {
+            "matched_name": "じしん",
+            "move_key": "earthquake", "matched_key": "earthquake",
+            "move_id": 89, "confidence": 0.8,
+        }
+        mock_gd.moves = {
+            "earthquake": {
+                "type": "ground", "power": 100, "accuracy": 100,
+                "damage_class": "physical",
+            },
+        }
+        mock_gd.fuzzy_match_pokemon_name.return_value = None
+        mock_get_gd.return_value = mock_gd
+
+        # OCRテキストが learnset 内のわざと全く似ていない場合
+        result = _validate_fields({"わざ１": "じしん"}, pokemon_key="charizard")
+        assert result["わざ１"]["validated"] == "じしん"
+        mock_gd.fuzzy_match_move_name.assert_called_once()
+
+    @patch("app.dependencies.get_game_data")
+    def test_ability_validated_against_pokemon(self, mock_get_gd: MagicMock) -> None:
+        """pokemon_key 指定時、そのポケモンの特性リストから優先マッチ."""
+        mock_gd = MagicMock()
+        mock_gd.get_pokemon_by_key.return_value = {
+            "abilities": {"normal": ["blaze"], "hidden": "solarpower"},
+        }
+        mock_gd.names = {
+            "ja": {"abilities": {"もうか": "blaze", "サンパワー": "solarpower"}},
+        }
+        mock_gd.fuzzy_match_pokemon_name.return_value = None
+        mock_get_gd.return_value = mock_gd
+
+        result = _validate_fields({"特性": "もうか"}, pokemon_key="charizard")
+        assert result["特性"]["validated"] == "もうか"
+        assert result["特性"]["matched_key"] == "blaze"
+        # ポケモン固有マッチ成功のでグローバルは呼ばれない
+        mock_gd.fuzzy_match_ability_name.assert_not_called()
+
+    @patch("app.dependencies.get_game_data")
+    def test_ability_falls_back_when_pokemon_data_missing(
+        self, mock_get_gd: MagicMock,
+    ) -> None:
+        """ポケモンデータが見つからない場合、グローバルマッチにフォールバック."""
+        mock_gd = MagicMock()
+        mock_gd.get_pokemon_by_key.return_value = None
+        mock_gd.names = {"ja": {"abilities": {}}}
+        mock_gd.fuzzy_match_ability_name.return_value = {
+            "matched_name": "もうか",
+            "ability_key": "blaze", "matched_key": "blaze",
+            "ability_id": 66, "confidence": 0.95,
+        }
+        mock_gd.fuzzy_match_pokemon_name.return_value = None
+        mock_get_gd.return_value = mock_gd
+
+        result = _validate_fields({"特性": "もうか"}, pokemon_key="unknown")
+        assert result["特性"]["validated"] == "もうか"
+        mock_gd.fuzzy_match_ability_name.assert_called_once()
+
+    @patch("app.dependencies.get_game_data")
+    def test_ability_falls_back_when_no_pokemon_key(
+        self, mock_get_gd: MagicMock,
+    ) -> None:
+        """pokemon_key が None の場合、グローバルマッチを使用."""
+        mock_gd = MagicMock()
+        mock_gd.fuzzy_match_ability_name.return_value = {
+            "matched_name": "もうか",
+            "ability_key": "blaze", "matched_key": "blaze",
+            "ability_id": 66, "confidence": 0.95,
+        }
+        mock_gd.fuzzy_match_pokemon_name.return_value = None
+        mock_get_gd.return_value = mock_gd
+
+        result = _validate_fields({"特性": "もうか"}, pokemon_key=None)
+        mock_gd.fuzzy_match_ability_name.assert_called_once()
+
+    def test_move_ocr_pipelines_include_jishin_from_u_sh_h(self) -> None:
+        """設定パイプラインが「Uしh」から正規化形に辿り着く."""
+        forms = iter_normalized_move_ocr_forms("Uしh")
+        assert "じしん" in forms
+
+    def test_move_ocr_pipelines_hyper_prefix(self) -> None:
+        """カタカナパイプラインでハパー→ハイパー系へ."""
+        forms = iter_normalized_move_ocr_forms("ハパーポス")
+        assert any("ハイパ" in f for f in forms)
+
+    def test_match_move_in_learnset_ocr_latin_noise(self) -> None:
+        """英字混入 OCR を learnset 照合前に補正し、じしん にマッチする."""
+        mock_gd = MagicMock()
+        mock_gd.get_learnset.return_value = ["earthquake"]
+        mock_gd.names = {"ja": {"moves": {"じしん": "earthquake"}}}
+        result = _match_move_in_learnset("Uしh", "garchomp", mock_gd)
+        assert result is not None
+        assert result["matched_key"] == "earthquake"
+        assert result["confidence"] == 1.0
+
+    def test_match_move_in_learnset_ocr_double_u(self) -> None:
+        """連続U誤読 (UUん) を learnset 照合前に補正し、じしん にマッチする."""
+        mock_gd = MagicMock()
+        mock_gd.get_learnset.return_value = ["earthquake"]
+        mock_gd.names = {"ja": {"moves": {"じしん": "earthquake"}}}
+        result = _match_move_in_learnset("UUん", "garchomp", mock_gd)
+        assert result is not None
+        assert result["matched_key"] == "earthquake"
+        assert result["confidence"] == 1.0
+
+    def test_match_move_in_learnset_exact(self) -> None:
+        """learnset 内のわざ名が完全一致する."""
+        mock_gd = MagicMock()
+        mock_gd.get_learnset.return_value = ["flamethrower", "fireblast"]
+        mock_gd.names = {
+            "ja": {"moves": {"かえんほうしゃ": "flamethrower", "だいもんじ": "fireblast"}},
+        }
+        result = _match_move_in_learnset("かえんほうしゃ", "charizard", mock_gd)
+        assert result is not None
+        assert result["matched_name"] == "かえんほうしゃ"
+        assert result["move_key"] == "flamethrower"
+        assert result["confidence"] == 1.0
+
+    def test_match_move_in_learnset_returns_none_for_empty(self) -> None:
+        """learnset が空なら None."""
+        mock_gd = MagicMock()
+        mock_gd.get_learnset.return_value = []
+        result = _match_move_in_learnset("かえんほうしゃ", "charizard", mock_gd)
+        assert result is None
+
+    def test_match_ability_for_pokemon_hidden(self) -> None:
+        """hidden 特性にもマッチする."""
+        mock_gd = MagicMock()
+        mock_gd.get_pokemon_by_key.return_value = {
+            "abilities": {"normal": ["blaze"], "hidden": "solarpower"},
+        }
+        mock_gd.names = {
+            "ja": {"abilities": {"もうか": "blaze", "サンパワー": "solarpower"}},
+        }
+        result = _match_ability_for_pokemon("サンパワー", "charizard", mock_gd)
+        assert result is not None
+        assert result["matched_name"] == "サンパワー"
+        assert result["ability_key"] == "solarpower"
+        assert result["confidence"] == 1.0
+
+    def test_match_ability_for_pokemon_returns_none_when_no_data(self) -> None:
+        """ポケモンデータがない場合 None."""
+        mock_gd = MagicMock()
+        mock_gd.get_pokemon_by_key.return_value = None
+        result = _match_ability_for_pokemon("もうか", "unknown", mock_gd)
+        assert result is None

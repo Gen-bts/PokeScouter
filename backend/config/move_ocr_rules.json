@@ -1,0 +1,36 @@
+{
+  "_comment": "パーティ登録のわざ名 OCR → 辞書照合。手続きをコードに埋め込まず、検証可能なパイプラインとして定義する。",
+  "steps": {
+    "nfkc_strip": { "type": "nfkc_strip" },
+    "game_normalize": { "type": "game_normalize" },
+    "latin_u_to_ji_prefix": {
+      "type": "regex_sub",
+      "pattern": "^([Uu])([ぁ-ん])",
+      "replacement": "じ\\2"
+    },
+    "latin_trailing_h_to_n": {
+      "type": "regex_sub",
+      "pattern": "[hH]$",
+      "replacement": "ん"
+    },
+    "latin_medial_u_to_shi": {
+      "type": "regex_sub",
+      "pattern": "(?<=[Uu\\u3040-\\u309f\\u30a0-\\u30ff])[Uu](?=[ぁ-ん])",
+      "replacement": "し"
+    },
+    "katakana_insert_i_before_pa_long": {
+      "type": "regex_sub",
+      "pattern": "ハ(?=パー)",
+      "replacement": "ハイ"
+    }
+  },
+  "pipelines": [
+    ["nfkc_strip", "latin_trailing_h_to_n", "latin_medial_u_to_shi", "latin_u_to_ji_prefix", "katakana_insert_i_before_pa_long", "game_normalize"],
+    ["nfkc_strip", "game_normalize"]
+  ],
+  "matching": {
+    "learnset_min_ratio": 0.6,
+    "learnset_min_margin": 0.04,
+    "learnset_margin_requires_second": true
+  }
+}
