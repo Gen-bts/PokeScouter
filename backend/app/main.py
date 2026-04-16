@@ -18,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.damage import router as damage_router
 from app.api.health import router as health_router
 from app.api.devtools import router as devtools_router
+from app.api.move import router as move_router
 from app.api.parties import router as parties_router
 from app.api.pokemon import router as pokemon_router
 from app.api.settings import router as settings_router
@@ -137,6 +138,13 @@ def _load_pokemon_sprite_fallbacks() -> dict[str, str]:
 
         candidates: list[str] = []
         num = pdata.get("num")
+        forme = pdata.get("forme")
+
+        # メガシンカ等のフォルム: {num}-mega.png / {num}-mega-x.png を優先
+        if isinstance(num, int) and isinstance(forme, str) and forme:
+            forme_suffix = forme.lower().replace(" ", "-")  # "Mega-X" → "mega-x"
+            candidates.append(f"{num}-{forme_suffix}.png")
+
         if isinstance(num, int):
             candidates.append(f"{num}.png")
 
@@ -253,6 +261,7 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(damage_router)
 app.include_router(devtools_router)
+app.include_router(move_router)
 app.include_router(parties_router)
 app.include_router(pokemon_router)
 app.include_router(settings_router)

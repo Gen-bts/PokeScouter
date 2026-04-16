@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import TYPE_CHECKING
+
+logger = logging.getLogger(__name__)
 
 from app.config import Settings, load_settings
 
@@ -93,6 +96,7 @@ def init_pokemon_matcher() -> PokemonMatcher:
     cfg = settings.recognition.pokemon_matcher
     _pokemon_matcher = PokemonMatcher(
         threshold=cfg.threshold,
+        margin_threshold=cfg.margin_threshold,
         model_name=cfg.model,
     )
     # シーズン合法ポケモンで FAISS 検索空間を絞り込む
@@ -101,6 +105,8 @@ def init_pokemon_matcher() -> PokemonMatcher:
     legal_pokemon = game_data.format.get("legal_pokemon_keys", [])
     if legal_pokemon:
         _pokemon_matcher.set_legal_pokemon(legal_pokemon)
+    else:
+        logger.warning("legal_pokemon_keys が未設定: FAISS フィルタなしで全ポケモンが候補になります")
     return _pokemon_matcher
 
 
@@ -149,8 +155,9 @@ def init_game_data() -> GameData:
     global _game_data  # noqa: PLW0603
     from app.data.game_data import GameData
 
+    settings = get_settings()
     _game_data = GameData()
-    _game_data.load()
+    _game_data.load(usage_source=settings.data.usage_source)
     return _game_data
 
 

@@ -32,6 +32,7 @@ import {
 import {
   preprocessRequest,
   applyAnnotations,
+  getEffectiveMoveType,
 } from "./champions-abilities.js";
 import {
   loadSnapshot,
@@ -250,26 +251,12 @@ export class SmogonDamageEngine implements DamageEngine {
           continue;
         }
 
-        // タイプ相性（calculate 前に確認）
-        const typeEff = getTypeEffectiveness(moveInput.type, resolvedDefender.types);
-
-        // 無効 (0x) の場合はダメージ 0 で即座に結果を返す
-        if (typeEff === 0) {
-          let moveResult: MoveResult = {
-            move_key: moveInput.move_key,
-            move_id: moveInput.move_key,
-            move_name: moveInput.name,
-            damage: { min: 0, max: 0 },
-            min_percent: 0,
-            max_percent: 0,
-            guaranteed_ko: 0,
-            type_effectiveness: 0,
-            description: "0.0% - 0.0% (無効)",
-          };
-          moveResult = applyAnnotations(moveResult, preprocess.annotations, moveInput);
-          moveResults.push(moveResult);
-          continue;
-        }
+        // タイプ相性（表示用 — 特性によるタイプ変換を考慮）
+        const effectiveMoveType = getEffectiveMoveType(
+          moveInput.type,
+          preprocess.sanitizedAbility,
+        );
+        const typeEff = getTypeEffectiveness(effectiveMoveType, resolvedDefender.types);
 
         const move = buildMove(moveInput);
 

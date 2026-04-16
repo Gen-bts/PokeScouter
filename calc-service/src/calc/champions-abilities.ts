@@ -12,10 +12,18 @@ import type {
   ResolvedPokemonInput,
 } from "../types.js";
 
-/** -ize 系特性（ノーマル技を別タイプに変換 + 1.2 倍） */
+/** -ize 系特性（ノーマル技を別タイプに変換 + 1.2 倍） — Champions 固有 */
 const TYPE_CHANGE_ABILITIES: Record<string, string> = {
   dragonize: "Dragon",
   // 将来: 他の Champions 固有 -ize 特性をここに追加
+};
+
+/** @smogon/calc が認識する標準タイプ変換特性（表示用タイプ相性の算出に使用） */
+export const SMOGON_TYPE_CHANGE_ABILITIES: Record<string, string> = {
+  pixilate: "Fairy",
+  refrigerate: "Ice",
+  aerilate: "Flying",
+  galvanize: "Electric",
 };
 
 /** 天候をセットする特性 */
@@ -95,6 +103,22 @@ export function preprocessRequest(
     sanitizedAbility,
     annotations,
   };
+}
+
+/**
+ * タイプ変換特性を考慮した実効タイプを返す.
+ *
+ * Champions 固有特性は preprocessRequest で既に変換済みのため、
+ * ここでは @smogon/calc が認識する標準特性のみ対応する。
+ */
+export function getEffectiveMoveType(
+  moveType: string,
+  attackerAbility: string | null,
+): string {
+  if (!attackerAbility) return moveType;
+  const target = SMOGON_TYPE_CHANGE_ABILITIES[attackerAbility.toLowerCase()];
+  if (target && moveType.toLowerCase() === "normal") return target;
+  return moveType;
 }
 
 /**
