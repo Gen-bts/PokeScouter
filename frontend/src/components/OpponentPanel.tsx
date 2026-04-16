@@ -2,18 +2,25 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTooltipClamp } from "../hooks/useTooltipClamp";
 import {
+  getEffectivePokemonKey,
   useOpponentTeamStore,
   type OpponentSlot,
 } from "../stores/useOpponentTeamStore";
+import { useDamageCalcStore } from "../stores/useDamageCalcStore";
+import { useMyPartyStore } from "../stores/useMyPartyStore";
+import { useFieldStateStore } from "../stores/useFieldStateStore";
+import { buildSpeedComparison, fieldToInt, fieldToKey } from "../utils/speed";
 import { usePokemonNames } from "../hooks/usePokemonNames";
 import { usePokemonDetail, type PokemonDetail } from "../hooks/usePokemonDetail";
 import { PokemonSprite } from "./PokemonSprite";
 import { ItemSprite } from "./ItemSprite";
+import { MoveInfoChip } from "./MoveInfoChip";
 import { TypeConsistencyPanel } from "./TypeConsistencyPanel";
 import { TypeBadge } from "./TypeBadge";
 import { TypeEffectivenessSection, formatMultiplier } from "./TypeEffectivenessSection";
 import type { MegaFormDetail, PokemonCandidate, TypeConsistencyEntry } from "../types";
 import { useConnectionStore } from "../stores/useConnectionStore";
+import { useMatchLogStore } from "../stores/useMatchLogStore";
 
 const STAT_LABELS: Record<string, string> = {
   hp: "HP", atk: "こうげき", def: "ぼうぎょ",
@@ -30,7 +37,7 @@ function getEffClass(eff: number): string {
   return "super2";
 }
 
-function AbilityWithTooltip({ name, effect, isHidden }: { name: string; effect?: string; isHidden?: boolean }) {
+function AbilityWithTooltip({ name, effect, effectEn, isHidden }: { name: string; effect?: string; effectEn?: string; isHidden?: boolean }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [hovered, setHovered] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
@@ -45,6 +52,8 @@ function AbilityWithTooltip({ name, effect, isHidden }: { name: string; effect?:
 
   const handleMouseLeave = useCallback(() => setHovered(false), []);
 
+  const showEnLine = effectEn && effectEn !== effect;
+
   return (
     <span
       ref={ref}
@@ -57,6 +66,7 @@ function AbilityWithTooltip({ name, effect, isHidden }: { name: string; effect?:
       {effect && hovered && createPortal(
         <span className="ability-desc-tooltip ability-desc-tooltip-visible" style={{ top: pos.top, left: pos.left }}>
           {effect}
+          {showEnLine && <span className="ability-desc-tooltip-en">{effectEn}</span>}
           <span className="ability-desc-tooltip-arrow" />
         </span>,
         document.body
@@ -78,7 +88,7 @@ function OpponentMegaSection({ megaForm }: { megaForm: MegaFormDetail }) {
       </div>
       {megaForm.ability.name && (
         <div className="opponent-tooltip-abilities">
-          <AbilityWithTooltip name={megaForm.ability.name} effect={megaForm.ability.effect} />
+          <AbilityWithTooltip name={megaForm.ability.name} effect={megaForm.ability.effect} effectEn={megaForm.ability.effect_en} />
         </div>
       )}
       <div className="mega-stats-grid">
@@ -115,7 +125,13 @@ function OpponentMegaSection({ megaForm }: { megaForm: MegaFormDetail }) {
   );
 }
 
-function OpponentTooltipContent({ detail }: { detail: PokemonDetail }) {
+function OpponentTooltipContent({
+  detail,
+  speedBattleTooltipLine,
+}: {
+  detail: PokemonDetail;
+  speedBattleTooltipLine?: string | null;
+}) {
   return (
     <>
       {/* タイプ */}
@@ -130,12 +146,13 @@ function OpponentTooltipContent({ detail }: { detail: PokemonDetail }) {
         <div className="tooltip-section-label">とくせい</div>
         <div className="opponent-tooltip-abilities">
           {detail.abilities.normal.map((a) => (
-            <AbilityWithTooltip key={a.name} name={a.name} effect={a.effect} />
+            <AbilityWithTooltip key={a.name} name={a.name} effect={a.effect} effectEn={a.effect_en} />
           ))}
           {detail.abilities.hidden && (
             <AbilityWithTooltip
               name={detail.abilities.hidden.name}
               effect={detail.abilities.hidden.effect}
+              effectEn={detail.abilities.hidden.effect_en}
               isHidden
             />
           )}
@@ -157,6 +174,13 @@ function OpponentTooltipContent({ detail }: { detail: PokemonDetail }) {
           })}
         </div>
       </div>
+
+      {speedBattleTooltipLine ? (
+        <div className="tooltip-section">
+          <div className="tooltip-section-label">すばやさ（行動順推定）</div>
+          <div className="opponent-tooltip-speed-inferred">{speedBattleTooltipLine}</div>
+        </div>
+      ) : null}
 
       {/* タイプ相性 */}
       <TypeEffectivenessSection typeEffectiveness={detail.type_effectiveness} />
@@ -210,6 +234,16 @@ function PokemonAutocomplete({
 
   const select = useCallback(
     (name: string, id: string) => {
+      const oldSlot = useOpponentTeamStore.getState().slots[position - 1];
+      useMatchLogStore.getState().addPokemonCorrection(
+        position,
+        oldSlot?.pokemonId ?? null,
+        oldSlot?.name ?? null,
+        oldSlot ? oldSlot.confidence : null,
+        id,
+        name,
+        "manual_input",
+      );
       manualSet(position, id, name);
       sendSetOpponentPokemon(position, id, name);
       onClose();
@@ -311,6 +345,16 @@ function CandidateSelector({
 
   const select = useCallback(
     (c: PokemonCandidate) => {
+      const oldSlot = useOpponentTeamStore.getState().slots[position - 1];
+      useMatchLogStore.getState().addPokemonCorrection(
+        position,
+        oldSlot?.pokemonId ?? null,
+        oldSlot?.name ?? null,
+        oldSlot ? oldSlot.confidence : null,
+        c.pokemon_id,
+        c.name,
+        "candidate",
+      );
       manualSet(position, c.pokemon_id, c.name);
       sendSetOpponentPokemon(position, c.pokemon_id, c.name);
       onClose();
@@ -407,7 +451,130 @@ const SlotRow = memo(function SlotRow({
   );
   const slotRef = useRef<HTMLDivElement>(null);
   const [tooltipPos, setTooltipPos] = useState<{ top: number; right: number } | null>(null);
-  const { detail } = usePokemonDetail(slot.pokemonId);
+  const attackerPos = useDamageCalcStore((s) => s.selectedAttackerPosition);
+  const partySlots = useMyPartyStore((s) => s.slots);
+  const mySlot = attackerPos != null ? partySlots[attackerPos - 1] ?? null : null;
+  const weather = useFieldStateStore((s) => s.weather);
+  const terrain = useFieldStateStore((s) => s.terrain);
+  const trickRoom = useFieldStateStore((s) => s.trickRoom);
+  const playerTailwind = useFieldStateStore((s) => s.playerSide.tailwind);
+  const opponentTailwind = useFieldStateStore((s) => s.opponentSide.tailwind);
+
+  const effectiveKey = getEffectivePokemonKey(slot);
+  const { detail } = usePokemonDetail(effectiveKey);
+  const setSlotMegaForms = useOpponentTeamStore((s) => s.setSlotMegaForms);
+
+  const speedBattleTooltipLine = useMemo(() => {
+    if (!detail || slot.pokemonId == null || slot.inferredSpeedBounds == null) {
+      return null;
+    }
+    const mySpeed = fieldToInt(mySlot?.fields["すばやさ実数値"]);
+    const mySpeedStatPoints = fieldToInt(mySlot?.fields["すばやさ努力値"]);
+    const playerBaseSpeed =
+      mySlot?.megaForm?.base_stats.spe != null
+        ? mySlot.megaForm.base_stats.spe - (mySlot.megaForm.stat_deltas?.spe ?? 0)
+        : null;
+    const playerContext = mySlot
+      ? {
+          pokemonKey: mySlot.pokemonId,
+          name: mySlot.name,
+          actualSpeed: mySpeed,
+          speedStatPoints: mySpeedStatPoints,
+          baseSpeed: playerBaseSpeed,
+          speBoost: mySlot.boosts.spe ?? 0,
+          abilityId: fieldToKey(mySlot.fields["特性"]),
+          itemId: fieldToKey(mySlot.fields["もちもの"]),
+          itemIdentifier:
+            mySlot.fields["もちもの"]?.matched_identifier ??
+            fieldToKey(mySlot.fields["もちもの"]),
+          tailwind: playerTailwind,
+          isMegaEvolved: mySlot.isMegaEvolved,
+          megaPokemonKey: mySlot.megaForm?.pokemon_key ?? null,
+          megaBaseSpeed: mySlot.megaForm?.base_stats.spe ?? null,
+        }
+      : null;
+
+    const opponentContext = {
+      pokemonKey: getEffectivePokemonKey(slot),
+      name: slot.name,
+      actualSpeed: null,
+      speedStatPoints: null,
+      baseSpeed: null,
+      speBoost: slot.boosts.spe ?? 0,
+      abilityId: slot.abilityId,
+      itemId: slot.itemId,
+      itemIdentifier: slot.itemIdentifier ?? slot.itemId,
+      tailwind: opponentTailwind,
+      isMegaEvolved: slot.activeMegaIndex != null,
+      megaPokemonKey:
+        slot.activeMegaIndex != null
+          ? (slot.megaForms[slot.activeMegaIndex]?.pokemon_key ?? null)
+          : null,
+      megaBaseSpeed:
+        slot.activeMegaIndex != null
+          ? (slot.megaForms[slot.activeMegaIndex]?.base_stats.spe ?? null)
+          : null,
+    };
+
+    const result = buildSpeedComparison(
+      playerContext,
+      detail.base_stats.spe,
+      opponentContext,
+      {
+        weather,
+        terrain,
+        trickRoom,
+        playerTailwind,
+        opponentTailwind,
+      },
+      slot.inferredSpeedBounds,
+    );
+    if (!result?.narrowed) return null;
+    if (result.minSpeed === result.maxSpeed) {
+      return `戦闘中 ≈${result.minSpeed}`;
+    }
+    return `戦闘中 ${result.minSpeed}〜${result.maxSpeed}`;
+  }, [
+    detail,
+    slot,
+    mySlot,
+    weather,
+    terrain,
+    trickRoom,
+    playerTailwind,
+    opponentTailwind,
+  ]);
+  const cycleMegaForm = useOpponentTeamStore((s) => s.cycleMegaForm);
+
+  // detail のメガフォーム情報をストアにキャッシュ
+  const megaFormsRef = useRef(detail?.mega_forms);
+  useEffect(() => {
+    const forms = detail?.mega_forms ?? [];
+    if (forms !== megaFormsRef.current) {
+      megaFormsRef.current = forms;
+      if (forms.length > 0) {
+        setSlotMegaForms(slot.position, forms);
+      }
+    }
+  }, [detail?.mega_forms, slot.position, setSlotMegaForms]);
+
+  const activeMega =
+    slot.activeMegaIndex != null ? slot.megaForms[slot.activeMegaIndex] ?? null : null;
+  const displayPokemonId = activeMega
+    ? activeMega.pokemon_key
+    : (slot.basePokemonKey ?? slot.pokemonId);
+  const hasMegaForms = (detail?.mega_forms?.length ?? 0) > 0;
+
+  // メガトグルボタンのラベル
+  const megaLabel = (() => {
+    if (!activeMega) return "M";
+    if (slot.megaForms.length <= 1) return "M";
+    // X/Y の場合: forme suffix から判定
+    const key = activeMega.pokemon_key;
+    if (key.endsWith("megax")) return "Mx";
+    if (key.endsWith("megay")) return "My";
+    return "M";
+  })();
 
   const effectivenessInfo = useMemo(() => {
     if (!hoveredTypeEntry || slot.pokemonId === null) return null;
@@ -481,7 +648,7 @@ const SlotRow = memo(function SlotRow({
     >
       <div className="opponent-slot-sprite-wrap">
         <PokemonSprite
-          pokemonId={slot.pokemonId}
+          pokemonId={displayPokemonId}
           size={52}
           className="opponent-slot-img"
           placeholderClass="opponent-slot-placeholder"
@@ -492,6 +659,18 @@ const SlotRow = memo(function SlotRow({
             size={28}
             className="opponent-slot-item-overlay"
           />
+        )}
+        {hasMegaForms && (
+          <button
+            className={`mega-toggle-btn${activeMega ? " active" : ""}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              cycleMegaForm(slot.position);
+            }}
+            title={activeMega ? "メガシンカ解除" : "メガシンカ"}
+          >
+            {megaLabel}
+          </button>
         )}
       </div>
       <div className="opponent-slot-info">
@@ -515,9 +694,6 @@ const SlotRow = memo(function SlotRow({
               </span>
               {isDisplaySelected && (
                 <span className="opponent-slot-display-badge">表示中</span>
-              )}
-              {slot.wasSentOut && (
-                <span className="opponent-slot-selected-badge">選出確定</span>
               )}
             </div>
             {(displayAbility || slot.item) && (
@@ -555,12 +731,19 @@ const SlotRow = memo(function SlotRow({
               <div className="opponent-slot-moves">
                 {Array.from({ length: 4 }, (_, i) => {
                   const move = slot.knownMoves[i];
-                  return (
+                  return move ? (
+                    <MoveInfoChip
+                      key={i}
+                      moveKey={move.id}
+                      moveName={move.name}
+                      className="opponent-slot-move move-chip-hoverable"
+                    />
+                  ) : (
                     <span
                       key={i}
-                      className={`opponent-slot-move${move ? "" : " opponent-slot-move-unknown"}`}
+                      className="opponent-slot-move opponent-slot-move-unknown"
                     >
-                      {move ? move.name : "？？？"}
+                      ？？？
                     </span>
                   );
                 })}
@@ -594,7 +777,10 @@ const SlotRow = memo(function SlotRow({
           onMouseLeave={handleTooltipMouseLeave}
         >
           <div className="opponent-slot-tooltip-inner">
-            <OpponentTooltipContent detail={detail} />
+            <OpponentTooltipContent
+              detail={detail}
+              speedBattleTooltipLine={speedBattleTooltipLine}
+            />
           </div>
         </div>
       )}

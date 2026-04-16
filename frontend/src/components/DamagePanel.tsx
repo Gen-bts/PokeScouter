@@ -1,13 +1,22 @@
 import { memo } from "react";
 import { useDamageCalcStore } from "../stores/useDamageCalcStore";
 import { useMyPartyStore } from "../stores/useMyPartyStore";
-import { useOpponentTeamStore } from "../stores/useOpponentTeamStore";
+import { useOpponentTeamStore, getEffectivePokemonKey } from "../stores/useOpponentTeamStore";
 import { PokemonSprite } from "./PokemonSprite";
-import { getKoClass, getKoLabel } from "../utils/damageFormat";
+import {
+  formatDamagePercent,
+  getRangeKoClass,
+  getRangeKoLabel,
+} from "../utils/damageFormat";
 import type { DefenderDamageResult, MoveDamageResult } from "../types";
 
 function DamageMoveLine({ move }: { move: MoveDamageResult }) {
-  const barWidth = Math.min(move.max_percent, 100);
+  const r = move.range;
+  const koClass = getRangeKoClass(move);
+
+  // バー幅: range があれば range.max_percent、なければ nominal
+  const nomBarWidth = Math.min(move.max_percent, 100);
+  const rangeBarWidth = r ? Math.min(r.max_percent, 100) : nomBarWidth;
 
   return (
     <div className="damage-move-line">
@@ -15,18 +24,22 @@ function DamageMoveLine({ move }: { move: MoveDamageResult }) {
         {move.move_name}
       </span>
       <div className="damage-bar-container">
+        {r && rangeBarWidth > nomBarWidth && (
+          <div
+            className={`damage-bar-range ${koClass}`}
+            style={{ width: `${rangeBarWidth}%` }}
+          />
+        )}
         <div
-          className={`damage-bar-fill ${getKoClass(move.guaranteed_ko)}`}
-          style={{ width: `${barWidth}%` }}
+          className={`damage-bar-fill ${koClass}`}
+          style={{ width: `${nomBarWidth}%` }}
         />
       </div>
-      <span className={`damage-ko-label ${getKoClass(move.guaranteed_ko)}`}>
-        {move.type_effectiveness === 0
-          ? "0% 無効"
-          : `${move.min_percent.toFixed(1)}-${move.max_percent.toFixed(1)}%`}
+      <span className={`damage-ko-label ${koClass}`}>
+        {formatDamagePercent(move)}
       </span>
-      <span className={`damage-ko-badge ${getKoClass(move.guaranteed_ko)}`}>
-        {getKoLabel(move.guaranteed_ko, move.type_effectiveness)}
+      <span className={`damage-ko-badge ${koClass}`}>
+        {getRangeKoLabel(move)}
       </span>
     </div>
   );
@@ -34,7 +47,7 @@ function DamageMoveLine({ move }: { move: MoveDamageResult }) {
 
 function DamageDefenderSection({ result }: { result: DefenderDamageResult }) {
   const name = useOpponentTeamStore(
-    (s) => s.slots.find((sl) => sl.pokemonId === result.defender_species_id)?.name,
+    (s) => s.slots.find((sl) => getEffectivePokemonKey(sl) === result.defender_species_id)?.name,
   ) ?? `#${result.defender_species_id}`;
 
   return (

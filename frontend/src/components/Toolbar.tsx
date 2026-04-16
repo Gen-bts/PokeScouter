@@ -1,4 +1,5 @@
 import type { ConnectionState } from "../types";
+import { useSettingsStore } from "../stores/useSettingsStore";
 
 const STATE_LABELS: Record<ConnectionState, string> = {
   connected: "接続中",
@@ -7,6 +8,17 @@ const STATE_LABELS: Record<ConnectionState, string> = {
   reconnecting: "再接続中...",
   processing: "処理中...",
 };
+
+function OverlayToggle() {
+  const show = useSettingsStore((s) => s.showBattleInfo);
+  const toggle = useSettingsStore((s) => s.toggleBattleInfo);
+  return (
+    <label className="toolbar-checkbox">
+      <input type="checkbox" checked={show} onChange={toggle} />
+      バトル情報
+    </label>
+  );
+}
 
 interface Props {
   connectionState: ConnectionState;
@@ -28,6 +40,7 @@ interface Props {
   availableScenes?: Record<string, { display_name: string }>;
   currentScene?: string;
   onForceScene?: (scene: string) => void;
+  onSceneDebug?: () => void;
 }
 
 export function Toolbar({
@@ -50,6 +63,7 @@ export function Toolbar({
   availableScenes,
   currentScene,
   onForceScene,
+  onSceneDebug,
 }: Props) {
   return (
     <div className="toolbar">
@@ -89,6 +103,16 @@ export function Toolbar({
         </button>
       )}
 
+      {onSceneDebug && (
+        <button
+          className="toolbar-btn"
+          onClick={onSceneDebug}
+          title="シーン検出状態を DevTools コンソールに出力"
+        >
+          検出ログ
+        </button>
+      )}
+
       {onForceScene && availableScenes && (
         <select
           className="toolbar-select"
@@ -113,6 +137,8 @@ export function Toolbar({
         />
         領域オーバーレイ表示
       </label>
+
+      <OverlayToggle />
 
       <button className="toolbar-btn" onClick={onToggleRightPanel}>
         {rightPanelOpen ? "\u76F8\u624B \u25B6" : "\u25C0 \u76F8\u624B"}

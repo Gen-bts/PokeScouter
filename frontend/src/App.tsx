@@ -13,14 +13,31 @@ import "./App.css";
 type Tab = "battle" | "settings" | "devtools";
 
 export default function App() {
-  const { videoRef, canvasRef, devices, audioDevices, startCapture, captureFrame, setVolume, setMuted } =
-    useVideoCapture();
+  const {
+    videoRef,
+    canvasRef,
+    devices,
+    audioDevices,
+    devicesReady,
+    isCapturing,
+    startCapture,
+    captureFrame,
+    setVolume,
+    setMuted,
+    refreshDevices,
+  } = useVideoCapture();
 
   const [activeTab, setActiveTab] = useState<Tab>("battle");
   const [battleConnectionState, setBattleConnectionState] =
     useState<ConnectionState>("disconnected");
   const [sceneReset, setSceneReset] = useState<(() => void) | null>(null);
   const [pauseToggle, setPauseToggle] = useState<(() => void) | null>(null);
+  const handleSceneResetReady = useCallback(
+    (reset: () => void) => setSceneReset(() => reset), [],
+  );
+  const handlePauseReady = useCallback(
+    (toggle: () => void) => setPauseToggle(() => toggle), [],
+  );
   const [paused, setPaused] = useState(false);
   const [sending, setSending] = useState(false);
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
@@ -28,6 +45,7 @@ export default function App() {
   const [availableScenes, setAvailableScenes] = useState<Record<string, SceneMeta>>({});
   const currentScene = useConnectionStore((s) => s.currentScene);
   const sendForceScene = useConnectionStore((s) => s.sendForceScene);
+  const sendSceneDebug = useConnectionStore((s) => s.sendSceneDebug);
   const connect = useConnectionStore((s) => s.connect);
   const volume = useSettingsStore((s) => s.volume);
   const storeSetVolume = useSettingsStore((s) => s.setVolume);
@@ -65,19 +83,37 @@ export default function App() {
     return useSettingsStore.persist.onFinishHydration(() => setHydrated(true));
   }, [hydrated]);
 
-  // 保存済みデバイスが列挙リストにあれば自動でキャプチャ開始
+  // 保存済みデバイスで自動キャプチャを試みる
   const autoCaptureRan = useRef(false);
+  const autoCaptureInFlight = useRef(false);
+  const [autoRestoreFailed, setAutoRestoreFailed] = useState(false);
+
   useEffect(() => {
-    if (!hydrated || devices.length === 0 || autoCaptureRan.current) return;
+    if (!hydrated || !devicesReady || autoCaptureRan.current || autoCaptureInFlight.current) return;
 
-    const deviceId = useSettingsStore.getState().selectedDeviceId;
-    const audioDeviceId = useSettingsStore.getState().selectedAudioDeviceId;
+    const savedVideoId = useSettingsStore.getState().selectedDeviceId;
+    if (!savedVideoId) return;
 
-    if (deviceId && devices.some((d) => d.deviceId === deviceId)) {
-      autoCaptureRan.current = true;
-      startCapture(deviceId, audioDeviceId || undefined);
-    }
-  }, [hydrated, devices, startCapture]);
+    const savedAudioId = useSettingsStore.getState().selectedAudioDeviceId;
+    const validAudioId =
+      savedAudioId && audioDevices.some((d) => d.deviceId === savedAudioId)
+        ? savedAudioId
+        : undefined;
+
+    (async () => {
+      autoCaptureInFlight.current = true;
+      try {
+        await startCapture(savedVideoId, validAudioId);
+        autoCaptureRan.current = true;
+        setAutoRestoreFailed(false);
+      } catch {
+        setAutoRestoreFailed(true);
+        await refreshDevices();
+      } finally {
+        autoCaptureInFlight.current = false;
+      }
+    })();
+  }, [hydrated, devicesReady, audioDevices, startCapture, refreshDevices]);
 
   return (
     <div className="app-root">
@@ -123,6 +159,7 @@ export default function App() {
           availableScenes={availableScenes}
           currentScene={currentScene}
           onForceScene={sendForceScene}
+          onSceneDebug={sendSceneDebug}
         />
       )}
 
@@ -135,8 +172,8 @@ export default function App() {
             setVideoVolume={setVolume}
             setVideoMuted={setMuted}
             onConnectionStateChange={setBattleConnectionState}
-            onSceneResetReady={(reset) => setSceneReset(() => reset)}
-            onPauseReady={(toggle) => setPauseToggle(() => toggle)}
+            onSceneResetReady={handleSceneResetReady}
+            onPauseReady={handlePauseReady}
             onPauseStateChange={setPaused}
             onSendingStateChange={setSending}
             leftPanelOpen={leftPanelOpen}
@@ -148,6 +185,8 @@ export default function App() {
             devices={devices}
             audioDevices={audioDevices}
             startCapture={startCapture}
+            isCapturing={isCapturing}
+            autoRestoreFailed={autoRestoreFailed}
           />
         </div>
         <div style={{ display: activeTab === "devtools" ? "contents" : "none" }}>

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { ControlPanel } from "./ControlPanel";
 import { BenchmarkReport } from "./BenchmarkReport";
 import { useConnectionStore } from "../stores/useConnectionStore";
@@ -9,9 +9,17 @@ interface Props {
   devices: MediaDeviceInfo[];
   audioDevices: MediaDeviceInfo[];
   startCapture: (deviceId: string, audioDeviceId?: string) => Promise<void>;
+  isCapturing: boolean;
+  autoRestoreFailed: boolean;
 }
 
-export function SettingsView({ devices, audioDevices, startCapture }: Props) {
+export function SettingsView({
+  devices,
+  audioDevices,
+  startCapture,
+  isCapturing,
+  autoRestoreFailed,
+}: Props) {
   const isConnected = useConnectionStore((s) => s.isConnected);
   const connect = useConnectionStore((s) => s.connect);
   const disconnect = useConnectionStore((s) => s.disconnect);
@@ -30,15 +38,12 @@ export function SettingsView({ devices, audioDevices, startCapture }: Props) {
   const benchmarkStart = useBenchmarkStore((s) => s.start);
   const benchmarkStop = useBenchmarkStore((s) => s.stop);
 
-  const [videoReady, setVideoReady] = useState(!!selectedDeviceId);
-
   const handleDeviceChange = useCallback(
     async (deviceId: string) => {
       setDeviceId(deviceId);
       if (!deviceId) return;
       try {
         await startCapture(deviceId, selectedAudioDeviceId || undefined);
-        setVideoReady(true);
       } catch (err) {
         alert("映像の開始に失敗しました: " + (err as Error).message);
       }
@@ -94,12 +99,13 @@ export function SettingsView({ devices, audioDevices, startCapture }: Props) {
         onAudioDeviceChange={handleAudioDeviceChange}
         connected={isConnected}
         onConnectToggle={handleConnectToggle}
-        connectDisabled={!videoReady}
+        connectDisabled={!isCapturing}
         debugCrops={debugCrops}
         onToggleDebugCrops={handleToggleDebugCrops}
         benchmark={benchmarkActive}
         benchmarkFrameCount={benchmarkFrameCount}
         onToggleBenchmark={handleToggleBenchmark}
+        autoRestoreFailed={autoRestoreFailed}
       />
       {!benchmarkActive && benchmarkFrameCount > 0 && <BenchmarkReport />}
     </div>

@@ -9,6 +9,7 @@ import { calcChampionsHp, calcChampionsStat } from "../utils/statCalc";
 import { usePokemonDetail, type PokemonDetail } from "../hooks/usePokemonDetail";
 import { PokemonSprite } from "./PokemonSprite";
 import { ItemSprite } from "./ItemSprite";
+import { MoveInfoChip } from "./MoveInfoChip";
 import { TypeBadge } from "./TypeBadge";
 import { TypeEffectivenessSection } from "./TypeEffectivenessSection";
 
@@ -17,10 +18,6 @@ const PHASE_LABELS: Record<string, string> = {
   reading_screen1: "画面1を読み取り中...",
   detecting_screen2: "画面2を検出中...",
   reading_screen2: "画面2を読み取り中...",
-};
-
-const DAMAGE_CLASS_LABELS: Record<string, string> = {
-  physical: "物理", special: "特殊", status: "変化",
 };
 
 const STAT_ORDER = ["HP", "こうげき", "ぼうぎょ", "とくこう", "とくぼう", "すばやさ"];
@@ -42,6 +39,16 @@ interface MergedStat {
 /** フィールド表示テキスト: validated があればそちら、なければ raw */
 function fieldText(f: { raw: string; validated: string | null }): string {
   return f.validated ?? f.raw;
+}
+
+/** スロット横の表示名: パーティ登録の OCR 補正（fields.名前）を優先し、無ければ識別名（slot.name） */
+function displaySlotPokemonName(slot: MyPartySlot): string {
+  const nf = slot.fields["名前"];
+  if (nf != null) {
+    const t = fieldText(nf).trim();
+    if (t.length > 0) return t;
+  }
+  return slot.name ?? "???";
 }
 
 /** フィールドをグループ分けして返す */
@@ -215,27 +222,21 @@ function SlotTooltipContent({
         <div className="tooltip-section">
           <div className="tooltip-section-label">わざ</div>
           <div className="tooltip-moves">
-            {moves.map(([key, val, field]) => (
-              <span key={key} className="tooltip-move">
-                {val}
-                {field.move_meta && (
-                  <span className="move-detail-popup">
-                    <TypeBadge type={field.move_meta.type ?? ""} size="sm" />
-                    {field.move_meta.damage_class && (
-                      <span className="move-detail-class">
-                        {DAMAGE_CLASS_LABELS[field.move_meta.damage_class] ?? field.move_meta.damage_class}
-                      </span>
-                    )}
-                    {field.move_meta.power != null && (
-                      <span className="move-detail-stat">威力 {field.move_meta.power}</span>
-                    )}
-                    {field.move_meta.accuracy != null && (
-                      <span className="move-detail-stat">命中 {field.move_meta.accuracy}</span>
-                    )}
-                  </span>
-                )}
-              </span>
-            ))}
+            {moves.map(([key, val, field]) => {
+              const moveKey = field.matched_key ?? field.matched_id ?? null;
+              return moveKey ? (
+                <MoveInfoChip
+                  key={key}
+                  moveKey={String(moveKey)}
+                  moveName={val}
+                  className="tooltip-move move-chip-hoverable"
+                />
+              ) : (
+                <span key={key} className="tooltip-move">
+                  {val}
+                </span>
+              );
+            })}
           </div>
         </div>
       )}
@@ -295,11 +296,15 @@ const SlotRow = memo(function SlotRow({
     null;
   const isMegaStone = itemField?.is_mega_stone ?? false;
   const { megaForm } = useMegaForm(
-    isMegaStone ? (itemField?.matched_id ?? null) : null,
+    isMegaStone ? (itemField?.matched_key ?? null) : null,
     slot.pokemonId,
     slot.position,
   );
   const { detail } = usePokemonDetail(slot.pokemonId);
+  const toggleMegaEvolution = useMyPartyStore((s) => s.toggleMegaEvolution);
+
+  const displayPokemonId =
+    megaForm && slot.isMegaEvolved ? megaForm.pokemon_key : slot.pokemonId;
 
   const showTooltip = isTooltipActive && tooltipPos && hasDetails;
   const { tooltipRef, clampedTop } = useTooltipClamp(
@@ -352,7 +357,7 @@ const SlotRow = memo(function SlotRow({
     >
       <div className="my-party-slot-sprite-wrap">
         <PokemonSprite
-          pokemonId={slot.pokemonId}
+          pokemonId={displayPokemonId}
           size={44}
           className="my-party-slot-img"
           placeholderClass="my-party-slot-placeholder"
@@ -362,9 +367,21 @@ const SlotRow = memo(function SlotRow({
           size={30}
           className="my-party-slot-item-overlay"
         />
+        {megaForm && (
+          <button
+            className={`mega-toggle-btn${slot.isMegaEvolved ? " active" : ""}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleMegaEvolution(slot.position);
+            }}
+            title={slot.isMegaEvolved ? "メガシンカ解除" : "メガシンカ"}
+          >
+            M
+          </button>
+        )}
       </div>
       <span className="my-party-slot-name">
-        {slot.name ?? "???"}
+        {displaySlotPokemonName(slot)}
       </span>
 
       {showTooltip && (

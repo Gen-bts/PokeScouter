@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { VideoCanvas } from "./VideoCanvas";
 import { MyPartyPanel } from "./MyPartyPanel";
 import { MatchLog } from "./MatchLog";
 import { OpponentPanel } from "./OpponentPanel";
 import { DamagePanel } from "./DamagePanel";
 import { useDamageCalc } from "../hooks/useDamageCalc";
+import { useIncomingDamageCalc } from "../hooks/useIncomingDamageCalc";
 import { useConnectionStore } from "../stores/useConnectionStore";
 import { useSettingsStore } from "../stores/useSettingsStore";
 import { useBenchmarkStore } from "../stores/useBenchmarkStore";
@@ -28,6 +29,12 @@ function BenchmarkSync() {
 /** ダメージ計算をトリガーする副作用専用コンポーネント（BattleView の再描画を防止） */
 function DamageCalcSync() {
   useDamageCalc();
+  return null;
+}
+
+/** 被ダメージ計算をトリガーする副作用専用コンポーネント */
+function IncomingDamageCalcSync() {
+  useIncomingDamageCalc();
   return null;
 }
 
@@ -79,7 +86,10 @@ export function BattleView({
     partyRegState === "reading_screen1" ||
     partyRegState === "detecting_screen2" ||
     partyRegState === "reading_screen2";
-  const FRAME_INTERVAL_MS = isPartyRegistering ? 150 : 100;
+  const FRAME_INTERVAL_MS = useMemo(
+    () => (isPartyRegistering ? 150 : 100),
+    [isPartyRegistering],
+  );
   const [availableScenes, setAvailableScenes] = useState<Record<string, SceneMeta>>({});
   const [paused, setPaused] = useState(false);
   const [pauseReason, setPauseReason] = useState<"manual" | "auto" | null>(null);
@@ -119,11 +129,11 @@ export function BattleView({
   }, [sendConfig]);
 
   const handleResume = useCallback(() => {
-    if (!paused) return;
+    if (!pausedRef.current) return;
     setPaused(false);
     setPauseReason(null);
     sendConfig({ paused: false });
-  }, [paused, sendConfig]);
+  }, [sendConfig]);
 
   // pause toggle を親に公開
   useEffect(() => {
@@ -183,6 +193,7 @@ export function BattleView({
     <>
       <BenchmarkSync />
       <DamageCalcSync />
+      <IncomingDamageCalcSync />
       <aside className={`left-panel${leftPanelOpen ? "" : " collapsed"}`}>
         <MyPartyPanel />
         <MatchLog />

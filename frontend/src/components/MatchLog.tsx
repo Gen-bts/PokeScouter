@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import {
   useMatchLogStore,
   type BattleEventLogEntry,
@@ -7,7 +7,11 @@ import {
   type MatchLogEntry,
   type MatchTeamsLogEntry,
   type OcrResultLogEntry,
+  type PokemonCorrectionLogEntry,
+  type TeamSelectionOrderLogEntry,
+  type TurnSummaryLogEntry,
 } from "../stores/useMatchLogStore";
+import { useConnectionStore } from "../stores/useConnectionStore";
 
 function formatTime(ts: number): string {
   const d = new Date(ts);
@@ -66,13 +70,12 @@ function MatchTeamsEntry({ entry }: { entry: MatchTeamsLogEntry }) {
 
 function TeamSelectionEntry({
   entry,
-  entries,
 }: {
   entry: MatchLogEntry & { kind: "team_selection" };
-  entries: MatchLogEntry[];
 }) {
   // 直前の match_teams エントリから名前を引く
-  const lastTeams = [...entries]
+  const storeEntries = useMatchLogStore.getState().entries;
+  const lastTeams = [...storeEntries]
     .reverse()
     .find((e): e is MatchTeamsLogEntry => e.kind === "match_teams");
 
@@ -86,6 +89,37 @@ function TeamSelectionEntry({
       <span className="match-log-time">{formatTime(entry.timestamp)}</span>
       <span className="match-log-selection-label">選出:</span>
       <span className="match-log-selection-names">{names.join(", ")}</span>
+    </div>
+  );
+}
+
+const FULLWIDTH_DIGITS = ["", "１", "２", "３", "４", "５", "６"];
+
+function TeamSelectionOrderEntry({
+  entry,
+}: {
+  entry: TeamSelectionOrderLogEntry;
+}) {
+  const storeEntries = useMatchLogStore.getState().entries;
+  const lastTeams = [...storeEntries]
+    .reverse()
+    .find((e): e is MatchTeamsLogEntry => e.kind === "match_teams");
+
+  const ordered = Object.entries(entry.selectionOrder)
+    .sort(([, a], [, b]) => a - b)
+    .map(([posStr, orderNum]) => {
+      const pos = Number(posStr);
+      const p = lastTeams?.playerTeam.find((t) => t.position === pos);
+      const name = p?.name || `#${pos}`;
+      const num = FULLWIDTH_DIGITS[orderNum] ?? `${orderNum}`;
+      return `${num}・${name}`;
+    });
+
+  return (
+    <div className="match-log-entry match-log-selection">
+      <span className="match-log-time">{formatTime(entry.timestamp)}</span>
+      <span className="match-log-selection-label">選出順:</span>
+      <span className="match-log-selection-names">{ordered.join(" ")}</span>
     </div>
   );
 }
@@ -152,6 +186,77 @@ function BattleEventEntry({ entry }: { entry: BattleEventLogEntry }) {
       description = `${sideLabel}の ${name} の ${stat}が ${magnitude}${direction}！`;
       break;
     }
+    case "type_effectiveness": {
+      const eff = entry.details?.effectiveness as string;
+      description = eff === "super_effective" ? "効果はバツグンだ！"
+        : eff === "double_super_effective" ? "効果はちょうバツグンだ!!"
+        : "効果はいまひとつだ…";
+      break;
+    }
+    case "weather": {
+      const weatherNames: Record<string, string> = { snow: "雪", sand: "砂あらし", sun: "日差し", rain: "雨" };
+      const w = entry.details?.weather as string;
+      const wa = entry.details?.action as string;
+      description = wa === "start"
+        ? `${weatherNames[w] ?? w}が発生した！`
+        : `${weatherNames[w] ?? w}がおさまった！`;
+      break;
+    }
+    case "field_effect": {
+      const fe = entry.details?.effect as string;
+      const fa = entry.details?.action as string;
+      if (fe === "trick_room") {
+        description = fa === "start"
+          ? `${sideLabel}の${name}がトリックルームを発動！`
+          : "トリックルームが終了した！";
+      } else {
+        description = entry.rawText;
+      }
+      break;
+    }
+    case "hazard_set":
+      description = `${sideLabel}の場にステルスロックが撒かれた！`;
+      break;
+    case "hazard_damage":
+      description = `${sideLabel}の${name}にステルスロックのダメージ！`;
+      break;
+    case "protect":
+      description = (entry.details?.phase as string) === "blocked"
+        ? `${sideLabel}の${name}は攻撃から身を守った！`
+        : `${sideLabel}の${name}は守りの体勢に入った！`;
+      break;
+    case "status_condition": {
+      const phase = entry.details?.phase as string;
+      description = phase === "continuing"
+        ? `${sideLabel}の${name}はぐうぐう眠っている…`
+        : `${sideLabel}の${name}は眠ってしまった！`;
+      break;
+    }
+    case "move_failed":
+      description = (entry.details?.reason as string) === "missed"
+        ? `${name}には当たらなかった！`
+        : "しかしうまく決まらなかった！";
+      break;
+    case "forced_switch":
+      description = `${sideLabel}の${name}は戦闘に引きずりだされた！`;
+      break;
+    case "mega_evolution":
+      description = `${sideLabel}の${name}は${(entry.details?.mega_name as string) ?? "メガシンカ"}にメガシンカした！`;
+      break;
+    case "pokemon_recalled": {
+      const method = entry.details?.method as string;
+      if (method === "returning") {
+        description = `${sideLabel}の${name}は戻っていった！`;
+      } else if (method === "withdrew") {
+        description = `${name}を引っこめた！`;
+      } else {
+        description = `${name} 戻れ！`;
+      }
+      break;
+    }
+    case "surrender":
+      description = "降参が選ばれました";
+      break;
     case "unrecognized":
       description = `[未認識] ${entry.rawText}`;
       break;
@@ -171,12 +276,20 @@ function BattleEventEntry({ entry }: { entry: BattleEventLogEntry }) {
 }
 
 function HpChangeEntry({ entry }: { entry: HpChangeLogEntry }) {
+  const hasActualHp =
+    entry.fromCurrentHp != null &&
+    entry.fromMaxHp != null &&
+    entry.toCurrentHp != null &&
+    entry.toMaxHp != null;
+
   return (
     <div className="match-log-entry match-log-hp-change">
       <span className="match-log-time">{formatTime(entry.timestamp)}</span>
       <span className="match-log-hp-name">{entry.pokemonName}</span>
       <span className="match-log-hp-values">
-        {entry.fromHp}% → {entry.toHp}%
+        {hasActualHp
+          ? `${entry.fromCurrentHp}/${entry.fromMaxHp} → ${entry.toCurrentHp}/${entry.toMaxHp}`
+          : `${entry.fromHp}% → ${entry.toHp}%`}
       </span>
     </div>
   );
@@ -214,8 +327,111 @@ function BattleResultEntry({ entry }: { entry: MatchLogEntry & { kind: "battle_r
   );
 }
 
+function PokemonCorrectionEntry({ entry }: { entry: PokemonCorrectionLogEntry }) {
+  const original = entry.originalName ?? "（なし）";
+  return (
+    <div
+      className="match-log-entry match-log-correction"
+      title={`${entry.source === "candidate" ? "候補選択" : "手動入力"}: ${original} → ${entry.correctedName}`}
+    >
+      <span className="match-log-time">{formatTime(entry.timestamp)}</span>
+      <span className="match-log-event-text">
+        修正 #{entry.position}: {original} → {entry.correctedName}
+      </span>
+    </div>
+  );
+}
+
+/** インデックスベースの自己購読エントリ。entries[index] の参照が変わった時のみ再レンダリング。 */
+function TurnSummaryEntry({ entry }: { entry: TurnSummaryLogEntry }) {
+  const firstMover =
+    entry.firstMover === "player"
+      ? "player first"
+      : entry.firstMover === "opponent"
+        ? "opponent first"
+        : "no order";
+  const inference = entry.inferenceApplied
+    ? "inference applied"
+    : entry.inferenceNote ?? "no inference";
+
+  return (
+    <div className="match-log-entry match-log-turn-summary">
+      <span className="match-log-time">{formatTime(entry.timestamp)}</span>
+      <span className="match-log-event-text">
+        Turn {entry.turnId}: {entry.status} / {firstMover} / {inference}
+      </span>
+    </div>
+  );
+}
+
+const MemoizedLogEntry = memo(function MemoizedLogEntry({ index }: { index: number }) {
+  const entry = useMatchLogStore((s) => s.entries[index]);
+  const toggleErrorFlag = useMatchLogStore((s) => s.toggleErrorFlag);
+  const sendErrorFlag = useConnectionStore((s) => s.sendErrorFlag);
+
+  const handleFlag = useCallback(() => {
+    if (!entry) return;
+    const newFlagged = !entry.errorFlagged;
+    toggleErrorFlag(entry.seq, entry.timestamp, entry.kind);
+    sendErrorFlag(entry.seq, entry.kind, entry.timestamp, newFlagged);
+  }, [entry, toggleErrorFlag, sendErrorFlag]);
+
+  if (!entry) return null;
+
+  let content: React.ReactNode;
+  switch (entry.kind) {
+    case "scene_change":
+      content = <SceneChangeEntry entry={entry} />;
+      break;
+    case "match_teams":
+      content = <MatchTeamsEntry entry={entry} />;
+      break;
+    case "team_selection":
+      content = <TeamSelectionEntry entry={entry} />;
+      break;
+    case "team_selection_order":
+      content = <TeamSelectionOrderEntry entry={entry} />;
+      break;
+    case "battle_result":
+      content = <BattleResultEntry entry={entry} />;
+      break;
+    case "battle_event":
+      content = <BattleEventEntry entry={entry} />;
+      break;
+    case "hp_change":
+      content = <HpChangeEntry entry={entry} />;
+      break;
+    case "item_ability":
+      content = <ItemAbilityEntry entry={entry} />;
+      break;
+    case "ocr_result":
+      content = <OcrResultEntry entry={entry} />;
+      break;
+    case "pokemon_correction":
+      content = <PokemonCorrectionEntry entry={entry} />;
+      break;
+    case "turn_summary":
+      content = <TurnSummaryEntry entry={entry} />;
+      break;
+  }
+
+  return (
+    <div className={`match-log-entry-wrapper${entry.errorFlagged ? " match-log-flagged" : ""}`}>
+      {content}
+      <button
+        className={`match-log-flag-btn${entry.errorFlagged ? " flagged" : ""}`}
+        onClick={handleFlag}
+        title={entry.errorFlagged ? "エラーフラグを解除" : "誤検出をマーク"}
+      >
+        {entry.errorFlagged ? "\u26A0" : "\u2691"}
+      </button>
+    </div>
+  );
+});
+
 export const MatchLog = memo(function MatchLog() {
-  const entries = useMatchLogStore((s) => s.entries);
+  // entries.length（プリミティブ数値）のみ購読。配列参照の変更では再レンダリングしない。
+  const entryCount = useMatchLogStore((s) => s.entries.length);
   const clear = useMatchLogStore((s) => s.clear);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -224,44 +440,28 @@ export const MatchLog = memo(function MatchLog() {
     if (el) {
       el.scrollTop = el.scrollHeight;
     }
-  }, [entries]);
+  }, [entryCount]);
+
+  // entryCount 変更で再レンダリングされた時点でのスナップショット（key 取得用）
+  const entries = useMatchLogStore.getState().entries;
 
   return (
     <div className="panel-section match-log">
       <div className="match-log-header">
         <h2>Match Log</h2>
-        {entries.length > 0 && (
+        {entryCount > 0 && (
           <button className="btn-small btn-clear" onClick={clear}>
             Clear
           </button>
         )}
       </div>
       <div className="match-log-list" ref={listRef}>
-        {entries.length === 0 ? (
+        {entryCount === 0 ? (
           <span className="placeholder">シーン遷移を待機中…</span>
         ) : (
-          entries.map((e, i) => {
-            switch (e.kind) {
-              case "scene_change":
-                return <SceneChangeEntry key={i} entry={e} />;
-              case "match_teams":
-                return <MatchTeamsEntry key={i} entry={e} />;
-              case "team_selection":
-                return (
-                  <TeamSelectionEntry key={i} entry={e} entries={entries} />
-                );
-              case "battle_result":
-                return <BattleResultEntry key={i} entry={e} />;
-              case "battle_event":
-                return <BattleEventEntry key={i} entry={e} />;
-              case "hp_change":
-                return <HpChangeEntry key={i} entry={e} />;
-              case "item_ability":
-                return <ItemAbilityEntry key={i} entry={e} />;
-              case "ocr_result":
-                return <OcrResultEntry key={i} entry={e} />;
-            }
-          })
+          Array.from({ length: entryCount }, (_, i) => (
+            <MemoizedLogEntry key={entries[i]?.seq ?? i} index={i} />
+          ))
         )}
       </div>
     </div>

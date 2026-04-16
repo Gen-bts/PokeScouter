@@ -25,7 +25,11 @@ interface DebugProps {
   onToggleBenchmark: () => void;
 }
 
-type Props = DeviceProps & ConnectionProps & DebugProps;
+interface RestoreProps {
+  autoRestoreFailed: boolean;
+}
+
+type Props = DeviceProps & ConnectionProps & DebugProps & RestoreProps;
 
 export function ControlPanel({
   devices,
@@ -42,6 +46,7 @@ export function ControlPanel({
   benchmark,
   benchmarkFrameCount,
   onToggleBenchmark,
+  autoRestoreFailed,
 }: Props) {
   const jpegQuality = useSettingsStore((s) => s.jpegQuality);
   const setJpegQuality = useSettingsStore((s) => s.setJpegQuality);
@@ -82,10 +87,17 @@ export function ControlPanel({
             </option>
           ))}
         </select>
-        {selectedDeviceId && devices.length > 0 &&
+        {autoRestoreFailed && (
+          <p className="text-warning">
+            保存済みデバイスの復元に失敗しました。デバイスを再選択してください。
+          </p>
+        )}
+        {!autoRestoreFailed &&
+          selectedDeviceId &&
+          devices.length > 0 &&
           !devices.some((d) => d.deviceId === selectedDeviceId) && (
             <p className="text-warning">
-              保存済みの映像デバイスが見つかりません。再接続するか別のデバイスを選択してください。
+              保存済みの映像デバイスが見つかりません。
             </p>
           )}
 

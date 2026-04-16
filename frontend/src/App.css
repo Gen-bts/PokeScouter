@@ -725,6 +725,59 @@ button.active {
   color: var(--text-primary);
 }
 
+.match-log-correction {
+  border-left: 3px solid #ffc107;
+  background: rgba(255, 193, 7, 0.08);
+}
+
+/* エラーフラグ */
+.match-log-entry-wrapper {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.match-log-entry-wrapper .match-log-entry {
+  flex: 1;
+  min-width: 0;
+}
+
+.match-log-flag-btn {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.15s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 4px;
+  color: var(--text-secondary);
+  line-height: 1;
+  z-index: 1;
+}
+
+.match-log-entry-wrapper:hover .match-log-flag-btn {
+  opacity: 0.5;
+}
+
+.match-log-flag-btn:hover {
+  opacity: 1 !important;
+  color: #f0c040;
+}
+
+.match-log-flag-btn.flagged {
+  opacity: 1;
+  color: #f0c040;
+}
+
+.match-log-flagged .match-log-entry {
+  background: rgba(240, 192, 64, 0.06);
+  outline: 1px solid rgba(240, 192, 64, 0.25);
+}
+
 /* ======================================================================
    DevTools
    ====================================================================== */
@@ -2376,17 +2429,6 @@ button.active {
   flex-shrink: 1;
 }
 
-.opponent-slot-selected-badge {
-  flex-shrink: 0;
-  font-size: 9px;
-  font-weight: bold;
-  color: #fff;
-  background: var(--accent-green);
-  padding: 1px 5px;
-  border-radius: 3px;
-  white-space: nowrap;
-}
-
 .opponent-slot-display-badge {
   flex-shrink: 0;
   font-size: 9px;
@@ -2464,6 +2506,7 @@ button.active {
 
 .opponent-slot-fainted {
   opacity: 0.45;
+  border: 2px solid var(--accent-red, #e53935);
 }
 
 .opponent-slot-moves {
@@ -2623,6 +2666,16 @@ button.active {
   z-index: 10000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   pointer-events: none;
+}
+
+.ability-desc-tooltip-en {
+  display: block;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: #888;
+  font-style: italic;
 }
 
 .ability-desc-tooltip-arrow {
@@ -3105,6 +3158,13 @@ button.active {
   margin-bottom: 2px;
 }
 
+.opponent-tooltip-speed-inferred {
+  font-size: 12px;
+  color: var(--text-primary, #e2e8f0);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+}
+
 .tooltip-moves {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -3185,6 +3245,37 @@ button.active {
 .nature-down {
   color: #1e88e5;
   font-size: 12px;
+}
+
+/* メガシンカトグルボタン */
+.mega-toggle-btn {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  z-index: 2;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #b06cca;
+  background: rgba(30, 30, 30, 0.7);
+  color: #b06cca;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+}
+
+.mega-toggle-btn.active {
+  background: #b06cca;
+  color: #fff;
+}
+
+.mega-toggle-btn:hover {
+  filter: brightness(1.2);
 }
 
 /* メガシンカセクション */
@@ -3340,65 +3431,30 @@ button.active {
   min-width: 0;
 }
 
-/* ===== Battle State Debug Overlay ===== */
-
-.battle-state-overlay {
-  position: absolute;
-  top: 42px;
-  left: 10px;
-  z-index: 12;
-  pointer-events: none;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 6px;
-  font-size: max(11px, 0.75vw);
-  color: #e0e0e0;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  line-height: 1.6;
-  max-width: 50%;
-}
-
-.battle-state-overlay__row {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-.battle-state-overlay__label {
-  color: #888;
-  flex-shrink: 0;
-}
-
-.battle-state-overlay__label--item {
-  margin-left: 10px;
-}
-
-.battle-state-overlay__value {
-  color: #fff;
-  font-weight: 600;
-}
-
-.battle-state-overlay__hp {
-  color: #4ecdc4;
-  font-weight: 700;
-  margin-left: 4px;
-}
-
-.battle-state-overlay__boosts {
-  color: #ffe66d;
-}
-
 /* ===== Battle Info Overlay ===== */
 
 .battle-info-overlay {
-  position: absolute;
+  position: fixed;
   top: 8px;
   left: 50%;
-  transform: translateX(-50%);
   z-index: 12;
-  pointer-events: none;
+  pointer-events: auto;
   width: min(76vw, 820px);
+  user-select: none;
+  cursor: grab;
+  /* 映像を邪魔しないよう通常は薄く、操作時のみ不透明 */
+  opacity: 0.58;
+  transition: opacity 0.18s ease;
+}
+
+.battle-info-overlay:hover,
+.battle-info-overlay:focus-within {
+  opacity: 1;
+}
+
+.battle-info-overlay:active {
+  cursor: grabbing;
+  opacity: 1;
 }
 
 .battle-info-overlay__card {
@@ -3418,6 +3474,19 @@ button.active {
 .battle-info-overlay__sides {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.battle-info-overlay__damage-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.battle-info-overlay__damage-col-left {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
@@ -3455,6 +3524,19 @@ button.active {
 .battle-info-overlay__header-main {
   flex: 1;
   min-width: 0;
+}
+
+.battle-info-overlay__revealed-moves {
+  font-size: 0.88em;
+  color: #c5cdd6;
+  margin: 0 0 8px;
+  line-height: 1.45;
+}
+
+.battle-info-overlay__revealed-moves-label {
+  color: #9aa4b2;
+  margin-right: 6px;
+  font-weight: 600;
 }
 
 .battle-info-overlay__name {
@@ -3524,6 +3606,21 @@ button.active {
   color: #fff;
   font-size: 1.05em;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.battle-info-overlay__stat-ev {
+  color: #64748b;
+  font-size: 0.72em;
+  font-variant-numeric: tabular-nums;
+}
+
+.battle-info-overlay__stat-subtitle {
+  color: #94a3b8;
+  font-size: 0.68em;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
   font-variant-numeric: tabular-nums;
 }
 
@@ -3609,6 +3706,12 @@ button.active {
   white-space: nowrap;
 }
 
+.battle-info-overlay__damage-usage {
+  margin-left: 4px;
+  font-size: 0.75em;
+  color: #6b7a8d;
+}
+
 .battle-info-overlay__damage-move-value {
   font-variant-numeric: tabular-nums;
   text-align: right;
@@ -3640,6 +3743,18 @@ button.active {
   color: #22c55e;
 }
 
+.battle-info-overlay__damage-known-marker {
+  color: #ffd700;
+  margin-right: 0.25em;
+  font-size: 0.85em;
+}
+
+.battle-info-overlay__damage-move-value.dmg-status,
+.battle-info-overlay__damage-move-ko.dmg-status {
+  color: #8f9bab;
+  font-style: italic;
+}
+
 .battle-info-overlay__placeholder {
   color: #8f9bab;
   min-height: 42px;
@@ -3651,6 +3766,62 @@ button.active {
 
 .battle-info-overlay__placeholder--error {
   color: #ff8f8f;
+}
+
+.battle-info-overlay__presets {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.battle-info-overlay__preset-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.battle-info-overlay__preset-label {
+  font-size: 0.75em;
+  color: #8f9bab;
+  min-width: 28px;
+}
+
+.battle-info-overlay__preset-options {
+  display: flex;
+  gap: 2px;
+}
+
+.battle-info-overlay__preset-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  color: #8f9bab;
+  font-size: 0.7em;
+  font-weight: 600;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 22px;
+  text-align: center;
+}
+
+.battle-info-overlay__preset-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.battle-info-overlay__preset-btn--active {
+  background: #4f8df9;
+  border-color: #4f8df9;
+  color: #fff;
+}
+
+.battle-info-overlay__preset-btn--active:hover {
+  background: #5c96fa;
+  border-color: #5c96fa;
 }
 
 @media (max-width: 1100px) {
@@ -3671,6 +3842,10 @@ button.active {
   }
 
   .battle-info-overlay__sides {
+    grid-template-columns: 1fr;
+  }
+
+  .battle-info-overlay__damage-columns {
     grid-template-columns: 1fr;
   }
 
@@ -3781,6 +3956,7 @@ button.active {
 .registration-overlay--detecting::before {
   content: "";
   position: absolute;
+  top: 0;
   left: 0;
   right: 0;
   height: 2px;
@@ -3998,12 +4174,21 @@ button.active {
   border-radius: 3px;
   overflow: hidden;
   min-width: 40px;
+  position: relative;
 }
 
-.damage-bar-fill {
+.damage-bar-fill,
+.damage-bar-range {
   height: 100%;
   border-radius: 3px;
   transition: width 0.2s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.damage-bar-range {
+  opacity: 0.3;
 }
 
 .damage-bar-fill.dmg-ohko  { background: #ef4444; }
@@ -4011,11 +4196,16 @@ button.active {
 .damage-bar-fill.dmg-3hko  { background: #eab308; }
 .damage-bar-fill.dmg-weak  { background: #22c55e; }
 
+.damage-bar-range.dmg-ohko  { background: #ef4444; }
+.damage-bar-range.dmg-2hko  { background: #f97316; }
+.damage-bar-range.dmg-3hko  { background: #eab308; }
+.damage-bar-range.dmg-weak  { background: #22c55e; }
+
 .damage-ko-label {
   flex-shrink: 0;
   font-size: 10px;
   font-family: "Consolas", "Monaco", monospace;
-  min-width: 68px;
+  min-width: 100px;
   text-align: right;
   color: var(--text-secondary);
 }
@@ -4047,4 +4237,111 @@ button.active {
 .my-party-slot-selected {
   border-color: var(--accent) !important;
   background: rgba(233, 69, 96, 0.08);
+}
+
+/* =================================================================
+   わざ情報チップ（共通）
+   ================================================================= */
+
+.move-info-tooltip {
+  position: fixed;
+  z-index: 10000;
+  transform: translateX(-50%) translateY(-100%);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-width: 180px;
+  max-width: 280px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.move-info-tooltip-arrow {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--border);
+}
+
+.move-info-tooltip-arrow::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--bg-card);
+}
+
+.move-info-tooltip-loading,
+.move-info-tooltip-error {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.move-info-tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.move-info-tooltip-name {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.move-info-tooltip-class {
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: var(--bg-section);
+  color: var(--text-secondary);
+}
+
+.move-info-tooltip-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.move-info-tooltip-stat {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.move-info-tooltip-stat::before {
+  content: "";
+}
+
+.move-info-tooltip-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  border-top: 1px solid var(--border);
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+/* わざ名ホバー対応（OpponentPanel / BattleInfoOverlay 等） */
+.move-chip-hoverable {
+  cursor: help;
+  border-bottom: 1px dotted var(--text-secondary);
+}
+
+.move-chip-hoverable:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
