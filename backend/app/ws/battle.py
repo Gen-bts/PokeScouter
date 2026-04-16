@@ -12,6 +12,7 @@ import json
 import logging
 import re
 import time
+import unicodedata
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -25,6 +26,7 @@ from app.data.names import get_id_to_name
 from app.dependencies import get_detector, get_game_data, get_pokemon_matcher, get_recognizer, get_settings, ocr_lock
 from app.ocr.region import RegionConfig
 from app.recognition.battle_log_parser import BattleLogParser, match_against_party
+from app.recognition.field_state import FieldStateAccumulator
 from app.recognition.item_ability_parser import ItemAbilityParser
 from app.recognition.party_register import PartyRegistrationMachine
 from app.recognition.scene_state import SceneStateMachine
@@ -55,11 +57,13 @@ class BattleSession:
     _pokemon_icon_cache: dict[str, dict] = field(default_factory=dict, repr=False)
     _battle_log_parser: BattleLogParser | None = field(default=None, repr=False)
     _item_ability_parser: ItemAbilityParser | None = field(default=None, repr=False)
+    _field_state: FieldStateAccumulator = field(default_factory=FieldStateAccumulator, repr=False)
     _opponent_party: list[dict] = field(default_factory=list, repr=False)
     _auto_opponent_party: list[dict] = field(default_factory=list, repr=False)
     _manual_opponent_overrides: dict[int, dict] = field(default_factory=dict, repr=False)
     _player_party: list[dict] = field(default_factory=list, repr=False)
     _match_logger: BattleMatchLogger | None = field(default=None, repr=False)
+    _last_selection_order: dict[int, int] = field(default_factory=dict, repr=False)
 
     def _rebuild_opponent_party(self) -> None:
         """自動認識パーティに手動オーバーライドを適用して _opponent_party を再構築."""
@@ -119,6 +123,65 @@ def _run_scene_detection(frame: np.ndarray, session: BattleSession) -> dict | No
     return None
 
 
+async def _handle_scene_debug(
+    websocket: WebSocket,
+    session: BattleSession,
+    last_jpeg: list[bytes],
+) -> None:
+    """シーン検出デバッグダンプを生成して返す."""
+    if not last_jpeg:
+        await websocket.send_json({
+            "type": "scene_debug_result",
+            "error": "フレームがまだ受信されていません",
+        })
+        return
+
+    frame = _decode_frame(last_jpeg[0])
+    detector = get_detector()
+    config = get_recognizer()._config
+    sm = session._state_machine
+
+    # detection 領域を持つ全シーンを列挙
+    all_scenes = [s for s in config.scenes if config.get_detection_regions(s)]
+
+    # 全シーンの詳細検出を実行
+    results = await asyncio.to_thread(detector.detect_detailed, frame, all_scenes)
+
+    # ステートマシンの内部状態スナップショット
+    sm_state = {
+        "top_level": sm.state.top_level,
+        "sub_scene": sm.state.sub_scene,
+        "scene_key": sm.state.scene_key,
+        "confidence": round(sm.state.confidence, 3),
+        "candidates": sm.candidates(),
+        "pending_top": sm._pending_top,
+        "pending_top_count": sm._pending_top_count,
+        "pending_sub": sm._pending_sub,
+        "pending_sub_count": sm._pending_sub_count,
+        "no_sub_count": sm._no_sub_count,
+        "force_cooldown_active": sm.is_force_cooldown_active(),
+    }
+
+    detection_results = [
+        {
+            "scene": r.scene,
+            "matched": r.matched,
+            "confidence": round(r.confidence, 3),
+            "region_name": r.region_name,
+            "elapsed_ms": round(r.elapsed_ms, 1),
+        }
+        for r in results
+    ]
+
+    await websocket.send_json({
+        "type": "scene_debug_result",
+        "state_machine": sm_state,
+        "detections": detection_results,
+        "scenes_tested": all_scenes,
+    })
+    logger.info("シーン検出デバッグダンプ送信: %d シーン, %d 検出結果", len(all_scenes), len(results))
+
+
 def _save_failed_crop(
     frame: np.ndarray,
     pos: dict[str, int],
@@ -158,6 +221,11 @@ def _run_pokemon_identification(
 
     recognizer = get_recognizer()
     config = recognizer._config
+
+    # フォールバック設定を取得
+    settings = get_settings()
+    fallback_threshold = settings.recognition.pokemon_matcher.fallback_threshold
+    fallback_margin_min = settings.recognition.pokemon_matcher.fallback_margin_min
 
     # regions.json の team_select.pokemon_icons から座標を取得
     scene_def = config._data.get("scenes", {}).get("team_select", {})
@@ -201,6 +269,7 @@ def _run_pokemon_identification(
 
     # 元の順序で結果リストを構築
     pokemon_list = []
+    failed_crops: list[tuple[str, np.ndarray]] = []
     for idx, key in enumerate(keys_ordered):
         pos = icon_defs[key]
         entry: dict = {
@@ -223,16 +292,42 @@ def _run_pokemon_identification(
             if detailed is not None and detailed.candidates:
                 best = detailed.candidates[0]
                 threshold = detailed.threshold
-                if best.confidence >= threshold:
+                margin = detailed.margin
+
+                # 判定ロジック:
+                # 1. 閾値以上 → 採用（マージン不足なら uncertain フラグを付与）
+                # 2. 閾値未満でもフォールバック条件を満たす → 採用
+                # 3. それ以外 → 棄却
+                is_primary_ok = best.confidence >= threshold
+                is_fallback_candidate = (
+                    not is_primary_ok
+                    and
+                    best.confidence >= fallback_threshold
+                    and (margin is None or margin >= fallback_margin_min)
+                )
+
+                if is_primary_ok:
+                    # 通常採用（マージン不足時も top-1 を返す）
                     entry["pokemon_key"] = best.pokemon_key
                     entry["pokemon_id"] = best.pokemon_key
                     entry["name"] = id_to_name.get(best.pokemon_key, best.pokemon_key)
                     entry["confidence"] = round(best.confidence, 3)
+                    entry["uncertain"] = detailed.is_uncertain
+                elif is_fallback_candidate:
+                    # フォールバック採用（閾値未満 or マージン不足だが採用）
+                    entry["pokemon_key"] = best.pokemon_key
+                    entry["pokemon_id"] = best.pokemon_key
+                    entry["name"] = id_to_name.get(best.pokemon_key, best.pokemon_key)
+                    entry["confidence"] = round(best.confidence, 3)
+                    entry["fallback"] = True
+                    entry["uncertain"] = detailed.is_uncertain
                 else:
+                    # 採用不可
                     entry["pokemon_key"] = None
                     entry["pokemon_id"] = None
                     entry["name"] = None
                     entry["confidence"] = 0.0
+                    entry["uncertain"] = detailed.is_uncertain
                 # 全候補を含める
                 entry["candidates"] = [
                     {
@@ -257,10 +352,12 @@ def _run_pokemon_identification(
                     "name": entry["name"],
                     "confidence": entry["confidence"],
                     "candidates": entry["candidates"],
+                    "fallback": entry.get("fallback", False),
                 }
         # --- ポジション別診断ログ ---
         is_failed = entry["pokemon_id"] is None
         is_cached = entry.get("cached", False)
+        is_fallback = entry.get("fallback", False)
         confidence = entry.get("confidence", 0.0)
 
         if is_cached:
@@ -275,13 +372,41 @@ def _run_pokemon_identification(
                 f"{c['name']}({c['confidence']:.3f})"
                 for c in cands[:3]
             )
+            detailed_ref = fresh_map.get(key)
+            is_uncertain = entry.get("uncertain", False)
+            margin = detailed_ref.margin if detailed_ref else None
+            margin_str = f" margin={margin:.4f}" if margin is not None else ""
+            reason = "UNCERTAIN" if is_uncertain else "FAILED"
             logger.info(
-                "  [pos %d] %s FAILED: best=%.3f thr=%.2f candidates=[%s]",
-                entry["position"], key, best_conf,
-                fresh_map.get(key).threshold if fresh_map.get(key) else 0.60,
-                cands_str,
+                "  [pos %d] %s %s: best=%.3f thr=%.2f fb_thr=%.2f%s candidates=[%s]",
+                entry["position"], key, reason, best_conf,
+                detailed_ref.threshold if detailed_ref else 0.60,
+                fallback_threshold,
+                margin_str, cands_str,
             )
             _save_failed_crop(frame, pos, key)
+            # マッチログ紐づけ用にクロップを収集
+            x, y, w, h = pos["x"], pos["y"], pos["w"], pos["h"]
+            crop = frame[y : y + h, x : x + w]
+            if crop.size > 0:
+                failed_crops.append((key, crop.copy()))
+        elif is_fallback:
+            # フォールバック採用
+            detailed_ref = fresh_map.get(key)
+            margin = detailed_ref.margin if detailed_ref else None
+            margin_str = f" margin={margin:.4f}" if margin is not None else ""
+            logger.info(
+                "  [pos %d] %s FALLBACK: %s (%.3f)%s",
+                entry["position"], key, entry["name"], confidence, margin_str,
+            )
+        elif entry.get("uncertain", False):
+            detailed_ref = fresh_map.get(key)
+            margin = detailed_ref.margin if detailed_ref else None
+            margin_str = f" margin={margin:.4f}" if margin is not None else ""
+            logger.info(
+                "  [pos %d] %s UNCERTAIN_OK: %s (%.3f)%s",
+                entry["position"], key, entry["name"], confidence, margin_str,
+            )
         else:
             logger.info(
                 "  [pos %d] %s OK: %s (%.3f)",
@@ -289,6 +414,7 @@ def _run_pokemon_identification(
             )
 
         # JSONL 監査レコード
+        detailed_for_audit = fresh_map.get(key) if not is_cached else None
         _audit_logger.info(json.dumps({
             "ts": datetime.now(timezone.utc).isoformat(),
             "event": "pokemon_identify",
@@ -298,6 +424,9 @@ def _run_pokemon_identification(
             "pokemon_id": entry["pokemon_id"],
             "name": entry.get("name"),
             "confidence": confidence,
+            "margin": round(detailed_for_audit.margin, 4) if detailed_for_audit and detailed_for_audit.margin is not None else None,
+            "uncertain": entry.get("uncertain", False),
+            "fallback": is_fallback,
             "cached": is_cached,
             "failed": is_failed,
             "candidates": entry.get("candidates", []),
@@ -305,15 +434,22 @@ def _run_pokemon_identification(
 
         pokemon_list.append(entry)
 
-    return {
+    result: dict = {
         "type": "pokemon_identified",
         "pokemon": pokemon_list,
         "elapsed_ms": round(elapsed, 1),
     }
+    if failed_crops:
+        result["_failed_crops"] = failed_crops
+    return result
 
 
 def _extract_player_team(frame: np.ndarray) -> list[dict]:
-    """team_select シーンの味方ポケモン1-6 を OCR で読み取る."""
+    """team_select シーンの味方ポケモン1-6 を OCR で読み取る.
+
+    マッチログ用の味方チームは通常 :meth:`_player_team_for_match_teams` で
+    クライアント送信のパーティ順を使う。本関数はパーティ未設定時のフォールバック。
+    """
     recognizer = get_recognizer()
     config = recognizer._config
     regions = config.get_regions("team_select")
@@ -341,6 +477,39 @@ def _extract_team_selection(frame: np.ndarray) -> list[int]:
     return [i + 1 for i, r in enumerate(results) if r.text.strip()]
 
 
+_FULLWIDTH_DIGITS = "１２３４５６"
+
+
+def _parse_selection_order_from_ocr(ocr_result: dict) -> dict[int, int]:
+    """OCR 結果の「ポケモン選出」リージョンから選出順序を抽出する.
+
+    Returns:
+        {party_position: selection_order} e.g. {3: 1, 1: 2, 5: 3}
+    """
+    selection: dict[int, int] = {}
+    for r in ocr_result.get("regions", []):
+        name: str = r["name"]
+        if not name.startswith("ポケモン選出") or "判定" in name:
+            continue
+        # リージョン名末尾の全角数字 → position (1-6)
+        last_char = name[-1]
+        if last_char in _FULLWIDTH_DIGITS:
+            position = _FULLWIDTH_DIGITS.index(last_char) + 1
+        else:
+            continue
+        # OCR テキスト → order (1-9)
+        text = unicodedata.normalize("NFKC", r["text"].strip())
+        if not text:
+            continue
+        try:
+            order = int(text)
+            if 1 <= order <= 9:
+                selection[position] = order
+        except ValueError:
+            pass
+    return selection
+
+
 def _extract_battle_result(frame: np.ndarray) -> str:
     """battle_end の検出リージョン「自分勝敗」を OCR して WIN/LOSE を判定する."""
     recognizer = get_recognizer()
@@ -357,6 +526,25 @@ def _extract_battle_result(frame: np.ndarray) -> str:
             if "LOSE" in text:
                 return "lose"
     return "unknown"
+
+
+def _crop_battle_text(
+    frame: np.ndarray,
+    regions: list[dict],
+) -> np.ndarray | None:
+    """メインテキスト１＋２の結合範囲をクロップする（未認識テキスト検証用）."""
+    text_regions = [
+        r for r in regions
+        if r["name"] in ("メインテキスト１", "メインテキスト２")
+    ]
+    if not text_regions:
+        return None
+    x_min = min(r["x"] for r in text_regions)
+    y_min = min(r["y"] for r in text_regions)
+    x_max = max(r["x"] + r["w"] for r in text_regions)
+    y_max = max(r["y"] + r["h"] for r in text_regions)
+    crop = frame[y_min:y_max, x_min:x_max]
+    return crop if crop.size > 0 else None
 
 
 def _run_ocr(
@@ -503,6 +691,25 @@ def _parse_hp_percent(text: str) -> int | None:
     return None
 
 
+def _parse_hp_value(text: str) -> int | None:
+    """OCR テキストから HP 数値（実数値）を解析する.
+
+    プレイヤー HP は "156" や "210" のような整数テキストとして表示される。
+    OCR 誤読 (O→0, l→1 等) を補正する。
+    """
+    cleaned = text.strip()
+    cleaned = cleaned.replace("O", "0").replace("o", "0")
+    cleaned = cleaned.replace("l", "1").replace("I", "1")
+    cleaned = cleaned.replace(" ", "")
+    m = _HP_DIGITS_RE.search(cleaned)
+    if m is None:
+        return None
+    value = int(m.group())
+    if 1 <= value <= 999:
+        return value
+    return None
+
+
 @router.websocket("/ws/battle")
 async def websocket_battle(websocket: WebSocket) -> None:
     """バトル WebSocket エンドポイント."""
@@ -518,6 +725,7 @@ async def websocket_battle(websocket: WebSocket) -> None:
         ),
     )
     frame_queue: asyncio.Queue[bytes] = asyncio.Queue(maxsize=2)
+    last_jpeg: list[bytes] = []  # 最新フレーム保持用（scene_debug で使用）
 
     await websocket.send_json({"type": "status", "status": "connected", "message": ""})
     logger.info("WebSocket 接続確立")
@@ -572,6 +780,7 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         session._last_scene_key = "none"
                         session._read_once_cache.clear()
                         session._pokemon_icon_cache.clear()
+                        session._last_selection_order.clear()
                         session._opponent_party.clear()
                         session._auto_opponent_party.clear()
                         session._manual_opponent_overrides.clear()
@@ -580,6 +789,7 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             session._battle_log_parser.reset()
                         if session._item_ability_parser is not None:
                             session._item_ability_parser.reset()
+                        session._field_state.reset()
                         logger.info("ステートマシンをリセット")
                         await websocket.send_json({
                             "type": "scene_change",
@@ -602,6 +812,7 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         session._last_scene_key = new_state.scene_key
                         session._read_once_cache.clear()
                         session._pokemon_icon_cache.clear()
+                        session._last_selection_order.clear()
                         if session._battle_log_parser is not None:
                             session._battle_log_parser.reset()
                         if session._item_ability_parser is not None:
@@ -645,6 +856,36 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         name = data.get("name")
                         position = data.get("position")
                         if pokemon_key is not None and name and position is not None:
+                            # 修正前のデータを取得（再修正 → 初回修正 → なし の順に探す）
+                            original: dict | None = None
+                            if position in session._manual_opponent_overrides:
+                                prev = session._manual_opponent_overrides[position]
+                                original = {
+                                    "pokemon_key": prev["pokemon_key"],
+                                    "name": prev["name"],
+                                    "confidence": None,
+                                }
+                            else:
+                                for p in session._auto_opponent_party:
+                                    if p.get("position") == position:
+                                        original = {
+                                            "pokemon_key": p["pokemon_key"],
+                                            "name": p["name"],
+                                            "confidence": p.get("confidence"),
+                                        }
+                                        break
+
+                            ml = session._match_logger
+                            if ml is not None:
+                                ml.log_pokemon_correction({
+                                    "position": position,
+                                    "original_pokemon_key": original["pokemon_key"] if original else None,
+                                    "original_name": original["name"] if original else None,
+                                    "original_confidence": original.get("confidence") if original else None,
+                                    "corrected_pokemon_key": pokemon_key,
+                                    "corrected_name": name,
+                                })
+
                             session._manual_opponent_overrides[position] = {
                                 "pokemon_key": pokemon_key,
                                 "name": name,
@@ -659,7 +900,7 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         session._player_party = [
                             {
                                 "pokemon_key": p.get("pokemon_key", p.get("species_id")),
-                                "name": p["name"],
+                                "name": p.get("name") or "?",
                             }
                             for p in party_list
                             if p.get("pokemon_key", p.get("species_id")) is not None
@@ -668,6 +909,22 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             "プレイヤーパーティ設定: %d体",
                             len(session._player_party),
                         )
+                    elif data.get("type") == "error_flag":
+                        ml = session._match_logger
+                        if ml is not None:
+                            ml.log_error_flag(
+                                target_seq=data.get("target_seq"),
+                                entry_kind=data.get("entry_kind", ""),
+                                flagged=data.get("flagged", True),
+                            )
+                        logger.info(
+                            "エラーフラグ: seq=%s kind=%s flagged=%s",
+                            data.get("target_seq"),
+                            data.get("entry_kind"),
+                            data.get("flagged"),
+                        )
+                    elif data.get("type") == "scene_debug":
+                        await _handle_scene_debug(websocket, session, last_jpeg)
                 except (json.JSONDecodeError, KeyError, TypeError):
                     logger.warning("不正な設定メッセージを無視")
 
@@ -701,6 +958,9 @@ async def websocket_battle(websocket: WebSocket) -> None:
                 logger.warning("フレームデコード失敗、スキップ")
                 continue
 
+            last_jpeg.clear()
+            last_jpeg.append(jpeg_data)
+
             # パーティ登録処理（バトル処理と並行動作）
             if (
                 session._party_machine is not None
@@ -723,6 +983,7 @@ async def websocket_battle(websocket: WebSocket) -> None:
                 if scene_change is not None:
                     session._read_once_cache.clear()
                     session._pokemon_icon_cache.clear()
+                    session._last_selection_order.clear()
                     if session._battle_log_parser is not None:
                         # サブシーン切り替え (battle内) ではパーサーをリセットしない
                         # battle ↔ battle_Neutral の頻繁な切り替えで重複排除状態が失われるのを防ぐ
@@ -734,18 +995,21 @@ async def websocket_battle(websocket: WebSocket) -> None:
                     scene_change["interval_ms"] = session.effective_interval_ms(
                         scene_change["scene"], get_recognizer()._config,
                     )
+
+                    # --- 試合ログ: シーン遷移（seq を得てから送信） ---
+                    ml = session._match_logger
+                    if ml is not None:
+                        ml.maybe_start_match(scene_change["scene"])
+                        seq = ml.log_scene_change(scene_change)
+                        if seq is not None:
+                            scene_change["seq"] = seq
+
                     await websocket.send_json(scene_change)
                     logger.info(
                         "シーン変更: %s (confidence=%.3f)",
                         scene_change["scene"],
                         scene_change["confidence"],
                     )
-
-                    # --- 試合ログ: シーン遷移 ---
-                    ml = session._match_logger
-                    if ml is not None:
-                        ml.maybe_start_match(scene_change["scene"])
-                        ml.log_scene_change(scene_change)
 
                     # team_select 遷移時にポケモン画像認識 + 味方チーム OCR を実行
                     if scene_change["scene"] == "team_select":
@@ -754,6 +1018,7 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             session._pokemon_icon_cache,
                         )
                         if pokemon_result is not None:
+                            failed_crops = pokemon_result.pop("_failed_crops", None)
                             await websocket.send_json(pokemon_result)
                             logger.info(
                                 "ポケモン識別完了: %d件 (%.1fms)",
@@ -761,79 +1026,92 @@ async def websocket_battle(websocket: WebSocket) -> None:
                                 pokemon_result["elapsed_ms"],
                             )
                             if ml is not None:
-                                ml.log_pokemon_identified(pokemon_result)
+                                ml.log_pokemon_identified(
+                                    pokemon_result, failed_crops=failed_crops,
+                                )
 
                         # match_teams メッセージ送信（味方 + 相手チーム）
-                        player_team = await asyncio.to_thread(
-                            _extract_player_team, frame,
-                        )
+                        # 味方はパーティ編成順（set_player_party）を優先。未設定時のみ OCR。
+                        if session._player_party:
+                            player_team = [
+                                {"position": i + 1, "name": p.get("name") or "?"}
+                                for i, p in enumerate(session._player_party)
+                            ]
+                        else:
+                            player_team = await asyncio.to_thread(
+                                _extract_player_team, frame,
+                            )
                         opponent_team = (
                             pokemon_result["pokemon"] if pokemon_result else []
                         )
                         # セッションに自動認識パーティを保存し、手動オーバーライドとマージ
                         session._auto_opponent_party = [
-                            {"position": p["position"], "pokemon_key": p["pokemon_key"], "name": p["name"]}
+                            {
+                                "position": p["position"],
+                                "pokemon_key": p["pokemon_key"],
+                                "name": p["name"],
+                                "confidence": p.get("confidence", 0.0),
+                            }
                             for p in opponent_team
                             if p.get("pokemon_key") is not None
                         ]
                         session._rebuild_opponent_party()
-                        await websocket.send_json({
+                        opponent_team_data = [
+                            {
+                                "position": p.get("position"),
+                                "pokemon_key": p.get("pokemon_key"),
+                                "pokemon_id": p.get("pokemon_id"),
+                                "name": p.get("name"),
+                                "confidence": p.get("confidence", 0.0),
+                            }
+                            for p in opponent_team
+                        ]
+                        match_teams_msg: dict = {
                             "type": "match_teams",
                             "player_team": player_team,
-                            "opponent_team": [
-                                {
-                                    "position": p.get("position"),
-                                    "pokemon_key": p.get("pokemon_key"),
-                                    "pokemon_id": p.get("pokemon_id"),
-                                    "name": p.get("name"),
-                                    "confidence": p.get("confidence", 0.0),
-                                }
-                                for p in opponent_team
-                            ],
-                        })
+                            "opponent_team": opponent_team_data,
+                        }
+                        if ml is not None:
+                            seq = ml.log_match_teams(player_team, opponent_team_data)
+                            if seq is not None:
+                                match_teams_msg["seq"] = seq
+                        await websocket.send_json(match_teams_msg)
+                        session._field_state.reset()
                         logger.info("match_teams 送信: 味方%d体, 相手%d体",
                                     len(player_team), len(opponent_team))
-                        if ml is not None:
-                            ml.log_match_teams(
-                                player_team,
-                                [
-                                    {
-                                        "position": p.get("position"),
-                                        "pokemon_key": p.get("pokemon_key"),
-                                        "pokemon_id": p.get("pokemon_id"),
-                                        "name": p.get("name"),
-                                        "confidence": p.get("confidence", 0.0),
-                                    }
-                                    for p in opponent_team
-                                ],
-                            )
 
                     # team_confirm 遷移時に選出ポケモンを読み取り
                     elif scene_change["scene"] == "team_confirm":
                         selected = await asyncio.to_thread(
                             _extract_team_selection, frame,
                         )
-                        await websocket.send_json({
+                        team_sel_msg: dict = {
                             "type": "team_selection",
                             "selected_positions": selected,
-                        })
-                        logger.info("team_selection 送信: %s", selected)
+                        }
                         if ml is not None:
-                            ml.log_team_selection(selected)
+                            seq = ml.log_team_selection(selected)
+                            if seq is not None:
+                                team_sel_msg["seq"] = seq
+                        await websocket.send_json(team_sel_msg)
+                        logger.info("team_selection 送信: %s", selected)
 
                     # battle_end 遷移時に勝敗を読み取り
                     elif scene_change["scene"] == "battle_end":
                         result_str = await asyncio.to_thread(
                             _extract_battle_result, frame,
                         )
-                        await websocket.send_json({
+                        battle_result_msg: dict = {
                             "type": "battle_result",
                             "result": result_str,
-                        })
-                        logger.info("battle_result 送信: %s", result_str)
+                        }
                         if ml is not None:
-                            ml.log_battle_result(result_str)
+                            seq = ml.log_battle_result(result_str)
+                            if seq is not None:
+                                battle_result_msg["seq"] = seq
                             ml.end_match(reason="battle_end", battle_result=result_str)
+                        await websocket.send_json(battle_result_msg)
+                        logger.info("battle_result 送信: %s", result_str)
 
             # OCR 実行するシーンを決定
             if session.auto_detect:
@@ -864,12 +1142,32 @@ async def websocket_battle(websocket: WebSocket) -> None:
                     )
 
             session._last_process_time = time.monotonic()
-            await websocket.send_json(result)
 
-            # --- 試合ログ: OCR 結果 ---
+            # --- 試合ログ: OCR 結果（seq を得てから送信） ---
             ml = session._match_logger
             if ml is not None and ml.is_active and not session.benchmark:
-                ml.log_ocr_result(result)
+                seq = ml.log_ocr_result(result)
+                if seq is not None:
+                    result["seq"] = seq
+
+            await websocket.send_json(result)
+
+            # team_select シーンの選出順序変更を検出
+            if scene_key == "team_select" and not session.benchmark:
+                selection_order = _parse_selection_order_from_ocr(result)
+                if selection_order and selection_order != session._last_selection_order:
+                    session._last_selection_order = selection_order.copy()
+                    order_msg: dict = {
+                        "type": "team_selection_order",
+                        "selection_order": selection_order,
+                    }
+                    ml = session._match_logger
+                    if ml is not None and ml.is_active:
+                        seq = ml.log_team_selection_order(selection_order)
+                        if seq is not None:
+                            order_msg["seq"] = seq
+                    await websocket.send_json(order_msg)
+                    logger.info("team_selection_order 送信: %s", selection_order)
 
             # バトルシーンの OCR 結果を処理
             if scene_key == "battle" and not session.benchmark:
@@ -881,6 +1179,9 @@ async def websocket_battle(websocket: WebSocket) -> None:
                 opponent_hp_text = ""
                 opponent_trait_text1 = ""
                 opponent_trait_text2 = ""
+                player_pokemon_name = ""
+                player_current_hp_text = ""
+                player_max_hp_text = ""
                 for r in result.get("regions", []):
                     if r["name"] == "メインテキスト１":
                         text1 = r["text"]
@@ -894,6 +1195,12 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         opponent_trait_text1 = r["text"].strip()
                     elif r["name"] == "相手もちもの・特性２":
                         opponent_trait_text2 = r["text"].strip()
+                    elif r["name"] == "自分ポケモン名":
+                        player_pokemon_name = r["text"].strip()
+                    elif r["name"] == "自分現在HP":
+                        player_current_hp_text = r["text"].strip()
+                    elif r["name"] == "自分最大HP":
+                        player_max_hp_text = r["text"].strip()
 
                 # トレーナー名はバトルログテキストから取得（専用リージョンは廃止）
                 session._battle_log_parser.update_context(
@@ -905,13 +1212,40 @@ async def websocket_battle(websocket: WebSocket) -> None:
                 battle_events = session._battle_log_parser.parse(text1, text2)
                 for ev in battle_events:
                     ev_msg = ev.to_ws_message()
+                    if ml is not None:
+                        crop = None
+                        if ev.event_type == "unrecognized":
+                            crop = _crop_battle_text(
+                                frame, result.get("regions", []),
+                            )
+                        seq = ml.log_battle_event(ev_msg, crop_image=crop)
+                        if seq is not None:
+                            ev_msg["seq"] = seq
                     await websocket.send_json(ev_msg)
                     logger.info(
                         "battle_event: %s side=%s pokemon=%s",
                         ev.event_type, ev.side, ev.pokemon_name,
                     )
-                    if ml is not None:
-                        ml.log_battle_event(ev_msg)
+
+                    # フィールド状態の更新・送信
+                    if session._field_state.apply_event(ev):
+                        await websocket.send_json(
+                            {"type": "field_state", **session._field_state.to_dict()},
+                        )
+
+                # メガシンカイベントで相手パーティの pokemon_key を更新
+                for ev in battle_events:
+                    if (
+                        ev.event_type == "mega_evolution"
+                        and ev.side == "opponent"
+                        and ev.details.get("mega_pokemon_key")
+                        and session._opponent_party
+                    ):
+                        mega_key = ev.details["mega_pokemon_key"]
+                        for member in session._opponent_party:
+                            if member.get("pokemon_key") == ev.pokemon_key:
+                                member["pokemon_key"] = mega_key
+                                break
 
                 # 相手ポケモン名をパーティ照合 + HP を送信
                 if opponent_pokemon_name and session._opponent_party:
@@ -927,10 +1261,15 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             "hp_percent": hp_percent,
                             "confidence": party_match["confidence"],
                         }
-                        await websocket.send_json({
+                        opponent_active_msg: dict = {
                             "type": "opponent_active",
                             **opponent_active_data,
-                        })
+                        }
+                        if ml is not None:
+                            seq = ml.log_opponent_active(opponent_active_data)
+                            if seq is not None:
+                                opponent_active_msg["seq"] = seq
+                        await websocket.send_json(opponent_active_msg)
                         logger.debug(
                             "opponent_active: %s (key=%s) HP=%s confidence=%.3f",
                             party_match["matched_name"],
@@ -938,8 +1277,46 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             hp_percent,
                             party_match["confidence"],
                         )
+
+                # 自分ポケモン名をパーティ照合 + HP を送信
+                if player_pokemon_name and session._player_party:
+                    player_match = match_against_party(
+                        player_pokemon_name, session._player_party,
+                    )
+                    if player_match is not None:
+                        current_hp = _parse_hp_value(player_current_hp_text)
+                        max_hp = _parse_hp_value(player_max_hp_text)
+                        player_hp_percent: int | None = None
+                        if current_hp is not None and max_hp is not None and max_hp > 0:
+                            player_hp_percent = round(current_hp * 100 / max_hp)
+                            player_hp_percent = max(0, min(100, player_hp_percent))
+                        player_active_data = {
+                            "pokemon_key": player_match["pokemon_key"],
+                            "species_id": player_match["pokemon_key"],
+                            "pokemon_name": player_match["matched_name"],
+                            "current_hp": current_hp,
+                            "max_hp": max_hp,
+                            "hp_percent": player_hp_percent,
+                            "confidence": player_match["confidence"],
+                        }
+                        player_active_msg: dict = {
+                            "type": "player_active",
+                            **player_active_data,
+                        }
                         if ml is not None:
-                            ml.log_opponent_active(opponent_active_data)
+                            seq = ml.log_player_active(player_active_data)
+                            if seq is not None:
+                                player_active_msg["seq"] = seq
+                        await websocket.send_json(player_active_msg)
+                        logger.debug(
+                            "player_active: %s (key=%s) HP=%s/%s (%s%%) confidence=%.3f",
+                            player_match["matched_name"],
+                            player_match["pokemon_key"],
+                            current_hp,
+                            max_hp,
+                            player_hp_percent,
+                            player_match["confidence"],
+                        )
 
                 # 相手もちもの・特性テキストを解析
                 if opponent_trait_text1 or opponent_trait_text2:
@@ -951,6 +1328,10 @@ async def websocket_battle(websocket: WebSocket) -> None:
                         session._opponent_party or [],
                     )
                     for det in detections:
+                        if ml is not None:
+                            seq = ml.log_item_ability(det)
+                            if seq is not None:
+                                det["seq"] = seq
                         await websocket.send_json(det)
                         logger.info(
                             "opponent_%s: %s → %s (id=%d)",
@@ -959,8 +1340,6 @@ async def websocket_battle(websocket: WebSocket) -> None:
                             det["trait_name"],
                             det["trait_id"],
                         )
-                        if ml is not None:
-                            ml.log_item_ability(det)
 
     receive_task = asyncio.create_task(receive_loop())
     process_task = asyncio.create_task(process_loop())
