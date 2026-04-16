@@ -29,6 +29,9 @@ dev = [
     "pytest",
     "pytest-timeout",
 ]
+scripts = [
+    "beautifulsoup4>=4.12",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

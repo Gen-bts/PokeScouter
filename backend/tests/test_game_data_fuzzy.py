@@ -57,6 +57,8 @@ def game_data(tmp_path):
             "たべのこし": 234,
             "こだわりハチマキ": 220,
             "いのちのたま": 270,
+            "オボンのみ": "sitrusberry",
+            "オレンのみ": "oranberry",
         },
     }
     (names_dir / "ja.json").write_text(
@@ -201,6 +203,64 @@ class TestFuzzyMatchItemName:
 
     def test_empty_string_returns_none(self, game_data: GameData) -> None:
         assert game_data.fuzzy_match_item_name("") is None
+
+
+class TestStripDakuten:
+    """_strip_dakuten 関数のユニットテスト."""
+
+    def test_katakana_dakuten(self) -> None:
+        assert GameData._strip_dakuten("ガブリアス") == "カフリアス"
+
+    def test_katakana_handakuten(self) -> None:
+        assert GameData._strip_dakuten("ポケモン") == "ホケモン"
+
+    def test_hiragana_dakuten(self) -> None:
+        assert GameData._strip_dakuten("もうが") == "もうか"
+
+    def test_no_dakuten_unchanged(self) -> None:
+        assert GameData._strip_dakuten("アイウエオ") == "アイウエオ"
+
+    def test_mixed_script(self) -> None:
+        assert GameData._strip_dakuten("オボンのみ") == "オホンのみ"
+
+
+class TestDakutenTiebreaker:
+    """濁点/半濁点 OCR 誤認識の解消テスト."""
+
+    def test_obon_vs_oren_dakuten_confusion(self, game_data: GameData) -> None:
+        """OCR "オポンのみ" → "オボンのみ" (not "オレンのみ")."""
+        result = game_data.fuzzy_match_item_name("オポンのみ")
+        assert result is not None
+        assert result["matched_name"] == "オボンのみ"
+        assert result["matched_key"] == "sitrusberry"
+
+    def test_obon_exact_match_still_works(self, game_data: GameData) -> None:
+        """完全一致 "オボンのみ" は tiebreaker の影響を受けない."""
+        result = game_data.fuzzy_match_item_name("オボンのみ")
+        assert result is not None
+        assert result["matched_name"] == "オボンのみ"
+        assert result["confidence"] == 1.0
+
+    def test_oren_exact_match_still_works(self, game_data: GameData) -> None:
+        """完全一致 "オレンのみ" も正しくマッチする."""
+        result = game_data.fuzzy_match_item_name("オレンのみ")
+        assert result is not None
+        assert result["matched_name"] == "オレンのみ"
+        assert result["matched_key"] == "oranberry"
+        assert result["confidence"] == 1.0
+
+    def test_garchomp_dakuten_confusion(self, game_data: GameData) -> None:
+        """OCR "ガプリアス" → "ガブリアス" (半濁点混同、ポケモン名)."""
+        result = game_data.fuzzy_match_pokemon_name("ガプリアス")
+        assert result is not None
+        assert result["matched_name"] == "ガブリアス"
+        assert result["pokemon_key"] == "445"
+
+    def test_non_dakuten_fuzzy_unchanged(self, game_data: GameData) -> None:
+        """濁点無関係の fuzzy match (リザードソ→リザードン) は従来通り."""
+        result = game_data.fuzzy_match_pokemon_name("リザードソ")
+        assert result is not None
+        assert result["matched_name"] == "リザードン"
 
 
 @pytest.fixture()

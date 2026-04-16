@@ -2,13 +2,34 @@
 
 from __future__ import annotations
 
+import json
 import re
+import time
+from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query
 
 from app.dependencies import get_game_data
 
 _WIKI_MARKUP_RE = re.compile(r"\[([^\]]*)\]\{[^}]+\}")
+_DEBUG_LOG_PATH = Path(__file__).resolve().parents[3] / "debug-bc4e26.log"
+
+
+def _append_debug_log(hypothesis_id: str, location: str, message: str, data: dict) -> None:
+    payload = {
+        "sessionId": "bc4e26",
+        "runId": "pre-fix",
+        "hypothesisId": hypothesis_id,
+        "location": location,
+        "message": message,
+        "data": data,
+        "timestamp": int(time.time() * 1000),
+    }
+    try:
+        with _DEBUG_LOG_PATH.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
 
 
 def _strip_wiki_markup(text: str) -> str:
@@ -63,8 +84,13 @@ def _localize_entry_name(game_data, category: str, entry_key: str, lang: str) ->
 def _resolve_ability(game_data, ability_key: str, lang: str) -> dict[str, str]:
     ability_data = game_data.get_ability_by_key(ability_key) or {}
     name = _localize_entry_name(game_data, "abilities", ability_key, lang)
-    effect = _strip_wiki_markup(ability_data.get("effect", ""))
-    return {"name": name, "effect": effect}
+    effect_en = _strip_wiki_markup(ability_data.get("effect", ""))
+    if lang == "ja":
+        effect_ja = game_data.get_ability_desc_ja(ability_key)
+        effect = effect_ja or effect_en
+    else:
+        effect = effect_en
+    return {"name": name, "effect": effect, "effect_en": effect_en}
 
 
 @router.get("/names")
@@ -192,6 +218,99 @@ def get_mega_form(
         "base_stats": mega_pdata.get("base_stats", {}),
         "stat_deltas": stat_deltas,
         "type_effectiveness": _calc_type_effectiveness(game_data, mega_types),
+    }
+
+
+@router.get("/{pokemon_key}/usage")
+def get_pokemon_usage(pokemon_key: str, lang: str = Query("ja")) -> dict:
+    """ポケモンの使用率データを返す."""
+    game_data = get_game_data()
+    usage = game_data.get_usage_data(pokemon_key)
+    # region agent log
+    _append_debug_log(
+        "H6",
+        "backend/app/api/pokemon.py:227",
+        "pokemon usage api lookup",
+        {
+            "pokemon_key": pokemon_key,
+            "has_usage": usage is not None,
+            "raw_move_count": len(usage.get("moves", [])) if usage else 0,
+            "raw_item_count": len(usage.get("items", [])) if usage else 0,
+            "raw_ability_count": len(usage.get("abilities", [])) if usage else 0,
+        },
+    )
+    # endregion
+    if usage is None:
+        return {
+            "pokemon_key": pokemon_key,
+            "usage_percent": 0,
+            "moves": [],
+            "items": [],
+            "abilities": [],
+        }
+
+    ja_moves = game_data.names.get(lang, {}).get("moves", {})
+    move_key_to_name: dict[str, str] = {str(v): k for k, v in ja_moves.items()}
+    ja_items = game_data.names.get(lang, {}).get("items", {})
+    item_key_to_name: dict[str, str] = {str(v): k for k, v in ja_items.items()}
+    ja_abilities = game_data.names.get(lang, {}).get("abilities", {})
+    ability_key_to_name: dict[str, str] = {str(v): k for k, v in ja_abilities.items()}
+
+    moves = []
+    for m in usage.get("moves", []):
+        mk = m.get("move_key", "")
+        move_data = game_data.get_move_by_key(mk)
+        name = move_key_to_name.get(mk) or (move_data.get("name", mk) if move_data else mk)
+        moves.append({
+            "move_key": mk,
+            "move_name": name,
+            "usage_percent": m.get("usage_percent", 0),
+            "damage_class": move_data.get("damage_class") if move_data else None,
+        })
+    # region agent log
+    _append_debug_log(
+        "H6",
+        "backend/app/api/pokemon.py:260",
+        "pokemon usage api localized",
+        {
+            "pokemon_key": pokemon_key,
+            "localized_move_count": len(moves),
+            "sample_move_keys": [m.get("move_key") for m in usage.get("moves", [])[:5]],
+            "sample_resolved_names": [m.get("move_name") for m in moves[:5]],
+        },
+    )
+    # endregion
+
+    items = []
+    for it in usage.get("items", []):
+        ik = it.get("item_key", "")
+        item_data = game_data.get_item_by_key(ik)
+        name = item_key_to_name.get(ik) or (item_data.get("name", ik) if item_data else ik)
+        items.append({
+            "item_key": ik,
+            "item_name": name,
+            "usage_percent": it.get("usage_percent", 0),
+        })
+
+    abilities = []
+    for ab in usage.get("abilities", []):
+        ak = ab.get("ability_key", "")
+        ability_data = game_data.get_ability_by_key(ak)
+        name = ability_key_to_name.get(ak) or (
+            ability_data.get("name", ak) if ability_data else ak
+        )
+        abilities.append({
+            "ability_key": ak,
+            "ability_name": name,
+            "usage_percent": ab.get("usage_percent", 0),
+        })
+
+    return {
+        "pokemon_key": pokemon_key,
+        "usage_percent": usage.get("usage_percent", 0),
+        "moves": moves,
+        "items": items,
+        "abilities": abilities,
     }
 
 

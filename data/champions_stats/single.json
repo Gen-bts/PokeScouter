@@ -1,0 +1,7009 @@
+{
+  "_meta": {
+    "source": "pokemon-champions-stats",
+    "format": "single",
+    "season": "M-1",
+    "fetched_at": "2026-04-15T05:38:16.678105+00:00",
+    "pokemon_count": 30,
+    "fetch_attempted": 30,
+    "fetch_failed_count": 0
+  },
+  "pokemon": {
+    "garchomp": {
+      "moves": [
+        {
+          "move_key": "earthquake",
+          "usage_percent": 99.0
+        },
+        {
+          "move_key": "outrage",
+          "usage_percent": 70.0
+        },
+        {
+          "move_key": "stealthrock",
+          "usage_percent": 48.0
+        },
+        {
+          "move_key": "rocktomb",
+          "usage_percent": 46.4
+        },
+        {
+          "move_key": "poisonjab",
+          "usage_percent": 24.0
+        },
+        {
+          "move_key": "swordsdance",
+          "usage_percent": 21.3
+        },
+        {
+          "move_key": "scaleshot",
+          "usage_percent": 17.8
+        },
+        {
+          "move_key": "rockslide",
+          "usage_percent": 14.1
+        },
+        {
+          "move_key": "ironhead",
+          "usage_percent": 14.1
+        },
+        {
+          "move_key": "dragontail",
+          "usage_percent": 10.8
+        }
+      ],
+      "items": [
+        {
+          "item_key": "focussash",
+          "usage_percent": 45.0
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 32.0
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 7.8
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 7.6
+        },
+        {
+          "item_key": "habanberry",
+          "usage_percent": 1.8
+        },
+        {
+          "item_key": "garchompite",
+          "usage_percent": 1.5
+        },
+        {
+          "item_key": "yacheberry",
+          "usage_percent": 1.2
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 0.5
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.5
+        },
+        {
+          "item_key": "softsand",
+          "usage_percent": 0.3
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "roughskin",
+          "usage_percent": 99.0
+        },
+        {
+          "ability_key": "sandveil",
+          "usage_percent": 1.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "jolly",
+          "usage_percent": 75.4
+        },
+        {
+          "nature_key": "adamant",
+          "usage_percent": 14.3
+        },
+        {
+          "nature_key": "careful",
+          "usage_percent": 4.6
+        },
+        {
+          "nature_key": "impish",
+          "usage_percent": 4.3
+        },
+        {
+          "nature_key": "naive",
+          "usage_percent": 0.5
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 54.0
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 8.6
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 7.4
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 5.1
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.9
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "primarina",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "gengar",
+          "rank": 5
+        }
+      ]
+    },
+    "primarina": {
+      "moves": [
+        {
+          "move_key": "moonblast",
+          "usage_percent": 96.3
+        },
+        {
+          "move_key": "sparklingaria",
+          "usage_percent": 90.0
+        },
+        {
+          "move_key": "aquajet",
+          "usage_percent": 67.9
+        },
+        {
+          "move_key": "flipturn",
+          "usage_percent": 52.4
+        },
+        {
+          "move_key": "encore",
+          "usage_percent": 32.0
+        },
+        {
+          "move_key": "calmmind",
+          "usage_percent": 13.3
+        },
+        {
+          "move_key": "icebeam",
+          "usage_percent": 7.4
+        },
+        {
+          "move_key": "psychicnoise",
+          "usage_percent": 5.8
+        },
+        {
+          "move_key": "energyball",
+          "usage_percent": 5.1
+        },
+        {
+          "move_key": "perishsong",
+          "usage_percent": 4.0
+        }
+      ],
+      "items": [
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 47.2
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 22.8
+        },
+        {
+          "item_key": "mysticwater",
+          "usage_percent": 12.1
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 6.1
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 6.0
+        },
+        {
+          "item_key": "chestoberry",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "fairyfeather",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "shellbell",
+          "usage_percent": 0.5
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.5
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "torrent",
+          "usage_percent": 90.0
+        },
+        {
+          "ability_key": "liquidvoice",
+          "usage_percent": 10.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "modest",
+          "usage_percent": 65.1
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 12.8
+        },
+        {
+          "nature_key": "quiet",
+          "usage_percent": 9.8
+        },
+        {
+          "nature_key": "calm",
+          "usage_percent": 4.3
+        },
+        {
+          "nature_key": "relaxed",
+          "usage_percent": 2.9
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 12.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 8.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 7.1
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 3.4
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 2,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 3.4
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.9
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 2.2
+        },
+        {
+          "spread": {
+            "hp": 30,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 4
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 4,
+            "spa": 4,
+            "spd": 26,
+            "spe": 0
+          },
+          "usage_percent": 1.2
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "scizor",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 5
+        }
+      ]
+    },
+    "charizard": {
+      "moves": [
+        {
+          "move_key": "solarbeam",
+          "usage_percent": 77.9
+        },
+        {
+          "move_key": "flamecharge",
+          "usage_percent": 54.4
+        },
+        {
+          "move_key": "overheat",
+          "usage_percent": 44.9
+        },
+        {
+          "move_key": "flamethrower",
+          "usage_percent": 43.7
+        },
+        {
+          "move_key": "airslash",
+          "usage_percent": 35.5
+        },
+        {
+          "move_key": "flareblitz",
+          "usage_percent": 18.3
+        },
+        {
+          "move_key": "dragondance",
+          "usage_percent": 11.1
+        },
+        {
+          "move_key": "outrage",
+          "usage_percent": 10.3
+        },
+        {
+          "move_key": "dragonpulse",
+          "usage_percent": 10.1
+        }
+      ],
+      "items": [
+        {
+          "item_key": "charizarditey",
+          "usage_percent": 78.8
+        },
+        {
+          "item_key": "charizarditex",
+          "usage_percent": 20.0
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "abomasite",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "blaze",
+          "usage_percent": 76.6
+        },
+        {
+          "ability_key": "solarpower",
+          "usage_percent": 23.2
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "timid",
+          "usage_percent": 54.4
+        },
+        {
+          "nature_key": "modest",
+          "usage_percent": 23.6
+        },
+        {
+          "nature_key": "adamant",
+          "usage_percent": 10.6
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 9.1
+        },
+        {
+          "nature_key": "impish",
+          "usage_percent": 0.5
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 46.7
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 11.1
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 7.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 3.4
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.4
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.8
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 1.8
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.7
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.6
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 0.8
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "kingambit",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "mimikyu",
+          "rank": 5
+        }
+      ]
+    },
+    "corviknight": {
+      "moves": [
+        {
+          "move_key": "roost",
+          "usage_percent": 96.6
+        },
+        {
+          "move_key": "bodypress",
+          "usage_percent": 88.4
+        },
+        {
+          "move_key": "irondefense",
+          "usage_percent": 75.4
+        },
+        {
+          "move_key": "uturn",
+          "usage_percent": 65.3
+        },
+        {
+          "move_key": "ironhead",
+          "usage_percent": 24.5
+        },
+        {
+          "move_key": "taunt",
+          "usage_percent": 20.6
+        },
+        {
+          "move_key": "bravebird",
+          "usage_percent": 9.3
+        },
+        {
+          "move_key": "bulkup",
+          "usage_percent": 4.8
+        },
+        {
+          "move_key": "powertrip",
+          "usage_percent": 4.8
+        },
+        {
+          "move_key": "drillpeck",
+          "usage_percent": 3.4
+        }
+      ],
+      "items": [
+        {
+          "item_key": "leftovers",
+          "usage_percent": 67.3
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 22.6
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 3.7
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 2.7
+        },
+        {
+          "item_key": "occaberry",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "mentalherb",
+          "usage_percent": 0.6
+        },
+        {
+          "item_key": "sharpbeak",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "wacanberry",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "blackbelt",
+          "usage_percent": 0.2
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "pressure",
+          "usage_percent": 50.5
+        },
+        {
+          "ability_key": "mirrorarmor",
+          "usage_percent": 46.9
+        },
+        {
+          "ability_key": "unnerve",
+          "usage_percent": 2.7
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "impish",
+          "usage_percent": 71.9
+        },
+        {
+          "nature_key": "relaxed",
+          "usage_percent": 17.1
+        },
+        {
+          "nature_key": "careful",
+          "usage_percent": 5.5
+        },
+        {
+          "nature_key": "sassy",
+          "usage_percent": 1.7
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 1.5
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 44.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 12.8
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 3.9
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 0,
+            "spd": 32,
+            "spe": 0
+          },
+          "usage_percent": 3.2
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 2,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 2.9
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 1,
+            "spe": 1
+          },
+          "usage_percent": 2.2
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 1
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 25,
+            "spa": 0,
+            "spd": 9,
+            "spe": 0
+          },
+          "usage_percent": 1.8
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 30,
+            "spa": 0,
+            "spd": 0,
+            "spe": 4
+          },
+          "usage_percent": 0.8
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "lopunny",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "gengar",
+          "rank": 5
+        }
+      ]
+    },
+    "archaludon": {
+      "moves": [
+        {
+          "move_key": "flashcannon",
+          "usage_percent": 80.3
+        },
+        {
+          "move_key": "dracometeor",
+          "usage_percent": 73.6
+        },
+        {
+          "move_key": "stealthrock",
+          "usage_percent": 59.2
+        },
+        {
+          "move_key": "thunderbolt",
+          "usage_percent": 50.4
+        },
+        {
+          "move_key": "aurasphere",
+          "usage_percent": 27.8
+        },
+        {
+          "move_key": "dragontail",
+          "usage_percent": 19.8
+        },
+        {
+          "move_key": "roar",
+          "usage_percent": 15.8
+        },
+        {
+          "move_key": "electroshot",
+          "usage_percent": 14.8
+        },
+        {
+          "move_key": "thunderwave",
+          "usage_percent": 14.1
+        },
+        {
+          "move_key": "mirrorcoat",
+          "usage_percent": 7.6
+        }
+      ],
+      "items": [
+        {
+          "item_key": "leftovers",
+          "usage_percent": 32.0
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 29.5
+        },
+        {
+          "item_key": "whiteherb",
+          "usage_percent": 18.6
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 6.5
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 2.4
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 2.0
+        },
+        {
+          "item_key": "shucaberry",
+          "usage_percent": 2.0
+        },
+        {
+          "item_key": "dragonfang",
+          "usage_percent": 1.2
+        },
+        {
+          "item_key": "chopleberry",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 0.8
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "stamina",
+          "usage_percent": 78.3
+        },
+        {
+          "ability_key": "sturdy",
+          "usage_percent": 21.5
+        },
+        {
+          "ability_key": "stalwart",
+          "usage_percent": 0.1
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "modest",
+          "usage_percent": 39.5
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 26.7
+        },
+        {
+          "nature_key": "calm",
+          "usage_percent": 13.1
+        },
+        {
+          "nature_key": "timid",
+          "usage_percent": 11.8
+        },
+        {
+          "nature_key": "impish",
+          "usage_percent": 3.0
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 13.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 0,
+            "spd": 32,
+            "spe": 0
+          },
+          "usage_percent": 7.3
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 4.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 4.1
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 3.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 32,
+            "spe": 2
+          },
+          "usage_percent": 3.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 2.9
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.7
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 2.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 15,
+            "spd": 16,
+            "spe": 3
+          },
+          "usage_percent": 2.2
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "meowscarada",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "scizor",
+          "rank": 5
+        }
+      ]
+    },
+    "hippowdon": {
+      "moves": [
+        {
+          "move_key": "stealthrock",
+          "usage_percent": 97.6
+        },
+        {
+          "move_key": "earthquake",
+          "usage_percent": 97.0
+        },
+        {
+          "move_key": "yawn",
+          "usage_percent": 96.1
+        },
+        {
+          "move_key": "slackoff",
+          "usage_percent": 44.9
+        },
+        {
+          "move_key": "whirlwind",
+          "usage_percent": 38.4
+        },
+        {
+          "move_key": "roar",
+          "usage_percent": 12.5
+        },
+        {
+          "move_key": "rocktomb",
+          "usage_percent": 4.6
+        },
+        {
+          "move_key": "icefang",
+          "usage_percent": 3.2
+        },
+        {
+          "move_key": "protect",
+          "usage_percent": 1.0
+        },
+        {
+          "move_key": "fissure",
+          "usage_percent": 1.0
+        }
+      ],
+      "items": [
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 73.4
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 21.7
+        },
+        {
+          "item_key": "mentalherb",
+          "usage_percent": 1.7
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "passhoberry",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "rindoberry",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "chestoberry",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "sandstream",
+          "usage_percent": 99.6
+        },
+        {
+          "ability_key": "sandforce",
+          "usage_percent": 0.3
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "impish",
+          "usage_percent": 68.1
+        },
+        {
+          "nature_key": "careful",
+          "usage_percent": 24.3
+        },
+        {
+          "nature_key": "relaxed",
+          "usage_percent": 3.0
+        },
+        {
+          "nature_key": "sassy",
+          "usage_percent": 1.6
+        },
+        {
+          "nature_key": "adamant",
+          "usage_percent": 1.0
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 0,
+            "spd": 32,
+            "spe": 0
+          },
+          "usage_percent": 21.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 16.8
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 18,
+            "spa": 0,
+            "spd": 16,
+            "spe": 0
+          },
+          "usage_percent": 9.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 3.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 12,
+            "spa": 0,
+            "spd": 22,
+            "spe": 0
+          },
+          "usage_percent": 3.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 10,
+            "spa": 0,
+            "spd": 24,
+            "spe": 0
+          },
+          "usage_percent": 2.4
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 2,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 2.2
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 22,
+            "spa": 0,
+            "spd": 12,
+            "spe": 0
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 1,
+            "spa": 0,
+            "spd": 32,
+            "spe": 0
+          },
+          "usage_percent": 1.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 17,
+            "spa": 0,
+            "spd": 17,
+            "spe": 0
+          },
+          "usage_percent": 1.7
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "charizard",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "garchomp",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "aegislash",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "hydreigon",
+          "rank": 5
+        }
+      ]
+    },
+    "gengar": {
+      "moves": [
+        {
+          "move_key": "shadowball",
+          "usage_percent": 83.5
+        },
+        {
+          "move_key": "sludgewave",
+          "usage_percent": 78.3
+        },
+        {
+          "move_key": "destinybond",
+          "usage_percent": 46.2
+        },
+        {
+          "move_key": "focusblast",
+          "usage_percent": 33.9
+        },
+        {
+          "move_key": "icywind",
+          "usage_percent": 28.7
+        },
+        {
+          "move_key": "protect",
+          "usage_percent": 18.0
+        },
+        {
+          "move_key": "substitute",
+          "usage_percent": 15.0
+        },
+        {
+          "move_key": "hex",
+          "usage_percent": 14.6
+        },
+        {
+          "move_key": "thunderbolt",
+          "usage_percent": 14.3
+        },
+        {
+          "move_key": "sludgebomb",
+          "usage_percent": 14.0
+        }
+      ],
+      "items": [
+        {
+          "item_key": "gengarite",
+          "usage_percent": 86.4
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 10.8
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 1.5
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "spelltag",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "cursedbody",
+          "usage_percent": 100.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "timid",
+          "usage_percent": 92.0
+        },
+        {
+          "nature_key": "modest",
+          "usage_percent": 6.9
+        },
+        {
+          "nature_key": "hasty",
+          "usage_percent": 0.3
+        },
+        {
+          "nature_key": "calm",
+          "usage_percent": 0.2
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 0.2
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 61.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 5.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 2,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 4.3
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 3.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.0
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 3.0
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.8
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.6
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.1
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 1,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 0.6
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "hydreigon",
+          "rank": 5
+        }
+      ]
+    },
+    "kingambit": {
+      "moves": [
+        {
+          "move_key": "suckerpunch",
+          "usage_percent": 99.4
+        },
+        {
+          "move_key": "kowtowcleave",
+          "usage_percent": 94.4
+        },
+        {
+          "move_key": "swordsdance",
+          "usage_percent": 87.4
+        },
+        {
+          "move_key": "ironhead",
+          "usage_percent": 80.4
+        },
+        {
+          "move_key": "lowkick",
+          "usage_percent": 25.1
+        },
+        {
+          "move_key": "brickbreak",
+          "usage_percent": 3.7
+        },
+        {
+          "move_key": "guillotine",
+          "usage_percent": 3.2
+        },
+        {
+          "move_key": "metalburst",
+          "usage_percent": 1.0
+        },
+        {
+          "move_key": "stealthrock",
+          "usage_percent": 0.8
+        },
+        {
+          "move_key": "taunt",
+          "usage_percent": 0.8
+        }
+      ],
+      "items": [
+        {
+          "item_key": "blackglasses",
+          "usage_percent": 78.9
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 3.7
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 3.5
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 3.0
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 1.7
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 1.1
+        },
+        {
+          "item_key": "shucaberry",
+          "usage_percent": 0.5
+        },
+        {
+          "item_key": "occaberry",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "blackbelt",
+          "usage_percent": 0.4
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "supremeoverlord",
+          "usage_percent": 92.8
+        },
+        {
+          "ability_key": "defiant",
+          "usage_percent": 6.9
+        },
+        {
+          "ability_key": "pressure",
+          "usage_percent": 0.3
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "adamant",
+          "usage_percent": 93.1
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 2.9
+        },
+        {
+          "nature_key": "brave",
+          "usage_percent": 2.0
+        },
+        {
+          "nature_key": "careful",
+          "usage_percent": 0.6
+        },
+        {
+          "nature_key": "impish",
+          "usage_percent": 0.5
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 26.1
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 7.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 7.1
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 5.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 4.9
+        },
+        {
+          "spread": {
+            "hp": 10,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 1,
+            "spe": 21
+          },
+          "usage_percent": 4.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 1.7
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.7
+        },
+        {
+          "spread": {
+            "hp": 12,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 22
+          },
+          "usage_percent": 1.6
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 1
+          },
+          "usage_percent": 1.5
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "gengar",
+          "rank": 5
+        }
+      ]
+    },
+    "scizor": {
+      "moves": [
+        {
+          "move_key": "bulletpunch",
+          "usage_percent": 99.8
+        },
+        {
+          "move_key": "swordsdance",
+          "usage_percent": 92.6
+        },
+        {
+          "move_key": "closecombat",
+          "usage_percent": 62.9
+        },
+        {
+          "move_key": "knockoff",
+          "usage_percent": 44.2
+        },
+        {
+          "move_key": "uturn",
+          "usage_percent": 37.2
+        },
+        {
+          "move_key": "roost",
+          "usage_percent": 35.7
+        },
+        {
+          "move_key": "dualwingbeat",
+          "usage_percent": 12.6
+        },
+        {
+          "move_key": "bugbite",
+          "usage_percent": 3.5
+        },
+        {
+          "move_key": "thief",
+          "usage_percent": 1.7
+        },
+        {
+          "move_key": "quickattack",
+          "usage_percent": 1.2
+        }
+      ],
+      "items": [
+        {
+          "item_key": "scizorite",
+          "usage_percent": 82.6
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 5.8
+        },
+        {
+          "item_key": "metalcoat",
+          "usage_percent": 2.7
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 2.5
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 2.0
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 1.3
+        },
+        {
+          "item_key": "occaberry",
+          "usage_percent": 1.2
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "whiteherb",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "kingsrock",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "technician",
+          "usage_percent": 98.1
+        },
+        {
+          "ability_key": "swarm",
+          "usage_percent": 0.8
+        },
+        {
+          "ability_key": "lightmetal",
+          "usage_percent": 0.8
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "adamant",
+          "usage_percent": 92.5
+        },
+        {
+          "nature_key": "impish",
+          "usage_percent": 2.9
+        },
+        {
+          "nature_key": "careful",
+          "usage_percent": 1.5
+        },
+        {
+          "nature_key": "brave",
+          "usage_percent": 1.2
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 0.8
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 16.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 14.6
+        },
+        {
+          "spread": {
+            "hp": 14,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 20
+          },
+          "usage_percent": 10.6
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 8.3
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 3.7
+        },
+        {
+          "spread": {
+            "hp": 30,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 1,
+            "spe": 2
+          },
+          "usage_percent": 2.5
+        },
+        {
+          "spread": {
+            "hp": 30,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 4
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.8
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 1
+          },
+          "usage_percent": 1.8
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 1.7
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 5
+        }
+      ]
+    },
+    "aegislash": {
+      "moves": [
+        {
+          "move_key": "shadowsneak",
+          "usage_percent": 93.1
+        },
+        {
+          "move_key": "kingsshield",
+          "usage_percent": 82.6
+        },
+        {
+          "move_key": "poltergeist",
+          "usage_percent": 55.0
+        },
+        {
+          "move_key": "sacredsword",
+          "usage_percent": 43.9
+        },
+        {
+          "move_key": "shadowball",
+          "usage_percent": 32.0
+        },
+        {
+          "move_key": "closecombat",
+          "usage_percent": 29.5
+        },
+        {
+          "move_key": "ironhead",
+          "usage_percent": 23.5
+        },
+        {
+          "move_key": "swordsdance",
+          "usage_percent": 21.1
+        },
+        {
+          "move_key": "flashcannon",
+          "usage_percent": 10.0
+        },
+        {
+          "move_key": "shadowclaw",
+          "usage_percent": 3.2
+        }
+      ],
+      "items": [
+        {
+          "item_key": "leftovers",
+          "usage_percent": 57.2
+        },
+        {
+          "item_key": "spelltag",
+          "usage_percent": 26.7
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 4.9
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 4.0
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 3.0
+        },
+        {
+          "item_key": "shucaberry",
+          "usage_percent": 0.6
+        },
+        {
+          "item_key": "occaberry",
+          "usage_percent": 0.5
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.5
+        },
+        {
+          "item_key": "colburberry",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.4
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "stancechange",
+          "usage_percent": 100.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "adamant",
+          "usage_percent": 43.5
+        },
+        {
+          "nature_key": "quiet",
+          "usage_percent": 24.7
+        },
+        {
+          "nature_key": "brave",
+          "usage_percent": 19.0
+        },
+        {
+          "nature_key": "relaxed",
+          "usage_percent": 2.9
+        },
+        {
+          "nature_key": "sassy",
+          "usage_percent": 2.5
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 14.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 10.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 1,
+            "def": 1,
+            "spa": 32,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 9.6
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 6.6
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 6.6
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 2,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 5.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 1.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 1.7
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "hydreigon",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 5
+        }
+      ]
+    },
+    "meowscarada": {
+      "moves": [
+        {
+          "move_key": "flowertrick",
+          "usage_percent": 96.8
+        },
+        {
+          "move_key": "tripleaxel",
+          "usage_percent": 79.3
+        },
+        {
+          "move_key": "knockoff",
+          "usage_percent": 70.4
+        },
+        {
+          "move_key": "uturn",
+          "usage_percent": 66.8
+        },
+        {
+          "move_key": "suckerpunch",
+          "usage_percent": 25.2
+        },
+        {
+          "move_key": "playrough",
+          "usage_percent": 19.1
+        },
+        {
+          "move_key": "lowkick",
+          "usage_percent": 13.6
+        },
+        {
+          "move_key": "trick",
+          "usage_percent": 6.4
+        },
+        {
+          "move_key": "thunderpunch",
+          "usage_percent": 5.3
+        },
+        {
+          "move_key": "taunt",
+          "usage_percent": 4.6
+        }
+      ],
+      "items": [
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 62.5
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 31.3
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 1.2
+        },
+        {
+          "item_key": "miracleseed",
+          "usage_percent": 0.6
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 0.6
+        },
+        {
+          "item_key": "kingsrock",
+          "usage_percent": 0.6
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.5
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.5
+        },
+        {
+          "item_key": "blackglasses",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 0.3
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "protean",
+          "usage_percent": 92.3
+        },
+        {
+          "ability_key": "overgrow",
+          "usage_percent": 7.6
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "jolly",
+          "usage_percent": 55.0
+        },
+        {
+          "nature_key": "adamant",
+          "usage_percent": 42.9
+        },
+        {
+          "nature_key": "naive",
+          "usage_percent": 0.5
+        },
+        {
+          "nature_key": "naughty",
+          "usage_percent": 0.4
+        },
+        {
+          "nature_key": "hasty",
+          "usage_percent": 0.4
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 54.2
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 10.8
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 7.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 5.6
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 4.1
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.7
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.2
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 0.8
+        },
+        {
+          "spread": {
+            "hp": 7,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 27
+          },
+          "usage_percent": 0.6
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 5
+        }
+      ]
+    },
+    "mimikyu": {
+      "moves": [
+        {
+          "move_key": "playrough",
+          "usage_percent": 95.4
+        },
+        {
+          "move_key": "shadowsneak",
+          "usage_percent": 92.1
+        },
+        {
+          "move_key": "swordsdance",
+          "usage_percent": 77.6
+        },
+        {
+          "move_key": "shadowclaw",
+          "usage_percent": 63.2
+        },
+        {
+          "move_key": "curse",
+          "usage_percent": 21.2
+        },
+        {
+          "move_key": "drainpunch",
+          "usage_percent": 13.1
+        },
+        {
+          "move_key": "trickroom",
+          "usage_percent": 5.9
+        },
+        {
+          "move_key": "willowisp",
+          "usage_percent": 5.1
+        },
+        {
+          "move_key": "painsplit",
+          "usage_percent": 4.6
+        },
+        {
+          "move_key": "destinybond",
+          "usage_percent": 3.5
+        }
+      ],
+      "items": [
+        {
+          "item_key": "spelltag",
+          "usage_percent": 47.2
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 19.0
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 9.3
+        },
+        {
+          "item_key": "fairyfeather",
+          "usage_percent": 7.8
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 3.0
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 2.7
+        },
+        {
+          "item_key": "mentalherb",
+          "usage_percent": 2.2
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 2.0
+        },
+        {
+          "item_key": "scopelens",
+          "usage_percent": 1.8
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 1.7
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "disguise",
+          "usage_percent": 100.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "adamant",
+          "usage_percent": 61.0
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 33.2
+        },
+        {
+          "nature_key": "brave",
+          "usage_percent": 1.7
+        },
+        {
+          "nature_key": "impish",
+          "usage_percent": 1.1
+        },
+        {
+          "nature_key": "timid",
+          "usage_percent": 0.6
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 25.0
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 23.3
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 9.3
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 5.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 4.0
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.0
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 2.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.2
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 1.1
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 5
+        }
+      ]
+    },
+    "hydreigon": {
+      "moves": [
+        {
+          "move_key": "darkpulse",
+          "usage_percent": 98.5
+        },
+        {
+          "move_key": "dracometeor",
+          "usage_percent": 94.5
+        },
+        {
+          "move_key": "uturn",
+          "usage_percent": 71.1
+        },
+        {
+          "move_key": "flamethrower",
+          "usage_percent": 49.5
+        },
+        {
+          "move_key": "fireblast",
+          "usage_percent": 31.1
+        },
+        {
+          "move_key": "flashcannon",
+          "usage_percent": 17.7
+        },
+        {
+          "move_key": "focusblast",
+          "usage_percent": 7.8
+        },
+        {
+          "move_key": "earthpower",
+          "usage_percent": 6.5
+        },
+        {
+          "move_key": "taunt",
+          "usage_percent": 5.6
+        },
+        {
+          "move_key": "nastyplot",
+          "usage_percent": 3.5
+        }
+      ],
+      "items": [
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 85.6
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 6.0
+        },
+        {
+          "item_key": "whiteherb",
+          "usage_percent": 1.8
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 1.1
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "blackglasses",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "habanberry",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "dragonfang",
+          "usage_percent": 0.3
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "levitate",
+          "usage_percent": 100.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "timid",
+          "usage_percent": 57.2
+        },
+        {
+          "nature_key": "modest",
+          "usage_percent": 40.9
+        },
+        {
+          "nature_key": "naive",
+          "usage_percent": 0.3
+        },
+        {
+          "nature_key": "hasty",
+          "usage_percent": 0.2
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 0.2
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 57.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 9.6
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 5.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 4.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 3.5
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.4
+        },
+        {
+          "spread": {
+            "hp": 8,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 26
+          },
+          "usage_percent": 0.6
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 0.6
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "aegislash",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "garchomp",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "gengar",
+          "rank": 5
+        }
+      ]
+    },
+    "lopunny": {
+      "moves": [
+        {
+          "move_key": "fakeout",
+          "usage_percent": 92.5
+        },
+        {
+          "move_key": "closecombat",
+          "usage_percent": 90.5
+        },
+        {
+          "move_key": "tripleaxel",
+          "usage_percent": 67.0
+        },
+        {
+          "move_key": "uturn",
+          "usage_percent": 66.9
+        },
+        {
+          "move_key": "machpunch",
+          "usage_percent": 12.3
+        },
+        {
+          "move_key": "facade",
+          "usage_percent": 10.3
+        },
+        {
+          "move_key": "swordsdance",
+          "usage_percent": 9.1
+        },
+        {
+          "move_key": "icepunch",
+          "usage_percent": 8.8
+        },
+        {
+          "move_key": "highjumpkick",
+          "usage_percent": 7.3
+        },
+        {
+          "move_key": "encore",
+          "usage_percent": 7.0
+        }
+      ],
+      "items": [
+        {
+          "item_key": "lopunnite",
+          "usage_percent": 99.0
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "kangaskhanite",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "chopleberry",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "limber",
+          "usage_percent": 73.6
+        },
+        {
+          "ability_key": "cutecharm",
+          "usage_percent": 22.1
+        },
+        {
+          "ability_key": "klutz",
+          "usage_percent": 4.1
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "jolly",
+          "usage_percent": 89.9
+        },
+        {
+          "nature_key": "adamant",
+          "usage_percent": 9.1
+        },
+        {
+          "nature_key": "timid",
+          "usage_percent": 0.2
+        },
+        {
+          "nature_key": "hasty",
+          "usage_percent": 0.1
+        },
+        {
+          "nature_key": "naive",
+          "usage_percent": 0.1
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 42.7
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 31.1
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 6.6
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 5.8
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.2
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 3.0
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.7
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 0.6
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 0.4
+        },
+        {
+          "spread": {
+            "hp": 3,
+            "atk": 31,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 0.2
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "aegislash",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 5
+        }
+      ]
+    },
+    "rotomwash": {
+      "moves": [
+        {
+          "move_key": "hydropump",
+          "usage_percent": 98.8
+        },
+        {
+          "move_key": "voltswitch",
+          "usage_percent": 93.5
+        },
+        {
+          "move_key": "willowisp",
+          "usage_percent": 65.3
+        },
+        {
+          "move_key": "thunderbolt",
+          "usage_percent": 58.2
+        },
+        {
+          "move_key": "trick",
+          "usage_percent": 27.5
+        },
+        {
+          "move_key": "discharge",
+          "usage_percent": 12.1
+        },
+        {
+          "move_key": "nastyplot",
+          "usage_percent": 8.1
+        },
+        {
+          "move_key": "thunderwave",
+          "usage_percent": 7.0
+        },
+        {
+          "move_key": "foulplay",
+          "usage_percent": 6.1
+        },
+        {
+          "move_key": "shadowball",
+          "usage_percent": 4.5
+        }
+      ],
+      "items": [
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 43.0
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 32.4
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 9.8
+        },
+        {
+          "item_key": "chestoberry",
+          "usage_percent": 4.0
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 3.5
+        },
+        {
+          "item_key": "magnet",
+          "usage_percent": 1.8
+        },
+        {
+          "item_key": "rindoberry",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "mysticwater",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.8
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "levitate",
+          "usage_percent": 100.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "modest",
+          "usage_percent": 47.0
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 28.2
+        },
+        {
+          "nature_key": "timid",
+          "usage_percent": 17.1
+        },
+        {
+          "nature_key": "calm",
+          "usage_percent": 5.8
+        },
+        {
+          "nature_key": "relaxed",
+          "usage_percent": 0.6
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 14.1
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 7.3
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 2,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 5.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 4.6
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 1,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 4.4
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 3.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 3.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 2.9
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 2.5
+        },
+        {
+          "spread": {
+            "hp": 10,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 24
+          },
+          "usage_percent": 2.2
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "scizor",
+          "rank": 5
+        }
+      ]
+    },
+    "glimmora": {
+      "moves": [
+        {
+          "move_key": "powergem",
+          "usage_percent": 86.3
+        },
+        {
+          "move_key": "stealthrock",
+          "usage_percent": 75.8
+        },
+        {
+          "move_key": "mortalspin",
+          "usage_percent": 61.5
+        },
+        {
+          "move_key": "mudshot",
+          "usage_percent": 47.4
+        },
+        {
+          "move_key": "sludgewave",
+          "usage_percent": 37.7
+        },
+        {
+          "move_key": "earthpower",
+          "usage_percent": 37.5
+        },
+        {
+          "move_key": "dazzlinggleam",
+          "usage_percent": 11.8
+        },
+        {
+          "move_key": "energyball",
+          "usage_percent": 10.1
+        },
+        {
+          "move_key": "sludgebomb",
+          "usage_percent": 4.9
+        },
+        {
+          "move_key": "memento",
+          "usage_percent": 4.9
+        }
+      ],
+      "items": [
+        {
+          "item_key": "focussash",
+          "usage_percent": 73.3
+        },
+        {
+          "item_key": "shucaberry",
+          "usage_percent": 1.5
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 1.3
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 1.1
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "passhoberry",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "mentalherb",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "toxicdebris",
+          "usage_percent": 97.9
+        },
+        {
+          "ability_key": "corrosion",
+          "usage_percent": 2.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "timid",
+          "usage_percent": 75.5
+        },
+        {
+          "nature_key": "modest",
+          "usage_percent": 17.1
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 3.0
+        },
+        {
+          "nature_key": "calm",
+          "usage_percent": 1.7
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 0.6
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 30.5
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 20.6
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 10.1
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 5.8
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.2
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 2.7
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.1
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 1.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 2,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 0.8
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "kingambit",
+          "rank": 5
+        }
+      ]
+    },
+    "dragonite": {
+      "moves": [
+        {
+          "move_key": "extremespeed",
+          "usage_percent": 74.6
+        },
+        {
+          "move_key": "dracometeor",
+          "usage_percent": 62.2
+        },
+        {
+          "move_key": "icebeam",
+          "usage_percent": 35.7
+        },
+        {
+          "move_key": "thunderbolt",
+          "usage_percent": 32.2
+        },
+        {
+          "move_key": "flamethrower",
+          "usage_percent": 30.5
+        },
+        {
+          "move_key": "airslash",
+          "usage_percent": 25.7
+        },
+        {
+          "move_key": "fireblast",
+          "usage_percent": 20.3
+        },
+        {
+          "move_key": "dragondance",
+          "usage_percent": 19.7
+        },
+        {
+          "move_key": "earthquake",
+          "usage_percent": 19.7
+        },
+        {
+          "move_key": "roost",
+          "usage_percent": 18.5
+        }
+      ],
+      "items": [
+        {
+          "item_key": "lumberry",
+          "usage_percent": 13.1
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 4.0
+        },
+        {
+          "item_key": "silkscarf",
+          "usage_percent": 2.0
+        },
+        {
+          "item_key": "whiteherb",
+          "usage_percent": 1.3
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 1.1
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.6
+        },
+        {
+          "item_key": "dragonfang",
+          "usage_percent": 0.6
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "multiscale",
+          "usage_percent": 98.0
+        },
+        {
+          "ability_key": "innerfocus",
+          "usage_percent": 1.8
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "modest",
+          "usage_percent": 55.5
+        },
+        {
+          "nature_key": "adamant",
+          "usage_percent": 17.3
+        },
+        {
+          "nature_key": "timid",
+          "usage_percent": 7.6
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 5.8
+        },
+        {
+          "nature_key": "quiet",
+          "usage_percent": 3.2
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 27.7
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 7.3
+        },
+        {
+          "spread": {
+            "hp": 31,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 1,
+            "spe": 1
+          },
+          "usage_percent": 5.1
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 4.9
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.2
+        },
+        {
+          "spread": {
+            "hp": 29,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 5
+          },
+          "usage_percent": 3.2
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 2.9
+        },
+        {
+          "spread": {
+            "hp": 31,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 3
+          },
+          "usage_percent": 2.9
+        },
+        {
+          "spread": {
+            "hp": 31,
+            "atk": 0,
+            "def": 15,
+            "spa": 20,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 1.3
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "kingambit",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "scizor",
+          "rank": 5
+        }
+      ]
+    },
+    "delphox": {
+      "moves": [
+        {
+          "move_key": "flamethrower",
+          "usage_percent": 87.6
+        },
+        {
+          "move_key": "psychic",
+          "usage_percent": 59.0
+        },
+        {
+          "move_key": "dazzlinggleam",
+          "usage_percent": 58.4
+        },
+        {
+          "move_key": "encore",
+          "usage_percent": 43.7
+        },
+        {
+          "move_key": "psyshock",
+          "usage_percent": 37.4
+        },
+        {
+          "move_key": "nastyplot",
+          "usage_percent": 32.2
+        },
+        {
+          "move_key": "substitute",
+          "usage_percent": 23.6
+        },
+        {
+          "move_key": "grassknot",
+          "usage_percent": 12.0
+        },
+        {
+          "move_key": "calmmind",
+          "usage_percent": 8.6
+        },
+        {
+          "move_key": "mysticalfire",
+          "usage_percent": 6.1
+        }
+      ],
+      "items": [
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 0.6
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "whiteherb",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "charizarditey",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "charcoal",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "gengarite",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "blaze",
+          "usage_percent": 92.0
+        },
+        {
+          "ability_key": "magician",
+          "usage_percent": 8.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "timid",
+          "usage_percent": 92.4
+        },
+        {
+          "nature_key": "modest",
+          "usage_percent": 6.5
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 0.2
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 0.2
+        },
+        {
+          "nature_key": "calm",
+          "usage_percent": 0.1
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 21.5
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 20.2
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 9.3
+        },
+        {
+          "spread": {
+            "hp": 9,
+            "atk": 0,
+            "def": 1,
+            "spa": 27,
+            "spd": 0,
+            "spe": 29
+          },
+          "usage_percent": 6.1
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 4.0
+        },
+        {
+          "spread": {
+            "hp": 5,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 29
+          },
+          "usage_percent": 3.5
+        },
+        {
+          "spread": {
+            "hp": 3,
+            "atk": 0,
+            "def": 0,
+            "spa": 31,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.2
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.9
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 2.7
+        },
+        {
+          "spread": {
+            "hp": 15,
+            "atk": 0,
+            "def": 1,
+            "spa": 18,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.8
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "meowscarada",
+          "rank": 5
+        }
+      ]
+    },
+    "meganium": {
+      "moves": [
+        {
+          "move_key": "solarbeam",
+          "usage_percent": 97.9
+        },
+        {
+          "move_key": "weatherball",
+          "usage_percent": 91.9
+        },
+        {
+          "move_key": "dazzlinggleam",
+          "usage_percent": 85.0
+        },
+        {
+          "move_key": "synthesis",
+          "usage_percent": 83.6
+        },
+        {
+          "move_key": "earthpower",
+          "usage_percent": 20.1
+        },
+        {
+          "move_key": "leechseed",
+          "usage_percent": 10.0
+        },
+        {
+          "move_key": "ancientpower",
+          "usage_percent": 3.4
+        },
+        {
+          "move_key": "encore",
+          "usage_percent": 1.5
+        },
+        {
+          "move_key": "trailblaze",
+          "usage_percent": 1.2
+        },
+        {
+          "move_key": "gigadrain",
+          "usage_percent": 1.2
+        }
+      ],
+      "items": [
+        {
+          "item_key": "leftovers",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "overgrow",
+          "usage_percent": 81.4
+        },
+        {
+          "ability_key": "leafguard",
+          "usage_percent": 18.6
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "modest",
+          "usage_percent": 84.3
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 6.0
+        },
+        {
+          "nature_key": "calm",
+          "usage_percent": 5.5
+        },
+        {
+          "nature_key": "timid",
+          "usage_percent": 3.0
+        },
+        {
+          "nature_key": "quiet",
+          "usage_percent": 0.5
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 41.9
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 4.5
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.2
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 20,
+            "spa": 0,
+            "spd": 14,
+            "spe": 0
+          },
+          "usage_percent": 3.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 2.9
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 1,
+            "spa": 29,
+            "spd": 1,
+            "spe": 3
+          },
+          "usage_percent": 1.3
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 1,
+            "spa": 1,
+            "spd": 23,
+            "spe": 9
+          },
+          "usage_percent": 1.3
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 26,
+            "spa": 7,
+            "spd": 0,
+            "spe": 1
+          },
+          "usage_percent": 1.2
+        },
+        {
+          "spread": {
+            "hp": 30,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 4
+          },
+          "usage_percent": 1.1
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "pelipper",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 5
+        }
+      ]
+    },
+    "basculegion": {
+      "moves": [
+        {
+          "move_key": "lastrespects",
+          "usage_percent": 99.8
+        },
+        {
+          "move_key": "wavecrash",
+          "usage_percent": 95.5
+        },
+        {
+          "move_key": "aquajet",
+          "usage_percent": 84.5
+        },
+        {
+          "move_key": "flipturn",
+          "usage_percent": 68.5
+        },
+        {
+          "move_key": "agility",
+          "usage_percent": 9.3
+        },
+        {
+          "move_key": "icefang",
+          "usage_percent": 7.3
+        },
+        {
+          "move_key": "headsmash",
+          "usage_percent": 6.5
+        },
+        {
+          "move_key": "liquidation",
+          "usage_percent": 4.9
+        },
+        {
+          "move_key": "waterfall",
+          "usage_percent": 4.8
+        },
+        {
+          "move_key": "substitute",
+          "usage_percent": 3.9
+        }
+      ],
+      "items": [
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 68.5
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 12.1
+        },
+        {
+          "item_key": "mysticwater",
+          "usage_percent": 11.3
+        },
+        {
+          "item_key": "spelltag",
+          "usage_percent": 3.9
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 1.2
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "colburberry",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "kasibberry",
+          "usage_percent": 0.2
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "adaptability",
+          "usage_percent": 85.4
+        },
+        {
+          "ability_key": "swiftswim",
+          "usage_percent": 13.8
+        },
+        {
+          "ability_key": "moldbreaker",
+          "usage_percent": 0.6
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "jolly",
+          "usage_percent": 53.2
+        },
+        {
+          "nature_key": "adamant",
+          "usage_percent": 44.9
+        },
+        {
+          "nature_key": "brave",
+          "usage_percent": 0.5
+        },
+        {
+          "nature_key": "naive",
+          "usage_percent": 0.2
+        },
+        {
+          "nature_key": "naughty",
+          "usage_percent": 0.2
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 48.0
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 16.8
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 6.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 3.9
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.2
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.0
+        },
+        {
+          "spread": {
+            "hp": 4,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 30
+          },
+          "usage_percent": 2.9
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.9
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 0.8
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 0.6
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "kingambit",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "scizor",
+          "rank": 5
+        }
+      ]
+    },
+    "gyarados": {
+      "moves": [
+        {
+          "move_key": "waterfall",
+          "usage_percent": 93.5
+        },
+        {
+          "move_key": "dragondance",
+          "usage_percent": 91.4
+        },
+        {
+          "move_key": "earthquake",
+          "usage_percent": 76.9
+        },
+        {
+          "move_key": "icefang",
+          "usage_percent": 45.0
+        },
+        {
+          "move_key": "crunch",
+          "usage_percent": 24.8
+        },
+        {
+          "move_key": "taunt",
+          "usage_percent": 21.2
+        },
+        {
+          "move_key": "powerwhip",
+          "usage_percent": 14.6
+        },
+        {
+          "move_key": "thunderwave",
+          "usage_percent": 3.0
+        },
+        {
+          "move_key": "avalanche",
+          "usage_percent": 2.5
+        }
+      ],
+      "items": [
+        {
+          "item_key": "gyaradosite",
+          "usage_percent": 77.4
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 7.8
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 6.5
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 3.2
+        },
+        {
+          "item_key": "mysticwater",
+          "usage_percent": 1.1
+        },
+        {
+          "item_key": "wacanberry",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 0.5
+        },
+        {
+          "item_key": "chestoberry",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "kingsrock",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 0.3
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "intimidate",
+          "usage_percent": 97.0
+        },
+        {
+          "ability_key": "moxie",
+          "usage_percent": 3.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "jolly",
+          "usage_percent": 61.5
+        },
+        {
+          "nature_key": "adamant",
+          "usage_percent": 32.9
+        },
+        {
+          "nature_key": "impish",
+          "usage_percent": 4.0
+        },
+        {
+          "nature_key": "careful",
+          "usage_percent": 0.6
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 0.2
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 24.7
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 23.7
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 5.0
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.9
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.7
+        },
+        {
+          "spread": {
+            "hp": 5,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 29
+          },
+          "usage_percent": 2.4
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.7
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 1.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 1.2
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 1.2
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "kingambit",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "gengar",
+          "rank": 5
+        }
+      ]
+    },
+    "greninja": {
+      "moves": [
+        {
+          "move_key": "icebeam",
+          "usage_percent": 90.1
+        },
+        {
+          "move_key": "darkpulse",
+          "usage_percent": 67.8
+        },
+        {
+          "move_key": "sludgewave",
+          "usage_percent": 60.5
+        },
+        {
+          "move_key": "surf",
+          "usage_percent": 41.5
+        },
+        {
+          "move_key": "watershuriken",
+          "usage_percent": 38.2
+        }
+      ],
+      "items": [
+        {
+          "item_key": "focussash",
+          "usage_percent": 25.3
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 13.8
+        },
+        {
+          "item_key": "mysticwater",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "kingsrock",
+          "usage_percent": 0.6
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "lightball",
+          "usage_percent": 0.2
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "protean",
+          "usage_percent": 91.0
+        },
+        {
+          "ability_key": "torrent",
+          "usage_percent": 9.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "timid",
+          "usage_percent": 58.2
+        },
+        {
+          "nature_key": "modest",
+          "usage_percent": 20.7
+        },
+        {
+          "nature_key": "naive",
+          "usage_percent": 10.8
+        },
+        {
+          "nature_key": "hasty",
+          "usage_percent": 2.7
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 2.2
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 50.7
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 8.1
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 2,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 5.3
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 32
+          },
+          "usage_percent": 3.9
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 3.2
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 2.5
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.5
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 2.0
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 0,
+            "def": 1,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.6
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 2,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.6
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 4
+        }
+      ]
+    },
+    "venusaur": {
+      "moves": [
+        {
+          "move_key": "earthpower",
+          "usage_percent": 83.8
+        },
+        {
+          "move_key": "synthesis",
+          "usage_percent": 78.5
+        },
+        {
+          "move_key": "gigadrain",
+          "usage_percent": 71.9
+        },
+        {
+          "move_key": "sludgebomb",
+          "usage_percent": 52.0
+        },
+        {
+          "move_key": "leechseed",
+          "usage_percent": 45.5
+        },
+        {
+          "move_key": "sludgewave",
+          "usage_percent": 33.5
+        },
+        {
+          "move_key": "toxic",
+          "usage_percent": 6.9
+        },
+        {
+          "move_key": "sleeppowder",
+          "usage_percent": 6.0
+        },
+        {
+          "move_key": "acidspray",
+          "usage_percent": 4.0
+        },
+        {
+          "move_key": "energyball",
+          "usage_percent": 3.2
+        }
+      ],
+      "items": [
+        {
+          "item_key": "venusaurite",
+          "usage_percent": 93.8
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 1.8
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 1.1
+        },
+        {
+          "item_key": "miracleseed",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 0.4
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "poisonbarb",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "whiteherb",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "chlorophyll",
+          "usage_percent": 59.0
+        },
+        {
+          "ability_key": "overgrow",
+          "usage_percent": 41.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "calm",
+          "usage_percent": 45.5
+        },
+        {
+          "nature_key": "modest",
+          "usage_percent": 30.5
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 20.7
+        },
+        {
+          "nature_key": "timid",
+          "usage_percent": 1.2
+        },
+        {
+          "nature_key": "quiet",
+          "usage_percent": 0.4
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 17,
+            "spa": 0,
+            "spd": 4,
+            "spe": 13
+          },
+          "usage_percent": 10.1
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 0,
+            "spd": 32,
+            "spe": 0
+          },
+          "usage_percent": 8.6
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 5.8
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 2,
+            "spd": 32,
+            "spe": 0
+          },
+          "usage_percent": 4.4
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 4.3
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 32,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 3.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 2.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 32,
+            "spe": 2
+          },
+          "usage_percent": 1.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 4,
+            "spa": 0,
+            "spd": 30,
+            "spe": 0
+          },
+          "usage_percent": 1.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 2,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 1.5
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "hydreigon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "aegislash",
+          "rank": 5
+        }
+      ]
+    },
+    "kangaskhan": {
+      "moves": [
+        {
+          "move_key": "fakeout",
+          "usage_percent": 91.9
+        },
+        {
+          "move_key": "suckerpunch",
+          "usage_percent": 84.9
+        },
+        {
+          "move_key": "earthquake",
+          "usage_percent": 78.5
+        },
+        {
+          "move_key": "icepunch",
+          "usage_percent": 64.1
+        },
+        {
+          "move_key": "doubleedge",
+          "usage_percent": 42.9
+        },
+        {
+          "move_key": "firepunch",
+          "usage_percent": 12.0
+        },
+        {
+          "move_key": "drainpunch",
+          "usage_percent": 8.6
+        },
+        {
+          "move_key": "bodyslam",
+          "usage_percent": 4.4
+        },
+        {
+          "move_key": "thunderpunch",
+          "usage_percent": 2.5
+        },
+        {
+          "move_key": "rocktomb",
+          "usage_percent": 1.6
+        }
+      ],
+      "items": [
+        {
+          "item_key": "kangaskhanite",
+          "usage_percent": 98.9
+        },
+        {
+          "item_key": "silkscarf",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "lopunnite",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "scrappy",
+          "usage_percent": 89.6
+        },
+        {
+          "ability_key": "innerfocus",
+          "usage_percent": 9.0
+        },
+        {
+          "ability_key": "earlybird",
+          "usage_percent": 1.3
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "adamant",
+          "usage_percent": 86.6
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 11.3
+        },
+        {
+          "nature_key": "naughty",
+          "usage_percent": 0.3
+        },
+        {
+          "nature_key": "brave",
+          "usage_percent": 0.3
+        },
+        {
+          "nature_key": "impish",
+          "usage_percent": 0.3
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 27,
+            "atk": 32,
+            "def": 5,
+            "spa": 0,
+            "spd": 1,
+            "spe": 1
+          },
+          "usage_percent": 23.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 10.3
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 8.3
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 1,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 6.6
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 1,
+            "spe": 32
+          },
+          "usage_percent": 4.8
+        },
+        {
+          "spread": {
+            "hp": 31,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 3
+          },
+          "usage_percent": 3.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 32,
+            "def": 2,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 3.5
+        },
+        {
+          "spread": {
+            "hp": 27,
+            "atk": 32,
+            "def": 5,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 2.2
+        },
+        {
+          "spread": {
+            "hp": 27,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 7
+          },
+          "usage_percent": 1.7
+        },
+        {
+          "spread": {
+            "hp": 1,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 1.2
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "aegislash",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "gengar",
+          "rank": 5
+        }
+      ]
+    },
+    "umbreon": {
+      "moves": [
+        {
+          "move_key": "foulplay",
+          "usage_percent": 97.4
+        },
+        {
+          "move_key": "protect",
+          "usage_percent": 89.3
+        },
+        {
+          "move_key": "wish",
+          "usage_percent": 87.3
+        },
+        {
+          "move_key": "yawn",
+          "usage_percent": 76.8
+        },
+        {
+          "move_key": "toxic",
+          "usage_percent": 21.6
+        },
+        {
+          "move_key": "moonlight",
+          "usage_percent": 11.1
+        },
+        {
+          "move_key": "taunt",
+          "usage_percent": 3.2
+        },
+        {
+          "move_key": "detect",
+          "usage_percent": 1.7
+        },
+        {
+          "move_key": "batonpass",
+          "usage_percent": 1.7
+        },
+        {
+          "move_key": "snarl",
+          "usage_percent": 1.5
+        }
+      ],
+      "items": [
+        {
+          "item_key": "leftovers",
+          "usage_percent": 92.4
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 3.7
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 1.1
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 0.6
+        },
+        {
+          "item_key": "mentalherb",
+          "usage_percent": 0.6
+        },
+        {
+          "item_key": "blackglasses",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "chopleberry",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "roseliberry",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "chestoberry",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "innerfocus",
+          "usage_percent": 71.5
+        },
+        {
+          "ability_key": "synchronize",
+          "usage_percent": 28.3
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "bold",
+          "usage_percent": 57.2
+        },
+        {
+          "nature_key": "impish",
+          "usage_percent": 23.0
+        },
+        {
+          "nature_key": "calm",
+          "usage_percent": 9.1
+        },
+        {
+          "nature_key": "careful",
+          "usage_percent": 7.0
+        },
+        {
+          "nature_key": "relaxed",
+          "usage_percent": 2.0
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 2,
+            "spe": 0
+          },
+          "usage_percent": 39.2
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 1,
+            "spe": 1
+          },
+          "usage_percent": 13.0
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 2,
+            "spa": 0,
+            "spd": 32,
+            "spe": 0
+          },
+          "usage_percent": 5.1
+        },
+        {
+          "spread": {
+            "hp": 31,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 3,
+            "spe": 0
+          },
+          "usage_percent": 4.6
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 1,
+            "spe": 0
+          },
+          "usage_percent": 4.6
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 4.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 2.2
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 30,
+            "spa": 0,
+            "spd": 4,
+            "spe": 0
+          },
+          "usage_percent": 1.5
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 20,
+            "spa": 0,
+            "spd": 14,
+            "spe": 0
+          },
+          "usage_percent": 1.2
+        },
+        {
+          "spread": {
+            "hp": 31,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 3
+          },
+          "usage_percent": 1.1
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "gengar",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "scizor",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 5
+        }
+      ]
+    },
+    "rotomheat": {
+      "moves": [
+        {
+          "move_key": "overheat",
+          "usage_percent": 98.5
+        },
+        {
+          "move_key": "voltswitch",
+          "usage_percent": 94.0
+        },
+        {
+          "move_key": "willowisp",
+          "usage_percent": 66.0
+        },
+        {
+          "move_key": "thunderbolt",
+          "usage_percent": 50.9
+        },
+        {
+          "move_key": "trick",
+          "usage_percent": 34.5
+        },
+        {
+          "move_key": "discharge",
+          "usage_percent": 10.3
+        },
+        {
+          "move_key": "foulplay",
+          "usage_percent": 8.6
+        },
+        {
+          "move_key": "thunderwave",
+          "usage_percent": 7.3
+        },
+        {
+          "move_key": "nastyplot",
+          "usage_percent": 5.8
+        },
+        {
+          "move_key": "shadowball",
+          "usage_percent": 5.4
+        }
+      ],
+      "items": [
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 42.0
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 33.7
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 7.4
+        },
+        {
+          "item_key": "whiteherb",
+          "usage_percent": 6.4
+        },
+        {
+          "item_key": "chestoberry",
+          "usage_percent": 1.7
+        },
+        {
+          "item_key": "magnet",
+          "usage_percent": 1.7
+        },
+        {
+          "item_key": "passhoberry",
+          "usage_percent": 1.5
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 1.3
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 1.0
+        },
+        {
+          "item_key": "charcoal",
+          "usage_percent": 0.8
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "levitate",
+          "usage_percent": 100.0
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "modest",
+          "usage_percent": 44.7
+        },
+        {
+          "nature_key": "timid",
+          "usage_percent": 29.1
+        },
+        {
+          "nature_key": "bold",
+          "usage_percent": 17.6
+        },
+        {
+          "nature_key": "calm",
+          "usage_percent": 6.8
+        },
+        {
+          "nature_key": "relaxed",
+          "usage_percent": 0.4
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 20.7
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 7.4
+        },
+        {
+          "spread": {
+            "hp": 32,
+            "atk": 0,
+            "def": 32,
+            "spa": 0,
+            "spd": 0,
+            "spe": 2
+          },
+          "usage_percent": 3.9
+        },
+        {
+          "spread": {
+            "hp": 10,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 24
+          },
+          "usage_percent": 3.4
+        },
+        {
+          "spread": {
+            "hp": 26,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 0
+          },
+          "usage_percent": 3.2
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "scizor",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "lopunny",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 5
+        }
+      ]
+    },
+    "tyranitar": {
+      "moves": [
+        {
+          "move_key": "knockoff",
+          "usage_percent": 68.0
+        },
+        {
+          "move_key": "stoneedge",
+          "usage_percent": 50.7
+        },
+        {
+          "move_key": "earthquake",
+          "usage_percent": 48.7
+        },
+        {
+          "move_key": "stealthrock",
+          "usage_percent": 39.2
+        },
+        {
+          "move_key": "dragondance",
+          "usage_percent": 31.6
+        },
+        {
+          "move_key": "icepunch",
+          "usage_percent": 24.1
+        },
+        {
+          "move_key": "crunch",
+          "usage_percent": 20.8
+        },
+        {
+          "move_key": "rocktomb",
+          "usage_percent": 15.8
+        },
+        {
+          "move_key": "rockslide",
+          "usage_percent": 14.5
+        },
+        {
+          "move_key": "lowkick",
+          "usage_percent": 10.6
+        }
+      ],
+      "items": [
+        {
+          "item_key": "tyranitarite",
+          "usage_percent": 45.5
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 16.2
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 11.1
+        },
+        {
+          "item_key": "chopleberry",
+          "usage_percent": 6.1
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 5.1
+        },
+        {
+          "item_key": "chestoberry",
+          "usage_percent": 4.4
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 3.2
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 1.6
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 1.6
+        },
+        {
+          "item_key": "shucaberry",
+          "usage_percent": 1.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "sandstream",
+          "usage_percent": 99.5
+        },
+        {
+          "ability_key": "unnerve",
+          "usage_percent": 0.4
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "adamant",
+          "usage_percent": 43.2
+        },
+        {
+          "nature_key": "careful",
+          "usage_percent": 27.2
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 20.7
+        },
+        {
+          "nature_key": "impish",
+          "usage_percent": 4.4
+        },
+        {
+          "nature_key": "sassy",
+          "usage_percent": 1.0
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 14.1
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "rotom",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 5
+        }
+      ]
+    },
+    "sneasler": {
+      "moves": [
+        {
+          "move_key": "closecombat",
+          "usage_percent": 98.5
+        },
+        {
+          "move_key": "direclaw",
+          "usage_percent": 97.1
+        },
+        {
+          "move_key": "fakeout",
+          "usage_percent": 52.7
+        },
+        {
+          "move_key": "uturn",
+          "usage_percent": 33.4
+        },
+        {
+          "move_key": "throatchop",
+          "usage_percent": 22.6
+        },
+        {
+          "move_key": "swordsdance",
+          "usage_percent": 20.1
+        },
+        {
+          "move_key": "shadowclaw",
+          "usage_percent": 14.1
+        },
+        {
+          "move_key": "acrobatics",
+          "usage_percent": 10.3
+        },
+        {
+          "move_key": "taunt",
+          "usage_percent": 9.3
+        },
+        {
+          "move_key": "rockslide",
+          "usage_percent": 5.0
+        }
+      ],
+      "items": [
+        {
+          "item_key": "focussash",
+          "usage_percent": 41.7
+        },
+        {
+          "item_key": "whiteherb",
+          "usage_percent": 30.2
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 8.8
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 8.1
+        },
+        {
+          "item_key": "kingsrock",
+          "usage_percent": 2.7
+        },
+        {
+          "item_key": "lightball",
+          "usage_percent": 2.2
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 1.2
+        },
+        {
+          "item_key": "blackbelt",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "shucaberry",
+          "usage_percent": 0.8
+        },
+        {
+          "item_key": "poisonbarb",
+          "usage_percent": 0.6
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "unburden",
+          "usage_percent": 64.5
+        },
+        {
+          "ability_key": "poisontouch",
+          "usage_percent": 35.0
+        },
+        {
+          "ability_key": "pressure",
+          "usage_percent": 0.5
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "adamant",
+          "usage_percent": 57.5
+        },
+        {
+          "nature_key": "jolly",
+          "usage_percent": 38.2
+        },
+        {
+          "nature_key": "naughty",
+          "usage_percent": 1.2
+        },
+        {
+          "nature_key": "lonely",
+          "usage_percent": 0.8
+        },
+        {
+          "nature_key": "naive",
+          "usage_percent": 0.6
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 46.2
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 11.6
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 7.6
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 4.5
+        },
+        {
+          "spread": {
+            "hp": 0,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 4.0
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "archaludon",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 5
+        }
+      ]
+    },
+    "lucario": {
+      "moves": [
+        {
+          "move_key": "closecombat",
+          "usage_percent": 74.0
+        },
+        {
+          "move_key": "bulletpunch",
+          "usage_percent": 64.0
+        },
+        {
+          "move_key": "swordsdance",
+          "usage_percent": 58.5
+        },
+        {
+          "move_key": "meteormash",
+          "usage_percent": 29.5
+        },
+        {
+          "move_key": "earthquake",
+          "usage_percent": 25.6
+        },
+        {
+          "move_key": "vacuumwave",
+          "usage_percent": 21.1
+        },
+        {
+          "move_key": "flashcannon",
+          "usage_percent": 21.1
+        },
+        {
+          "move_key": "extremespeed",
+          "usage_percent": 20.6
+        },
+        {
+          "move_key": "aurasphere",
+          "usage_percent": 19.1
+        },
+        {
+          "move_key": "nastyplot",
+          "usage_percent": 15.5
+        }
+      ],
+      "items": [
+        {
+          "item_key": "lucarionite",
+          "usage_percent": 92.5
+        },
+        {
+          "item_key": "focussash",
+          "usage_percent": 4.4
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 1.1
+        },
+        {
+          "item_key": "blackbelt",
+          "usage_percent": 0.3
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "quickclaw",
+          "usage_percent": 0.2
+        },
+        {
+          "item_key": "whiteherb",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "silkscarf",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 0.1
+        },
+        {
+          "item_key": "scizorite",
+          "usage_percent": 0.1
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "innerfocus",
+          "usage_percent": 82.6
+        },
+        {
+          "ability_key": "justified",
+          "usage_percent": 9.1
+        },
+        {
+          "ability_key": "steadfast",
+          "usage_percent": 8.1
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "jolly",
+          "usage_percent": 61.4
+        },
+        {
+          "nature_key": "timid",
+          "usage_percent": 18.2
+        },
+        {
+          "nature_key": "adamant",
+          "usage_percent": 12.1
+        },
+        {
+          "nature_key": "modest",
+          "usage_percent": 3.4
+        },
+        {
+          "nature_key": "naive",
+          "usage_percent": 2.4
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 45.0
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 14.6
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "garchomp",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "charizard",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "meowscarada",
+          "rank": 5
+        }
+      ]
+    },
+    "dragapult": {
+      "moves": [
+        {
+          "move_key": "dragondarts",
+          "usage_percent": 60.0
+        },
+        {
+          "move_key": "uturn",
+          "usage_percent": 49.4
+        },
+        {
+          "move_key": "dracometeor",
+          "usage_percent": 33.0
+        },
+        {
+          "move_key": "phantomforce",
+          "usage_percent": 32.9
+        },
+        {
+          "move_key": "willowisp",
+          "usage_percent": 32.7
+        },
+        {
+          "move_key": "shadowball",
+          "usage_percent": 29.8
+        },
+        {
+          "move_key": "suckerpunch",
+          "usage_percent": 29.5
+        },
+        {
+          "move_key": "flamethrower",
+          "usage_percent": 16.8
+        },
+        {
+          "move_key": "thunderbolt",
+          "usage_percent": 16.2
+        },
+        {
+          "move_key": "dragondance",
+          "usage_percent": 16.2
+        }
+      ],
+      "items": [
+        {
+          "item_key": "focussash",
+          "usage_percent": 41.2
+        },
+        {
+          "item_key": "choicescarf",
+          "usage_percent": 25.2
+        },
+        {
+          "item_key": "dragonfang",
+          "usage_percent": 7.1
+        },
+        {
+          "item_key": "lumberry",
+          "usage_percent": 6.6
+        },
+        {
+          "item_key": "whiteherb",
+          "usage_percent": 4.3
+        },
+        {
+          "item_key": "leftovers",
+          "usage_percent": 3.9
+        },
+        {
+          "item_key": "sitrusberry",
+          "usage_percent": 2.4
+        },
+        {
+          "item_key": "spelltag",
+          "usage_percent": 1.6
+        },
+        {
+          "item_key": "brightpowder",
+          "usage_percent": 1.6
+        },
+        {
+          "item_key": "kingsrock",
+          "usage_percent": 1.2
+        }
+      ],
+      "abilities": [
+        {
+          "ability_key": "infiltrator",
+          "usage_percent": 63.9
+        },
+        {
+          "ability_key": "clearbody",
+          "usage_percent": 23.7
+        },
+        {
+          "ability_key": "cursedbody",
+          "usage_percent": 12.3
+        }
+      ],
+      "natures": [
+        {
+          "nature_key": "jolly",
+          "usage_percent": 26.2
+        },
+        {
+          "nature_key": "timid",
+          "usage_percent": 25.6
+        },
+        {
+          "nature_key": "adamant",
+          "usage_percent": 18.7
+        },
+        {
+          "nature_key": "modest",
+          "usage_percent": 10.1
+        },
+        {
+          "nature_key": "naive",
+          "usage_percent": 9.8
+        }
+      ],
+      "ev_spreads": [
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 32,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 23.2
+        },
+        {
+          "spread": {
+            "hp": 2,
+            "atk": 0,
+            "def": 0,
+            "spa": 32,
+            "spd": 0,
+            "spe": 32
+          },
+          "usage_percent": 16.7
+        }
+      ],
+      "teammates": [
+        {
+          "pokemon_key": "charizard",
+          "rank": 1
+        },
+        {
+          "pokemon_key": "garchomp",
+          "rank": 2
+        },
+        {
+          "pokemon_key": "primarina",
+          "rank": 3
+        },
+        {
+          "pokemon_key": "corviknight",
+          "rank": 4
+        },
+        {
+          "pokemon_key": "hippowdon",
+          "rank": 5
+        }
+      ]
+    }
+  }
+}

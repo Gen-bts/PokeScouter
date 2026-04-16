@@ -13,6 +13,12 @@ logger = logging.getLogger(__name__)
 DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data"
 SNAPSHOT_DIR = DATA_DIR / "showdown" / "champions-bss-reg-ma"
 
+# 使用率データソースのレジストリ: ソース名 → data/ からの相対パス
+_USAGE_SOURCES: dict[str, str] = {
+    "pikalytics": "pikalytics/championspreview.json",
+    "champions_stats": "champions_stats/single.json",
+}
+
 _POKEMON_FORM_NAME_OVERRIDES_JA: dict[str, str] = {
     "rotomheat": "ヒート{base}",
     "rotomwash": "ウォッシュ{base}",
@@ -71,7 +77,8 @@ class GameData:
         self.format: dict[str, Any] = {}
         self.season: dict[str, Any] = {}
         self.names: dict[str, dict[str, Any]] = {}
-        self._fuzzy_cache: dict[str, list[tuple[str, str, str]]] = {}
+        self.usage: dict[str, Any] = {}
+        self._fuzzy_cache: dict[str, list[tuple[str, str, str, str]]] = {}
         self._exact_cache: dict[str, dict[str, tuple[str, str]]] = {}
         self._mega_stone_map: dict[str, dict[str, Any]] = {}
         self._pokemon_mega_forms: dict[str, list[dict[str, Any]]] = {}
@@ -79,6 +86,8 @@ class GameData:
         self._localized_pokemon_name_cache: dict[str, dict[str, str]] = {}
         self._pokemon_key_to_name_cache: dict[str, dict[str, str]] = {}
         self._pokemon_name_choices_cache: dict[str, dict[str, str]] = {}
+        self._ability_desc_ja: dict[str, str] | None = None
+        self._move_desc_ja: dict[str, str] | None = None
 
     @staticmethod
     def legacy_value(value: str | int | None) -> Any:
@@ -89,7 +98,7 @@ class GameData:
         except (TypeError, ValueError):
             return value
 
-    def load(self) -> None:
+    def load(self, *, usage_source: str = "pikalytics") -> None:
         names_dir = self._data_dir / "names"
 
         logger.info("Showdown snapshot 読み込み中...")
@@ -112,8 +121,170 @@ class GameData:
         for lang_file in names_dir.glob("*.json"):
             self.names[lang_file.stem] = _load_json(lang_file)
 
+        self._merge_champions_move_names_ja()
+        self._merge_champions_ability_names_ja()
+
+        self._load_usage_data(usage_source)
         self._build_mega_stone_map()
         self._log_stats()
+
+    def _load_usage_data(self, usage_source: str) -> None:
+        """使用率データを読み込む.
+
+        Args:
+            usage_source: _USAGE_SOURCES のキー名
+        """
+        rel_path = _USAGE_SOURCES.get(usage_source)
+        if rel_path is None:
+            logger.warning(
+                "未知の usage_source: %s (pikalytics にフォールバック)",
+                usage_source,
+            )
+            rel_path = _USAGE_SOURCES["pikalytics"]
+        path = self._data_dir / rel_path
+        raw = _load_json(path)
+        self.usage = raw.get("pokemon", {}) if raw else {}
+        if self.usage:
+            logger.info(
+                "使用率データ読み込み完了: source=%s, %d 件",
+                usage_source,
+                len(self.usage),
+            )
+
+    def get_usage_moves(
+        self,
+        pokemon_key: str,
+        limit: int = 10,
+    ) -> list[dict[str, Any]]:
+        """ポケモンの使用率上位技を返す.
+
+        Args:
+            pokemon_key: Showdown key
+            limit: 返す技の最大数
+
+        Returns:
+            [{"move_key": str, "usage_percent": float}, ...] (使用率降順)
+        """
+        entry = self.usage.get(pokemon_key)
+        # base_species_key でフォールバック
+        if entry is None:
+            pdata = self.get_pokemon_by_key(pokemon_key)
+            if pdata:
+                base_key = pdata.get("base_species_key", pokemon_key)
+                entry = self.usage.get(base_key)
+        if entry is None:
+            return []
+
+        moves: list[dict[str, Any]] = []
+        for m in entry.get("moves", []):
+            move_key = m.get("move_key", "")
+            if self.moves.get(move_key):
+                moves.append(m)
+        return moves[:limit]
+
+    def get_usage_data(self, pokemon_key: str) -> dict[str, Any] | None:
+        """ポケモンの使用率データ全体を返す."""
+        entry = self.usage.get(pokemon_key)
+        if entry is None:
+            pdata = self.get_pokemon_by_key(pokemon_key)
+            if pdata:
+                base_key = pdata.get("base_species_key", pokemon_key)
+                entry = self.usage.get(base_key)
+        return entry
+
+    def _merge_champions_move_names_ja(self) -> None:
+        """PokeAPI CSV 由来の不足分を names/ja.json の moves にマージする.
+
+        learnset 照合では ja 辞書に無い move_key はスキップされ、
+        「ハパーポス」→「ハイパーボイス」のようなマッチが成立しない。
+        """
+        path = self._data_dir / "champions_override" / "move_names_ja.json"
+        extra = _load_json(path)
+        moves_patch = extra.get("moves")
+        if not moves_patch:
+            return
+        ja = self.names.setdefault("ja", {})
+        target = ja.setdefault("moves", {})
+        target.update(moves_patch)
+        logger.info(
+            "champions_override/move_names_ja.json から moves を %d 件マージしました",
+            len(moves_patch),
+        )
+        self._fuzzy_cache.clear()
+        self._exact_cache.clear()
+
+    def _merge_champions_ability_names_ja(self) -> None:
+        """PokeAPI CSV 由来の不足分を names/ja.json の abilities にマージする."""
+        path = self._data_dir / "champions_override" / "ability_names_ja.json"
+        extra = _load_json(path)
+        abilities_patch = extra.get("abilities")
+        if not abilities_patch:
+            return
+        ja = self.names.setdefault("ja", {})
+        target = ja.setdefault("abilities", {})
+        target.update(abilities_patch)
+        logger.info(
+            "champions_override/ability_names_ja.json から abilities を %d 件マージしました",
+            len(abilities_patch),
+        )
+        self._fuzzy_cache.clear()
+        self._exact_cache.clear()
+
+    def _build_ability_desc_ja(self) -> dict[str, str]:
+        """showdown_key -> 日本語特性説明文の辞書を構築する."""
+        result: dict[str, str] = {}
+
+        # Layer 1: base/abilities.json の flavor_text_ja
+        base_abilities = _load_json(self._data_dir / "base" / "abilities.json")
+        for aid, adata in base_abilities.items():
+            if not isinstance(adata, dict) or "identifier" not in adata:
+                continue
+            flavor = adata.get("flavor_text_ja", "")
+            if flavor:
+                showdown_key = adata["identifier"].replace("-", "")
+                result[showdown_key] = flavor
+
+        # Layer 2: champions_override/ability_descs_ja.json（Layer 1 を上書き）
+        override = _load_json(
+            self._data_dir / "champions_override" / "ability_descs_ja.json",
+        )
+        result.update(override.get("ability_descs", {}))
+
+        return result
+
+    def get_ability_desc_ja(self, ability_key: str) -> str:
+        """指定された ability_key の日本語説明文を返す。無ければ空文字列。"""
+        if self._ability_desc_ja is None:
+            self._ability_desc_ja = self._build_ability_desc_ja()
+        return self._ability_desc_ja.get(ability_key, "")
+
+    def _build_move_desc_ja(self) -> dict[str, str]:
+        """showdown_key -> 日本語技説明文の辞書を構築する."""
+        result: dict[str, str] = {}
+
+        # Layer 1: base/moves.json の flavor_text_ja（存在する場合）
+        base_moves = _load_json(self._data_dir / "base" / "moves.json")
+        for mid, mdata in base_moves.items():
+            if not isinstance(mdata, dict) or "identifier" not in mdata:
+                continue
+            flavor = mdata.get("flavor_text_ja", "")
+            if flavor:
+                showdown_key = mdata["identifier"].replace("-", "")
+                result[showdown_key] = flavor
+
+        # Layer 2: champions_override/move_descs_ja.json（Layer 1 を上書き）
+        override = _load_json(
+            self._data_dir / "champions_override" / "move_descs_ja.json",
+        )
+        result.update(override.get("move_descs", {}))
+
+        return result
+
+    def get_move_desc_ja(self, move_key: str) -> str:
+        """指定された move_key の日本語説明文を返す。無ければ空文字列。"""
+        if self._move_desc_ja is None:
+            self._move_desc_ja = self._build_move_desc_ja()
+        return self._move_desc_ja.get(move_key, "")
 
     def _load_legacy_data(self) -> None:
         base_dir = self._data_dir / "base"
@@ -225,16 +396,28 @@ class GameData:
         self._mega_stone_map.clear()
         self._pokemon_mega_forms.clear()
 
+        # Step 1: required_item → mega pokemon key の逆引きマップ構築
+        # is_mega フィルタで Silvally/Genesect/ゲンシカイキ等を除外
+        item_to_mega: dict[str, str] = {}
+        for pokemon_key, pdata in self.pokemon.items():
+            if pokemon_key.startswith("_"):
+                continue
+            if pdata.get("is_mega") and pdata.get("required_item"):
+                item_to_mega.setdefault(pdata["required_item"], pokemon_key)
+
+        # Step 2: メガストーンアイテムから逆引きでマップ構築
         for item_key, item_data in self.items.items():
             if item_key.startswith("_"):
                 continue
-            mega_key = item_data.get("mega_stone")
-            if not mega_key:
+            if item_data.get("mega_stone") is None:
+                continue
+            mega_key = item_to_mega.get(item_key)
+            if mega_key is None:
                 continue
             mega_pokemon = self.pokemon.get(mega_key)
             if mega_pokemon is None:
                 continue
-            base_species_key = item_data.get("mega_evolves") or mega_pokemon.get("base_species_key")
+            base_species_key = mega_pokemon.get("base_species_key")
             entry = {
                 "item_key": item_key,
                 "mega_pokemon_key": mega_key,
@@ -260,6 +443,23 @@ class GameData:
             return []
         base_species_key = pdata.get("base_species_key", pokemon_key)
         return self._pokemon_mega_forms.get(base_species_key, [])
+
+    def resolve_mega_pokemon_key(
+        self, base_pokemon_key: str, mega_name_ja: str,
+    ) -> str | None:
+        """ベースポケモンキーと日本語メガ名からメガフォームの pokemon_key を解決する."""
+        forms = self.get_mega_forms_for_pokemon(base_pokemon_key)
+        if not forms:
+            return None
+        if len(forms) == 1:
+            return forms[0]["mega_pokemon_key"]
+        # 複数フォーム（X/Y）: 日本語名で照合
+        for form in forms:
+            localized = self.localize_pokemon_name(form["mega_pokemon_key"], "ja")
+            if localized == mega_name_ja:
+                return form["mega_pokemon_key"]
+        # fallback: 先頭を返す
+        return forms[0]["mega_pokemon_key"]
 
     def _build_base_species_to_pokemon_keys(self) -> dict[str, list[str]]:
         mapping: dict[str, list[str]] = {}
@@ -345,23 +545,48 @@ class GameData:
         "ゃ": "や", "ゅ": "ゆ", "ょ": "よ",
     })
 
+    _DAKUTEN_TABLE = str.maketrans({
+        # カタカナ濁音
+        "ガ": "カ", "ギ": "キ", "グ": "ク", "ゲ": "ケ", "ゴ": "コ",
+        "ザ": "サ", "ジ": "シ", "ズ": "ス", "ゼ": "セ", "ゾ": "ソ",
+        "ダ": "タ", "ヂ": "チ", "ヅ": "ツ", "デ": "テ", "ド": "ト",
+        "バ": "ハ", "ビ": "ヒ", "ブ": "フ", "ベ": "ヘ", "ボ": "ホ",
+        "ヴ": "ウ",
+        # カタカナ半濁音
+        "パ": "ハ", "ピ": "ヒ", "プ": "フ", "ペ": "ヘ", "ポ": "ホ",
+        # ひらがな濁音
+        "が": "か", "ぎ": "き", "ぐ": "く", "げ": "け", "ご": "こ",
+        "ざ": "さ", "じ": "し", "ず": "す", "ぜ": "せ", "ぞ": "そ",
+        "だ": "た", "ぢ": "ち", "づ": "つ", "で": "て", "ど": "と",
+        "ば": "は", "び": "ひ", "ぶ": "ふ", "べ": "へ", "ぼ": "ほ",
+        # ひらがな半濁音
+        "ぱ": "は", "ぴ": "ひ", "ぷ": "ふ", "ぺ": "へ", "ぽ": "ほ",
+    })
+
+    _DAKUTEN_TIEBREAK_MARGIN = 0.05
+
     @staticmethod
     def _ocr_normalize(text: str) -> str:
         return text.translate(GameData._OCR_NORMALIZE_TABLE)
 
+    @staticmethod
+    def _strip_dakuten(text: str) -> str:
+        return text.translate(GameData._DAKUTEN_TABLE)
+
     def _get_fuzzy_list(
         self, category: str, lang: str,
-    ) -> list[tuple[str, str, str]]:
+    ) -> list[tuple[str, str, str, str]]:
         cache_key = f"{lang}:{category}"
         if cache_key not in self._fuzzy_cache:
             lang_data = self.names.get(lang, {})
             entries = lang_data.get(category, {})
-            fuzzy_list: list[tuple[str, str, str]] = []
+            fuzzy_list: list[tuple[str, str, str, str]] = []
             exact_map: dict[str, tuple[str, str]] = {}
             for name, entry_key in entries.items():
                 key_str = str(entry_key)
                 norm = self._ocr_normalize(name)
-                fuzzy_list.append((name, norm, key_str))
+                dak_norm = self._strip_dakuten(norm)
+                fuzzy_list.append((name, norm, dak_norm, key_str))
                 exact_map[norm] = (name, key_str)
             self._fuzzy_cache[cache_key] = fuzzy_list
             self._exact_cache[cache_key] = exact_map
@@ -408,15 +633,37 @@ class GameData:
         best_name = ""
         best_key = ""
         best_ratio = 0.0
-        for orig_name, norm_name, entry_key in candidates:
+        near_count = 0
+        margin = self._DAKUTEN_TIEBREAK_MARGIN
+        for orig_name, norm_name, _dak_norm, entry_key in candidates:
             ratio = SequenceMatcher(None, norm_text, norm_name).ratio()
             if ratio > best_ratio:
                 best_ratio = ratio
                 best_name = orig_name
                 best_key = entry_key
+                near_count = 1
+            elif ratio >= best_ratio - margin:
+                near_count += 1
 
         if best_ratio < threshold:
             return None
+
+        if near_count > 1:
+            dak_text = self._strip_dakuten(norm_text)
+            best_dak_ratio = -1.0
+            best_primary = 0.0
+            for orig_name, norm_name, dak_norm, entry_key in candidates:
+                ratio = SequenceMatcher(None, norm_text, norm_name).ratio()
+                if ratio < best_ratio - margin:
+                    continue
+                dak_ratio = SequenceMatcher(None, dak_text, dak_norm).ratio()
+                if dak_ratio > best_dak_ratio or (
+                    dak_ratio == best_dak_ratio and ratio > best_primary
+                ):
+                    best_dak_ratio = dak_ratio
+                    best_primary = ratio
+                    best_name = orig_name
+                    best_key = entry_key
 
         result = {
             "matched_name": best_name,

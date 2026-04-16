@@ -87,6 +87,12 @@ class PokemonMatcherConfig(BaseModel):
     """ポケモン識別設定."""
 
     threshold: float = 0.60
+    margin_threshold: float = 0.03
+    """top-1 と top-2 の差。採用可否ではなく uncertain 判定に使う。"""
+    fallback_threshold: float = 0.50
+    """threshold 未満時のフォールバック閾値。この値以上ならフォールバック採用を検討。"""
+    fallback_margin_min: float = 0.01
+    """threshold 未満でフォールバック採用する際の最小マージン。"""
     model: str = "dinov2_vits14"
 
 
@@ -118,6 +124,16 @@ class RecognitionConfig(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# データソース設定
+# ---------------------------------------------------------------------------
+
+class DataConfig(BaseModel):
+    """データソース設定."""
+
+    usage_source: str = "pikalytics"
+
+
+# ---------------------------------------------------------------------------
 # ルート設定
 # ---------------------------------------------------------------------------
 
@@ -128,6 +144,7 @@ class Settings(BaseModel):
     calc_service: CalcServiceConfig = CalcServiceConfig()
     ocr: OcrConfig = OcrConfig()
     recognition: RecognitionConfig = RecognitionConfig()
+    data: DataConfig = DataConfig()
 
 
 # ---------------------------------------------------------------------------

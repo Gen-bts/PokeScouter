@@ -41,6 +41,9 @@ ocr_threshold = 0.5          # OCR ベース検出の閾値
 
 [recognition.pokemon_matcher]
 threshold = 0.60             # ポケモン識別の類似度閾値
+margin_threshold = 0.03      # top-1 と top-2 の最低スコア差（これ未満は uncertain=true）
+fallback_threshold = 0.50    # threshold 未満時のフォールバック閾値（この値以上なら採用検討）
+fallback_margin_min = 0.01   # threshold 未満でフォールバックする際の最小マージン
 model = "dinov2_vits14"      # DINOv2 モデル名（再起動必要）
 
 [recognition.party_register]
@@ -48,6 +51,15 @@ detection_debounce = 3       # 画面検出に必要な連続フレーム数
 detection_debounce_high_conf = 2
 high_confidence_threshold = 0.95
 detection_timeout_s = 60.0   # 画面検出タイムアウト（秒）
+
+# --- データソース設定 ---
+
+[data]
+# 使用率データの参照元。利用可能なソース:
+#   "pikalytics"       → data/pikalytics/championspreview.json
+#   "champions_stats"  → data/champions_stats/single.json
+# 新しいソースを追加する場合は docs/usage-data-sources.md を参照
+usage_source = "pikalytics"
 
 [recognition.scene_state]
 top_debounce = 3             # トップレベル遷移のデバウンス
