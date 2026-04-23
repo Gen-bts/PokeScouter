@@ -39,6 +39,17 @@ DAMAGE_CLASS_LABELS_JA: dict[str, str] = {
 }
 
 
+@router.get("/names")
+def get_move_names(lang: str = Query("ja")) -> dict:
+    """全技の key ↔ 名前マップを返す (autocomplete 用)."""
+    game_data = get_game_data()
+    lang_moves = game_data.names.get(lang, {}).get("moves", {})
+    # lang_moves は {name: key} 形式
+    moves = [{"key": str(key), "name": str(name)} for name, key in lang_moves.items()]
+    moves.sort(key=lambda m: m["name"])
+    return {"moves": moves}
+
+
 @router.get("/{move_key}")
 def get_move_detail(move_key: str, lang: str = Query("ja")) -> dict:
     """わざの詳細情報を返す."""

@@ -64,6 +64,30 @@ class CalcServiceClient:
             )
         return resp.json()
 
+    async def optimize_hbd(self, request: dict[str, Any]) -> dict[str, Any]:
+        """HBD 耐久指数最適化リクエストを calc-service に送信する."""
+        resp = await self._client.post("/optimize/hbd", json=request)
+        if resp.status_code != 200:
+            detail = resp.text[:200]
+            raise ValueError(
+                f"calc-service returned {resp.status_code}: {detail}",
+            )
+        return resp.json()
+
+    async def solve_nash(self, request: dict[str, Any]) -> dict[str, Any]:
+        """Nash 選出シミュレーションを calc-service に送信する (重い処理のため長めタイムアウト)."""
+        resp = await self._client.post(
+            "/nash/solve",
+            json=request,
+            timeout=30.0,  # Nash 20×20 は最悪ケースで数秒
+        )
+        if resp.status_code != 200:
+            detail = resp.text[:200]
+            raise ValueError(
+                f"calc-service returned {resp.status_code}: {detail}",
+            )
+        return resp.json()
+
     async def close(self) -> None:
         """HTTP クライアントを閉じる."""
         await self._client.aclose()

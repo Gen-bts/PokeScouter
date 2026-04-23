@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from app.damage.client import CalcServiceClient
 from app.damage.stat_estimator import (
+    calc_champions_stats,
     calc_opponent_defense_stats,
     calc_opponent_offense_stats,
 )
@@ -55,8 +56,10 @@ class FieldData(BaseModel):
 class DefenderPreset(BaseModel):
     """相手スロットごとの耐久配分・性格設定."""
 
-    defense_preset: str = "none"  # "none" / "h" / "hb" / "hd"
+    defense_preset: str = "none"  # "none" / "h" / "hb" / "hd" / "custom"
     nature_boost_stat: str | None = None  # null / "atk" / "def" / "spa" / "spd" / "spe"
+    # defense_preset == "custom" の場合の SP 配分（HBD 推定値）
+    custom_sp: dict[str, int] | None = None
 
 
 class DamageCalcRequest(BaseModel):
@@ -95,6 +98,41 @@ class IncomingDamageCalcRequest(BaseModel):
     # 明示選択用: 火力配分・性格補正
     attacker_offense_preset: str | None = None  # "none" / "a" / "c"
     attacker_nature_boost_stat: str | None = None  # null / "atk" / "def" / "spa" / "spd" / "spe"
+
+
+# --- /api/damage/test 用モデル（マニュアル入力） ---
+
+
+_VALID_STATS = {"atk", "def", "spa", "spd", "spe"}
+_VALID_STATUSES = {"slp", "psn", "brn", "frz", "par", "tox"}
+
+
+class TestSideInput(BaseModel):
+    """テスト画面の片側入力."""
+
+    pokemon_key: str
+    ev_allocation: dict[str, int]  # {hp,atk,def,spa,spd,spe} 各 0-32
+    nature_up: str | None = None  # "atk" / "def" / "spa" / "spd" / "spe" / null
+    nature_down: str | None = None  # 同上（up と同じ stat は不可）
+    ability_key: str | None = None
+    item_key: str | None = None
+    boosts: dict[str, int] | None = None  # -6..+6
+    status: str | None = None  # "slp"|"psn"|"brn"|"frz"|"par"|"tox"|null
+    is_mega_active: bool = False
+
+
+class TestAttackerInput(TestSideInput):
+    """テスト画面の攻撃側（技付き）."""
+
+    move_keys: list[str]  # 最大 4（空文字は無視）
+
+
+class DamageTestRequest(BaseModel):
+    """マニュアル入力ダメージ計算リクエスト."""
+
+    attacker: TestAttackerInput
+    defender: TestSideInput
+    field: FieldData | None = None
 
 
 # --- エンドポイント ---
@@ -147,8 +185,11 @@ async def calculate_damage(req: DamageCalcRequest) -> dict[str, Any]:
         )
         defense_preset = preset.defense_preset if preset else "none"
         nature_boost_stat = preset.nature_boost_stat if preset else None
+        custom_sp = preset.custom_sp if preset else None
 
-        stats = calc_opponent_defense_stats(base_stats, defense_preset, nature_boost_stat)
+        stats = calc_opponent_defense_stats(
+            base_stats, defense_preset, nature_boost_stat, custom_sp,
+        )
 
         # 特性（検出済みの場合は優先、未検出なら先頭の通常特性）
         detected_ability = (
@@ -329,9 +370,200 @@ async def calculate_incoming_damage(req: IncomingDamageCalcRequest) -> dict[str,
     return {"results": raw_results}
 
 
+@router.post("/damage/test")
+async def calculate_damage_test(req: DamageTestRequest) -> dict[str, Any]:
+    """マニュアル入力のダメージ計算（テスト画面用）.
+
+    EV（0-32）、性格（上昇 1.1 / 下降 0.9）、状態異常、メガ発動を明示的に受け取り、
+    Champions 式で実数値を算出して calc-service に送信する。
+    """
+    game_data = get_game_data()
+    calc_client: CalcServiceClient = get_calc_client()
+
+    # 攻撃側 / 防御側の解決
+    atk_key, atk_stats, atk_ability = _resolve_test_side(req.attacker, "攻撃", game_data)
+    def_key, def_stats, def_ability = _resolve_test_side(req.defender, "防御", game_data)
+
+    # 技の検証（空や不正 key は除外）
+    move_keys: list[str] = []
+    for move_key in req.attacker.move_keys:
+        if not move_key:
+            continue
+        if game_data.get_move_by_key(move_key) is not None:
+            move_keys.append(move_key)
+
+    if not move_keys:
+        return {
+            "results": [],
+            "attacker_stats": atk_stats,
+            "defender_stats": def_stats,
+            "attacker_pokemon_key": atk_key,
+            "defender_pokemon_key": def_key,
+        }
+
+    # calc-service リクエスト構築
+    attacker_payload = _build_test_payload(
+        atk_key, atk_stats, atk_ability, req.attacker,
+    )
+    defender_payload = _build_test_payload(
+        def_key, def_stats, def_ability, req.defender,
+    )
+
+    calc_request = {
+        "attacker": attacker_payload,
+        "defenders": [defender_payload],
+        "moves": [{"move_key": mk} for mk in move_keys],
+        "field": _build_field(req.field),
+    }
+
+    try:
+        result = await calc_client.calculate_damage(calc_request)
+    except Exception as e:
+        logger.error("calc-service 呼び出しエラー（テスト）: %s", e)
+        raise HTTPException(
+            status_code=503,
+            detail="ダメージ計算サービスに接続できません",
+        ) from e
+
+    # わざ名を日本語に差し替え
+    ja_moves = game_data.names.get("ja", {}).get("moves", {})
+    move_key_to_ja: dict[str, str] = {str(v): k for k, v in ja_moves.items()}
+
+    raw_results: list[dict[str, Any]] = result.get("results", [])
+    for dr in raw_results:
+        for move_res in dr.get("moves", []):
+            mk = move_res.get("move_key", "")
+            if mk in move_key_to_ja:
+                move_res["move_name"] = move_key_to_ja[mk]
+
+    return {
+        "results": raw_results,
+        "attacker_stats": atk_stats,
+        "defender_stats": def_stats,
+        "attacker_pokemon_key": atk_key,
+        "defender_pokemon_key": def_key,
+    }
+
+
 # ---------------------------------------------------------------------------
 # ヘルパー関数
 # ---------------------------------------------------------------------------
+
+
+def _resolve_test_side(
+    side: TestSideInput,
+    role: str,
+    game_data: Any,
+) -> tuple[str, dict[str, int], str | None]:
+    """テスト入力から (effective_pokemon_key, stats, ability_key) を解決する.
+
+    メガ発動時は effective_pokemon_key と base_stats を mega 側で差し替え、
+    特性も mega 固定特性で上書きする。
+    """
+    pokemon_data = game_data.get_pokemon_by_key(side.pokemon_key)
+    if not pokemon_data:
+        raise HTTPException(
+            status_code=404,
+            detail=f"{role}側ポケモンが見つかりません: {side.pokemon_key}",
+        )
+
+    effective_key = side.pokemon_key
+    effective_data = pokemon_data
+    mega_activated = False
+
+    if side.is_mega_active and side.item_key:
+        mega_info = game_data.get_mega_form_for_item(side.item_key)
+        if mega_info is not None:
+            mega_base = mega_info.get("base_species_key")
+            pokemon_base = pokemon_data.get("base_species_key", side.pokemon_key)
+            if not mega_base or mega_base == pokemon_base:
+                mega_key = mega_info.get("mega_pokemon_key")
+                if mega_key:
+                    mega_data = game_data.get_pokemon_by_key(mega_key)
+                    if mega_data is not None:
+                        effective_key = mega_key
+                        effective_data = mega_data
+                        mega_activated = True
+
+    base_stats = effective_data.get("base_stats", {})
+
+    # 性格補正の組み立て
+    if side.nature_up is not None and side.nature_up not in _VALID_STATS:
+        raise HTTPException(
+            status_code=422,
+            detail=f"{role}側の性格上昇ステータスが不正です: {side.nature_up}",
+        )
+    if side.nature_down is not None and side.nature_down not in _VALID_STATS:
+        raise HTTPException(
+            status_code=422,
+            detail=f"{role}側の性格下降ステータスが不正です: {side.nature_down}",
+        )
+    if (
+        side.nature_up is not None
+        and side.nature_down is not None
+        and side.nature_up == side.nature_down
+    ):
+        raise HTTPException(
+            status_code=422,
+            detail=f"{role}側の性格補正: 上昇と下降で同じステータスを指定できません",
+        )
+
+    nature_mods: dict[str, float] = {}
+    if side.nature_up:
+        nature_mods[side.nature_up] = 1.1
+    if side.nature_down:
+        nature_mods[side.nature_down] = 0.9
+
+    ev_allocation = {
+        "hp": int(side.ev_allocation.get("hp", 0)),
+        "atk": int(side.ev_allocation.get("atk", 0)),
+        "def": int(side.ev_allocation.get("def", 0)),
+        "spa": int(side.ev_allocation.get("spa", 0)),
+        "spd": int(side.ev_allocation.get("spd", 0)),
+        "spe": int(side.ev_allocation.get("spe", 0)),
+    }
+
+    stats = calc_champions_stats(base_stats, ev_allocation, nature_mods)
+
+    # 特性解決（メガ発動時は強制上書き）
+    if mega_activated:
+        mega_abilities = effective_data.get("abilities", {}).get("normal", [])
+        ability_key = mega_abilities[0] if mega_abilities else None
+    elif side.ability_key:
+        ability_key = side.ability_key
+    else:
+        normal_abilities = effective_data.get("abilities", {}).get("normal", [])
+        ability_key = normal_abilities[0] if normal_abilities else None
+
+    return effective_key, stats, ability_key
+
+
+def _build_test_payload(
+    pokemon_key: str,
+    stats: dict[str, int],
+    ability_key: str | None,
+    side: TestSideInput,
+) -> dict[str, Any]:
+    """calc-service に送る片側 payload を組み立てる."""
+    payload: dict[str, Any] = {
+        "pokemon_key": pokemon_key,
+        "stats": stats,
+        "ability_key": ability_key,
+        "item_key": side.item_key,
+    }
+    if side.boosts:
+        # 0 の key は削除（calc-service 側で意味を持たないため）
+        filtered = {k: v for k, v in side.boosts.items() if v != 0}
+        if filtered:
+            payload["boosts"] = filtered
+    if side.status:
+        if side.status not in _VALID_STATUSES:
+            raise HTTPException(
+                status_code=422,
+                detail=f"不正な状態異常です: {side.status}",
+            )
+        payload["status"] = side.status
+    return payload
 
 
 def _build_field(field: FieldData | None) -> dict[str, Any]:

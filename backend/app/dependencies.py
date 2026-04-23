@@ -157,8 +157,15 @@ def init_game_data() -> GameData:
 
     settings = get_settings()
     _game_data = GameData()
-    _game_data.load(usage_source=settings.data.usage_source)
+    _game_data.load(usage_priority=settings.data.get_effective_priority())
     return _game_data
+
+
+def reload_usage_data() -> None:
+    """使用率データのみホットリロード（サーバー再起動不要）."""
+    settings = get_settings()
+    game_data = get_game_data()
+    game_data.reload_usage(settings.data.get_effective_priority())
 
 
 def get_game_data() -> GameData:

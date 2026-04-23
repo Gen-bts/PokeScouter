@@ -127,10 +127,42 @@ class RecognitionConfig(BaseModel):
 # データソース設定
 # ---------------------------------------------------------------------------
 
+class UsagePriorityConfig(BaseModel):
+    """フィールドごとの使用率ソース優先順位."""
+
+    default: list[str] = ["pokechamdb", "pikalytics", "champions_stats", "yakkun"]
+    moves: list[str] | None = None
+    items: list[str] | None = None
+    abilities: list[str] | None = None
+    teammates: list[str] | None = None
+    natures: list[str] | None = None
+    ev_spreads: list[str] | None = None
+
+    def for_field(self, field: str) -> list[str]:
+        """指定フィールドの優先順位リストを返す（未設定なら default）."""
+        override = getattr(self, field, None)
+        return override if override is not None else self.default
+
+
 class DataConfig(BaseModel):
     """データソース設定."""
 
     usage_source: str = "pikalytics"
+    usage_priority: UsagePriorityConfig | None = None
+
+    def get_effective_priority(self) -> UsagePriorityConfig:
+        """実効的な優先順位設定を返す.
+
+        優先順: (1) usage_priority が明示指定されていればそれを使用。
+        (2) usage_source がユーザーによって明示指定されていれば単一ソースモード（後方互換）。
+        (3) いずれも未指定なら全登録ソースのデフォルト優先度を使用。
+        """
+        if self.usage_priority is not None:
+            return self.usage_priority
+        # usage_source を明示指定したユーザーは単一ソースを望んでいるとみなす（後方互換）
+        if "usage_source" in self.model_fields_set:
+            return UsagePriorityConfig(default=[self.usage_source])
+        return UsagePriorityConfig()
 
 
 # ---------------------------------------------------------------------------

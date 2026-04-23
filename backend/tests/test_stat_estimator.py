@@ -210,6 +210,25 @@ class TestCalcOpponentDefenseStats:
         none_stats = calc_opponent_defense_stats(DRAGONITE_BASE, "none")
         assert stats == none_stats
 
+    def test_custom_preset_with_sp_uses_given_allocation(self) -> None:
+        """defense_preset="custom" + custom_sp で与えた配分がそのまま使われる."""
+        custom_sp = {"hp": 32, "atk": 0, "def": 16, "spa": 0, "spd": 16, "spe": 2}
+        custom_stats = calc_opponent_defense_stats(
+            DRAGONITE_BASE, "custom", None, custom_sp=custom_sp,
+        )
+        hb_stats = calc_opponent_defense_stats(DRAGONITE_BASE, "hb")
+        hd_stats = calc_opponent_defense_stats(DRAGONITE_BASE, "hd")
+        # HB (def=32) と HD (spd=32) の中間になる
+        assert custom_stats["def"] < hb_stats["def"]
+        assert custom_stats["spd"] < hd_stats["spd"]
+        assert custom_stats["hp"] == hb_stats["hp"]
+
+    def test_custom_preset_without_sp_falls_back_to_none(self) -> None:
+        """defense_preset="custom" だが custom_sp=None なら "none" と同じになる."""
+        stats = calc_opponent_defense_stats(DRAGONITE_BASE, "custom", None, custom_sp=None)
+        none_stats = calc_opponent_defense_stats(DRAGONITE_BASE, "none")
+        assert stats == none_stats
+
 
 class TestCalcOpponentOffenseStats:
     """calc_opponent_offense_stats のテスト."""

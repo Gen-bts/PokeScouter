@@ -18,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.damage import router as damage_router
 from app.api.health import router as health_router
 from app.api.devtools import router as devtools_router
+from app.api.item import router as item_router
 from app.api.move import router as move_router
 from app.api.parties import router as parties_router
 from app.api.pokemon import router as pokemon_router
@@ -261,6 +262,7 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(damage_router)
 app.include_router(devtools_router)
+app.include_router(item_router)
 app.include_router(move_router)
 app.include_router(parties_router)
 app.include_router(pokemon_router)

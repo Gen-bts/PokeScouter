@@ -90,13 +90,16 @@ def _resolve_ability(game_data, ability_key: str, lang: str) -> dict[str, str]:
         effect = effect_ja or effect_en
     else:
         effect = effect_en
-    return {"name": name, "effect": effect, "effect_en": effect_en}
+    return {"key": ability_key, "name": name, "effect": effect, "effect_en": effect_en}
 
 
 @router.get("/names")
-def get_pokemon_names(lang: str = Query("ja")) -> dict:
+def get_pokemon_names(
+    lang: str = Query("ja"),
+    champions_only: bool = Query(False),
+) -> dict:
     game_data = get_game_data()
-    return {"pokemon": game_data.get_pokemon_name_choices(lang)}
+    return {"pokemon": game_data.get_pokemon_name_choices(lang, champions_only)}
 
 
 @router.get("/{pokemon_key}/detail")
@@ -185,6 +188,19 @@ def get_mega_form(
     if mega is None:
         raise HTTPException(status_code=404, detail="Not a mega stone or no mega form found")
 
+    # OCR誤マッチ等で渡された item_key がそのポケモンのメガストーンではないケースを弾く
+    if pokemon_key is not None:
+        mega_base = mega.get("base_species_key")
+        base_pdata = game_data.get_pokemon_by_key(pokemon_key)
+        pokemon_base = (
+            base_pdata.get("base_species_key", pokemon_key) if base_pdata else pokemon_key
+        )
+        if mega_base and pokemon_base and mega_base != pokemon_base:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Item {item_key} is not compatible with {pokemon_key}",
+            )
+
     mega_key = mega.get("mega_pokemon_key")
     mega_pdata = game_data.get_pokemon_by_key(mega_key) if mega_key else None
     if mega_pdata is None:
@@ -247,6 +263,11 @@ def get_pokemon_usage(pokemon_key: str, lang: str = Query("ja")) -> dict:
             "moves": [],
             "items": [],
             "abilities": [],
+            "natures": [],
+            "ev_spreads": [],
+            "teammates": [],
+            "base_stats": None,
+            "actual_stats": None,
         }
 
     ja_moves = game_data.names.get(lang, {}).get("moves", {})
@@ -255,6 +276,8 @@ def get_pokemon_usage(pokemon_key: str, lang: str = Query("ja")) -> dict:
     item_key_to_name: dict[str, str] = {str(v): k for k, v in ja_items.items()}
     ja_abilities = game_data.names.get(lang, {}).get("abilities", {})
     ability_key_to_name: dict[str, str] = {str(v): k for k, v in ja_abilities.items()}
+    ja_pokemon = game_data.names.get(lang, {}).get("pokemon", {})
+    pokemon_key_to_name: dict[str, str] = {str(v): k for k, v in ja_pokemon.items()}
 
     moves = []
     for m in usage.get("moves", []):
@@ -305,12 +328,41 @@ def get_pokemon_usage(pokemon_key: str, lang: str = Query("ja")) -> dict:
             "usage_percent": ab.get("usage_percent", 0),
         })
 
+    natures = []
+    for nt in usage.get("natures", []):
+        nk = nt.get("nature_key", "")
+        nature_data = game_data.natures.get(nk) or {}
+        natures.append({
+            "nature_key": nk,
+            "nature_name": nature_data.get("name", nk),
+            "plus": nature_data.get("plus"),
+            "minus": nature_data.get("minus"),
+            "usage_percent": nt.get("usage_percent", 0),
+        })
+
+    teammates = []
+    for tm in usage.get("teammates", []):
+        tk = tm.get("pokemon_key", "")
+        pdata = game_data.get_pokemon_by_key(tk) or {}
+        name = pokemon_key_to_name.get(tk) or pdata.get("name", tk)
+        teammates.append({
+            "pokemon_key": tk,
+            "pokemon_name": name,
+            "rank": tm.get("rank"),
+            "usage_percent": tm.get("usage_percent"),
+        })
+
     return {
         "pokemon_key": pokemon_key,
         "usage_percent": usage.get("usage_percent", 0),
         "moves": moves,
         "items": items,
         "abilities": abilities,
+        "natures": natures,
+        "ev_spreads": usage.get("ev_spreads", []),
+        "teammates": teammates,
+        "base_stats": usage.get("base_stats"),
+        "actual_stats": usage.get("actual_stats"),
     }
 
 
@@ -324,3 +376,80 @@ def get_type_consistency(
     keys = [x for x in pokemon_keys.split(",") if x.strip()]
     results = game_data.calc_type_consistency(keys)
     return {"results": results, "pokemon_count": len(keys)}
+
+
+@router.get("/{pokemon_key}/learnset")
+def get_pokemon_learnset(pokemon_key: str, lang: str = Query("ja")) -> dict:
+    """指定ポケモンが習得できる技の一覧を返す (技データ付き)."""
+    game_data = get_game_data()
+    pdata = game_data.get_pokemon_by_key(pokemon_key) or game_data.get_pokemon_by_id(pokemon_key)
+    if pdata is None:
+        raise HTTPException(status_code=404, detail="Pokemon not found")
+    resolved_key = pdata.get("pokemon_key") or pdata.get("key") or pokemon_key
+    move_keys = game_data.get_learnset(resolved_key)
+
+    ja_moves = game_data.names.get("ja", {}).get("moves", {})
+    en_moves = game_data.names.get("en", {}).get("moves", {})
+    ja_move_key_to_ja: dict[str, str] = {str(v): k for k, v in ja_moves.items()}
+    en_move_key_to_en: dict[str, str] = {str(v): k for k, v in en_moves.items()}
+
+    moves: list[dict] = []
+    for mk in move_keys:
+        mdata = game_data.get_move_by_key(mk)
+        if mdata is None:
+            continue
+        name_ja = ja_move_key_to_ja.get(mk)
+        name_en = en_move_key_to_en.get(mk) or mdata.get("name")
+        moves.append({
+            "move_key": mk,
+            "name": name_ja if lang == "ja" and name_ja else (name_en or mk),
+            "type": mdata.get("type"),
+            "damage_class": mdata.get("damage_class"),
+            "power": mdata.get("power"),
+            "accuracy": mdata.get("accuracy"),
+            "pp": mdata.get("pp"),
+            "priority": mdata.get("priority"),
+        })
+
+    return {
+        "pokemon_key": resolved_key,
+        "count": len(moves),
+        "moves": moves,
+    }
+
+
+@router.get("/by-move/{move_key}")
+def get_pokemon_by_move(move_key: str, lang: str = Query("ja")) -> dict:
+    """指定技を習得できるポケモンの一覧を返す (逆引き)."""
+    game_data = get_game_data()
+    mdata = game_data.get_move_by_key(move_key)
+    if mdata is None:
+        raise HTTPException(status_code=404, detail="Move not found")
+
+    ja_pokemon = game_data.names.get("ja", {}).get("pokemon", {})
+    en_pokemon = game_data.names.get("en", {}).get("pokemon", {})
+    ja_key_to_name: dict[str, str] = {str(v): k for k, v in ja_pokemon.items()}
+    en_key_to_name: dict[str, str] = {str(v): k for k, v in en_pokemon.items()}
+
+    matched: list[dict] = []
+    for pokemon_key, moves in game_data.learnsets.items():
+        if not isinstance(moves, list) or move_key not in moves:
+            continue
+        pdata = game_data.get_pokemon_by_key(pokemon_key)
+        if pdata is None:
+            continue
+        name_ja = ja_key_to_name.get(pokemon_key)
+        name_en = en_key_to_name.get(pokemon_key) or pdata.get("name", pokemon_key)
+        matched.append({
+            "pokemon_key": pokemon_key,
+            "name": name_ja if lang == "ja" and name_ja else (name_en or pokemon_key),
+            "types": pdata.get("types", []),
+        })
+
+    matched.sort(key=lambda m: m["name"])
+
+    return {
+        "move_key": move_key,
+        "count": len(matched),
+        "pokemon": matched,
+    }

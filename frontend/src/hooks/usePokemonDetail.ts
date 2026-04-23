@@ -15,8 +15,8 @@ export interface PokemonDetail {
     spe: number;
   };
   abilities: {
-    normal: Array<{ name: string; effect: string; effect_en?: string }>;
-    hidden: { name: string; effect: string; effect_en?: string } | null;
+    normal: Array<{ key?: string; name: string; effect: string; effect_en?: string }>;
+    hidden: { key?: string; name: string; effect: string; effect_en?: string } | null;
   };
   type_effectiveness: TypeEffectivenessData;
   mega_forms: MegaFormDetail[];

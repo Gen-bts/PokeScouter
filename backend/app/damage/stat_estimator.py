@@ -206,18 +206,30 @@ def calc_opponent_defense_stats(
     base_stats: dict[str, int],
     defense_preset: str,
     nature_boost_stat: str | None = None,
+    custom_sp: dict[str, int] | None = None,
 ) -> dict[str, int]:
     """相手の耐久配分プリセットから実数値を算出する（与ダメージ計算用）.
 
     Args:
         base_stats: 種族値 {hp, atk, def, spa, spd, spe}
-        defense_preset: 耐久配分プリセット ("none" / "h" / "hb" / "hd")
+        defense_preset: 耐久配分プリセット ("none" / "h" / "hb" / "hd" / "custom")
         nature_boost_stat: 性格で 1.1 倍にするステータス (null / "atk" / "def" / "spa" / "spd" / "spe")
+        custom_sp: defense_preset == "custom" の場合に使う SP 配分 (HBD 推定値). None なら "none" にフォールバック
 
     Returns:
         実数値 {hp, atk, def, spa, spd, spe}
     """
-    stat_points = DEFENSE_PRESETS.get(defense_preset, DEFENSE_PRESETS["none"])
+    if defense_preset == "custom" and custom_sp is not None:
+        stat_points = {
+            "hp": int(custom_sp.get("hp", 0)),
+            "atk": int(custom_sp.get("atk", 0)),
+            "def": int(custom_sp.get("def", 0)),
+            "spa": int(custom_sp.get("spa", 0)),
+            "spd": int(custom_sp.get("spd", 0)),
+            "spe": int(custom_sp.get("spe", 0)),
+        }
+    else:
+        stat_points = DEFENSE_PRESETS.get(defense_preset, DEFENSE_PRESETS["none"])
     nature_mods: dict[str, float] | None = None
     if nature_boost_stat and nature_boost_stat in NATURE_BOOST_STATS:
         nature_mods = {nature_boost_stat: 1.1}

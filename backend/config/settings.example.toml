@@ -55,11 +55,31 @@ detection_timeout_s = 60.0   # 画面検出タイムアウト（秒）
 # --- データソース設定 ---
 
 [data]
-# 使用率データの参照元。利用可能なソース:
+# --- 使用率データの参照元 ---
+# 利用可能なソース:
+#   "pokechamdb"       → data/pokechamdb/single.json
+#                        (pokechamdb.com: 種族値・実数値・技/持ち物/特性/性格/
+#                         努力値配分・チームメイトを網羅。最優先ソース)
 #   "pikalytics"       → data/pikalytics/championspreview.json
 #   "champions_stats"  → data/champions_stats/single.json
+#   "yakkun"           → data/yakkun/single.json
+#                        (ポケモン徹底攻略の「人気」技一覧。usage_percent は null。
+#                         他ソースに技データが無い時のフォールバック用途)
 # 新しいソースを追加する場合は docs/usage-data-sources.md を参照
-usage_source = "pikalytics"
+
+# デフォルト: usage_source も usage_priority も未設定なら
+# `["pokechamdb", "pikalytics", "champions_stats", "yakkun"]` の全ソースを
+# フィールドごとにフォールバックマージする (pokechamdb が最優先)。
+
+# (A) 単一ソース指定（後方互換: このキーを明示的に設定すると他ソースは無視される）
+# usage_source = "pokechamdb"
+
+# (B) 複数ソースマージ: フィールドごとの優先順位
+# 明示的にカスタマイズしたい場合はコメントを外す。未設定なら上記デフォルトが適用。
+# [data.usage_priority]
+# default = ["pokechamdb", "pikalytics", "champions_stats", "yakkun"]
+# natures = ["pokechamdb", "champions_stats"]    # 性格は pokechamdb 優先
+# ev_spreads = ["pokechamdb", "champions_stats"] # 努力値も同様
 
 [recognition.scene_state]
 top_debounce = 3             # トップレベル遷移のデバウンス

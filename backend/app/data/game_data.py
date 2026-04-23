@@ -6,7 +6,10 @@ import json
 import logging
 from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from app.config import UsagePriorityConfig
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +18,10 @@ SNAPSHOT_DIR = DATA_DIR / "showdown" / "champions-bss-reg-ma"
 
 # 使用率データソースのレジストリ: ソース名 → data/ からの相対パス
 _USAGE_SOURCES: dict[str, str] = {
+    "pokechamdb": "pokechamdb/single.json",
     "pikalytics": "pikalytics/championspreview.json",
     "champions_stats": "champions_stats/single.json",
+    "yakkun": "yakkun/single.json",
 }
 
 _POKEMON_FORM_NAME_OVERRIDES_JA: dict[str, str] = {
@@ -84,8 +89,8 @@ class GameData:
         self._pokemon_mega_forms: dict[str, list[dict[str, Any]]] = {}
         self._base_species_to_pokemon_keys: dict[str, list[str]] | None = None
         self._localized_pokemon_name_cache: dict[str, dict[str, str]] = {}
-        self._pokemon_key_to_name_cache: dict[str, dict[str, str]] = {}
-        self._pokemon_name_choices_cache: dict[str, dict[str, str]] = {}
+        self._pokemon_key_to_name_cache: dict[tuple[str, bool], dict[str, str]] = {}
+        self._pokemon_name_choices_cache: dict[tuple[str, bool], dict[str, str]] = {}
         self._ability_desc_ja: dict[str, str] | None = None
         self._move_desc_ja: dict[str, str] | None = None
 
@@ -98,7 +103,12 @@ class GameData:
         except (TypeError, ValueError):
             return value
 
-    def load(self, *, usage_source: str = "pikalytics") -> None:
+    def load(self, *, usage_priority: UsagePriorityConfig | None = None) -> None:
+        self._load_static_data()
+        self.reload_usage(usage_priority)
+
+    def _load_static_data(self) -> None:
+        """静的データ（Showdown snapshot・名前辞書・パッチ）を読み込む."""
         names_dir = self._data_dir / "names"
 
         logger.info("Showdown snapshot 読み込み中...")
@@ -124,32 +134,88 @@ class GameData:
         self._merge_champions_move_names_ja()
         self._merge_champions_ability_names_ja()
 
-        self._load_usage_data(usage_source)
         self._build_mega_stone_map()
         self._log_stats()
 
-    def _load_usage_data(self, usage_source: str) -> None:
-        """使用率データを読み込む.
+    def reload_usage(self, priority: UsagePriorityConfig | None = None) -> None:
+        """使用率データを（再）読み込みする.
 
-        Args:
-            usage_source: _USAGE_SOURCES のキー名
+        静的データとは独立して呼び出し可能。
         """
-        rel_path = _USAGE_SOURCES.get(usage_source)
-        if rel_path is None:
-            logger.warning(
-                "未知の usage_source: %s (pikalytics にフォールバック)",
-                usage_source,
-            )
-            rel_path = _USAGE_SOURCES["pikalytics"]
-        path = self._data_dir / rel_path
-        raw = _load_json(path)
-        self.usage = raw.get("pokemon", {}) if raw else {}
-        if self.usage:
-            logger.info(
-                "使用率データ読み込み完了: source=%s, %d 件",
-                usage_source,
-                len(self.usage),
-            )
+        from app.config import UsagePriorityConfig
+
+        effective = priority or UsagePriorityConfig()
+        all_sources = self._load_all_usage_sources()
+        self.usage = self._merge_usage_data(all_sources, effective)
+
+    def _load_all_usage_sources(self) -> dict[str, dict[str, Any]]:
+        """_USAGE_SOURCES に登録された全ソースを読み込む."""
+        all_sources: dict[str, dict[str, Any]] = {}
+        for name, rel_path in _USAGE_SOURCES.items():
+            raw = _load_json(self._data_dir / rel_path)
+            pokemon_data = raw.get("pokemon", {}) if raw else {}
+            if pokemon_data:
+                all_sources[name] = pokemon_data
+                logger.info(
+                    "使用率データ読み込み: source=%s, %d 件",
+                    name,
+                    len(pokemon_data),
+                )
+        return all_sources
+
+    def _merge_usage_data(
+        self,
+        all_sources: dict[str, dict[str, Any]],
+        priority: UsagePriorityConfig,
+    ) -> dict[str, Any]:
+        """全ソースからフィールドごとに優先度マージした使用率辞書を構築する."""
+        all_keys: set[str] = set()
+        for src in all_sources.values():
+            all_keys.update(src.keys())
+
+        merged: dict[str, Any] = {}
+        list_fields = ("moves", "items", "abilities", "teammates",
+                       "natures", "ev_spreads")
+        # スカラー/辞書系フィールド: default 優先順で最初に見つかった値を採用する
+        scalar_fields = ("usage_percent", "base_stats", "actual_stats",
+                         "rank", "dex_no", "types")
+
+        for pokemon_key in all_keys:
+            entry: dict[str, Any] = {}
+
+            # スカラー/辞書フィールド: default 優先順に従う
+            for field in scalar_fields:
+                for source_name in priority.default:
+                    val = (
+                        all_sources.get(source_name, {})
+                        .get(pokemon_key, {})
+                        .get(field)
+                    )
+                    if val is not None:
+                        entry[field] = val
+                        break
+
+            # リストフィールドはフィールドごとの優先順位
+            for field in list_fields:
+                for source_name in priority.for_field(field):
+                    val = (
+                        all_sources.get(source_name, {})
+                        .get(pokemon_key, {})
+                        .get(field)
+                    )
+                    if val:  # None や [] はスキップ → 次ソースへフォールバック
+                        entry[field] = val
+                        break
+
+            if entry:
+                merged[pokemon_key] = entry
+
+        logger.info(
+            "使用率データマージ完了: %d 件 (sources: %s)",
+            len(merged),
+            ", ".join(all_sources.keys()),
+        )
+        return merged
 
     def get_usage_moves(
         self,
@@ -752,28 +818,40 @@ class GameData:
         cache[pokemon_key] = localized
         return localized
 
-    def get_pokemon_key_to_name_map(self, lang: str = "ja") -> dict[str, str]:
-        cached = self._pokemon_key_to_name_cache.get(lang)
+    def get_pokemon_key_to_name_map(
+        self, lang: str = "ja", champions_only: bool = False,
+    ) -> dict[str, str]:
+        cache_key = (lang, champions_only)
+        cached = self._pokemon_key_to_name_cache.get(cache_key)
         if cached is not None:
             return cached
+
+        legal_keys: set[str] | None = None
+        if champions_only:
+            legal_keys = set(self.format.get("legal_pokemon_keys", []))
 
         result: dict[str, str] = {}
         for pokemon_key, pdata in sorted(self.pokemon.items()):
             if pokemon_key.startswith("_") or not isinstance(pdata, dict):
                 continue
+            if legal_keys is not None and pokemon_key not in legal_keys:
+                continue
             result[pokemon_key] = self.localize_pokemon_name(
                 pokemon_key, lang,
             ) or pdata.get("name", pokemon_key)
 
-        self._pokemon_key_to_name_cache[lang] = result
+        self._pokemon_key_to_name_cache[cache_key] = result
         return result
 
-    def get_pokemon_name_choices(self, lang: str = "ja") -> dict[str, str]:
-        cached = self._pokemon_name_choices_cache.get(lang)
+    def get_pokemon_name_choices(
+        self, lang: str = "ja", champions_only: bool = False,
+    ) -> dict[str, str]:
+        cache_key = (lang, champions_only)
+        cached = self._pokemon_name_choices_cache.get(cache_key)
         if cached is not None:
             return cached
 
-        key_to_name = self.get_pokemon_key_to_name_map(lang)
+        key_to_name = self.get_pokemon_key_to_name_map(lang, champions_only)
         result: dict[str, str] = {}
 
         for pokemon_key, display_name in key_to_name.items():
@@ -797,5 +875,5 @@ class GameData:
 
             result[unique_name] = pokemon_key
 
-        self._pokemon_name_choices_cache[lang] = result
+        self._pokemon_name_choices_cache[cache_key] = result
         return result
