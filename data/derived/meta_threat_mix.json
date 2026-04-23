@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "source": "aggregated from pikalytics championspreview + showdown moves",
+    "pokemon_count": 236,
+    "unmatched_move_count": 0,
+    "unmatched_move_keys": [],
+    "generated_at": "2026-04-18T10:49:04.593Z"
+  },
+  "phys": 0.5114034617393937,
+  "spec": 0.48859653826060623,
+  "total_usage_pts": 25070.48899999998,
+  "contributions": {
+    "physical": 7439.693000000007,
+    "special": 7107.906999999998,
+    "status": 10522.88900000004
+  }
+}

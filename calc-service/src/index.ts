@@ -2,6 +2,7 @@ import express from "express";
 import healthRouter from "./routes/health.js";
 import damageRouter from "./routes/damage.js";
 import validateRouter from "./routes/validate.js";
+import optimizeRouter from "./routes/optimize.js";
 import nashRouter from "./routes/nash.js";
 
 const PORT = parseInt(process.env.CALC_PORT ?? "3100", 10);
@@ -13,6 +14,7 @@ app.use(express.json({ limit: "1mb" }));
 app.use(healthRouter);
 app.use(damageRouter);
 app.use(validateRouter);
+app.use(optimizeRouter);
 app.use(nashRouter);
 
 app.listen(PORT, () => {

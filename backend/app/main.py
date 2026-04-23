@@ -21,6 +21,7 @@ from app.api.devtools import router as devtools_router
 from app.api.item import router as item_router
 from app.api.move import router as move_router
 from app.api.nash import router as nash_router
+from app.api.optimize import router as optimize_router
 from app.api.parties import router as parties_router
 from app.api.pokemon import router as pokemon_router
 from app.api.settings import router as settings_router
@@ -266,6 +267,7 @@ app.include_router(devtools_router)
 app.include_router(item_router)
 app.include_router(move_router)
 app.include_router(nash_router)
+app.include_router(optimize_router)
 app.include_router(parties_router)
 app.include_router(pokemon_router)
 app.include_router(settings_router)
