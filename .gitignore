@@ -9,4 +9,7 @@ backend/tests/fixtures/images/*.jpg
 backend/data/recordings/
 templates/pokemon/
 debug/
+debug-*.log
 backend/config/settings.toml
+.claude/
+.cursor/
