@@ -12,9 +12,11 @@ interface DamageCalcState {
   error: string | null;
   /** stale レスポンス破棄用カウンタ */
   requestGeneration: number;
+  /** デバッグ用: 最後に送信したリクエストボディ */
+  lastRequestBody: Record<string, unknown> | null;
 
   selectAttacker: (position: number | null) => void;
-  setResults: (results: DefenderDamageResult[], generation: number) => void;
+  setResults: (results: DefenderDamageResult[], generation: number, requestBody?: Record<string, unknown>) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   incrementGeneration: () => number;
@@ -28,6 +30,7 @@ export const useDamageCalcStore = create<DamageCalcState>()((set, get) => ({
   loading: false,
   error: null,
   requestGeneration: 0,
+  lastRequestBody: null,
 
   selectAttacker: (position) =>
     set({
@@ -36,10 +39,10 @@ export const useDamageCalcStore = create<DamageCalcState>()((set, get) => ({
       error: null,
     }),
 
-  setResults: (results, generation) =>
+  setResults: (results, generation, requestBody?) =>
     set((state) => {
       if (generation !== state.requestGeneration) return state;
-      return { results, loading: false, error: null };
+      return { results, loading: false, error: null, lastRequestBody: requestBody ?? null };
     }),
 
   setLoading: (loading) => set({ loading }),
@@ -52,7 +55,7 @@ export const useDamageCalcStore = create<DamageCalcState>()((set, get) => ({
     return next;
   },
 
-  clearResults: () => set({ results: [], loading: false, error: null }),
+  clearResults: () => set({ results: [], loading: false, error: null, lastRequestBody: null }),
 
   clear: () =>
     set({
@@ -60,5 +63,6 @@ export const useDamageCalcStore = create<DamageCalcState>()((set, get) => ({
       results: [],
       loading: false,
       error: null,
+      lastRequestBody: null,
     }),
 }));

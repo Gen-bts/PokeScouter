@@ -31,11 +31,19 @@ import { useBattleTurnStore } from "./useBattleTurnStore";
 import { useMyPartyStore } from "./useMyPartyStore";
 import { useOpponentTeamStore } from "./useOpponentTeamStore";
 import { useSpeedInferenceStore } from "./useSpeedInferenceStore";
+import { useSettingsStore } from "./useSettingsStore";
 import {
   getEffectivePlayerMaxHp,
   resolveHpPercent,
   clamp,
 } from "../utils/playerPartyHp";
+
+export const BATTLE_SCENES = new Set([
+  "battle",
+  "battle_Neutral",
+  "move_select",
+  "pokemon_summary",
+]);
 
 interface ConnectionStore {
   connectionState: ConnectionState;
@@ -89,6 +97,74 @@ function sendPlayerPartyIfReady(socket: WebSocket) {
   if (party.length > 0) {
     socket.send(JSON.stringify({ type: "set_player_party", party }));
   }
+}
+
+function applyOpponentTraitObservation(
+  speciesId: string | null | undefined,
+  detectionType: "ability" | "item",
+  name: unknown,
+  id: unknown,
+  identifier?: string | null,
+): boolean {
+  if (
+    speciesId == null ||
+    typeof name !== "string" ||
+    typeof id !== "string" ||
+    !name ||
+    !id
+  ) {
+    return false;
+  }
+
+  useOpponentTeamStore.getState().setItemAbility(
+    speciesId,
+    detectionType,
+    name,
+    id,
+    identifier,
+  );
+  useSpeedInferenceStore.getState().refreshInferences();
+  return true;
+}
+
+function applyOpponentMegaStoneObservation(
+  battleMsg: BattleEventMessage,
+  battlePokemonKey: string | null | undefined,
+): boolean {
+  if (
+    battleMsg.side === "opponent" &&
+    applyOpponentTraitObservation(
+      battlePokemonKey,
+      "item",
+      battleMsg.details?.stone_name,
+      battleMsg.details?.stone_key,
+      typeof battleMsg.details?.stone_key === "string" ? battleMsg.details.stone_key : null,
+    )
+  ) {
+    return true;
+  }
+
+  const pairs = battleMsg.details?.pairs;
+  if (pairs == null || typeof pairs !== "object") {
+    return false;
+  }
+
+  const opponentPair = (pairs as Record<string, unknown>).opponent;
+  if (opponentPair == null || typeof opponentPair !== "object") {
+    return false;
+  }
+
+  const detail = opponentPair as Record<string, unknown>;
+  const pokemonKey = typeof detail.pokemon_key === "string" ? detail.pokemon_key : null;
+  const stoneKey = typeof detail.stone_key === "string" ? detail.stone_key : null;
+  const stoneName = typeof detail.stone_name === "string" ? detail.stone_name : null;
+  return applyOpponentTraitObservation(
+    pokemonKey,
+    "item",
+    stoneName,
+    stoneKey,
+    stoneKey,
+  );
 }
 
 function doConnect() {
@@ -155,6 +231,12 @@ function doConnect() {
               .getState()
               .handleSceneChange(sceneMsg.scene, previousScene),
           );
+          // バトル開始時にオーバーレイ自動ON、バトル終了時に自動OFF
+          if (BATTLE_SCENES.has(sceneMsg.scene) && !BATTLE_SCENES.has(previousScene)) {
+            useSettingsStore.getState().setShowBattleInfo(true);
+          } else if (sceneMsg.scene === "battle_end") {
+            useSettingsStore.getState().setShowBattleInfo(false);
+          }
           console.log("[MatchLog] scene_change", sceneMsg.scene, `(${sceneMsg.top_level}${sceneMsg.sub_scene ? "/" + sceneMsg.sub_scene : ""})`, `conf=${sceneMsg.confidence}`);
           // 選出画面遷移時に相手パーティをクリア（match_teams より先に届くため）
           if (sceneMsg.scene === "team_select") {
@@ -222,6 +304,23 @@ function doConnect() {
             }
           } else if (battleMsg.event_type === "move_used" && battleMsg.side === "opponent" && battlePokemonKey != null && battleMsg.move_name != null && battleMoveKey != null) {
             useOpponentTeamStore.getState().addKnownMove(battlePokemonKey, battleMsg.move_name, battleMoveKey);
+          } else if (battleMsg.event_type === "item_triggered" && battleMsg.side === "opponent") {
+            applyOpponentTraitObservation(
+              battlePokemonKey,
+              "item",
+              battleMsg.details?.item_name,
+              battleMsg.details?.item_key,
+              typeof battleMsg.details?.item_key === "string" ? battleMsg.details.item_key : null,
+            );
+          } else if (battleMsg.event_type === "ability_revealed" && battleMsg.side === "opponent") {
+            applyOpponentTraitObservation(
+              battlePokemonKey,
+              "ability",
+              battleMsg.details?.ability_name,
+              battleMsg.details?.ability_key,
+            );
+          } else if (battleMsg.event_type === "mega_stone_revealed") {
+            applyOpponentMegaStoneObservation(battleMsg, battlePokemonKey);
           } else if (battleMsg.event_type === "mega_evolution" && battlePokemonKey != null) {
             const megaPokemonKey = battleMsg.details?.mega_pokemon_key as string | undefined;
             if (megaPokemonKey) {

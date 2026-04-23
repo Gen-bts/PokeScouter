@@ -45,7 +45,7 @@ export function SettingsView({
       try {
         await startCapture(deviceId, selectedAudioDeviceId || undefined);
       } catch (err) {
-        alert("映像の開始に失敗しました: " + (err as Error).message);
+        console.error("映像の開始に失敗しました:", err);
       }
     },
     [setDeviceId, startCapture, selectedAudioDeviceId],
@@ -58,7 +58,7 @@ export function SettingsView({
       try {
         await startCapture(selectedDeviceId, audioDeviceId || undefined);
       } catch (err) {
-        alert("音声デバイスの切り替えに失敗しました: " + (err as Error).message);
+        console.error("音声デバイスの切り替えに失敗しました:", err);
       }
     },
     [setAudioDeviceId, startCapture, selectedDeviceId],

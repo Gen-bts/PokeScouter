@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { useTooltipClamp } from "../hooks/useTooltipClamp";
 import {
@@ -38,25 +38,55 @@ function getEffClass(eff: number): string {
 }
 
 function AbilityWithTooltip({ name, effect, effectEn, isHidden }: { name: string; effect?: string; effectEn?: string; isHidden?: boolean }) {
-  const ref = useRef<HTMLSpanElement>(null);
+  const triggerRef = useRef<HTMLSpanElement>(null);
+  const tooltipRef = useRef<HTMLSpanElement>(null);
   const [hovered, setHovered] = useState(false);
-  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const [pos, setPos] = useState<{ top: number; left: number; arrowLeft: number; placement: "top" | "bottom" } | null>(null);
 
-  const handleMouseEnter = useCallback(() => {
-    if (ref.current) {
-      const r = ref.current.getBoundingClientRect();
-      setPos({ top: r.top - 6, left: r.left + r.width / 2 });
-    }
-    setHovered(true);
+  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseLeave = useCallback(() => {
+    setHovered(false);
+    setPos(null);
   }, []);
 
-  const handleMouseLeave = useCallback(() => setHovered(false), []);
+  useLayoutEffect(() => {
+    if (!hovered || !triggerRef.current || !tooltipRef.current) return;
+    const anchor = triggerRef.current.getBoundingClientRect();
+    const tip = tooltipRef.current;
+    const tipW = tip.offsetWidth;
+    const tipH = tip.offsetHeight;
+    const padding = 8;
+    const gap = 6;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const anchorCenterX = anchor.left + anchor.width / 2;
+
+    let placement: "top" | "bottom" = "top";
+    let top = anchor.top - gap - tipH;
+    if (top < padding) {
+      const belowTop = anchor.bottom + gap;
+      if (belowTop + tipH <= vh - padding) {
+        placement = "bottom";
+        top = belowTop;
+      } else {
+        top = Math.max(padding, Math.min(top, vh - tipH - padding));
+      }
+    }
+
+    let left = anchorCenterX - tipW / 2;
+    left = Math.max(padding, Math.min(left, vw - tipW - padding));
+
+    const arrowLeft = Math.max(8, Math.min(tipW - 8, anchorCenterX - left));
+
+    setPos({ top, left, arrowLeft, placement });
+  }, [hovered, name, effect, effectEn]);
 
   const showEnLine = effectEn && effectEn !== effect;
 
   return (
     <span
-      ref={ref}
+      ref={triggerRef}
       className={`opponent-tooltip-ability${isHidden ? " opponent-tooltip-ability-hidden" : ""}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -64,7 +94,17 @@ function AbilityWithTooltip({ name, effect, effectEn, isHidden }: { name: string
       {name}
       {isHidden && <span className="opponent-tooltip-hidden-tag">夢</span>}
       {effect && hovered && createPortal(
-        <span className="ability-desc-tooltip ability-desc-tooltip-visible" style={{ top: pos.top, left: pos.left }}>
+        <span
+          ref={tooltipRef}
+          className="ability-desc-tooltip ability-desc-tooltip-visible"
+          data-placement={pos?.placement ?? "top"}
+          style={{
+            top: pos?.top ?? -9999,
+            left: pos?.left ?? -9999,
+            visibility: pos ? "visible" : "hidden",
+            ["--arrow-left" as string]: pos ? `${pos.arrowLeft}px` : "50%",
+          } as CSSProperties}
+        >
           {effect}
           {showEnLine && <span className="ability-desc-tooltip-en">{effectEn}</span>}
           <span className="ability-desc-tooltip-arrow" />
@@ -199,7 +239,7 @@ function PokemonAutocomplete({
   position: number;
   onClose: () => void;
 }) {
-  const { names } = usePokemonNames();
+  const { names } = usePokemonNames({ championsOnly: true });
   const manualSet = useOpponentTeamStore((s) => s.manualSet);
   const sendSetOpponentPokemon = useConnectionStore((s) => s.sendSetOpponentPokemon);
   const [query, setQuery] = useState("");
@@ -563,7 +603,7 @@ const SlotRow = memo(function SlotRow({
   const displayPokemonId = activeMega
     ? activeMega.pokemon_key
     : (slot.basePokemonKey ?? slot.pokemonId);
-  const hasMegaForms = (detail?.mega_forms?.length ?? 0) > 0;
+  const hasMegaForms = slot.megaForms.length > 0;
 
   // メガトグルボタンのラベル
   const megaLabel = (() => {

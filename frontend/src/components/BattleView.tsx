@@ -6,6 +6,8 @@ import { OpponentPanel } from "./OpponentPanel";
 import { DamagePanel } from "./DamagePanel";
 import { useDamageCalc } from "../hooks/useDamageCalc";
 import { useIncomingDamageCalc } from "../hooks/useIncomingDamageCalc";
+import { useOpponentHbdEstimate } from "../hooks/useOpponentHbdEstimate";
+import { useNashAutoSolve } from "../hooks/useNashAutoSolve";
 import { useConnectionStore } from "../stores/useConnectionStore";
 import { useSettingsStore } from "../stores/useSettingsStore";
 import { useBenchmarkStore } from "../stores/useBenchmarkStore";
@@ -35,6 +37,18 @@ function DamageCalcSync() {
 /** 被ダメージ計算をトリガーする副作用専用コンポーネント */
 function IncomingDamageCalcSync() {
   useIncomingDamageCalc();
+  return null;
+}
+
+/** 相手 HBD 推定をトリガーする副作用専用コンポーネント */
+function OpponentHbdEstimateSync() {
+  useOpponentHbdEstimate();
+  return null;
+}
+
+/** Nash 選出シミュ自動トリガー副作用専用コンポーネント */
+function NashAutoSolveSync() {
+  useNashAutoSolve();
   return null;
 }
 
@@ -194,6 +208,8 @@ export function BattleView({
       <BenchmarkSync />
       <DamageCalcSync />
       <IncomingDamageCalcSync />
+      <OpponentHbdEstimateSync />
+      <NashAutoSolveSync />
       <aside className={`left-panel${leftPanelOpen ? "" : " collapsed"}`}>
         <MyPartyPanel />
         <MatchLog />

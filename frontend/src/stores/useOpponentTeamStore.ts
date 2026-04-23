@@ -9,13 +9,39 @@ import type {
 } from "../types";
 
 /** 耐久配分プリセット（与ダメージ計算用） */
-export type DefensePreset = "none" | "h" | "hb" | "hd";
+export type DefensePreset = "none" | "h" | "hb" | "hd" | "custom";
 
 /** 火力配分プリセット（被ダメージ計算用） */
 export type OffensePreset = "none" | "a" | "c";
 
 /** 性格補正対象ステータス */
 export type NatureBoostStat = "atk" | "def" | "spa" | "spd" | "spe" | null;
+
+/** SP 配分 (Champions: 各 0-32, 合計 66) */
+export interface StatPoints {
+  hp: number;
+  atk: number;
+  def: number;
+  spa: number;
+  spd: number;
+  spe: number;
+}
+
+/** HBD 最適化の推奨結果（/api/optimize/hbd のレスポンス整形版） */
+export interface HbdRecommendation {
+  /** 推定 SP 配分 */
+  sp: StatPoints;
+  /** 推定実数値 */
+  stats: StatPoints;
+  /** 最も近い既存プリセット (4つ + custom) */
+  nearestPreset: DefensePreset;
+  /** プリセット間の Euclidean 距離 (0 = 完全一致) */
+  presetDistance: number;
+  /** HBD スコア (H·B·D/(sB+pD)) */
+  score: number;
+  /** 計算に使った phys/spec 重み */
+  weights: { phys: number; spec: number };
+}
 
 export interface OpponentSlot {
   position: number;
@@ -46,6 +72,12 @@ export interface OpponentSlot {
   offensePreset: OffensePreset;
   /** 性格で 1.1 倍にするステータス */
   natureBoostStat: NatureBoostStat;
+  /** HBD 最適化の推奨結果（未取得なら null） */
+  hbdRecommendation: HbdRecommendation | null;
+  /** defensePreset === "custom" の場合の SP 配分（ユーザーが推奨値を採用した状態） */
+  customDefenseSp: StatPoints | null;
+  /** defensePreset が HBD 推奨で自動設定された状態か（手動変更で false になる） */
+  defensePresetAutoApplied: boolean;
 }
 
 function emptySlots(): OpponentSlot[] {
@@ -74,6 +106,9 @@ function emptySlots(): OpponentSlot[] {
     defensePreset: "none",
     offensePreset: "a",
     natureBoostStat: null,
+    hbdRecommendation: null,
+    customDefenseSp: null,
+    defensePresetAutoApplied: false,
   }));
 }
 
@@ -100,12 +135,18 @@ interface OpponentTeamState {
   cycleMegaForm: (position: number) => void;
   /** `useSpeedInferenceStore.inferredBounds` を各スロットの `pokemonId` に反映（リセット時は `{}`） */
   applyInferredSpeedMap: (map: Record<string, InferredSpeedBounds>) => void;
-  /** 耐久配分プリセットを設定 */
+  /** 耐久配分プリセットを設定 (手動変更扱い → defensePresetAutoApplied=false) */
   setDefensePreset: (position: number, preset: DefensePreset) => void;
   /** 火力配分プリセットを設定 */
   setOffensePreset: (position: number, preset: OffensePreset) => void;
   /** 性格補正対象ステータスを設定 */
   setNatureBoostStat: (position: number, stat: NatureBoostStat) => void;
+  /**
+   * HBD 推奨を設定する。
+   * 自動適用ポリシー: defensePresetAutoApplied が true (＝前回も自動適用済み or 未設定) なら
+   * 新しい nearestPreset を自動反映。ユーザーが手動変更した slot は変更しない。
+   */
+  setHbdRecommendation: (position: number, recommendation: HbdRecommendation) => void;
   /** 使用率データに基づいて火力配分の初期値を設定（まだ手動変更していない場合のみ） */
   autoSetOffensePresetFromMoves: (
     position: number,
@@ -148,7 +189,7 @@ function determineOffensePreset(
   for (const um of usageMoves) {
     if (seenMoveKeys.has(um.move_key)) continue;
     const damageClass = um.damage_class;
-    const weight = um.usage_percent;
+    const weight = um.usage_percent ?? 10;
     if (damageClass === "physical") {
       physicalWeight += weight;
     } else if (damageClass === "special") {
@@ -230,6 +271,9 @@ export const useOpponentTeamStore = create<OpponentTeamState>((set) => ({
             defensePreset: "none",
             offensePreset: "a",
             natureBoostStat: null,
+            hbdRecommendation: null,
+            customDefenseSp: null,
+            defensePresetAutoApplied: false,
           };
         }
       }
@@ -285,6 +329,9 @@ export const useOpponentTeamStore = create<OpponentTeamState>((set) => ({
             defensePreset: same ? slot.defensePreset : "none",
             offensePreset: same ? slot.offensePreset : "a",
             natureBoostStat: same ? slot.natureBoostStat : null,
+            hbdRecommendation: same ? slot.hbdRecommendation : null,
+            customDefenseSp: same ? slot.customDefenseSp : null,
+            defensePresetAutoApplied: same ? slot.defensePresetAutoApplied : false,
           };
         }
       }
@@ -328,6 +375,9 @@ export const useOpponentTeamStore = create<OpponentTeamState>((set) => ({
         defensePreset: "none",
         offensePreset: "a",
         natureBoostStat: null,
+        hbdRecommendation: null,
+        customDefenseSp: null,
+        defensePresetAutoApplied: false,
       };
       return {
         slots: next,
@@ -617,9 +667,25 @@ export const useOpponentTeamStore = create<OpponentTeamState>((set) => ({
       const idx = position - 1;
       if (idx < 0 || idx >= 6) return state;
       const existing = state.slots[idx];
-      if (!existing || existing.defensePreset === preset) return state;
+      if (!existing) return state;
+      if (
+        existing.defensePreset === preset &&
+        !existing.defensePresetAutoApplied
+      ) {
+        return state;
+      }
       const next = [...state.slots];
-      next[idx] = { ...existing, defensePreset: preset };
+      // "custom" を手動選択した場合は hbdRecommendation.sp を customDefenseSp に反映
+      const customSp =
+        preset === "custom" && existing.hbdRecommendation
+          ? existing.hbdRecommendation.sp
+          : existing.customDefenseSp;
+      next[idx] = {
+        ...existing,
+        defensePreset: preset,
+        defensePresetAutoApplied: false,
+        customDefenseSp: customSp,
+      };
       return { slots: next };
     }),
 
@@ -642,6 +708,39 @@ export const useOpponentTeamStore = create<OpponentTeamState>((set) => ({
       if (!existing || existing.natureBoostStat === stat) return state;
       const next = [...state.slots];
       next[idx] = { ...existing, natureBoostStat: stat };
+      return { slots: next };
+    }),
+
+  setHbdRecommendation: (position, recommendation) =>
+    set((state) => {
+      const idx = position - 1;
+      if (idx < 0 || idx >= 6) return state;
+      const existing = state.slots[idx];
+      if (!existing) return state;
+
+      // ユーザーが手動で変更していない場合のみ自動適用
+      const canAutoApply =
+        existing.defensePresetAutoApplied || existing.defensePreset === "none";
+      const shouldAutoApply =
+        canAutoApply && recommendation.nearestPreset !== "custom";
+
+      const nextPreset = shouldAutoApply
+        ? recommendation.nearestPreset
+        : existing.defensePreset;
+
+      const nextCustomSp =
+        recommendation.nearestPreset === "custom" && shouldAutoApply
+          ? recommendation.sp
+          : existing.customDefenseSp;
+
+      const next = [...state.slots];
+      next[idx] = {
+        ...existing,
+        hbdRecommendation: recommendation,
+        defensePreset: nextPreset,
+        customDefenseSp: nextCustomSp,
+        defensePresetAutoApplied: shouldAutoApply,
+      };
       return { slots: next };
     }),
 

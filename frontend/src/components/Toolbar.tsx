@@ -20,6 +20,28 @@ function OverlayToggle() {
   );
 }
 
+function ReferenceOverlayToggle() {
+  const show = useSettingsStore((s) => s.showReferenceOverlay);
+  const toggle = useSettingsStore((s) => s.toggleReferenceOverlay);
+  return (
+    <label className="toolbar-checkbox">
+      <input type="checkbox" checked={show} onChange={toggle} />
+      参考
+    </label>
+  );
+}
+
+function NashOverlayToggle() {
+  const show = useSettingsStore((s) => s.showNashOverlay);
+  const toggle = useSettingsStore((s) => s.toggleNashOverlay);
+  return (
+    <label className="toolbar-checkbox">
+      <input type="checkbox" checked={show} onChange={toggle} />
+      Nash
+    </label>
+  );
+}
+
 interface Props {
   connectionState: ConnectionState;
   onConnect?: () => void;
@@ -139,6 +161,8 @@ export function Toolbar({
       </label>
 
       <OverlayToggle />
+      <ReferenceOverlayToggle />
+      <NashOverlayToggle />
 
       <button className="toolbar-btn" onClick={onToggleRightPanel}>
         {rightPanelOpen ? "\u76F8\u624B \u25B6" : "\u25C0 \u76F8\u624B"}

@@ -24,9 +24,26 @@ interface SettingsState {
   debugCrops: boolean;
   toggleDebugCrops: () => void;
   showBattleInfo: boolean;
+  setShowBattleInfo: (v: boolean) => void;
   toggleBattleInfo: () => void;
   battleInfoPosition: { x: number; y: number };
   setBattleInfoPosition: (pos: { x: number; y: number }) => void;
+  // 参考オーバーレイ（Phase 2: type-chart / coverage / speed-tier / learnset）
+  showReferenceOverlay: boolean;
+  toggleReferenceOverlay: () => void;
+  referenceOverlayPosition: { x: number; y: number };
+  setReferenceOverlayPosition: (pos: { x: number; y: number }) => void;
+  referenceOverlayTab: "type-chart" | "coverage" | "speed-tier" | "learnset";
+  setReferenceOverlayTab: (
+    tab: "type-chart" | "coverage" | "speed-tier" | "learnset",
+  ) => void;
+  // Nash オーバーレイ（Phase 5: 3匹選出ナッシュシミュ）
+  showNashOverlay: boolean;
+  toggleNashOverlay: () => void;
+  nashOverlayPosition: { x: number; y: number };
+  setNashOverlayPosition: (pos: { x: number; y: number }) => void;
+  nashAutoSolve: boolean;
+  toggleNashAutoSolve: () => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -50,9 +67,23 @@ export const useSettingsStore = create<SettingsState>()(
       debugCrops: false,
       toggleDebugCrops: () => set((s) => ({ debugCrops: !s.debugCrops })),
       showBattleInfo: true,
+      setShowBattleInfo: (v) => set({ showBattleInfo: v }),
       toggleBattleInfo: () => set((s) => ({ showBattleInfo: !s.showBattleInfo })),
       battleInfoPosition: { x: 10, y: 8 },
       setBattleInfoPosition: (pos) => set({ battleInfoPosition: pos }),
+      showReferenceOverlay: false,
+      toggleReferenceOverlay: () =>
+        set((s) => ({ showReferenceOverlay: !s.showReferenceOverlay })),
+      referenceOverlayPosition: { x: 80, y: 120 },
+      setReferenceOverlayPosition: (pos) => set({ referenceOverlayPosition: pos }),
+      referenceOverlayTab: "type-chart",
+      setReferenceOverlayTab: (tab) => set({ referenceOverlayTab: tab }),
+      showNashOverlay: false,
+      toggleNashOverlay: () => set((s) => ({ showNashOverlay: !s.showNashOverlay })),
+      nashOverlayPosition: { x: 140, y: 160 },
+      setNashOverlayPosition: (pos) => set({ nashOverlayPosition: pos }),
+      nashAutoSolve: true,
+      toggleNashAutoSolve: () => set((s) => ({ nashAutoSolve: !s.nashAutoSolve })),
     }),
     {
       name: "pokescouter:settings",
@@ -68,6 +99,12 @@ export const useSettingsStore = create<SettingsState>()(
         debugCrops: state.debugCrops,
         showBattleInfo: state.showBattleInfo,
         battleInfoPosition: state.battleInfoPosition,
+        showReferenceOverlay: state.showReferenceOverlay,
+        referenceOverlayPosition: state.referenceOverlayPosition,
+        referenceOverlayTab: state.referenceOverlayTab,
+        showNashOverlay: state.showNashOverlay,
+        nashOverlayPosition: state.nashOverlayPosition,
+        nashAutoSolve: state.nashAutoSolve,
       }),
       migrate: (persisted: unknown, version: number) => {
         if (version === 2) {

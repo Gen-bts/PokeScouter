@@ -267,7 +267,7 @@ export interface MegaFormDetail {
   pokemon_key: PokemonKey;
   mega_name: string;
   types: string[];
-  ability: { name: string; effect: string; effect_en?: string };
+  ability: { key?: string; name: string; effect: string; effect_en?: string };
   base_stats: Record<string, number>;
   stat_deltas: Record<string, number> | null;
   type_effectiveness?: TypeEffectivenessData;
@@ -363,7 +363,7 @@ export interface DamageCalcResponse {
 export interface UsageMove {
   move_key: string;
   move_name: string;
-  usage_percent: number;
+  usage_percent: number | null;
   damage_class?: string | null;
 }
 
@@ -397,12 +397,62 @@ export interface UsageAbility {
   usage_percent: number;
 }
 
+export interface UsageNature {
+  nature_key: string;
+  nature_name: string;
+  plus: string | null;
+  minus: string | null;
+  usage_percent: number;
+}
+
+export interface EvSpreadEntry {
+  spread: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
+  usage_percent: number;
+}
+
+export interface UsageTeammate {
+  pokemon_key: string;
+  pokemon_name: string;
+  rank: number | null;
+  usage_percent: number | null;
+}
+
+export interface ActualStatValues {
+  max: number;
+  semi_max?: number;
+  no_invest?: number;
+  min: number;
+}
+
+export interface ActualStats {
+  hp: ActualStatValues;
+  atk: ActualStatValues;
+  def: ActualStatValues;
+  spa: ActualStatValues;
+  spd: ActualStatValues;
+  spe: ActualStatValues;
+}
+
+export interface BaseStats {
+  hp: number;
+  atk: number;
+  def: number;
+  spa: number;
+  spd: number;
+  spe: number;
+}
+
 export interface PokemonUsage {
   pokemon_key: string;
   usage_percent: number;
   moves: UsageMove[];
   items: UsageItem[];
   abilities: UsageAbility[];
+  natures?: UsageNature[];
+  ev_spreads?: EvSpreadEntry[];
+  teammates?: UsageTeammate[];
+  base_stats?: BaseStats | null;
+  actual_stats?: ActualStats | null;
 }
 
 export interface FieldStateSideMessage {

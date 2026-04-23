@@ -151,14 +151,30 @@ export function useDamageCalc(): void {
   const abilitiesKey = JSON.stringify(defenderAbilities);
 
   // 防御側プリセット（耐久配分・性格補正）を導出 — 実効キーで送信
-  const defenderPresets: Record<string, { defense_preset: string; nature_boost_stat: string | null }> = {};
+  // defensePreset === "custom" の場合は customDefenseSp を custom_sp として同送する
+  const defenderPresets: Record<
+    string,
+    {
+      defense_preset: string;
+      nature_boost_stat: string | null;
+      custom_sp?: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
+    }
+  > = {};
   for (const slot of opponentSlots) {
     const effectiveKey = getEffectivePokemonKey(slot);
     if (effectiveKey != null) {
-      defenderPresets[effectiveKey] = {
+      const entry: {
+        defense_preset: string;
+        nature_boost_stat: string | null;
+        custom_sp?: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
+      } = {
         defense_preset: slot.defensePreset,
         nature_boost_stat: slot.natureBoostStat,
       };
+      if (slot.defensePreset === "custom" && slot.customDefenseSp) {
+        entry.custom_sp = slot.customDefenseSp;
+      }
+      defenderPresets[effectiveKey] = entry;
     }
   }
   const presetsKey = JSON.stringify(defenderPresets);
@@ -217,33 +233,34 @@ export function useDamageCalc(): void {
 
     timerRef.current = setTimeout(async () => {
       try {
+        const requestBody = {
+          attacker: reqAttacker,
+          defender_pokemon_keys: reqDefenders,
+          defender_boosts: Object.keys(reqBoosts).length > 0 ? reqBoosts : undefined,
+          defender_items: Object.keys(reqItems).length > 0 ? reqItems : undefined,
+          defender_abilities: Object.keys(reqAbilities).length > 0 ? reqAbilities : undefined,
+          defender_presets: Object.keys(reqPresets).length > 0 ? reqPresets : undefined,
+          field: {
+            weather,
+            terrain,
+            attacker_side: {
+              is_reflect: playerSide.reflect,
+              is_light_screen: playerSide.lightScreen,
+              is_aurora_veil: playerSide.auroraVeil,
+              is_tailwind: playerSide.tailwind,
+            },
+            defender_side: {
+              is_reflect: opponentSide.reflect,
+              is_light_screen: opponentSide.lightScreen,
+              is_aurora_veil: opponentSide.auroraVeil,
+              is_tailwind: opponentSide.tailwind,
+            },
+          },
+        };
         const res = await fetch("/api/damage", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            attacker: reqAttacker,
-            defender_pokemon_keys: reqDefenders,
-            defender_boosts: Object.keys(reqBoosts).length > 0 ? reqBoosts : undefined,
-            defender_items: Object.keys(reqItems).length > 0 ? reqItems : undefined,
-            defender_abilities: Object.keys(reqAbilities).length > 0 ? reqAbilities : undefined,
-            defender_presets: Object.keys(reqPresets).length > 0 ? reqPresets : undefined,
-            field: {
-              weather,
-              terrain,
-              attacker_side: {
-                is_reflect: playerSide.reflect,
-                is_light_screen: playerSide.lightScreen,
-                is_aurora_veil: playerSide.auroraVeil,
-                is_tailwind: playerSide.tailwind,
-              },
-              defender_side: {
-                is_reflect: opponentSide.reflect,
-                is_light_screen: opponentSide.lightScreen,
-                is_aurora_veil: opponentSide.auroraVeil,
-                is_tailwind: opponentSide.tailwind,
-              },
-            },
-          }),
+          body: JSON.stringify(requestBody),
         });
         if (!res.ok) {
           const text = await res.text();
@@ -251,7 +268,7 @@ export function useDamageCalc(): void {
           return;
         }
         const data = await res.json();
-        setResults(data.results ?? [], generation);
+        setResults(data.results ?? [], generation, requestBody);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Unknown error");
       }

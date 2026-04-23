@@ -192,6 +192,33 @@ export function useIncomingDamageCalc(): void {
       try {
         let results: import("../types").DefenderDamageResult[] = [];
 
+        const requestBody = {
+          attacker_pokemon_key: reqAttackerKey,
+          attacker_move_keys: reqCalcMoveKeys,
+          attacker_boosts: reqBoosts,
+          attacker_ability_key: reqAbilityKey,
+          attacker_item_key: reqItemKey,
+          attacker_offense_preset: reqOffensePreset,
+          attacker_nature_boost_stat: reqNatureBoostStat,
+          defender: reqDefender,
+          field: {
+            weather,
+            terrain,
+            attacker_side: {
+              is_reflect: opponentSide.reflect,
+              is_light_screen: opponentSide.lightScreen,
+              is_aurora_veil: opponentSide.auroraVeil,
+              is_tailwind: opponentSide.tailwind,
+            },
+            defender_side: {
+              is_reflect: playerSide.reflect,
+              is_light_screen: playerSide.lightScreen,
+              is_aurora_veil: playerSide.auroraVeil,
+              is_tailwind: playerSide.tailwind,
+            },
+          },
+        };
+
         if (reqCalcMoveKeys.length > 0) {
           try {
             // #region agent log
@@ -200,32 +227,7 @@ export function useIncomingDamageCalc(): void {
             const res = await fetch("/api/damage/incoming", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                attacker_pokemon_key: reqAttackerKey,
-                attacker_move_keys: reqCalcMoveKeys,
-                attacker_boosts: reqBoosts,
-                attacker_ability_key: reqAbilityKey,
-                attacker_item_key: reqItemKey,
-                attacker_offense_preset: reqOffensePreset,
-                attacker_nature_boost_stat: reqNatureBoostStat,
-                defender: reqDefender,
-                field: {
-                  weather,
-                  terrain,
-                  attacker_side: {
-                    is_reflect: opponentSide.reflect,
-                    is_light_screen: opponentSide.lightScreen,
-                    is_aurora_veil: opponentSide.auroraVeil,
-                    is_tailwind: opponentSide.tailwind,
-                  },
-                  defender_side: {
-                    is_reflect: playerSide.reflect,
-                    is_light_screen: playerSide.lightScreen,
-                    is_aurora_veil: playerSide.auroraVeil,
-                    is_tailwind: playerSide.tailwind,
-                  },
-                },
-              }),
+              body: JSON.stringify(requestBody),
             });
             // #region agent log
             fetch(DEBUG_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "X-Debug-Session-Id": DEBUG_SESSION_ID }, body: JSON.stringify({ sessionId: DEBUG_SESSION_ID, runId: "pre-fix", hypothesisId: "H4", location: "frontend/src/hooks/useIncomingDamageCalc.ts:201", message: "incoming calc response received", data: { generation, ok: res.ok, status: res.status, attackerPokemonKey: reqAttackerKey }, timestamp: Date.now() }) }).catch(() => {});
@@ -254,14 +256,14 @@ export function useIncomingDamageCalc(): void {
           }
         }
 
-        setResults(results, generation, reqUsageMoves, reqKnownMoveKeys, finalStatusMoves);
+        setResults(results, generation, reqUsageMoves, reqKnownMoveKeys, finalStatusMoves, requestBody);
       } catch (e) {
         // 予期しないエラー時も使用率技リストだけは表示する
         const finalStatusMoves = [...reqStatusMoves];
         for (const km of reqExtraKnownMoves) {
           finalStatusMoves.push({ move_key: km.id, move_name: km.name });
         }
-        setResults([], generation, reqUsageMoves, reqKnownMoveKeys, finalStatusMoves);
+        setResults([], generation, reqUsageMoves, reqKnownMoveKeys, finalStatusMoves, requestBody);
       }
     }, DEBOUNCE_MS);
 

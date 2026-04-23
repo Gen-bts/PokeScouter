@@ -151,6 +151,19 @@ const STAT_LABEL: Record<string, string> = {
   evasion: "回避率",
 };
 
+const WEATHER_LABEL: Record<string, string> = {
+  snow: "雪",
+  sand: "砂あらし",
+  sun: "日差し",
+  rain: "雨",
+  hail: "あられ",
+};
+
+const HAZARD_LABEL: Record<string, string> = {
+  stealth_rock: "ステルスロック",
+  spikes: "まきびし",
+};
+
 function BattleEventEntry({ entry }: { entry: BattleEventLogEntry }) {
   const sideLabel = entry.side === "opponent" ? "相手" : "自分";
   const isUnrecognized = entry.eventType === "unrecognized";
@@ -188,18 +201,32 @@ function BattleEventEntry({ entry }: { entry: BattleEventLogEntry }) {
     }
     case "type_effectiveness": {
       const eff = entry.details?.effectiveness as string;
-      description = eff === "super_effective" ? "効果はバツグンだ！"
-        : eff === "double_super_effective" ? "効果はちょうバツグンだ!!"
-        : "効果はいまひとつだ…";
+      switch (eff) {
+        case "double_super_effective":
+          description = "効果はちょうバツグンだ!!";
+          break;
+        case "super_effective":
+          description = "効果はバツグンだ！";
+          break;
+        case "immune":
+          description = "効果がないようだ…";
+          break;
+        case "double_not_very_effective":
+        case "not_very_effective":
+          description = "効果はいまひとつだ…";
+          break;
+        default:
+          description = entry.rawText;
+          break;
+      }
       break;
     }
     case "weather": {
-      const weatherNames: Record<string, string> = { snow: "雪", sand: "砂あらし", sun: "日差し", rain: "雨" };
       const w = entry.details?.weather as string;
       const wa = entry.details?.action as string;
       description = wa === "start"
-        ? `${weatherNames[w] ?? w}が発生した！`
-        : `${weatherNames[w] ?? w}がおさまった！`;
+        ? `${WEATHER_LABEL[w] ?? w}が発生した！`
+        : `${WEATHER_LABEL[w] ?? w}がおさまった！`;
       break;
     }
     case "field_effect": {
@@ -214,22 +241,47 @@ function BattleEventEntry({ entry }: { entry: BattleEventLogEntry }) {
       }
       break;
     }
-    case "hazard_set":
-      description = `${sideLabel}の場にステルスロックが撒かれた！`;
+    case "hazard_set": {
+      const hazardType = entry.details?.hazard_type as string;
+      const hazardName = HAZARD_LABEL[hazardType] ?? hazardType ?? "設置技";
+      description = `${sideLabel}の場に${hazardName}が撒かれた！`;
       break;
-    case "hazard_damage":
-      description = `${sideLabel}の${name}にステルスロックのダメージ！`;
+    }
+    case "hazard_damage": {
+      const hazardType = entry.details?.hazard_type as string;
+      const hazardName = HAZARD_LABEL[hazardType] ?? hazardType ?? "設置技";
+      description = `${sideLabel}の${name}に${hazardName}のダメージ！`;
       break;
+    }
     case "protect":
       description = (entry.details?.phase as string) === "blocked"
         ? `${sideLabel}の${name}は攻撃から身を守った！`
         : `${sideLabel}の${name}は守りの体勢に入った！`;
       break;
     case "status_condition": {
+      const status = entry.details?.status as string;
       const phase = entry.details?.phase as string;
-      description = phase === "continuing"
-        ? `${sideLabel}の${name}はぐうぐう眠っている…`
-        : `${sideLabel}の${name}は眠ってしまった！`;
+      if (status === "sleep") {
+        description = phase === "continuing"
+          ? `${sideLabel}の${name}はぐうぐう眠っている…`
+          : `${sideLabel}の${name}は眠ってしまった！`;
+      } else if (status === "drowsy") {
+        description = `${sideLabel}の${name}は眠気を誘われた！`;
+      } else if (status === "confusion") {
+        description = `${sideLabel}の${name}は混乱した！`;
+      } else {
+        description = entry.rawText;
+      }
+      break;
+    }
+    case "weather_damage": {
+      const weather = entry.details?.weather as string;
+      description = `${sideLabel}の${name}に${WEATHER_LABEL[weather] ?? weather}のダメージ！`;
+      break;
+    }
+    case "multi_hit": {
+      const hits = entry.details?.hits as number | undefined;
+      description = typeof hits === "number" ? `${hits}回当たった！` : entry.rawText;
       break;
     }
     case "move_failed":
@@ -242,6 +294,35 @@ function BattleEventEntry({ entry }: { entry: BattleEventLogEntry }) {
       break;
     case "mega_evolution":
       description = `${sideLabel}の${name}は${(entry.details?.mega_name as string) ?? "メガシンカ"}にメガシンカした！`;
+      break;
+    case "item_triggered": {
+      const itemName = (entry.details?.item_name as string) ?? "もちもの";
+      description = `${sideLabel}の${name}のもちもの ${itemName} が発動した！`;
+      break;
+    }
+    case "mega_stone_revealed": {
+      const stoneName = entry.details?.stone_name as string | undefined;
+      description = stoneName != null
+        ? `${sideLabel}の${name}のもちもの ${stoneName} が判明した！`
+        : entry.rawText;
+      break;
+    }
+    case "ability_revealed": {
+      const abilityName = entry.details?.ability_name as string | undefined;
+      description = abilityName != null
+        ? `${sideLabel}の${name}のとくせい ${abilityName} が判明した！`
+        : entry.rawText;
+      break;
+    }
+    case "substitute":
+      description = (entry.details?.phase as string) === "broken"
+        ? `${sideLabel}の${name}の身代わりは消えてしまった！`
+        : `${sideLabel}の${name}は身代わりで攻撃を受けた！`;
+      break;
+    case "status_damage":
+      description = (entry.details?.status as string) === "burn"
+        ? `${sideLabel}の${name}はやけどのダメージを受けた！`
+        : entry.rawText;
       break;
     case "pokemon_recalled": {
       const method = entry.details?.method as string;

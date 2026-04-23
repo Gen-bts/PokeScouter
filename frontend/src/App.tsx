@@ -3,6 +3,7 @@ import { useVideoCapture } from "./hooks/useVideoCapture";
 import { useSettingsStore } from "./stores/useSettingsStore";
 import { useConnectionStore } from "./stores/useConnectionStore";
 import { BattleView } from "./components/BattleView";
+import { DamageTestView } from "./components/damageTest/DamageTestView";
 import { DevToolsView } from "./components/DevToolsView";
 import { SettingsView } from "./components/SettingsView";
 import { Toolbar } from "./components/Toolbar";
@@ -10,7 +11,7 @@ import { getScenes, type SceneMeta } from "./api/devtools";
 import type { ConnectionState } from "./types";
 import "./App.css";
 
-type Tab = "battle" | "settings" | "devtools";
+type Tab = "battle" | "damage-test" | "settings" | "devtools";
 
 export default function App() {
   const {
@@ -125,6 +126,12 @@ export default function App() {
           バトル
         </button>
         <button
+          className={activeTab === "damage-test" ? "active" : undefined}
+          onClick={() => setActiveTab("damage-test")}
+        >
+          ダメージ計算テスト
+        </button>
+        <button
           className={activeTab === "settings" ? "active" : undefined}
           onClick={() => setActiveTab("settings")}
         >
@@ -179,6 +186,9 @@ export default function App() {
             leftPanelOpen={leftPanelOpen}
             rightPanelOpen={rightPanelOpen}
           />
+        </div>
+        <div style={{ display: activeTab === "damage-test" ? "contents" : "none" }}>
+          <DamageTestView />
         </div>
         <div style={{ display: activeTab === "settings" ? "contents" : "none" }}>
           <SettingsView

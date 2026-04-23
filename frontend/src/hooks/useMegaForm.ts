@@ -48,8 +48,11 @@ export function useMegaForm(
     }
 
     promise.then((data) => {
-      if (!cancelled && data) {
+      if (cancelled) return;
+      if (data) {
         setSlotMegaForm(slotPosition, data);
+      } else if (persistedMegaForm) {
+        setSlotMegaForm(slotPosition, null);
       }
     });
 

@@ -19,6 +19,7 @@ import { getKoClass, getKoLabel } from "../utils/damageFormat";
 import { buildSpeedComparison, fieldToInt, fieldToKey } from "../utils/speed";
 import { PokemonSprite } from "./PokemonSprite";
 import { MoveInfoChip } from "./MoveInfoChip";
+import { DebugDamageTooltip } from "./DebugDamageTooltip";
 import type { StatusMoveEntry } from "../stores/useIncomingDamageStore";
 import type {
   DefenderDamageResult,
@@ -26,13 +27,6 @@ import type {
   SpeedContext,
   ValidatedField,
 } from "../types";
-
-const BATTLE_SCENES = new Set([
-  "battle",
-  "battle_Neutral",
-  "move_select",
-  "pokemon_summary",
-]);
 
 /** 相手ポケモンごとに、マッチログ上で使用が判明した技名を集約する */
 function useOpponentMovesFromLog(): Map<string, string[]> {
@@ -205,6 +199,23 @@ const DEFENSE_PRESET_OPTIONS: { value: DefensePreset; label: string }[] = [
   { value: "hd", label: "HD" },
 ];
 
+const SP_LABEL_MAP: Record<string, string> = {
+  hp: "H",
+  atk: "A",
+  def: "B",
+  spa: "C",
+  spd: "D",
+  spe: "S",
+};
+
+function formatSpString(sp: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number }): string {
+  const parts: string[] = [];
+  for (const k of ["hp", "atk", "def", "spa", "spd", "spe"] as const) {
+    if (sp[k] > 0) parts.push(`${SP_LABEL_MAP[k]}${sp[k]}`);
+  }
+  return parts.length > 0 ? parts.join("/") : "振りなし";
+}
+
 const OFFENSE_PRESET_OPTIONS: { value: OffensePreset; label: string }[] = [
   { value: "none", label: "無" },
   { value: "a", label: "A" },
@@ -225,31 +236,75 @@ function OpponentPresetSelector({
   defensePreset,
   offensePreset,
   natureBoostStat,
+  hbdRecommendation,
+  defensePresetAutoApplied,
 }: {
   position: number;
   defensePreset: DefensePreset;
   offensePreset: OffensePreset;
   natureBoostStat: NatureBoostStat;
+  hbdRecommendation: import("../stores/useOpponentTeamStore").HbdRecommendation | null;
+  defensePresetAutoApplied: boolean;
 }) {
   const setDefensePreset = useOpponentTeamStore((s) => s.setDefensePreset);
   const setOffensePreset = useOpponentTeamStore((s) => s.setOffensePreset);
   const setNatureBoostStat = useOpponentTeamStore((s) => s.setNatureBoostStat);
+
+  // HBD 推奨が custom の場合、5 つ目のオプションを動的追加
+  const defenseOptions: { value: DefensePreset; label: string }[] = [
+    ...DEFENSE_PRESET_OPTIONS,
+  ];
+  if (hbdRecommendation?.nearestPreset === "custom") {
+    defenseOptions.push({ value: "custom", label: "推" });
+  }
+
+  const buildHbdTooltip = (): string | null => {
+    if (!hbdRecommendation) return null;
+    const spStr = formatSpString(hbdRecommendation.sp);
+    const stats = hbdRecommendation.stats;
+    const statsStr = `H${stats.hp} B${stats.def} D${stats.spd}`;
+    const weights = hbdRecommendation.weights;
+    const weightStr = `環境重み phys:${(weights.phys * 100).toFixed(0)}% spec:${(weights.spec * 100).toFixed(0)}%`;
+    return `推奨配分: ${spStr}\n実数値: ${statsStr}\n${weightStr}`;
+  };
+
+  const hbdTooltip = buildHbdTooltip();
+  const recommendedValue = hbdRecommendation?.nearestPreset ?? null;
 
   return (
     <div className="battle-info-overlay__presets">
       <div className="battle-info-overlay__preset-row">
         <span className="battle-info-overlay__preset-label">耐久</span>
         <div className="battle-info-overlay__preset-options">
-          {DEFENSE_PRESET_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              className={`battle-info-overlay__preset-btn ${defensePreset === opt.value ? "battle-info-overlay__preset-btn--active" : ""}`}
-              onClick={() => setDefensePreset(position, opt.value)}
-            >
-              {opt.label}
-            </button>
-          ))}
+          {defenseOptions.map((opt) => {
+            const isActive = defensePreset === opt.value;
+            const isRecommended = recommendedValue === opt.value;
+            const showRecommendBadge =
+              isRecommended && isActive && defensePresetAutoApplied;
+            const title =
+              isRecommended && hbdTooltip
+                ? `${showRecommendBadge ? "【使用率推定で自動選択】\n" : ""}${hbdTooltip}`
+                : undefined;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                className={`battle-info-overlay__preset-btn ${isActive ? "battle-info-overlay__preset-btn--active" : ""}${isRecommended ? " battle-info-overlay__preset-btn--recommended" : ""}`}
+                onClick={() => setDefensePreset(position, opt.value)}
+                title={title}
+              >
+                {opt.label}
+                {showRecommendBadge && (
+                  <span
+                    className="battle-info-overlay__preset-badge"
+                    aria-label="使用率推定で自動選択"
+                  >
+                    ★
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
       <div className="battle-info-overlay__preset-row">
@@ -289,9 +344,11 @@ function OpponentPresetSelector({
 function DamageMoveRow({
   move,
   usagePercent,
+  requestBody,
 }: {
   move: MoveDamageResult;
   usagePercent?: number;
+  requestBody?: Record<string, unknown> | null;
 }) {
   return (
     <div className="battle-info-overlay__damage-move">
@@ -307,13 +364,15 @@ function DamageMoveRow({
           </span>
         )}
       </MoveInfoChip>
-      <span
-        className={`battle-info-overlay__damage-move-value ${getKoClass(move.guaranteed_ko)}`}
-      >
-        {move.type_effectiveness === 0
-          ? "0% 無効"
-          : `${move.min_percent.toFixed(1)}-${move.max_percent.toFixed(1)}%`}
-      </span>
+      <DebugDamageTooltip requestBody={requestBody ?? null} moveResult={move}>
+        <span
+          className={`battle-info-overlay__damage-move-value ${getKoClass(move.guaranteed_ko)}`}
+        >
+          {move.type_effectiveness === 0
+            ? "0% 無効"
+            : `${move.min_percent.toFixed(1)}-${move.max_percent.toFixed(1)}%`}
+        </span>
+      </DebugDamageTooltip>
       <span
         className={`battle-info-overlay__damage-move-ko ${getKoClass(move.guaranteed_ko)}`}
       >
@@ -329,12 +388,14 @@ function DamageSection({
   error,
   result,
   emptyMessage,
+  requestBody,
 }: {
   label: string;
   loading: boolean;
   error: string | null;
   result: DefenderDamageResult | null;
   emptyMessage: string;
+  requestBody?: Record<string, unknown> | null;
 }) {
   let content: ReactNode;
 
@@ -354,7 +415,7 @@ function DamageSection({
     content = (
       <div className="battle-info-overlay__damage-list">
         {result.moves.map((move) => (
-          <DamageMoveRow key={move.move_id} move={move} />
+          <DamageMoveRow key={move.move_id} move={move} requestBody={requestBody} />
         ))}
       </div>
     );
@@ -373,14 +434,14 @@ interface IncomingDisplayRow {
   key: string;
   move_name: string;
   isKnown: boolean;
-  usagePercent?: number;
+  usagePercent?: number | null;
   isStatus: boolean;
   damageResult?: MoveDamageResult;
 }
 
 function buildIncomingDisplayRows(
   result: DefenderDamageResult | null,
-  usagePercentMap: Record<string, number>,
+  usagePercentMap: Record<string, number | null>,
   knownMoveKeys: string[],
   statusMoves: StatusMoveEntry[],
 ): IncomingDisplayRow[] {
@@ -462,6 +523,7 @@ function IncomingDamageSection({
   usagePercentMap,
   knownMoveKeys,
   statusMoves,
+  requestBody,
 }: {
   loading: boolean;
   error: string | null;
@@ -470,6 +532,7 @@ function IncomingDamageSection({
   usagePercentMap: Record<string, number>;
   knownMoveKeys: string[];
   statusMoves: StatusMoveEntry[];
+  requestBody?: Record<string, unknown> | null;
 }) {
   const hasAnyData =
     result != null ||
@@ -530,13 +593,15 @@ function IncomingDamageSection({
                 </>
               ) : row.damageResult ? (
                 <>
-                  <span
-                    className={`battle-info-overlay__damage-move-value ${getKoClass(row.damageResult.guaranteed_ko)}`}
-                  >
-                    {row.damageResult.type_effectiveness === 0
-                      ? "0% 無効"
-                      : `${row.damageResult.min_percent.toFixed(1)}-${row.damageResult.max_percent.toFixed(1)}%`}
-                  </span>
+                  <DebugDamageTooltip requestBody={requestBody ?? null} moveResult={row.damageResult}>
+                    <span
+                      className={`battle-info-overlay__damage-move-value ${getKoClass(row.damageResult.guaranteed_ko)}`}
+                    >
+                      {row.damageResult.type_effectiveness === 0
+                        ? "0% 無効"
+                        : `${row.damageResult.min_percent.toFixed(1)}-${row.damageResult.max_percent.toFixed(1)}%`}
+                    </span>
+                  </DebugDamageTooltip>
                   <span
                     className={`battle-info-overlay__damage-move-ko ${getKoClass(row.damageResult.guaranteed_ko)}`}
                   >
@@ -575,12 +640,12 @@ export function BattleInfoOverlay({ currentScene }: Props) {
   const nodeRef = useRef<HTMLDivElement>(null);
   const pos = useSettingsStore((s) => s.battleInfoPosition);
   const setPos = useSettingsStore((s) => s.setBattleInfoPosition);
-  const isBattleScene = BATTLE_SCENES.has(currentScene);
 
   const attackerPosition = useDamageCalcStore((state) => state.selectedAttackerPosition);
   const damageResults = useDamageCalcStore((state) => state.results);
   const damageLoading = useDamageCalcStore((state) => state.loading);
   const damageError = useDamageCalcStore((state) => state.error);
+  const damageRequestBody = useDamageCalcStore((state) => state.lastRequestBody);
 
   const incomingResults = useIncomingDamageStore((state) => state.results);
   const incomingLoading = useIncomingDamageStore((state) => state.loading);
@@ -588,6 +653,7 @@ export function BattleInfoOverlay({ currentScene }: Props) {
   const incomingUsagePercentMap = useIncomingDamageStore((state) => state.usagePercentMap);
   const incomingKnownMoveKeys = useIncomingDamageStore((state) => state.knownMoveKeys);
   const incomingStatusMoves = useIncomingDamageStore((state) => state.statusMoves);
+  const incomingRequestBody = useIncomingDamageStore((state) => state.lastRequestBody);
 
   const weather = useFieldStateStore((state) => state.weather);
   const terrain = useFieldStateStore((state) => state.terrain);
@@ -614,10 +680,6 @@ export function BattleInfoOverlay({ currentScene }: Props) {
 
   const opponentMovesBySpecies = useOpponentMovesFromLog();
   const { detail: opponentDetail } = usePokemonDetail(effectiveOpponentKey);
-
-  if (!isBattleScene) {
-    return null;
-  }
 
   const logRevealedOpponentMoves =
     effectiveOpponentKey != null
@@ -816,6 +878,8 @@ export function BattleInfoOverlay({ currentScene }: Props) {
                     defensePreset={opponentSlot.defensePreset}
                     offensePreset={opponentSlot.offensePreset}
                     natureBoostStat={opponentSlot.natureBoostStat}
+                    hbdRecommendation={opponentSlot.hbdRecommendation}
+                    defensePresetAutoApplied={opponentSlot.defensePresetAutoApplied}
                   />
                 )}
               </section>
@@ -873,6 +937,7 @@ export function BattleInfoOverlay({ currentScene }: Props) {
                 error={damageError}
                 result={selectedDamageResult}
                 emptyMessage="自分と相手を選択してください"
+                requestBody={damageRequestBody}
               />
             </div>
 
@@ -884,6 +949,7 @@ export function BattleInfoOverlay({ currentScene }: Props) {
               usagePercentMap={incomingUsagePercentMap}
               knownMoveKeys={incomingKnownMoveKeys}
               statusMoves={incomingStatusMoves}
+              requestBody={incomingRequestBody}
             />
           </div>
         </div>

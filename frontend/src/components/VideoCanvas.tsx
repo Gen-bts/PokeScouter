@@ -1,6 +1,8 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SceneMeta } from "../api/devtools";
 import { BattleInfoOverlay } from "./BattleInfoOverlay";
+import { ReferenceOverlay } from "./ReferenceOverlay";
+import { NashOverlay } from "./NashOverlay";
 import { PauseBanner } from "./PauseBanner";
 import { RegistrationOverlay } from "./RegistrationOverlay";
 import { PokemonIconCandidateSelector } from "./devtools/PokemonIconCandidateSelector";
@@ -60,6 +62,8 @@ export const VideoCanvas = memo(function VideoCanvas({
   onResume,
 }: Props) {
   const showBattleInfo = useSettingsStore((s) => s.showBattleInfo);
+  const showReferenceOverlay = useSettingsStore((s) => s.showReferenceOverlay);
+  const showNashOverlay = useSettingsStore((s) => s.showNashOverlay);
   const overlayRef = useRef<HTMLCanvasElement>(null);
   const [activeSpritePosition, setActiveSpritePosition] = useState<number | null>(null);
   const [spriteOverrides, setSpriteOverrides] = useState<
@@ -413,6 +417,8 @@ export const VideoCanvas = memo(function VideoCanvas({
         </div>
       )}
       {showBattleInfo && <BattleInfoOverlay currentScene={currentScene} />}
+      {showReferenceOverlay && <ReferenceOverlay />}
+      {showNashOverlay && <NashOverlay />}
       {paused && pauseReason && (
         <PauseBanner reason={pauseReason} onResume={onResume} />
       )}

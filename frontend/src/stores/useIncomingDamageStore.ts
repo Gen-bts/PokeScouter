@@ -18,12 +18,14 @@ interface IncomingDamageState {
   error: string | null;
   /** stale レスポンス破棄用カウンタ */
   requestGeneration: number;
-  /** usage ソースの使用率マップ (move_key → usage_percent) — 常時構築 */
-  usagePercentMap: Record<string, number>;
+  /** usage ソースの使用率マップ (move_key → usage_percent). yakkun fallback では null */
+  usagePercentMap: Record<string, number | null>;
   /** 確定済み技のキーリスト */
   knownMoveKeys: string[];
   /** 変化技リスト（ダメージ計算対象外・表示用） */
   statusMoves: StatusMoveEntry[];
+  /** デバッグ用: 最後に送信したリクエストボディ */
+  lastRequestBody: Record<string, unknown> | null;
 
   setResults: (
     results: DefenderDamageResult[],
@@ -31,6 +33,7 @@ interface IncomingDamageState {
     usageMoves: UsageMove[],
     knownMoveKeys: string[],
     statusMoves: StatusMoveEntry[],
+    requestBody?: Record<string, unknown>,
   ) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -48,8 +51,9 @@ export const useIncomingDamageStore = create<IncomingDamageState>()(
     usagePercentMap: {},
     knownMoveKeys: [],
     statusMoves: [],
+    lastRequestBody: null,
 
-    setResults: (results, generation, usageMoves, knownMoveKeys, statusMoves) =>
+    setResults: (results, generation, usageMoves, knownMoveKeys, statusMoves, requestBody?) =>
       set((state) => {
         if (generation !== state.requestGeneration) {
           // #region agent log
@@ -57,7 +61,7 @@ export const useIncomingDamageStore = create<IncomingDamageState>()(
           // #endregion
           return state;
         }
-        const usagePercentMap: Record<string, number> = {};
+        const usagePercentMap: Record<string, number | null> = {};
         for (const m of usageMoves) {
           usagePercentMap[m.move_key] = m.usage_percent;
         }
@@ -71,6 +75,7 @@ export const useIncomingDamageStore = create<IncomingDamageState>()(
           usagePercentMap,
           knownMoveKeys,
           statusMoves,
+          lastRequestBody: requestBody ?? null,
         };
       }),
 
@@ -92,6 +97,7 @@ export const useIncomingDamageStore = create<IncomingDamageState>()(
         usagePercentMap: {},
         knownMoveKeys: [],
         statusMoves: [],
+        lastRequestBody: null,
       }),
 
     clear: () =>
@@ -102,6 +108,7 @@ export const useIncomingDamageStore = create<IncomingDamageState>()(
         usagePercentMap: {},
         knownMoveKeys: [],
         statusMoves: [],
+        lastRequestBody: null,
       }),
   }),
 );
