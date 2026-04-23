@@ -1,8 +1,18 @@
 /**
- * Champions 新特性の前処理/後処理.
+ * Champions 特性に関する表示ロジック.
  *
- * @smogon/calc が知らない Champions 固有特性について、
- * calculate() 呼び出しの前後でリクエスト/レスポンスを変換する。
+ * @smogon/calc master (2026-04-16〜) が Champions をネイティブサポートした
+ * ことで Dragonize / Mega Sol / Piercing Drill などのダメージ計算自体は
+ * ライブラリ側で完結する。このモジュールは次のみ担当する:
+ *
+ * 1. タイプ相性 (type_effectiveness) 表示用のタイプ変換
+ *    — ライブラリ内部の処理はダメージ値にしか反映されないため、
+ *      UI に「Pixilate 適用後の Fairy タイプ vs 〜」を出すには
+ *      こちら側で同じ変換を再現する必要がある.
+ *
+ * 2. MoveResult に付与する UI 向け注釈 (pierces_protect など)
+ *    — ダメージ計算には影響しないが、技ツールチップで
+ *      「Protect 貫通」「接触やけど」のようなヒントを表示する.
  */
 
 import type {
@@ -12,27 +22,20 @@ import type {
   ResolvedPokemonInput,
 } from "../types.js";
 
-/** -ize 系特性（ノーマル技を別タイプに変換 + 1.2 倍） — Champions 固有 */
-const TYPE_CHANGE_ABILITIES: Record<string, string> = {
-  dragonize: "Dragon",
-  // 将来: 他の Champions 固有 -ize 特性をここに追加
-};
-
-/** @smogon/calc が認識する標準タイプ変換特性（表示用タイプ相性の算出に使用） */
-export const SMOGON_TYPE_CHANGE_ABILITIES: Record<string, string> = {
+/**
+ * 表示時に Normal タイプを別タイプに変換する特性.
+ * ダメージ計算自体は @smogon/calc が処理するが、type_effectiveness の
+ * 表示計算はこちらで行うため同じ対応表を持つ。
+ */
+const TYPE_CHANGE_ABILITIES_FOR_DISPLAY: Record<string, string> = {
   pixilate: "Fairy",
   refrigerate: "Ice",
   aerilate: "Flying",
   galvanize: "Electric",
+  dragonize: "Dragon",
 };
 
-/** 天候をセットする特性 */
-const WEATHER_ABILITIES: Record<string, string> = {
-  "mega sol": "Sun",
-  // 将来: 他の天候特性をここに追加
-};
-
-/** 結果に注釈を付ける特性 */
+/** UI ツールチップ用の注釈付与特性. */
 const ANNOTATION_ABILITIES: Record<string, string> = {
   "piercing drill": "pierces_protect",
   "spicy spray": "contact_burn",
@@ -41,89 +44,53 @@ const ANNOTATION_ABILITIES: Record<string, string> = {
 export interface PreprocessResult {
   moves: ResolvedMoveInput[];
   field: FieldInput;
-  /** 攻撃側の特性を @smogon/calc が認識するものに置換した場合の値 */
-  sanitizedAbility: string | null;
-  /** 防御側の特性を @smogon/calc が認識するものに置換した場合の値 */
-  defenderSanitizedAbility?: string | null;
+  /** 攻撃側の特性 (そのまま渡す; @smogon/calc が Champions 特性をネイティブ処理). */
+  ability: string | null;
   annotations: Record<string, boolean>;
 }
 
 /**
- * calculate() 前にリクエストを変換する.
+ * リクエストから UI 向け注釈を収集する.
  *
- * @returns 変換後の moves, field, 注釈情報
+ * 以前は Champions 特性を @smogon/calc 向けに書き換えていたが、
+ * ライブラリ本体が Champions をネイティブサポートしたため、ここでは
+ * 表示用の注釈だけを抽出する。
  */
 export function preprocessRequest(
   attacker: ResolvedPokemonInput,
-  defender: ResolvedPokemonInput,
+  _defender: ResolvedPokemonInput,
   moves: ResolvedMoveInput[],
   field: FieldInput,
 ): PreprocessResult {
-  let processedMoves = [...moves];
-  let processedField = { ...field };
-  let sanitizedAbility = attacker.ability;
+  const abilityLower = attacker.ability?.toLowerCase() ?? "";
   const annotations: Record<string, boolean> = {};
 
-  const abilityLower = attacker.ability?.toLowerCase() ?? "";
-
-  // -ize 系特性: ノーマル技のタイプ変換 + 1.2 倍
-  const targetType = TYPE_CHANGE_ABILITIES[abilityLower];
-  if (targetType) {
-    processedMoves = processedMoves.map((m) => {
-      if (m.type.toLowerCase() === "normal" && m.damage_class !== "status") {
-        return {
-          ...m,
-          type: targetType,
-          power: m.power != null ? Math.floor(m.power * 1.2) : m.power,
-        };
-      }
-      return m;
-    });
-    // @smogon/calc には知られていないので無効な特性を渡さない
-    sanitizedAbility = null;
-  }
-
-  // 天候特性
-  const weather = WEATHER_ABILITIES[abilityLower];
-  if (weather) {
-    processedField = { ...processedField, weather };
-    sanitizedAbility = null;
-  }
-
-  // 注釈特性（ダメージ計算自体は変わらない）
   const annotation = ANNOTATION_ABILITIES[abilityLower];
-  if (annotation) {
-    annotations[annotation] = true;
-    sanitizedAbility = null;
-  }
+  if (annotation) annotations[annotation] = true;
 
   return {
-    moves: processedMoves,
-    field: processedField,
-    sanitizedAbility,
+    moves,
+    field,
+    ability: attacker.ability,
     annotations,
   };
 }
 
 /**
- * タイプ変換特性を考慮した実効タイプを返す.
- *
- * Champions 固有特性は preprocessRequest で既に変換済みのため、
- * ここでは @smogon/calc が認識する標準特性のみ対応する。
+ * タイプ変換特性を考慮した実効タイプを返す (表示専用).
  */
 export function getEffectiveMoveType(
   moveType: string,
   attackerAbility: string | null,
 ): string {
   if (!attackerAbility) return moveType;
-  const target = SMOGON_TYPE_CHANGE_ABILITIES[attackerAbility.toLowerCase()];
+  const target =
+    TYPE_CHANGE_ABILITIES_FOR_DISPLAY[attackerAbility.toLowerCase()];
   if (target && moveType.toLowerCase() === "normal") return target;
   return moveType;
 }
 
-/**
- * MoveResult に注釈を付与する（後処理）.
- */
+/** MoveResult に注釈を付与する (後処理). */
 export function applyAnnotations(
   result: MoveResult,
   annotations: Record<string, boolean>,
@@ -131,7 +98,7 @@ export function applyAnnotations(
 ): MoveResult {
   const merged = { ...annotations };
 
-  // Spicy Spray: 接触技の場合のみ注釈
+  // Spicy Spray: 接触技のときだけ注釈を残す.
   if (merged["contact_burn"] && !move.makes_contact) {
     delete merged["contact_burn"];
   }

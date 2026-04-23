@@ -1,7 +1,10 @@
 /**
  * @smogon/calc ベースのダメージ計算エンジン.
  *
- * Gen 9 をベースに使用し、Champions の実数値を stat override で注入する。
+ * Champions (gen 0) を使用し、実数値を stat override で注入する。
+ * @smogon/calc master (2026-04-16 以降) が Champions 固有の特性・種族を
+ * 内包しているため、Dragonize / Mega Sol / Piercing Drill などは
+ * ネイティブに処理される。
  */
 
 import {
@@ -40,7 +43,8 @@ import {
   type SnapshotMove,
 } from "../showdown/snapshot.js";
 
-const GEN_NUM = 9;
+// Champions は @smogon/calc 上で gen 0 として扱われる.
+const GEN_NUM = 0;
 let gen: ReturnType<typeof Generations.get> | null = null;
 
 function getGen(): ReturnType<typeof Generations.get> {
@@ -48,6 +52,20 @@ function getGen(): ReturnType<typeof Generations.get> {
     gen = Generations.get(GEN_NUM);
   }
   return gen;
+}
+
+function installStatPreservingClone(pokemon: Pokemon): void {
+  const originalClone = pokemon.clone.bind(pokemon);
+
+  pokemon.clone = () => {
+    const cloned = originalClone();
+    cloned.types = [...pokemon.types] as Pokemon["types"];
+    cloned.rawStats = { ...pokemon.rawStats };
+    cloned.stats = { ...pokemon.stats };
+    cloned.originalCurHP = pokemon.originalCurHP;
+    installStatPreservingClone(cloned);
+    return cloned;
+  };
 }
 
 /**
@@ -71,13 +89,24 @@ function buildPokemon(
     speciesName = baseName;
   }
 
+  // アイテム名を Champions の合法アイテムに検証.
+  // 認識されないアイテム (Life Orb など Champions 非合法) を渡すと
+  // calculateBPModsChampions が gen.items.get() の undefined にアクセスして crash するため、
+  // ここで事前に undefined に差し替える.
+  let itemName: string | undefined = input.item ?? undefined;
+  if (itemName) {
+    const itemId = itemName.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const itemEntry = g.items.get(itemId as Parameters<typeof g.items.get>[0]);
+    if (!itemEntry) itemName = undefined;
+  }
+
   let pokemon: Pokemon;
   try {
     pokemon = new Pokemon(g, speciesName, {
       level: 50,
       nature: "Serious", // 中性性格
       ability: ability ?? undefined,
-      item: input.item ?? undefined,
+      item: itemName,
       ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 },
       evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
       boosts: input.boosts
@@ -97,7 +126,7 @@ function buildPokemon(
       level: 50,
       nature: "Serious",
       ability: ability ?? undefined,
-      item: input.item ?? undefined,
+      item: itemName,
     });
   }
 
@@ -127,6 +156,7 @@ function buildPokemon(
     ? input.cur_hp
     : input.stats.hp;
   pokemon.originalCurHP = curHP;
+  installStatPreservingClone(pokemon);
 
   return pokemon;
 }
@@ -235,7 +265,7 @@ export class SmogonDamageEngine implements DamageEngine {
 
       const attackerPokemon = buildPokemon(
         resolvedAttacker,
-        preprocess.sanitizedAbility,
+        preprocess.ability,
       );
       const defenderPokemon = buildPokemon(
         resolvedDefender,
@@ -254,7 +284,7 @@ export class SmogonDamageEngine implements DamageEngine {
         // タイプ相性（表示用 — 特性によるタイプ変換を考慮）
         const effectiveMoveType = getEffectiveMoveType(
           moveInput.type,
-          preprocess.sanitizedAbility,
+          preprocess.ability,
         );
         const typeEff = getTypeEffectiveness(effectiveMoveType, resolvedDefender.types);
 

@@ -4,7 +4,8 @@
 
 import { TYPE_CHART } from "@smogon/calc";
 
-const GEN_NUM = 9;
+// Champions は @smogon/calc 上で gen 0 として扱われる.
+const GEN_NUM = 0;
 
 export function capitalizeType(type: string): string {
   return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();

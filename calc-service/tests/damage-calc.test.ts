@@ -190,4 +190,28 @@ describe("ダメージ計算", () => {
     expect(moveResult.damage.min).toBe(0);
     expect(moveResult.damage.max).toBe(0);
   });
+  it("applies custom attack and defense stats to damage rolls", () => {
+    const buildReq = (atk: number, def: number): DamageRequest => ({
+      attacker: {
+        pokemon_key: "garchomp",
+        stats: { hp: 183, atk, def: 115, spa: 100, spd: 105, spe: 169 },
+      },
+      defenders: [
+        {
+          pokemon_key: "umbreon",
+          stats: { hp: 202, atk: 85, def, spa: 80, spd: 150, spe: 85 },
+        },
+      ],
+      moves: [{ move_key: "earthquake" }],
+    });
+
+    const lowAtk = calculateDamage(buildReq(110, 130)).results[0].moves[0];
+    const highAtk = calculateDamage(buildReq(220, 130)).results[0].moves[0];
+    const highDef = calculateDamage(buildReq(220, 220)).results[0].moves[0];
+
+    expect(highAtk.damage.min).toBeGreaterThan(lowAtk.damage.min);
+    expect(highAtk.damage.max).toBeGreaterThan(lowAtk.damage.max);
+    expect(highDef.damage.min).toBeLessThan(highAtk.damage.min);
+    expect(highDef.damage.max).toBeLessThan(highAtk.damage.max);
+  });
 });
