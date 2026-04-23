@@ -154,6 +154,25 @@ class TestHazardAccumulation:
         changed = acc.apply_event(_event("hazard_set", side="opponent", hazard_type="stealth_rock"))
         assert changed is False
 
+    def test_spikes_stack_up_to_three_layers(self) -> None:
+        acc = FieldStateAccumulator()
+
+        assert acc.apply_event(_event("hazard_set", side="player", hazard_type="spikes")) is True
+        assert acc.apply_event(_event("hazard_set", side="player", hazard_type="spikes")) is True
+        assert acc.apply_event(_event("hazard_set", side="player", hazard_type="spikes")) is True
+
+        assert acc.state.player_side.spikes == 3
+
+    def test_spikes_fourth_layer_is_ignored(self) -> None:
+        acc = FieldStateAccumulator()
+        for _ in range(3):
+            acc.apply_event(_event("hazard_set", side="opponent", hazard_type="spikes"))
+
+        changed = acc.apply_event(_event("hazard_set", side="opponent", hazard_type="spikes"))
+
+        assert changed is False
+        assert acc.state.opponent_side.spikes == 3
+
 
 class TestReset:
     def test_reset_clears_all(self) -> None:
@@ -173,6 +192,7 @@ class TestReset:
         assert acc.state.player_side.reflect is False
         assert acc.state.opponent_side.tailwind is False
         assert acc.state.opponent_side.stealth_rock is False
+        assert acc.state.opponent_side.spikes == 0
 
 
 class TestToDict:

@@ -111,6 +111,8 @@ def game_data(tmp_path):
             "mega_stone": "gengarmega",
             "mega_evolves": "gengar",
         },
+        "focussash": {"item_key": "focussash", "name": "Focus Sash"},
+        "quickclaw": {"item_key": "quickclaw", "name": "Quick Claw"},
     }
     (base / "items.json").write_text(
         json.dumps(items_data, ensure_ascii=False), encoding="utf-8",
@@ -146,8 +148,18 @@ def game_data(tmp_path):
             "シャドークロー": 421,
             "でんこうせっか": 98,
         },
-        "abilities": {},
-        "items": {},
+        "abilities": {
+            "プレッシャー": "pressure",
+            "フェアリーオーラ": "fairyaura",
+            "そうだいしょう": "supremeoverlord",
+        },
+        "items": {
+            "きあいのタスキ": "focussash",
+            "せんせいのツメ": "quickclaw",
+            "ゲンガナイト": "gengarite",
+            "リザードナイトX": "charizarditex",
+            "リザードナイトY": "charizarditey",
+        },
     }
     (names_dir / "ja.json").write_text(
         json.dumps(ja_names, ensure_ascii=False), encoding="utf-8",
@@ -626,11 +638,12 @@ class TestMoveUsedPattern:
         assert len(events) == 1
         assert events[0].event_type == "stat_change"
 
-    def test_yawn_aftermath_not_move_used(self, parser: BattleLogParser) -> None:
-        """あくびのあと等「眠気を誘った」叙述はわざとして扱わない（未認識イベント）."""
+    def test_yawn_aftermath_is_drowsy_status(self, parser: BattleLogParser) -> None:
+        """あくび後の「眠気を誘った」は move_used ではなく drowsy として扱う."""
         events = parser.parse("相手のリザードンの 眠気を　誘つた!", "")
         assert len(events) == 1
-        assert events[0].event_type == "unrecognized"
+        assert events[0].event_type == "status_condition"
+        assert events[0].details["status"] == "drowsy"
 
     def test_move_used_dedup(self, parser: BattleLogParser) -> None:
         """同一技使用はTTL内で重複排除される."""
@@ -1406,3 +1419,278 @@ class TestTailwindPattern:
         ev = events[0]
         assert ev.side == "opponent"
         assert ev.details["action"] == "end"
+
+
+class TestOcrDriftTolerance:
+    """OCR揺らぎ（大きい「つ」→小さい「っ」、ハイフン挿入等）の吸収テスト."""
+
+    def test_sand_end_with_big_tsu(self, parser: BattleLogParser) -> None:
+        events = parser.parse("砂あらしがおさまつた!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "weather"
+        assert ev.details == {"weather": "sand", "action": "end"}
+
+    def test_sun_end_with_big_tsu(self, parser: BattleLogParser) -> None:
+        events = parser.parse("日差しが元に戻つた!", "")
+        assert len(events) == 1
+        assert events[0].event_type == "weather"
+        assert events[0].details == {"weather": "sun", "action": "end"}
+
+    def test_stat_change_with_big_tsu(self, parser: BattleLogParser) -> None:
+        events = parser.parse("相手のリザードンの 攻撃が下がつた!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "stat_change"
+        assert ev.side == "opponent"
+        assert ev.pokemon_key == "charizard"
+        assert ev.details == {"stat": "atk", "stages": -1}
+
+    def test_stat_change_sharply_with_big_tsu(self, parser: BattleLogParser) -> None:
+        events = parser.parse("ピカチュウの すばやさが がくつと下がつた!", "")
+        assert len(events) == 1
+        assert events[0].event_type == "stat_change"
+        assert events[0].details == {"stat": "spe", "stages": -2}
+
+    def test_opponent_sent_out_without_ri(self, parser: BattleLogParser) -> None:
+        """「繰り出した」の「り」が抜けた OCR ぶれ."""
+        parser.update_context(opponent_trainer="タロウ")
+        events = parser.parse("タロウが リザードンを繰出した!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "opponent_sent_out"
+        assert ev.pokemon_key == "charizard"
+
+    def test_mega_evolution_with_hyphen(self, parser: BattleLogParser) -> None:
+        """「メガ○○に-メガシンカした」のハイフン挿入OCRぶれ."""
+        events = parser.parse("ゲンガーは メガゲンガーに-メガシンカした!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "mega_evolution"
+        assert ev.pokemon_key == "gengar"
+        assert ev.details["mega_name"] == "メガゲンガー"
+
+
+class TestCriticalHitPattern:
+    """急所パターンのテスト."""
+
+    def test_critical_hit(self, parser: BattleLogParser) -> None:
+        events = parser.parse("急所に当たった!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "critical_hit"
+        assert ev.details == {"critical": True}
+
+    def test_critical_hit_with_big_tsu(self, parser: BattleLogParser) -> None:
+        events = parser.parse("急所に当たつた!", "")
+        assert len(events) == 1
+        assert events[0].event_type == "critical_hit"
+
+
+class TestMultiHitPattern:
+    """連続ヒットパターンのテスト."""
+
+    def test_two_hits(self, parser: BattleLogParser) -> None:
+        events = parser.parse("2回当たった!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "multi_hit"
+        assert ev.details == {"hits": 2}
+
+    def test_five_hits_with_big_tsu(self, parser: BattleLogParser) -> None:
+        events = parser.parse("5回当たつた!", "")
+        assert len(events) == 1
+        assert events[0].details == {"hits": 5}
+
+
+class TestItemTriggeredPattern:
+    """持ち物発動メッセージパターンのテスト."""
+
+    def test_focus_sash_holds_on(self, parser: BattleLogParser) -> None:
+        events = parser.parse("相手のガブリアスは きあいのタスキでもちこたえた!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "item_triggered"
+        assert ev.side == "opponent"
+        assert ev.pokemon_key == "garchomp"
+        assert ev.details["item_key"] == "focussash"
+        assert ev.details["item_name"] == "きあいのタスキ"
+
+    def test_quickclaw_triggers(self, parser: BattleLogParser) -> None:
+        events = parser.parse(
+            "相手のリザードンはせんせいのツメで 行動がはやくなった!", "",
+        )
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "item_triggered"
+        assert ev.side == "opponent"
+        assert ev.details["item_key"] == "quickclaw"
+
+
+class TestMegaStoneRevealedPattern:
+    """メガストーン反応パターンのテスト（対戦開始時両サイド所持判明）."""
+
+    def test_both_sides_revealed(self, parser: BattleLogParser) -> None:
+        events = parser.parse(
+            "ゲンガーのゲンガナイトと 相手のリザードンのリザードナイトXが反応した!", "",
+        )
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "mega_stone_revealed"
+        pairs = ev.details["pairs"]
+        assert pairs["player"]["pokemon_key"] == "gengar"
+        assert pairs["player"]["stone_key"] == "gengarite"
+        assert pairs["opponent"]["pokemon_key"] == "charizard"
+        assert pairs["opponent"]["stone_key"] == "charizarditex"
+
+
+class TestWeatherDamagePattern:
+    """天気被害パターンのテスト."""
+
+    def test_sandstorm_hits_opponent(self, parser: BattleLogParser) -> None:
+        events = parser.parse("砂あらしが 相手のリザードンを襲う!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "weather_damage"
+        assert ev.side == "opponent"
+        assert ev.pokemon_key == "charizard"
+        assert ev.details == {"weather": "sand"}
+
+    def test_sandstorm_hits_player(self, parser: BattleLogParser) -> None:
+        events = parser.parse("砂あらしが ピカチュウを襲う!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.side == "player"
+        assert ev.details == {"weather": "sand"}
+
+
+class TestStatResetPattern:
+    """ステータスリセットパターンのテスト."""
+
+    def test_all_stats_reset(self, parser: BattleLogParser) -> None:
+        events = parser.parse("全てのステータスが 元に戻った!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "stat_reset"
+        assert ev.details == {"reset_type": "all_stats"}
+
+    def test_all_stats_reset_with_big_tsu(self, parser: BattleLogParser) -> None:
+        events = parser.parse("全てのステータスが 元に戻つた!", "")
+        assert len(events) == 1
+        assert events[0].event_type == "stat_reset"
+
+
+class TestObservedLogVariants:
+    """実ログで残っていた高価値テキストの回帰テスト."""
+
+    def test_type_effectiveness_variant_super_effective(self, parser: BattleLogParser) -> None:
+        events = parser.parse("効果はーバツグンだ!", "")
+        assert len(events) == 1
+        assert events[0].event_type == "type_effectiveness"
+        assert events[0].details["effectiveness"] == "super_effective"
+
+    def test_type_effectiveness_variant_immune(self, parser: BattleLogParser) -> None:
+        events = parser.parse("ゲンガーには 効果がないようだ", "")
+        assert len(events) == 1
+        assert events[0].event_type == "type_effectiveness"
+        assert events[0].details["effectiveness"] == "immune"
+
+    def test_weather_variant_sandstorm_start(self, parser: BattleLogParser) -> None:
+        events = parser.parse("砂あしが吹き始めた!", "")
+        assert len(events) == 1
+        assert events[0].event_type == "weather"
+        assert events[0].details["weather"] == "sand"
+        assert events[0].details["action"] == "start"
+
+    def test_player_sent_out_variant(self, parser: BattleLogParser) -> None:
+        events = parser.parse("ゆけう!ガブリアス!", "")
+        assert len(events) == 1
+        assert events[0].event_type == "player_sent_out"
+        assert events[0].pokemon_key == "garchomp"
+
+    def test_fainted_variant_with_noise(self, parser: BattleLogParser) -> None:
+        events = parser.parse("ゲンガーは1たおれた!", "")
+        assert len(events) == 1
+        assert events[0].event_type == "pokemon_fainted"
+        assert events[0].pokemon_key == "gengar"
+
+    def test_drowsy_status_detected(self, parser: BattleLogParser) -> None:
+        events = parser.parse("相手のリザードンの 眠気を誘つた!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "status_condition"
+        assert ev.side == "opponent"
+        assert ev.details["status"] == "drowsy"
+
+    def test_confusion_detected(self, parser: BattleLogParser) -> None:
+        events = parser.parse("ガブリアスは つかれ果てて混乱した!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "status_condition"
+        assert ev.details["status"] == "confusion"
+        assert ev.pokemon_key == "garchomp"
+
+    def test_spikes_set_detected(self, parser: BattleLogParser) -> None:
+        events = parser.parse("相手の足下に まきびしが散ばつた!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "hazard_set"
+        assert ev.side == "opponent"
+        assert ev.details["hazard_type"] == "spikes"
+
+    def test_spikes_damage_detected(self, parser: BattleLogParser) -> None:
+        events = parser.parse("相手のガブリアスは まきびしのダメージを受けた!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "hazard_damage"
+        assert ev.side == "opponent"
+        assert ev.details["hazard_type"] == "spikes"
+        assert ev.pokemon_key == "garchomp"
+
+    def test_substitute_broken_detected(self, parser: BattleLogParser) -> None:
+        events = parser.parse("ゲンガーの 身代わりは 消えてしまつた", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "substitute"
+        assert ev.details["phase"] == "broken"
+        assert ev.pokemon_key == "gengar"
+
+    def test_substitute_took_hit_detected(self, parser: BattleLogParser) -> None:
+        events = parser.parse("ゲンガーにかわつて 身代わりが攻撃を受けた!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "substitute"
+        assert ev.details["phase"] == "took_hit"
+        assert ev.pokemon_key == "gengar"
+
+    def test_burn_damage_detected(self, parser: BattleLogParser) -> None:
+        events = parser.parse("ガブリアスは やけどのダメージを受けた!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "status_damage"
+        assert ev.details["status"] == "burn"
+        assert ev.pokemon_key == "garchomp"
+
+    def test_ability_revealed_detected(self, parser: BattleLogParser) -> None:
+        events = parser.parse("相手のリザードンは プレツシャーを放つている!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "ability_revealed"
+        assert ev.side == "opponent"
+        assert ev.details["ability_key"] == "pressure"
+
+    def test_supreme_overlord_detected(self, parser: BattleLogParser) -> None:
+        events = parser.parse("相手のガブリアスは 倒された仲間から力をもらつた!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "ability_revealed"
+        assert ev.details["ability_key"] == "supremeoverlord"
+
+    def test_mega_stone_reveal_with_ring_detected(self, parser: BattleLogParser) -> None:
+        events = parser.parse("ゲンガーのゲンガナイトと Genのゼンブイリングが反応した!", "")
+        assert len(events) == 1
+        ev = events[0]
+        assert ev.event_type == "mega_stone_revealed"
+        assert ev.pokemon_key == "gengar"
+        assert ev.details["stone_key"] == "gengarite"
+        assert ev.details["ring_name"] == "ゼンブイリング"

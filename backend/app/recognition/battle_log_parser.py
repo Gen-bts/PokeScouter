@@ -188,10 +188,17 @@ class BattleEvent:
             stat = self.details.get("stat", "")
             stages = self.details.get("stages", 0)
             return f"{self.event_type}:{self.side}:{self.pokemon_key}:{stat}:{stages}"
+        if self.event_type == "status_condition":
+            status = self.details.get("status", "")
+            phase = self.details.get("phase", "")
+            return f"{self.event_type}:{self.side}:{self.pokemon_key}:{status}:{phase}"
         if self.event_type == "weather":
             weather = self.details.get("weather", "")
             action = self.details.get("action", "")
             return f"{self.event_type}:{weather}:{action}"
+        if self.event_type == "weather_damage":
+            weather = self.details.get("weather", "")
+            return f"{self.event_type}:{self.side}:{self.pokemon_key}:{weather}"
         if self.event_type == "field_effect":
             effect = self.details.get("effect", "")
             action = self.details.get("action", "")
@@ -207,9 +214,30 @@ class BattleEvent:
         if self.event_type == "tailwind":
             action = self.details.get("action", "")
             return f"{self.event_type}:{self.side}:{action}"
+        if self.event_type in {"hazard_set", "hazard_damage"}:
+            hazard = self.details.get("hazard_type", "")
+            return f"{self.event_type}:{self.side}:{self.pokemon_key}:{hazard}"
         if self.event_type == "type_effectiveness":
             eff = self.details.get("effectiveness", "")
             return f"{self.event_type}:{eff}"
+        if self.event_type == "multi_hit":
+            hits = self.details.get("hits", 0)
+            return f"{self.event_type}:{hits}"
+        if self.event_type == "item_triggered":
+            item = self.details.get("item_key", self.details.get("item_name", ""))
+            return f"{self.event_type}:{self.side}:{self.pokemon_key}:{item}"
+        if self.event_type == "mega_stone_revealed":
+            stone = self.details.get("stone_key", self.details.get("stone_name", ""))
+            return f"{self.event_type}:{self.side}:{self.pokemon_key}:{stone}"
+        if self.event_type == "ability_revealed":
+            ability = self.details.get("ability_key", self.details.get("ability_name", ""))
+            return f"{self.event_type}:{self.side}:{self.pokemon_key}:{ability}"
+        if self.event_type == "substitute":
+            phase = self.details.get("phase", "")
+            return f"{self.event_type}:{self.side}:{self.pokemon_key}:{phase}"
+        if self.event_type == "status_damage":
+            status = self.details.get("status", "")
+            return f"{self.event_type}:{self.side}:{self.pokemon_key}:{status}"
         move_fingerprint = self.move_key if self.move_key is not None else self.move_name
         return f"{self.event_type}:{self.side}:{self.pokemon_key}:{move_fingerprint}"
 
@@ -247,7 +275,9 @@ class BattleTextPattern:
 # パターン定義
 # ---------------------------------------------------------------------------
 
-_FAINTED_RE = re.compile(r"(?:(相手)の\s*)?(.+?)\s*は\s*たおれた")
+_FAINTED_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)\s*は[\sー\-−一1I|]*\s*たおれた",
+)
 
 
 def _extract_fainted(
@@ -318,8 +348,8 @@ _STAT_CHANGE_RE = re.compile(
     r"(こうげき|攻撃|ぼうぎょ|防御|とくこう|特攻|とくぼう|特防|"
     r"すばやさ|素早さ|命中率|回避率)"
     r"\s*が\s*"
-    r"(ぐぐーんと\s*上がった|ぐーんと\s*上がった|上がった|"
-    r"がくーんと\s*下がった|がくっと\s*下がった|下がった)",
+    r"(ぐぐーんと\s*上が[つっ]た|ぐーんと\s*上が[つっ]た|上が[つっ]た|"
+    r"がくーんと\s*下が[つっ]た|がく[つっ]と\s*下が[つっ]た|下が[つっ]た)",
 )
 
 
@@ -338,8 +368,9 @@ def _extract_stat_change(
     if stat_key is None:
         return None
 
-    # スペースを除去してからステージ数を解決
+    # スペース除去 + OCR揺らぎ（大きい「つ」→小さい「っ」）正規化
     magnitude_normalized = re.sub(r"\s+", "", magnitude_raw)
+    magnitude_normalized = magnitude_normalized.replace("つた", "った").replace("つと", "っと")
     stages = _STAGE_MAP.get(magnitude_normalized)
     if stages is None:
         return None
@@ -371,14 +402,14 @@ def _extract_stat_change(
 
 
 _PLAYER_SENT_OUT_RE = re.compile(
-    r"ゆけ[っつ][っつがぁ]*[！!つ]?\s*(.+)",
+    r"ゆけ[っつうづ][っつうづがぁ！!]*\s*(.+)",
 )
 
 
 def _extract_player_sent_out(
     m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
 ) -> BattleEvent | None:
-    name_candidate = m.group(1).strip()
+    name_candidate = re.sub(r"[!！\s]+$", "", m.group(1).strip())
     if not name_candidate:
         return None
 
@@ -408,7 +439,7 @@ def _extract_player_sent_out(
     )
 
 
-_OPPONENT_SENT_OUT_RE = re.compile(r"(.+?)[がは]\s*(.+?)\s*を\s*繰り出した")
+_OPPONENT_SENT_OUT_RE = re.compile(r"(.+?)[がは]\s*(.+?)\s*を\s*繰り?出した")
 
 _TRAINER_NAME_THRESHOLD = 0.5
 
@@ -571,25 +602,42 @@ def _is_noise(text: str) -> bool:
 # ---------------------------------------------------------------------------
 
 _TYPE_EFFECTIVENESS_RE = re.compile(
-    r"効果は\s*(いまひとつ|ちょうバツグン|ちようバツグン|バツグン)",
+    r"効果[はが].*(?:ないようだ|かなり\s*いまひとつ|いまひとつ|"
+    r"ち(?:ょう|よう).*[バパ][ツッ].*|大?[バパ][ツッ].*)",
 )
 
 
 def _extract_type_effectiveness(
     m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
 ) -> BattleEvent | None:
-    kind_jp = re.sub(r"\s+", "", m.group(1).strip())
-    effectiveness_map: dict[str, str] = {
-        "いまひとつ": "not_very_effective",
-        "バツグン": "super_effective",
-        "ちょうバツグン": "double_super_effective",
-        "ちようバツグン": "double_super_effective",
-    }
+    kind_jp = re.sub(r"[\s!！…。、ー\-−]", "", raw_text.strip())
+    kind_jp = (
+        kind_jp
+        .replace("効果が", "効果は")
+        .replace("ちよう", "ちょう")
+        .replace("大バツグン", "バツグン")
+        .replace("バッグン", "バツグン")
+        .replace("バツダン", "バツグン")
+        .replace("バツン", "バツグン")
+        .replace("パツグン", "バツグン")
+    )
+    if "ないようだ" in kind_jp:
+        effectiveness = "immune"
+    elif "かなりいまひとつ" in kind_jp:
+        effectiveness = "double_not_very_effective"
+    elif "いまひとつ" in kind_jp:
+        effectiveness = "not_very_effective"
+    elif "ちょうバツグン" in kind_jp:
+        effectiveness = "double_super_effective"
+    elif "バツグン" in kind_jp:
+        effectiveness = "super_effective"
+    else:
+        return None
     return BattleEvent(
         event_type="type_effectiveness",
         side="unknown",
         raw_text=raw_text,
-        details={"effectiveness": effectiveness_map.get(kind_jp, kind_jp)},
+        details={"effectiveness": effectiveness},
     )
 
 
@@ -617,12 +665,12 @@ def _extract_surrender(
 _WEATHER_RE = re.compile(
     r"(雪)が\d?降り始めた"
     r"|(雪)が\d?止んだ"
-    r"|(砂あらし)が\d?吹き始めた"
-    r"|(砂あらし)が\d?おさまった"
+    r"|(砂あ(?:らし|し))が\d?吹き始めた"
+    r"|(砂あ(?:らし|し))が\d?おさま[つっ]た"
     r"|(雨)が\d?降り始めた"
     r"|(雨)が\d?止んだ"
-    r"|日差しが\d?(強くなった)"
-    r"|日差しが\d?(元に戻った)",
+    r"|日差しが\d?(強くな[つっ]た)"
+    r"|日差しが\d?(元に戻[つっ]た)",
 )
 
 _WEATHER_GROUP_MAP: list[tuple[str, str]] = [
@@ -707,7 +755,7 @@ _SCREEN_SET_RE = re.compile(
 )
 
 _SCREEN_END_RE = re.compile(
-    r"(相手)?\s*の?\s*(?:(リフレクター)|(ひかりのかべ)|(オーロラベール))(?:の効果)?が\d?(?:消えた|切れた|なくなった)",
+    r"(相手)?\s*の?\s*(?:(リフレクター)|(ひかりのかべ)|(オーロラベール))(?:の効果)?が\d?(?:消えた|切れた|なくな[つっ]た)",
 )
 
 
@@ -819,11 +867,11 @@ def _extract_trick_room_start(
 # ---------------------------------------------------------------------------
 
 _HAZARD_SET_RE = re.compile(
-    r"(相手)?の?\s*周りに\s*とが[つっ]た岩が\d?ただよい始めた",
+    r"(相手)?の?\s*周りに\s*とが[つっ]?(?:た)?岩が\d?(?:た?だよ|だよ)い始めた",
 )
 
 _HAZARD_DAMAGE_RE = re.compile(
-    r"(?:(相手)の\s*)?(.+?)に\s*とが[つっ]た岩が\d?食い[こコ]んだ",
+    r"(?:(相手)の\s*)?(.+?)に\s*とが[つっ]?(?:た)?岩が\d?食い[こコ]んだ",
 )
 
 
@@ -856,6 +904,53 @@ def _extract_hazard_damage(
         pokemon_name=pokemon_name,
         pokemon_key=pokemon_key,
         details={"hazard_type": "stealth_rock"},
+    )
+
+
+# ---------------------------------------------------------------------------
+# まきびしパターン
+# ---------------------------------------------------------------------------
+
+_SPIKES_SET_RE = re.compile(
+    r"(?:(相手)の\s*)?足下に\s*まきびしが\s*散(?:ら)?ば[つっ]た",
+)
+
+_SPIKES_DAMAGE_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)は\s*まきびしの\s*ダメ(?:ージ|ー)?\s*を?\s*受(?:け)?た",
+)
+
+
+def _extract_spikes_set(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    side = "opponent" if m.group(1) else "player"
+    return BattleEvent(
+        event_type="hazard_set",
+        side=side,
+        raw_text=raw_text,
+        details={"hazard_type": "spikes"},
+    )
+
+
+def _extract_spikes_damage(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    side = "opponent" if m.group(1) else "player"
+    name_candidate = m.group(2).strip()
+    if not name_candidate:
+        return None
+
+    match_result = _resolve_pokemon_name(name_candidate, side, game_data, ctx)
+    pokemon_name = match_result[0]
+    pokemon_key = match_result[1]
+
+    return BattleEvent(
+        event_type="hazard_damage",
+        side=side,
+        raw_text=raw_text,
+        pokemon_name=pokemon_name,
+        pokemon_key=pokemon_key,
+        details={"hazard_type": "spikes"},
     )
 
 
@@ -901,6 +996,14 @@ _SLEEP_RE = re.compile(
     r"(?:(相手)の\s*)?(.+?)は\s*(?:眠[つっ]てしま[つっ]た|ぐうぐう眠[つっ]ている)",
 )
 
+_DROWSY_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)の\s*眠気を\s*誘[つっ]た",
+)
+
+_CONFUSION_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)は\s*(?:つかれ果てて\s*)?混乱した",
+)
+
 
 def _extract_sleep(
     m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
@@ -922,6 +1025,50 @@ def _extract_sleep(
         pokemon_name=pokemon_name,
         pokemon_key=pokemon_key,
         details={"status": "sleep", "phase": phase},
+    )
+
+
+def _extract_drowsy(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    side = "opponent" if m.group(1) else "player"
+    name_candidate = m.group(2).strip()
+    if not name_candidate:
+        return None
+
+    match_result = _resolve_pokemon_name(name_candidate, side, game_data, ctx)
+    pokemon_name = match_result[0]
+    pokemon_key = match_result[1]
+
+    return BattleEvent(
+        event_type="status_condition",
+        side=side,
+        raw_text=raw_text,
+        pokemon_name=pokemon_name,
+        pokemon_key=pokemon_key,
+        details={"status": "drowsy", "phase": "inflicted"},
+    )
+
+
+def _extract_confusion(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    side = "opponent" if m.group(1) else "player"
+    name_candidate = m.group(2).strip()
+    if not name_candidate:
+        return None
+
+    match_result = _resolve_pokemon_name(name_candidate, side, game_data, ctx)
+    pokemon_name = match_result[0]
+    pokemon_key = match_result[1]
+
+    return BattleEvent(
+        event_type="status_condition",
+        side=side,
+        raw_text=raw_text,
+        pokemon_name=pokemon_name,
+        pokemon_key=pokemon_key,
+        details={"status": "confusion", "phase": "inflicted"},
     )
 
 
@@ -959,11 +1106,68 @@ def _extract_protect(
 
 
 # ---------------------------------------------------------------------------
+# 身代わりパターン
+# ---------------------------------------------------------------------------
+
+_SUBSTITUTE_BLOCK_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)に\s*かわ[つっ]て\s*身代わりが\s*攻撃を\s*受けた",
+)
+
+_SUBSTITUTE_BROKEN_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)の\s*身代わりは\s*消えてしま[つっ]た",
+)
+
+
+def _extract_substitute_block(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    side = "opponent" if m.group(1) else "player"
+    name_candidate = m.group(2).strip()
+    if not name_candidate:
+        return None
+
+    match_result = _resolve_pokemon_name(name_candidate, side, game_data, ctx)
+    pokemon_name = match_result[0]
+    pokemon_key = match_result[1]
+
+    return BattleEvent(
+        event_type="substitute",
+        side=side,
+        raw_text=raw_text,
+        pokemon_name=pokemon_name,
+        pokemon_key=pokemon_key,
+        details={"phase": "took_hit"},
+    )
+
+
+def _extract_substitute_broken(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    side = "opponent" if m.group(1) else "player"
+    name_candidate = m.group(2).strip()
+    if not name_candidate:
+        return None
+
+    match_result = _resolve_pokemon_name(name_candidate, side, game_data, ctx)
+    pokemon_name = match_result[0]
+    pokemon_key = match_result[1]
+
+    return BattleEvent(
+        event_type="substitute",
+        side=side,
+        raw_text=raw_text,
+        pokemon_name=pokemon_name,
+        pokemon_key=pokemon_key,
+        details={"phase": "broken"},
+    )
+
+
+# ---------------------------------------------------------------------------
 # メガシンカパターン
 # ---------------------------------------------------------------------------
 
 _MEGA_EVOLUTION_RE = re.compile(
-    r"(?:(相手)の\s*)?(.+?)は\s*メガ(.+?)にメガシンカした",
+    r"(?:(相手)の\s*)?(.+?)は\s*メガ(.+?)に[-\-ー−]?メガシンカした",
 )
 
 
@@ -1118,6 +1322,303 @@ def _extract_opponent_returning(
 
 
 # ---------------------------------------------------------------------------
+# 急所・連続ヒットパターン
+# ---------------------------------------------------------------------------
+
+_CRITICAL_HIT_RE = re.compile(r"急所に\s*当た[つっ]た")
+
+_MULTI_HIT_RE = re.compile(r"(\d+)\s*回\s*当た[つっ]た")
+
+
+def _extract_critical_hit(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    return BattleEvent(
+        event_type="critical_hit",
+        side="unknown",
+        raw_text=raw_text,
+        details={"critical": True},
+    )
+
+
+def _extract_multi_hit(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    try:
+        hits = int(m.group(1))
+    except (TypeError, ValueError):
+        return None
+    return BattleEvent(
+        event_type="multi_hit",
+        side="unknown",
+        raw_text=raw_text,
+        details={"hits": hits},
+    )
+
+
+# ---------------------------------------------------------------------------
+# 持ち物発動メッセージパターン
+# ---------------------------------------------------------------------------
+
+_ITEM_TRIGGER_KEYWORDS = (
+    "きあいのタスキ",
+    "オボンのみ",
+    "いのちのたま",
+    "ゴツゴツメット",
+    "たべのこし",
+    "せんせいのツメ",
+    "しろいハーブ",
+    "メンタルハーブ",
+    "きのみジュース",
+    "じゃくてんほけん",
+    "とつげきチョッキ",
+)
+
+_ITEM_TRIGGERED_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)は\s*"
+    r"(" + "|".join(re.escape(name) for name in _ITEM_TRIGGER_KEYWORDS) + r")"
+    r"(?:で\s*もちこたえた|で\s*回復|の\s*効果|が\s*発動|で\s*行動がはやくなった|で\s*行動がはやくな[つっ]た)",
+)
+
+
+def _extract_item_triggered(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    side = "opponent" if m.group(1) else "player"
+    name_candidate = m.group(2).strip()
+    item_name = m.group(3).strip()
+    if not name_candidate or not item_name:
+        return None
+
+    match_result = _resolve_pokemon_name(name_candidate, side, game_data, ctx)
+    pokemon_name = match_result[0]
+    pokemon_key = match_result[1]
+
+    item_key: str | None = None
+    item_match = game_data.fuzzy_match_item_name(item_name)
+    if item_match is not None:
+        item_key = item_match.get("item_key")
+
+    return BattleEvent(
+        event_type="item_triggered",
+        side=side,
+        raw_text=raw_text,
+        pokemon_name=pokemon_name,
+        pokemon_key=pokemon_key,
+        details={"item_name": item_name, "item_key": item_key},
+    )
+
+
+# ---------------------------------------------------------------------------
+# メガストーン反応パターン（対戦開始時の所持判明）
+# ---------------------------------------------------------------------------
+
+_MEGA_STONE_REVEAL_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)の\s*(\S+?ナイト[XYZ]?)と\s*"
+    r"(?:(?:(相手)の\s*)?(.+?)の\s*(\S+?ナイト[XYZ]?)|.+?の\s*(\S*リング))が\s*反応した",
+)
+
+
+def _extract_mega_stone_revealed(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    first_side = "opponent" if m.group(1) else "player"
+    first_pokemon_raw = m.group(2).strip()
+    first_stone = m.group(3).strip()
+    second_side = "opponent" if m.group(4) else "player"
+    second_pokemon_raw = (m.group(5) or "").strip()
+    second_stone = (m.group(6) or "").strip()
+    ring_name = (m.group(7) or "").strip()
+    if not first_pokemon_raw:
+        return None
+
+    first_resolved = _resolve_pokemon_name(first_pokemon_raw, first_side, game_data, ctx)
+    first_item = game_data.fuzzy_match_item_name(first_stone)
+    details: dict[str, Any] = {
+        "stone_name": first_stone,
+        "stone_key": first_item.get("item_key") if first_item else None,
+    }
+
+    if second_pokemon_raw and second_stone:
+        second_resolved = _resolve_pokemon_name(second_pokemon_raw, second_side, game_data, ctx)
+        second_item = game_data.fuzzy_match_item_name(second_stone)
+        details["pairs"] = {
+            first_side: {
+                "pokemon_name": first_resolved[0],
+                "pokemon_key": first_resolved[1],
+                "stone_name": first_stone,
+                "stone_key": first_item.get("item_key") if first_item else None,
+            },
+            second_side: {
+                "pokemon_name": second_resolved[0],
+                "pokemon_key": second_resolved[1],
+                "stone_name": second_stone,
+                "stone_key": second_item.get("item_key") if second_item else None,
+            },
+        }
+    elif ring_name:
+        details["ring_name"] = ring_name
+
+    return BattleEvent(
+        event_type="mega_stone_revealed",
+        side=first_side,
+        raw_text=raw_text,
+        pokemon_name=first_resolved[0],
+        pokemon_key=first_resolved[1],
+        details=details,
+    )
+
+
+# ---------------------------------------------------------------------------
+# 天気被害パターン（毎ターンのダメージメッセージ）
+# ---------------------------------------------------------------------------
+
+_WEATHER_DAMAGE_RE = re.compile(
+    r"(砂あらし|あられ|雪)が\s*"
+    r"(?:(相手)の\s*)?(.+?)を\s*襲う",
+)
+
+_WEATHER_NAME_MAP: dict[str, str] = {
+    "砂あらし": "sand",
+    "あられ": "hail",
+    "雪": "snow",
+}
+
+
+def _extract_weather_damage(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    weather_jp = m.group(1).strip()
+    side = "opponent" if m.group(2) else "player"
+    name_candidate = m.group(3).strip()
+    if not name_candidate:
+        return None
+
+    match_result = _resolve_pokemon_name(name_candidate, side, game_data, ctx)
+    pokemon_name = match_result[0]
+    pokemon_key = match_result[1]
+
+    return BattleEvent(
+        event_type="weather_damage",
+        side=side,
+        raw_text=raw_text,
+        pokemon_name=pokemon_name,
+        pokemon_key=pokemon_key,
+        details={"weather": _WEATHER_NAME_MAP.get(weather_jp, weather_jp)},
+    )
+
+
+# ---------------------------------------------------------------------------
+# 特性表示・状態ダメージパターン
+# ---------------------------------------------------------------------------
+
+_ABILITY_REVEALED_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)は\s*(.+?)を\s*放[つっ]ている",
+)
+
+_SUPREME_OVERLORD_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)は\s*倒された仲間から力をもら[つっ]た",
+)
+
+_BURN_DAMAGE_RE = re.compile(
+    r"(?:(相手)の\s*)?(.+?)は\s*やけどの\s*ダメ(?:ージ|ー)\s*を?\s*受(?:け)?た",
+)
+
+
+def _extract_ability_revealed(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    side = "opponent" if m.group(1) else "player"
+    name_candidate = m.group(2).strip()
+    ability_name = m.group(3).strip()
+    if not name_candidate or not ability_name:
+        return None
+
+    match_result = _resolve_pokemon_name(name_candidate, side, game_data, ctx)
+    pokemon_name = match_result[0]
+    pokemon_key = match_result[1]
+    ability_match = game_data.fuzzy_match_ability_name(ability_name)
+
+    return BattleEvent(
+        event_type="ability_revealed",
+        side=side,
+        raw_text=raw_text,
+        pokemon_name=pokemon_name,
+        pokemon_key=pokemon_key,
+        details={
+            "ability_name": ability_match["matched_name"] if ability_match else ability_name,
+            "ability_key": ability_match["ability_key"] if ability_match else None,
+        },
+    )
+
+
+def _extract_supreme_overlord(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    side = "opponent" if m.group(1) else "player"
+    name_candidate = m.group(2).strip()
+    if not name_candidate:
+        return None
+
+    match_result = _resolve_pokemon_name(name_candidate, side, game_data, ctx)
+    pokemon_name = match_result[0]
+    pokemon_key = match_result[1]
+    ability_match = game_data.fuzzy_match_ability_name("そうだいしょう")
+
+    return BattleEvent(
+        event_type="ability_revealed",
+        side=side,
+        raw_text=raw_text,
+        pokemon_name=pokemon_name,
+        pokemon_key=pokemon_key,
+        details={
+            "ability_name": ability_match["matched_name"] if ability_match else "そうだいしょう",
+            "ability_key": ability_match["ability_key"] if ability_match else None,
+        },
+    )
+
+
+def _extract_burn_damage(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    side = "opponent" if m.group(1) else "player"
+    name_candidate = m.group(2).strip()
+    if not name_candidate:
+        return None
+
+    match_result = _resolve_pokemon_name(name_candidate, side, game_data, ctx)
+    pokemon_name = match_result[0]
+    pokemon_key = match_result[1]
+
+    return BattleEvent(
+        event_type="status_damage",
+        side=side,
+        raw_text=raw_text,
+        pokemon_name=pokemon_name,
+        pokemon_key=pokemon_key,
+        details={"status": "burn"},
+    )
+
+
+# ---------------------------------------------------------------------------
+# ステータスリセットパターン（黒い霧・ミストバースト等）
+# ---------------------------------------------------------------------------
+
+_STAT_RESET_RE = re.compile(r"全ての\s*ステータスが\s*元に\s*戻[つっ]た")
+
+
+def _extract_stat_reset(
+    m: re.Match, raw_text: str, game_data: GameData, ctx: ParseContext,
+) -> BattleEvent | None:
+    return BattleEvent(
+        event_type="stat_reset",
+        side="unknown",
+        raw_text=raw_text,
+        details={"reset_type": "all_stats"},
+    )
+
+
+# ---------------------------------------------------------------------------
 # ポケモン名解決ヘルパー
 # ---------------------------------------------------------------------------
 
@@ -1157,9 +1658,34 @@ PATTERNS: list[BattleTextPattern] = [
         extract=_extract_surrender,
     ),
     BattleTextPattern(
+        event_type="critical_hit",
+        regex=_CRITICAL_HIT_RE,
+        extract=_extract_critical_hit,
+    ),
+    BattleTextPattern(
+        event_type="multi_hit",
+        regex=_MULTI_HIT_RE,
+        extract=_extract_multi_hit,
+    ),
+    BattleTextPattern(
+        event_type="stat_reset",
+        regex=_STAT_RESET_RE,
+        extract=_extract_stat_reset,
+    ),
+    BattleTextPattern(
         event_type="weather",
         regex=_WEATHER_RE,
         extract=_extract_weather,
+    ),
+    BattleTextPattern(
+        event_type="weather_damage",
+        regex=_WEATHER_DAMAGE_RE,
+        extract=_extract_weather_damage,
+    ),
+    BattleTextPattern(
+        event_type="mega_stone_revealed",
+        regex=_MEGA_STONE_REVEAL_RE,
+        extract=_extract_mega_stone_revealed,
     ),
     BattleTextPattern(
         event_type="terrain",
@@ -1192,6 +1718,11 @@ PATTERNS: list[BattleTextPattern] = [
         extract=_extract_hazard_set,
     ),
     BattleTextPattern(
+        event_type="hazard_set",
+        regex=_SPIKES_SET_RE,
+        extract=_extract_spikes_set,
+    ),
+    BattleTextPattern(
         event_type="type_effectiveness",
         regex=_TYPE_EFFECTIVENESS_RE,
         extract=_extract_type_effectiveness,
@@ -1219,14 +1750,44 @@ PATTERNS: list[BattleTextPattern] = [
         extract=_extract_sleep,
     ),
     BattleTextPattern(
+        event_type="status_condition",
+        regex=_DROWSY_RE,
+        extract=_extract_drowsy,
+    ),
+    BattleTextPattern(
+        event_type="status_condition",
+        regex=_CONFUSION_RE,
+        extract=_extract_confusion,
+    ),
+    BattleTextPattern(
         event_type="protect",
         regex=_PROTECT_RE,
         extract=_extract_protect,
     ),
     BattleTextPattern(
+        event_type="substitute",
+        regex=_SUBSTITUTE_BROKEN_RE,
+        extract=_extract_substitute_broken,
+    ),
+    BattleTextPattern(
+        event_type="substitute",
+        regex=_SUBSTITUTE_BLOCK_RE,
+        extract=_extract_substitute_block,
+    ),
+    BattleTextPattern(
+        event_type="item_triggered",
+        regex=_ITEM_TRIGGERED_RE,
+        extract=_extract_item_triggered,
+    ),
+    BattleTextPattern(
         event_type="hazard_damage",
         regex=_HAZARD_DAMAGE_RE,
         extract=_extract_hazard_damage,
+    ),
+    BattleTextPattern(
+        event_type="hazard_damage",
+        regex=_SPIKES_DAMAGE_RE,
+        extract=_extract_spikes_damage,
     ),
     BattleTextPattern(
         event_type="field_effect",
@@ -1242,6 +1803,21 @@ PATTERNS: list[BattleTextPattern] = [
         event_type="forced_switch",
         regex=_FORCED_SWITCH_RE,
         extract=_extract_forced_switch,
+    ),
+    BattleTextPattern(
+        event_type="ability_revealed",
+        regex=_SUPREME_OVERLORD_RE,
+        extract=_extract_supreme_overlord,
+    ),
+    BattleTextPattern(
+        event_type="ability_revealed",
+        regex=_ABILITY_REVEALED_RE,
+        extract=_extract_ability_revealed,
+    ),
+    BattleTextPattern(
+        event_type="status_damage",
+        regex=_BURN_DAMAGE_RE,
+        extract=_extract_burn_damage,
     ),
     # --- 送り出し/戻しパターン ---
     BattleTextPattern(

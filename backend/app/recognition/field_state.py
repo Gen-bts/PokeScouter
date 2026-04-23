@@ -174,6 +174,11 @@ class FieldStateAccumulator:
                 return False
             side_state.stealth_rock = True
             return True
+        if hazard == "spikes":
+            if side_state.spikes >= 3:
+                return False
+            side_state.spikes += 1
+            return True
         return False
 
     def _get_side(self, side: str) -> SideFieldState | None:
