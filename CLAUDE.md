@@ -81,13 +81,22 @@ pytest -m "not slow"        # 高速テストのみ
 # ソース切り替え: backend/config/settings.toml の [data] usage_source
 # 詳細: docs/usage-data-sources.md
 
-# Pikalytics (既定データソース)
+# pokechamdb (最優先データソース。種族値・実数値・技/持ち物/特性/性格/努力値を網羅)
+python scripts/fetch_pokechamdb.py               # 全件取得 (約210体)
+python scripts/fetch_pokechamdb.py --probe       # HTML構造確認 (2体のみ)
+
+# Pikalytics (フォールバック)
 python scripts/fetch_pikalytics_usage.py
 
 # pokemon-champions-stats (性格・努力値を含む)
 # 依存: pip install beautifulsoup4
 python scripts/fetch_champions_stats.py          # 全件取得
 python scripts/fetch_champions_stats.py --probe  # HTML構造確認 (2体のみ)
+
+# ポケモン徹底攻略 (yakkun.com, fallback用「人気」技リスト)
+# 依存: pip install beautifulsoup4
+python scripts/fetch_yakkun_usage.py             # 全件取得 (約185体)
+python scripts/fetch_yakkun_usage.py --probe     # HTML構造確認 (2体のみ)
 ```
 
 ### 詳細ドキュメント

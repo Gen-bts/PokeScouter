@@ -5,59 +5,46 @@
     "slots": [
       {
         "position": 1,
-        "pokemonId": "scizor",
-        "name": "ハッサム",
+        "pokemonId": "aegislash",
+        "name": "ギルガルド",
         "fields": {
           "名前": {
-            "raw": "ハツサム",
-            "validated": "ハッサム",
+            "raw": "ギルガルド",
+            "validated": "ギルガルド",
             "confidence": 1,
-            "matched_id": "scizor",
-            "matched_key": "scizor"
+            "matched_id": "aegislash",
+            "matched_key": "aegislash"
           },
           "特性": {
-            "raw": "テクニシャン",
-            "validated": "テクニシャン",
+            "raw": "バトルスイツチ",
+            "validated": "バトルスイッチ",
             "confidence": 1,
-            "matched_id": "technician",
-            "matched_key": "technician"
+            "matched_id": "stancechange",
+            "matched_key": "stancechange"
           },
           "もちもの": {
-            "raw": "ハツサムナイト",
-            "validated": "ハッサムナイト",
-            "confidence": 1,
-            "matched_id": "scizorite",
-            "matched_key": "scizorite",
-            "matched_identifier": "scizorite",
+            "raw": "のろいのおだ",
+            "validated": "のろいのおふだ",
+            "confidence": 0.9231,
+            "matched_id": "spelltag",
+            "matched_key": "spelltag",
+            "matched_identifier": "spelltag",
             "is_mega_stone": false
           },
           "わざ１": {
-            "raw": "バレツトパンチ",
-            "validated": "バレットパンチ",
-            "confidence": 1,
-            "matched_id": "bulletpunch",
-            "matched_key": "bulletpunch",
+            "raw": "ポルターガスト",
+            "validated": "ポルターガイスト",
+            "confidence": 0.9333,
+            "matched_id": "poltergeist",
+            "matched_key": "poltergeist",
             "move_meta": {
-              "type": "steel",
-              "power": 40,
-              "accuracy": 100,
+              "type": "ghost",
+              "power": 110,
+              "accuracy": 90,
               "damage_class": "physical"
             }
           },
           "わざ２": {
-            "raw": "はたきおとす",
-            "validated": "はたきおとす",
-            "confidence": 1,
-            "matched_id": "knockoff",
-            "matched_key": "knockoff",
-            "move_meta": {
-              "type": "dark",
-              "power": 65,
-              "accuracy": 100,
-              "damage_class": "physical"
-            }
-          },
-          "わざ３": {
             "raw": "つるぎのまい",
             "validated": "つるぎのまい",
             "confidence": 1,
@@ -70,64 +57,77 @@
               "damage_class": "status"
             }
           },
-          "わざ４": {
-            "raw": "はねやすめ",
-            "validated": "はねやすめ",
+          "わざ３": {
+            "raw": "かげうち",
+            "validated": "かげうち",
             "confidence": 1,
-            "matched_id": "roost",
-            "matched_key": "roost",
+            "matched_id": "shadowsneak",
+            "matched_key": "shadowsneak",
             "move_meta": {
-              "type": "flying",
-              "power": 0,
-              "accuracy": null,
-              "damage_class": "status"
+              "type": "ghost",
+              "power": 40,
+              "accuracy": 100,
+              "damage_class": "physical"
+            }
+          },
+          "わざ４": {
+            "raw": "インフアイト",
+            "validated": "インファイト",
+            "confidence": 1,
+            "matched_id": "closecombat",
+            "matched_key": "closecombat",
+            "move_meta": {
+              "type": "fighting",
+              "power": 120,
+              "accuracy": 100,
+              "damage_class": "physical"
             }
           },
           "HP実数値": {
-            "raw": "175",
-            "validated": "175",
+            "raw": "167",
+            "validated": "167",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "HP努力値": {
-            "raw": "30",
-            "validated": "30",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "こうげき実数値": {
-            "raw": "200",
-            "validated": "200",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "こうげき努力値": {
             "raw": "32",
             "validated": "32",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
+          "こうげき実数値": {
+            "raw": "103",
+            "validated": "103",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "こうげき努力値": {
+            "raw": "24",
+            "validated": "24",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
           "ぼうぎょ実数値": {
-            "raw": "120",
-            "validated": "120",
+            "raw": "161",
+            "validated": "161",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "ぼうぎょ努力値": {
-            "raw": "0",
-            "validated": "0",
-            "confidence": 1,
+            "raw": "",
+            "validated": null,
+            "confidence": 0,
             "matched_id": null,
             "matched_key": null
           },
           "とくこう実数値": {
-            "raw": "67",
-            "validated": "67",
+            "raw": "63",
+            "validated": "63",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -140,8 +140,8 @@
             "matched_key": null
           },
           "とくぼう実数値": {
-            "raw": "100",
-            "validated": "100",
+            "raw": "160",
+            "validated": "160",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -161,8 +161,8 @@
             "matched_key": null
           },
           "すばやさ努力値": {
-            "raw": "4",
-            "validated": "4",
+            "raw": "9",
+            "validated": "9",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -207,143 +207,143 @@
       },
       {
         "position": 2,
-        "pokemonId": "blastoise",
-        "name": "カメックス",
+        "pokemonId": "garchomp",
+        "name": "ガブリアス",
         "fields": {
           "名前": {
-            "raw": "カメツクス",
-            "validated": "カメックス",
+            "raw": "ガブリアス",
+            "validated": "ガブリアス",
             "confidence": 1,
-            "matched_id": "blastoise",
-            "matched_key": "blastoise"
+            "matched_id": "garchomp",
+            "matched_key": "garchomp"
           },
           "特性": {
-            "raw": "げきりゆう",
-            "validated": "げきりゅう",
+            "raw": "さめはだ",
+            "validated": "さめはだ",
             "confidence": 1,
-            "matched_id": "torrent",
-            "matched_key": "torrent"
+            "matched_id": "roughskin",
+            "matched_key": "roughskin"
           },
           "もちもの": {
-            "raw": "カメツクスナイト",
-            "validated": "カメックスナイト",
-            "confidence": 1,
-            "matched_id": "blastoisinite",
-            "matched_key": "blastoisinite",
-            "matched_identifier": "blastoisinite",
+            "raw": "こわスカーフ",
+            "validated": "こだわりスカーフ",
+            "confidence": 0.8571,
+            "matched_id": "choicescarf",
+            "matched_key": "choicescarf",
+            "matched_identifier": "choicescarf",
             "is_mega_stone": false
           },
           "わざ１": {
-            "raw": "みすのはどう",
-            "validated": "みずのはどう",
-            "confidence": 0.8333,
-            "matched_id": "waterpulse",
-            "matched_key": "waterpulse",
+            "raw": "げきりん",
+            "validated": "げきりん",
+            "confidence": 1,
+            "matched_id": "outrage",
+            "matched_key": "outrage",
             "move_meta": {
-              "type": "water",
-              "power": 60,
+              "type": "dragon",
+              "power": 120,
               "accuracy": 100,
-              "damage_class": "special"
+              "damage_class": "physical"
             }
           },
           "わざ２": {
-            "raw": "りゆうのはどう",
-            "validated": "りゅうのはどう",
+            "raw": "Uしh",
+            "validated": "じしん",
             "confidence": 1,
-            "matched_id": "dragonpulse",
-            "matched_key": "dragonpulse",
+            "matched_id": "earthquake",
+            "matched_key": "earthquake",
             "move_meta": {
-              "type": "dragon",
-              "power": 85,
+              "type": "ground",
+              "power": 100,
               "accuracy": 100,
-              "damage_class": "special"
+              "damage_class": "physical"
             }
           },
           "わざ３": {
-            "raw": "みがわり",
-            "validated": "みがわり",
-            "confidence": 1,
-            "matched_id": "substitute",
-            "matched_key": "substitute",
+            "raw": "がせきじ",
+            "validated": "がんせきふうじ",
+            "confidence": 0.7273,
+            "matched_id": "rocktomb",
+            "matched_key": "rocktomb",
             "move_meta": {
-              "type": "normal",
-              "power": 0,
-              "accuracy": null,
-              "damage_class": "status"
+              "type": "rock",
+              "power": 60,
+              "accuracy": 95,
+              "damage_class": "physical"
             }
           },
           "わざ４": {
-            "raw": "からをやぶる",
-            "validated": "からをやぶる",
+            "raw": "ほのおのキバ",
+            "validated": "ほのおのキバ",
             "confidence": 1,
-            "matched_id": "shellsmash",
-            "matched_key": "shellsmash",
+            "matched_id": "firefang",
+            "matched_key": "firefang",
             "move_meta": {
-              "type": "normal",
-              "power": 0,
-              "accuracy": null,
-              "damage_class": "status"
+              "type": "fire",
+              "power": 65,
+              "accuracy": 95,
+              "damage_class": "physical"
             }
           },
           "HP実数値": {
-            "raw": "159",
-            "validated": "159",
+            "raw": "191",
+            "validated": "191",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "HP努力値": {
-            "raw": "5",
-            "validated": "5",
+            "raw": "8",
+            "validated": "8",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "こうげき実数値": {
-            "raw": "92",
-            "validated": "92",
+            "raw": "200",
+            "validated": "200",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "こうげき努力値": {
-            "raw": "0",
-            "validated": "0",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "ぼうぎょ実数値": {
-            "raw": "120",
-            "validated": "120",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "ぼうぎょ努力値": {
-            "raw": "0",
-            "validated": "0",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "とくこう実数値": {
-            "raw": "150",
-            "validated": "150",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "とくこう努力値": {
             "raw": "32",
             "validated": "32",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
+          "ぼうぎょ実数値": {
+            "raw": "116",
+            "validated": "116",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "ぼうぎょ努力値": {
+            "raw": "",
+            "validated": null,
+            "confidence": 0,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "とくこう実数値": {
+            "raw": "90",
+            "validated": "90",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "とくこう努力値": {
+            "raw": "0",
+            "validated": "0",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
           "とくぼう実数値": {
-            "raw": "125",
-            "validated": "125",
+            "raw": "105",
+            "validated": "105",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -356,22 +356,22 @@
             "matched_key": null
           },
           "すばやさ実数値": {
-            "raw": "127",
-            "validated": "127",
+            "raw": "147",
+            "validated": "147",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "すばやさ努力値": {
-            "raw": "29",
-            "validated": "29",
+            "raw": "25",
+            "validated": "25",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "こうげき性格補正": {
-            "raw": "down",
-            "validated": "down",
+            "raw": "up",
+            "validated": "up",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -384,8 +384,8 @@
             "matched_key": null
           },
           "とくこう性格補正": {
-            "raw": "up",
-            "validated": "up",
+            "raw": "down",
+            "validated": "down",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -409,77 +409,77 @@
       },
       {
         "position": 3,
-        "pokemonId": "mimikyu",
-        "name": "ミミッキュ",
+        "pokemonId": "hippowdon",
+        "name": "カバルドン",
         "fields": {
           "名前": {
-            "raw": "三三ツキユ",
-            "validated": "ミミッキュ",
+            "raw": "カバルドン",
+            "validated": "カバルドン",
             "confidence": 1,
-            "matched_id": "mimikyu",
-            "matched_key": "mimikyu"
+            "matched_id": "hippowdon",
+            "matched_key": "hippowdon"
           },
           "特性": {
-            "raw": "ばけのかわ",
-            "validated": "ばけのかわ",
-            "confidence": 1,
-            "matched_id": "disguise",
-            "matched_key": "disguise"
+            "raw": "すなこし",
+            "validated": "すなおこし",
+            "confidence": 0.8889,
+            "matched_id": "sandstream",
+            "matched_key": "sandstream"
           },
           "もちもの": {
-            "raw": "ラムのみ",
-            "validated": "ラムのみ",
+            "raw": "たべのこし",
+            "validated": "たべのこし",
             "confidence": 1,
-            "matched_id": "lumberry",
-            "matched_key": "lumberry",
-            "matched_identifier": "lumberry",
+            "matched_id": "leftovers",
+            "matched_key": "leftovers",
+            "matched_identifier": "leftovers",
             "is_mega_stone": false
           },
           "わざ１": {
-            "raw": "かげうち",
-            "validated": "かげうち",
+            "raw": "Uしん",
+            "validated": "じしん",
             "confidence": 1,
-            "matched_id": "shadowsneak",
-            "matched_key": "shadowsneak",
+            "matched_id": "earthquake",
+            "matched_key": "earthquake",
             "move_meta": {
-              "type": "ghost",
-              "power": 40,
+              "type": "ground",
+              "power": 100,
               "accuracy": 100,
               "damage_class": "physical"
             }
           },
           "わざ２": {
-            "raw": "のろい",
-            "validated": "のろい",
+            "raw": "ステルスロツク",
+            "validated": "ステルスロック",
             "confidence": 1,
-            "matched_id": "curse",
-            "matched_key": "curse",
+            "matched_id": "stealthrock",
+            "matched_key": "stealthrock",
             "move_meta": {
-              "type": "ghost",
+              "type": "rock",
               "power": 0,
               "accuracy": null,
               "damage_class": "status"
             }
           },
           "わざ３": {
-            "raw": "じやれつく",
-            "validated": "じゃれつく",
+            "raw": "なまける",
+            "validated": "なまける",
             "confidence": 1,
-            "matched_id": "playrough",
-            "matched_key": "playrough",
+            "matched_id": "slackoff",
+            "matched_key": "slackoff",
             "move_meta": {
-              "type": "fairy",
-              "power": 90,
-              "accuracy": 90,
-              "damage_class": "physical"
+              "type": "normal",
+              "power": 0,
+              "accuracy": null,
+              "damage_class": "status"
             }
           },
           "わざ４": {
-            "raw": "いみわけ",
-            "validated": "いたみわけ",
-            "confidence": 0.8889,
-            "matched_id": "painsplit",
-            "matched_key": "painsplit",
+            "raw": "あくび",
+            "validated": "あくび",
+            "confidence": 1,
+            "matched_id": "yawn",
+            "matched_key": "yawn",
             "move_meta": {
               "type": "normal",
               "power": 0,
@@ -488,50 +488,50 @@
             }
           },
           "HP実数値": {
-            "raw": "131",
-            "validated": "131",
+            "raw": "215",
+            "validated": "215",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "HP努力値": {
-            "raw": "",
-            "validated": null,
-            "confidence": 0,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "こうげき実数値": {
-            "raw": "156",
-            "validated": "156",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "こうげき努力値": {
             "raw": "32",
             "validated": "32",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
+          "こうげき実数値": {
+            "raw": "132",
+            "validated": "132",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "こうげき努力値": {
+            "raw": "0",
+            "validated": "0",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
           "ぼうぎょ実数値": {
-            "raw": "101",
-            "validated": "101",
+            "raw": "170",
+            "validated": "170",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "ぼうぎょ努力値": {
-            "raw": "-",
-            "validated": null,
-            "confidence": 0,
+            "raw": "17",
+            "validated": "17",
+            "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "とくこう実数値": {
-            "raw": "63",
-            "validated": "63",
+            "raw": "79",
+            "validated": "79",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -544,43 +544,43 @@
             "matched_key": null
           },
           "とくぼう実数値": {
-            "raw": "125",
-            "validated": "125",
+            "raw": "109",
+            "validated": "109",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "とくぼう努力値": {
+            "raw": "17",
+            "validated": "17",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "すばやさ実数値": {
+            "raw": "67",
+            "validated": "67",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "すばやさ努力値": {
             "raw": "0",
             "validated": "0",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
-          "すばやさ実数値": {
-            "raw": "148",
-            "validated": "148",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "すばやさ努力値": {
-            "raw": "32",
-            "validated": "32",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
           "こうげき性格補正": {
-            "raw": "up",
-            "validated": "up",
+            "raw": "",
+            "validated": null,
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "ぼうぎょ性格補正": {
-            "raw": "",
-            "validated": null,
+            "raw": "up",
+            "validated": "up",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -611,115 +611,115 @@
       },
       {
         "position": 4,
-        "pokemonId": "glimmora",
-        "name": "キラフロル",
+        "pokemonId": "kangaskhan",
+        "name": "ガルーラ",
         "fields": {
           "名前": {
-            "raw": "キラフロル",
-            "validated": "キラフロル",
+            "raw": "ガルーラ",
+            "validated": "ガルーラ",
             "confidence": 1,
-            "matched_id": "glimmora",
-            "matched_key": "glimmora"
+            "matched_id": "kangaskhan",
+            "matched_key": "kangaskhan"
           },
           "特性": {
-            "raw": "どくげしよう",
-            "validated": null,
-            "confidence": 0,
-            "matched_id": null,
-            "matched_key": null
+            "raw": "きもつたま",
+            "validated": "きもったま",
+            "confidence": 1,
+            "matched_id": "scrappy",
+            "matched_key": "scrappy"
           },
           "もちもの": {
-            "raw": "きあいのタスキ",
-            "validated": "きあいのタスキ",
+            "raw": "ガルーラナイト",
+            "validated": "ガルーラナイト",
             "confidence": 1,
-            "matched_id": "focussash",
-            "matched_key": "focussash",
-            "matched_identifier": "focussash",
-            "is_mega_stone": false
+            "matched_id": "kangaskhanite",
+            "matched_key": "kangaskhanite",
+            "matched_identifier": "kangaskhanite",
+            "is_mega_stone": true
           },
           "わざ１": {
-            "raw": "キラースピン",
-            "validated": "キラースピン",
+            "raw": "ねこだまし",
+            "validated": "ねこだまし",
             "confidence": 1,
-            "matched_id": "mortalspin",
-            "matched_key": "mortalspin",
+            "matched_id": "fakeout",
+            "matched_key": "fakeout",
             "move_meta": {
-              "type": "poison",
-              "power": 30,
+              "type": "normal",
+              "power": 40,
               "accuracy": 100,
               "damage_class": "physical"
             }
           },
           "わざ２": {
-            "raw": "マツトヨツト",
-            "validated": "マッドショット",
-            "confidence": 0.7692,
-            "matched_id": "mudshot",
-            "matched_key": "mudshot",
+            "raw": "すてみタッワル",
+            "validated": "すてみタックル",
+            "confidence": 0.8571,
+            "matched_id": "doubleedge",
+            "matched_key": "doubleedge",
             "move_meta": {
-              "type": "ground",
-              "power": 55,
-              "accuracy": 95,
-              "damage_class": "special"
+              "type": "normal",
+              "power": 120,
+              "accuracy": 100,
+              "damage_class": "physical"
             }
           },
           "わざ３": {
-            "raw": "パワージエム",
-            "validated": "パワージェム",
+            "raw": "Uしん",
+            "validated": "じしん",
             "confidence": 1,
-            "matched_id": "powergem",
-            "matched_key": "powergem",
+            "matched_id": "earthquake",
+            "matched_key": "earthquake",
             "move_meta": {
-              "type": "rock",
-              "power": 80,
+              "type": "ground",
+              "power": 100,
               "accuracy": 100,
-              "damage_class": "special"
+              "damage_class": "physical"
             }
           },
           "わざ４": {
-            "raw": "ステルスロツ",
-            "validated": "ステルスロック",
-            "confidence": 0.9231,
-            "matched_id": "stealthrock",
-            "matched_key": "stealthrock",
+            "raw": "ふいうち",
+            "validated": "ふいうち",
+            "confidence": 1,
+            "matched_id": "suckerpunch",
+            "matched_key": "suckerpunch",
             "move_meta": {
-              "type": "rock",
-              "power": 0,
-              "accuracy": null,
-              "damage_class": "status"
+              "type": "dark",
+              "power": 70,
+              "accuracy": 100,
+              "damage_class": "physical"
             }
           },
           "HP実数値": {
-            "raw": "159",
-            "validated": "159",
+            "raw": "197",
+            "validated": "197",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "HP努力値": {
-            "raw": "1",
-            "validated": "1",
+            "raw": "17",
+            "validated": "17",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "こうげき実数値": {
-            "raw": "67",
-            "validated": "67",
+            "raw": "161",
+            "validated": "161",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "こうげき努力値": {
-            "raw": "0",
-            "validated": "0",
+            "raw": "32",
+            "validated": "32",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "ぼうぎょ実数値": {
-            "raw": "111",
-            "validated": "111",
+            "raw": "101",
+            "validated": "101",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -732,15 +732,15 @@
             "matched_key": null
           },
           "とくこう実数値": {
-            "raw": "182",
-            "validated": "182",
+            "raw": "54",
+            "validated": "54",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "とくこう努力値": {
-            "raw": "32",
-            "validated": "32",
+            "raw": "0",
+            "validated": "0",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -753,29 +753,29 @@
             "matched_key": null
           },
           "とくぼう努力値": {
-            "raw": "0",
-            "validated": "0",
-            "confidence": 1,
+            "raw": "",
+            "validated": null,
+            "confidence": 0,
             "matched_id": null,
             "matched_key": null
           },
           "すばやさ実数値": {
-            "raw": "151",
-            "validated": "151",
+            "raw": "125",
+            "validated": "125",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "すばやさ努力値": {
-            "raw": "32",
-            "validated": "32",
+            "raw": "15",
+            "validated": "15",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "こうげき性格補正": {
-            "raw": "down",
-            "validated": "down",
+            "raw": "up",
+            "validated": "up",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -788,8 +788,8 @@
             "matched_key": null
           },
           "とくこう性格補正": {
-            "raw": "",
-            "validated": null,
+            "raw": "down",
+            "validated": "down",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -802,112 +802,144 @@
             "matched_key": null
           },
           "すばやさ性格補正": {
-            "raw": "up",
-            "validated": "up",
+            "raw": "",
+            "validated": null,
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           }
         },
-        "megaForm": null
+        "megaForm": {
+          "item_key": "kangaskhanite",
+          "pokemon_key": "kangaskhanmega",
+          "mega_name": "メガガルーラ",
+          "types": [
+            "normal"
+          ],
+          "ability": {
+            "key": "parentalbond",
+            "name": "おやこあい",
+            "effect": "おやこ ２ひきで ２かいこうげきする ことが できる。",
+            "effect_en": "This Pokemon's damaging moves become multi-hit moves that hit twice. The second hit has its damage quartered. Does not affect Doom Desire, Dragon Darts, Dynamax Cannon, Endeavor, Explosion, Final Gambit, Fling, Future Sight, Ice Ball, Rollout, Self-Destruct, any multi-hit move, any move that has multiple targets, or any two-turn move."
+          },
+          "base_stats": {
+            "hp": 105,
+            "atk": 125,
+            "def": 100,
+            "spa": 60,
+            "spd": 100,
+            "spe": 100
+          },
+          "stat_deltas": {
+            "hp": 0,
+            "atk": 30,
+            "def": 20,
+            "spa": 20,
+            "spd": 20,
+            "spe": 10
+          },
+          "type_effectiveness": {
+            "weak": [
+              {
+                "type": "fighting",
+                "multiplier": 2
+              }
+            ],
+            "resist": [],
+            "immune": [
+              {
+                "type": "ghost",
+                "multiplier": 0
+              }
+            ]
+          }
+        }
       },
       {
         "position": 5,
-        "pokemonId": "garchomp",
-        "name": "ガブリアス",
+        "pokemonId": "dragonite",
+        "name": "カイリュー",
         "fields": {
           "名前": {
-            "raw": "ガブリアス",
-            "validated": "ガブリアス",
+            "raw": "カイリユー",
+            "validated": "カイリュー",
             "confidence": 1,
-            "matched_id": "garchomp",
-            "matched_key": "garchomp"
+            "matched_id": "dragonite",
+            "matched_key": "dragonite"
           },
           "特性": {
-            "raw": "さめはだ",
+            "raw": "せいしんりよく",
+            "validated": "せいしんりょく",
+            "confidence": 1,
+            "matched_id": "innerfocus",
+            "matched_key": "innerfocus"
+          },
+          "もちもの": {
+            "raw": "カイリユナイト",
+            "validated": "カイロスナイト",
+            "confidence": 0.7143,
+            "matched_id": "pinsirite",
+            "matched_key": "pinsirite",
+            "matched_identifier": "pinsirite",
+            "is_mega_stone": true
+          },
+          "わざ１": {
+            "raw": "せい",
             "validated": null,
             "confidence": 0,
             "matched_id": null,
             "matched_key": null
           },
-          "もちもの": {
-            "raw": "オポンのみ",
-            "validated": "オレンのみ",
-            "confidence": 0.8,
-            "matched_id": "oranberry",
-            "matched_key": "oranberry",
-            "matched_identifier": "oranberry",
-            "is_mega_stone": false
-          },
-          "わざ１": {
-            "raw": "Uしh",
-            "validated": "じしん",
+          "わざ２": {
+            "raw": "かえんほうしや",
+            "validated": "かえんほうしゃ",
             "confidence": 1,
-            "matched_id": "earthquake",
-            "matched_key": "earthquake",
+            "matched_id": "flamethrower",
+            "matched_key": "flamethrower",
             "move_meta": {
-              "type": "ground",
-              "power": 100,
+              "type": "fire",
+              "power": 90,
+              "accuracy": 100,
+              "damage_class": "special"
+            }
+          },
+          "わざ３": {
+            "raw": "10まんポルト",
+            "validated": null,
+            "confidence": 0,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "わざ４": {
+            "raw": "しんそく",
+            "validated": "しんそく",
+            "confidence": 1,
+            "matched_id": "extremespeed",
+            "matched_key": "extremespeed",
+            "move_meta": {
+              "type": "normal",
+              "power": 80,
               "accuracy": 100,
               "damage_class": "physical"
             }
           },
-          "わざ２": {
-            "raw": "まきびし",
-            "validated": "まきびし",
-            "confidence": 1,
-            "matched_id": "spikes",
-            "matched_key": "spikes",
-            "move_meta": {
-              "type": "ground",
-              "power": 0,
-              "accuracy": null,
-              "damage_class": "status"
-            }
-          },
-          "わざ３": {
-            "raw": "ステルスロツク",
-            "validated": "ステルスロック",
-            "confidence": 1,
-            "matched_id": "stealthrock",
-            "matched_key": "stealthrock",
-            "move_meta": {
-              "type": "rock",
-              "power": 0,
-              "accuracy": null,
-              "damage_class": "status"
-            }
-          },
-          "わざ４": {
-            "raw": "ドラゴテール",
-            "validated": "ドラゴンテール",
-            "confidence": 0.9231,
-            "matched_id": "dragontail",
-            "matched_key": "dragontail",
-            "move_meta": {
-              "type": "dragon",
-              "power": 60,
-              "accuracy": 90,
-              "damage_class": "physical"
-            }
-          },
           "HP実数値": {
-            "raw": "215",
-            "validated": "215",
+            "raw": "197",
+            "validated": "197",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "HP努力値": {
-            "raw": "32",
-            "validated": "32",
+            "raw": "31",
+            "validated": "31",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "こうげき実数値": {
-            "raw": "150",
-            "validated": "150",
+            "raw": "138",
+            "validated": "138",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -920,64 +952,64 @@
             "matched_key": null
           },
           "ぼうぎょ実数値": {
-            "raw": "123",
-            "validated": "123",
+            "raw": "116",
+            "validated": "116",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "ぼうぎょ努力値": {
-            "raw": "8",
-            "validated": "8",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "とくこう実数値": {
-            "raw": "90",
-            "validated": "90",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "とくこう努力値": {
-            "raw": "0",
-            "validated": "0",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "とくぼう実数値": {
-            "raw": "143",
-            "validated": "143",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "とくぼう努力値": {
-            "raw": "25",
-            "validated": "25",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "すばやさ実数値": {
-            "raw": "123",
-            "validated": "123",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "すばやさ努力値": {
             "raw": "1",
             "validated": "1",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
-          "こうげき性格補正": {
+          "とくこう実数値": {
+            "raw": "156",
+            "validated": "156",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "とくこう努力値": {
+            "raw": "22",
+            "validated": "22",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "とくぼう実数値": {
+            "raw": "121",
+            "validated": "121",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "とくぼう努力値": {
             "raw": "",
             "validated": null,
+            "confidence": 0,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "すばやさ実数値": {
+            "raw": "111",
+            "validated": "111",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "すばやさ努力値": {
+            "raw": "11",
+            "validated": "11",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "こうげき性格補正": {
+            "raw": "down",
+            "validated": "down",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -990,15 +1022,15 @@
             "matched_key": null
           },
           "とくこう性格補正": {
-            "raw": "down",
-            "validated": "down",
+            "raw": "up",
+            "validated": "up",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "とくぼう性格補正": {
-            "raw": "up",
-            "validated": "up",
+            "raw": "",
+            "validated": null,
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -1011,91 +1043,165 @@
             "matched_key": null
           }
         },
-        "megaForm": null
+        "megaForm": {
+          "item_key": "pinsirite",
+          "pokemon_key": "pinsirmega",
+          "mega_name": "メガカイロス",
+          "types": [
+            "bug",
+            "flying"
+          ],
+          "ability": {
+            "key": "aerilate",
+            "name": "スカイスキン",
+            "effect": "ノーマルタイプの わざがひこうタイプになる。いりょくが すこし あがる。",
+            "effect_en": "This Pokemon's Normal-type moves become Flying-type moves and have their power multiplied by 1.2. This effect comes after other effects that change a move's type, but before Ion Deluge and Electrify's effects."
+          },
+          "base_stats": {
+            "hp": 65,
+            "atk": 155,
+            "def": 120,
+            "spa": 65,
+            "spd": 90,
+            "spe": 105
+          },
+          "stat_deltas": {
+            "hp": -26,
+            "atk": 21,
+            "def": 25,
+            "spa": -35,
+            "spd": -10,
+            "spe": 25
+          },
+          "type_effectiveness": {
+            "weak": [
+              {
+                "type": "rock",
+                "multiplier": 4
+              },
+              {
+                "type": "electric",
+                "multiplier": 2
+              },
+              {
+                "type": "fire",
+                "multiplier": 2
+              },
+              {
+                "type": "flying",
+                "multiplier": 2
+              },
+              {
+                "type": "ice",
+                "multiplier": 2
+              }
+            ],
+            "resist": [
+              {
+                "type": "fighting",
+                "multiplier": 0.25
+              },
+              {
+                "type": "grass",
+                "multiplier": 0.25
+              },
+              {
+                "type": "bug",
+                "multiplier": 0.5
+              }
+            ],
+            "immune": [
+              {
+                "type": "ground",
+                "multiplier": 0
+              }
+            ]
+          }
+        }
       },
       {
         "position": 6,
-        "pokemonId": "sylveon",
-        "name": "ニンフィア",
+        "pokemonId": "primarina",
+        "name": "アシレーヌ",
         "fields": {
           "名前": {
-            "raw": "ニンフィア",
-            "validated": "ニンフィア",
+            "raw": "アシレーヌ",
+            "validated": "アシレーヌ",
             "confidence": 1,
-            "matched_id": "sylveon",
-            "matched_key": "sylveon"
+            "matched_id": "primarina",
+            "matched_key": "primarina"
           },
           "特性": {
-            "raw": "フエアリースキン",
-            "validated": "フェアリースキン",
+            "raw": "げきりゆう",
+            "validated": "げきりゅう",
             "confidence": 1,
-            "matched_id": "pixilate",
-            "matched_key": "pixilate"
+            "matched_id": "torrent",
+            "matched_key": "torrent"
           },
           "もちもの": {
-            "raw": "たべのこし",
-            "validated": "たべのこし",
-            "confidence": 1,
-            "matched_id": "leftovers",
-            "matched_key": "leftovers",
-            "matched_identifier": "leftovers",
+            "raw": "オポンのみ",
+            "validated": "オボンのみ",
+            "confidence": 0.8,
+            "matched_id": "sitrusberry",
+            "matched_key": "sitrusberry",
+            "matched_identifier": "sitrusberry",
             "is_mega_stone": false
           },
           "わざ１": {
-            "raw": "ハパーポス",
-            "validated": "ハイパーボイス",
-            "confidence": 0.7692,
-            "matched_id": "hypervoice",
-            "matched_key": "hypervoice",
+            "raw": "うたかたのリア",
+            "validated": "うたかたのアリア",
+            "confidence": 0.9333,
+            "matched_id": "sparklingaria",
+            "matched_key": "sparklingaria",
             "move_meta": {
-              "type": "normal",
+              "type": "water",
               "power": 90,
               "accuracy": 100,
               "damage_class": "special"
             }
           },
           "わざ２": {
-            "raw": "まもる",
-            "validated": "まもる",
-            "confidence": 1,
-            "matched_id": "protect",
-            "matched_key": "protect",
+            "raw": "オース",
+            "validated": "ムーンフォース",
+            "confidence": 0.6,
+            "matched_id": "moonblast",
+            "matched_key": "moonblast",
             "move_meta": {
-              "type": "normal",
-              "power": 0,
-              "accuracy": null,
-              "damage_class": "status"
+              "type": "fairy",
+              "power": 95,
+              "accuracy": 100,
+              "damage_class": "special"
             }
           },
           "わざ３": {
-            "raw": "あくび",
-            "validated": "あくび",
+            "raw": "アンコール",
+            "validated": "アンコール",
             "confidence": 1,
-            "matched_id": "yawn",
-            "matched_key": "yawn",
+            "matched_id": "encore",
+            "matched_key": "encore",
             "move_meta": {
               "type": "normal",
               "power": 0,
-              "accuracy": null,
+              "accuracy": 100,
               "damage_class": "status"
             }
           },
           "わざ４": {
-            "raw": "ねがいごと",
-            "validated": "ねがいごと",
+            "raw": "アクアジエツト",
+            "validated": "アクアジェット",
             "confidence": 1,
-            "matched_id": "wish",
-            "matched_key": "wish",
+            "matched_id": "aquajet",
+            "matched_key": "aquajet",
             "move_meta": {
-              "type": "normal",
-              "power": 0,
-              "accuracy": null,
-              "damage_class": "status"
+              "type": "water",
+              "power": 40,
+              "accuracy": 100,
+              "damage_class": "physical"
             }
           },
           "HP実数値": {
-            "raw": "202",
-            "validated": "202",
+            "raw": "187",
+            "validated": "187",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -1108,8 +1214,8 @@
             "matched_key": null
           },
           "こうげき実数値": {
-            "raw": "85",
-            "validated": "85",
+            "raw": "84",
+            "validated": "84",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -1122,78 +1228,78 @@
             "matched_key": null
           },
           "ぼうぎょ実数値": {
-            "raw": "128",
-            "validated": "128",
+            "raw": "100",
+            "validated": "100",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "ぼうぎょ努力値": {
-            "raw": "32",
-            "validated": "32",
+            "raw": "6",
+            "validated": "6",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "とくこう実数値": {
-            "raw": "130",
-            "validated": "130",
+            "raw": "176",
+            "validated": "176",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "とくこう努力値": {
-            "raw": "0",
-            "validated": "0",
+            "raw": "14",
+            "validated": "14",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "とくぼう実数値": {
-            "raw": "152",
-            "validated": "152",
+            "raw": "136",
+            "validated": "136",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "とくぼう努力値": {
-            "raw": "2",
-            "validated": "2",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "すばやさ実数値": {
-            "raw": "72",
-            "validated": "72",
-            "confidence": 1,
-            "matched_id": null,
-            "matched_key": null
-          },
-          "すばやさ努力値": {
             "raw": "0",
             "validated": "0",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
+          "すばやさ実数値": {
+            "raw": "94",
+            "validated": "94",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
+          "すばやさ努力値": {
+            "raw": "14",
+            "validated": "14",
+            "confidence": 1,
+            "matched_id": null,
+            "matched_key": null
+          },
           "こうげき性格補正": {
-            "raw": "",
-            "validated": null,
+            "raw": "down",
+            "validated": "down",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "ぼうぎょ性格補正": {
-            "raw": "up",
-            "validated": "up",
+            "raw": "",
+            "validated": null,
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
           },
           "とくこう性格補正": {
-            "raw": "",
-            "validated": null,
+            "raw": "up",
+            "validated": "up",
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -1206,8 +1312,8 @@
             "matched_key": null
           },
           "すばやさ性格補正": {
-            "raw": "down",
-            "validated": "down",
+            "raw": "",
+            "validated": null,
             "confidence": 1,
             "matched_id": null,
             "matched_key": null
@@ -1216,7 +1322,7 @@
         "megaForm": null
       }
     ],
-    "savedAt": 1775988808512
+    "savedAt": 1776779480153
   },
   {
     "id": "f039af5e-d89e-4022-b6d1-f288946e6c1f",
